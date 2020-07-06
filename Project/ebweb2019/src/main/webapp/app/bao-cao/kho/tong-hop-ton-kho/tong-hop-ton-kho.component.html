@@ -1,0 +1,154 @@
+<div class="body">
+    <div class = "modal-header" style = "padding: 2px 10px; padding-top: 10px">
+        <div class="d-flex flex-wrap col-md-11">
+            <h6 class="modal-title-detail"><img src="../../../../content/images/icon-logo.png" height="24px"
+                                                width="24px"> <span
+                class="text-uppercase" jhiTranslate="ebwebApp.baoCao.tongHopTonKho"></span></h6>
+        </div>
+    </div>
+    <div style="padding: 5px 25px">
+        <div>
+            <div class="form-group row" *ngIf="treeOrganizationUnits && treeOrganizationUnits[0]?.children && treeOrganizationUnits[0]?.children.length>0">
+                <label jhiTranslate="ebwebApp.baoCao.canDoiKeToan.organization" class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-10" style="padding: 0px 15px 0px 0px !important; z-index: 100">
+                    <eb-tree-combo-box [tree]="treeOrganizationUnits" [(ngModel)]="organizationUnit" (ngModelChange)="changeOptionData(true)"></eb-tree-combo-box>
+                </div>
+            </div>
+            <div class="form-group row" *ngIf="organizationUnit && !organizationUnit.hiddenDependent">
+                <label class="col-sm-2 col-form-label pd-lable"></label>
+                <div class="col-sm-10 custom-control custom-checkbox" style="padding-left: 24px !important;">
+                    <input class="custom-control-input" type="checkbox" name="isBill1" id="inlineCheckbox3"
+                           value="option" [(ngModel)]="similarBranch" (ngModelChange)="changeOptionData()">
+                    <label class="custom-control-label" for="inlineCheckbox3" style="font-size: 14px;"
+                           jhiTranslate="ebwebApp.baoCao.similarBranch"></label>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label jhiTranslate="ebwebApp.baoCao.canDoiKeToan.period" class="col-sm-2 col-form-label">Chọn thời
+                    gian</label>
+                <div class="col-sm-6" style="padding: 0 !important;">
+                    <combo-box style=""
+                               name="timeLine"
+                               [dataList]="listTimeLine"
+                               [listColumns]="utilsService.listColumnsTimeLine"
+                               [isOutTable]="true"
+                               displayMember="display"
+                               valueName="value"
+                               [headerColumns]="utilsService.listHeaderColumnsTimeLine"
+                               [isObject]="false"
+                               [(ngModel)]="timeLineVoucher"
+                               (ngModelChange)="selectChangeBeginDateAndEndDate(timeLineVoucher)"
+                    ></combo-box>
+                </div>
+                <label jhiTranslate="ebwebApp.baoCao.soChiTietVatLieuDungCuSPHH.categoryMG" class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-2" style="padding: 0px 15px 0px 0px !important;">
+                    <combo-box style="" id="field_materialGoodsCategoryID"
+                               name="comboboxMaterialGoodsCategoryID"
+                               [dataList]="materialGoodsCategories"
+                               [isOutTable]="true"
+                               [listColumns]="utilsService.listColumnsmaterialGoodsCategory"
+                               displayMember="materialGoodsCategoryName"
+                               valueName="id"
+                               [headerColumns]="utilsService.listHeaderColumnsmaterialGoodsCategor"
+                               [isObject]="false"
+                               [(ngModel)]="materialGoodsCategoryID">
+                    </combo-box>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label jhiTranslate="ebwebApp.saBill.invoice.fromDate" class="col-sm-2 col-form-label"></label>
+                <div class="" style="padding: 0 !important; width: calc(19%) !important;">
+                    <eb-date-picker [(ngModel)]="fromDate" name="fromdate" format="YYYYMMDD"></eb-date-picker>
+                </div>
+                <label jhiTranslate="ebwebApp.saBill.invoice.toDate" class="col-sm-2 col-form-label" style="max-width: 12%"></label>
+                <div class="" style="padding: 0 !important; width: calc(19%) !important;">
+                    <eb-date-picker [(ngModel)]="toDate" name="toDate" format="YYYYMMDD"></eb-date-picker>
+                </div>
+                <label jhiTranslate="ebwebApp.baoCao.soChiTietVatLieuDungCuSPHH.unit" class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-2" style="padding: 0px 15px 0px 0px !important;">
+                    <combo-box id="unit"
+                               name="unit"
+                               [dataList]="units"
+                               [listColumns]="['name']"
+                               displayMember="name"
+                               valueName="value"
+                               [headerColumns]="['Đơn vị tính']"
+                               [isObject]="false"
+                               [isOutTable]="true"
+                               [(ngModel)]="unitID"
+                    ></combo-box>
+                </div>
+            </div>
+        </div>
+        <div id="table-scroll0" class="table-scroll" style="height: 320px">
+            <table class="main-table">
+                <thead>
+                <tr>
+                    <th scope="col">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="check-all" [checked]="isCheckAll()" (change)="checkAll()">
+                            <label class="custom-control-label" for="check-all"></label>
+                        </div>
+                    </th>
+                    <th scope="col" jhiTranslate="ebwebApp.repository.repositoryCode">Mã hàng</th>
+                    <th scope="col" jhiTranslate="ebwebApp.repository.repositoryName">Tên hàng</th>
+                </tr>
+                <tr>
+                    <th class="col" class="jsgrid-align-center sticky-35"
+                        style="background: #fff !important; padding: 0px 10px !important;">
+                    </th>
+                    <th class="col" class="jsgrid-align-left sticky-35"
+                        style="background: #fff !important; padding: 0px 10px !important;"><input
+                        type="text" placeholder="{{'ebwebApp.accountDefault.searchHere' | translate}}"
+                        class="input-Cell"
+                        name="searchAccountNumber"
+                        [(ngModel)]="rCodeFilter"
+                        (ngModelChange)="changeMGFilter()">
+                    </th>
+                    <th class="col" class="jsgrid-align-left sticky-35"
+                        style="background: #fff !important; padding: 0px 10px !important;"><input
+                        type="text"
+                        placeholder="{{'ebwebApp.accountDefault.searchHere' | translate}}"
+                        class="input-Cell"
+                        name="searchAccountName"
+                        [(ngModel)]="rNameFilter"
+                        (ngModelChange)="changeMGFilter()"
+                    >
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let item of repositoriesFilter, let i = index">
+                    <td class="text-center">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" name="{{'checkbox' + i}}"
+                                   id="{{'checkbox' + i}}" [(ngModel)]="item.checked" (click)="check(item)">
+                            <label class="custom-control-label" for="{{'checkbox' + i}}"></label>
+                        </div>
+                    </td>
+                    <td class="jsgrid-align-left">
+                        {{item.repositoryCode}}
+                    </td>
+                    <td class="jsgrid-align-left">
+                        {{item.repositoryName}}
+                    </td>
+                </tr>
+                <tr *ngFor="let l of newArr(8 - repositoriesFilter?.length)">
+                    <td><input type="text" class="input-Cell" readonly></td>
+                    <td><input type="text" class="input-Cell" readonly></td>
+                    <td><input type="text" class="input-Cell" readonly></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="modal-footer" style="padding: 5px 31px">
+        <button id="save" (click)="showReport()" class="btn btn-success">
+            <span jhiTranslate="entity.action.preview"></span>
+        </button>
+        <button *ebHasSomeAuthorityAndCondition="[['ROLE_ADMIN', ROLE_KetXuat], isKetXuat]" class="btn btn-danger" jhiTranslate="entity.action.render" (click)="exportExcel()">Kết xuất</button>
+        <button type="button" class="btn btn-dark" (click)="activeModal.dismiss('closed')" data-dismiss="modal">
+            <span jhiTranslate="entity.action.close"></span>
+        </button>
+    </div>
+</div>

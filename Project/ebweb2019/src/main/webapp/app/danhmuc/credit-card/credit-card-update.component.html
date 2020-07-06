@@ -1,0 +1,256 @@
+<eb-alert></eb-alert>
+<div class="container-fluid">
+    <div class="margin-tp-5 margin-0">
+        <div class="">
+            <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
+                <div class="itemw">
+                    <div class="menu-tool-bar he">
+                        <div class="ptitle">
+                            <span jhiTranslate="ebwebApp.creditCard.titled"></span>
+                        </div>
+
+                        <div class="gr-toolbar">
+                            <a (click)="save()" *ebHasSomeAuthorityOrCondition=
+                                "[[ROLE_TheTinDung_Them, !isEditUrl], ROLE_TheTinDung_Sua,'ROLE_ADMIN']"
+                               title="{{'ebwebApp.autoPrinciple.tooltipSave' | translate}}"><i
+                                class="mdi mdi-briefcase-download"></i><span jhiTranslate="ebwebApp.creditCard.save"></span></a>
+                            <a (click)="saveAndNew()" *ebHasSomeAuthorityOrCondition=
+                                "[[ROLE_TheTinDung_Them , ROLE_TheTinDung_Sua], 'ROLE_ADMIN', [ROLE_TheTinDung_Them, isCreateUrl]]"
+                               title="{{'ebwebApp.autoPrinciple.tooltipSaveAndAdd' | translate}}"><i
+                                class="mdi mdi-plus"></i><span jhiTranslate="ebwebApp.creditCard.saveAndLoad"></span></a>
+                            <a [class.disable]="!creditCard.id" (click)="delete()"
+                               *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_TheTinDung_Xoa]"
+                               title="{{'ebwebApp.autoPrinciple.tooltipDelete' | translate}}"><i
+                                class="mdi mdi-delete-forever"></i><span jhiTranslate="ebwebApp.creditCard.deleted"></span></a>
+                            <a (click)="closeForm()" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_TheTinDung_Xem]"
+                               title="{{'ebwebApp.autoPrinciple.tooltipBack' | translate}}"><i class="mdi mdi-window-close"></i><span
+                                jhiTranslate="ebwebApp.autoPrinciple.closed"></span></a>
+                        </div>
+                    </div>
+
+                    <div class="frm-main">
+                        <div class="row ">
+                            <div class="col-lg-12">
+                                <legend style="font-size: 19px; color: #f26f21;font-weight: bold;"
+                                        jhiTranslate="ebwebApp.creditCard.information"></legend>
+                                <form>
+                                    <div class="row no-gutters">
+<!--                                        <div class="col-lg-12" [hidden]="true">-->
+<!--                                            <div class="form-group row no-gutters">-->
+<!--                                                <label for="id" class="col-sm-2 col-form-label"-->
+<!--                                                       jhiTranslate="global.field.id"></label>-->
+<!--                                                <div class="col-sm-10 pd-l-0 pd-r-10">-->
+<!--                                                    <input type="text" class="col-sm-10 col-form-label-sm-bank-sm"-->
+<!--                                                           id="id" name="id"-->
+<!--                                                           [(ngModel)]="creditCard.id" readonly-->
+<!--                                                           [tabIndex]="1"-->
+<!--                                                           [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"/>-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+                                        <div class="col-lg-12">
+                                            <div class="form-group row no-gutters">
+                                                <label class="col-sm-2 my-col-form-label"
+                                                       jhiTranslate="ebwebApp.creditCard.creditCardNumberNew"></label>
+                                                <div class="col-sm-4 pd-l-0 pd-r-10 my-col-form-label-so-the-1">
+                                                    <input type="text" class="form-control" name="creditCardNumber"
+                                                           id="field_creditCardNumber"
+                                                           (ngModelChange)="check()"
+                                                           [(ngModel)]="creditCard.creditCardNumber"
+                                                           mask="0000 0000 0000 0000"
+                                                           maxlength="19" required
+                                                           [tabIndex]="1"
+                                                           [disabled]="creditCard.id && (!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"/>
+                                                </div>
+                                                <label class="col-sm-2 my-col-form-label1"
+                                                       jhiTranslate="ebwebApp.creditCard.creditCardTypeNew"></label>
+                                                <div class="col-sm-2 pd-l-0 pd-r-10">
+<!--                                                    <select class="form-control" name="creditCardType"-->
+<!--                                                            id="field_creditCardType"-->
+<!--                                                            [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"-->
+<!--                                                            [(ngModel)]="creditCard.creditCardType" [tabIndex]="2" required>-->
+<!--                                                        <option value="VisaCard" selected>VisaCard</option>-->
+<!--                                                        <option value="MasterCard" selected>MasterCard</option>-->
+<!--                                                        <option value="Discover" selected>Discover</option>-->
+<!--                                                        <option value="Diners Club" selected>Diners Club</option>-->
+<!--                                                        <option value="American Express" selected>American Express-->
+<!--                                                        </option>-->
+<!--                                                    </select>-->
+                                                    <combo-box style="" id="field_forula"
+                                                               name="forula"
+                                                               [dataList]="creditCardTypeList"
+                                                               [isOutTable]="true"
+                                                               [listColumns]="['name']"
+                                                               displayMember="name"
+                                                               valueName="id"
+                                                               [headerColumns]="['Loại thẻ']"
+                                                               [isObject]="false"
+                                                               [isRequired]="true"
+                                                               [(ngModel)]="creditCard.creditCardType "
+                                                               [tabindex]="2"
+                                                               [isReadOnly]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)">
+                                                    </combo-box>
+                                                </div>
+                                                <label class="col-sm-2 my-col-form-label1"
+                                                       jhiTranslate="ebwebApp.creditCard.ownerCardNew"></label>
+                                                <div class="col-sm-2 pd-l-0 pd-r-10 my-last-div-unit-2-2">
+                                                    <input type="text" class="form-control" name="ownerCard"
+                                                           id="field_ownerCard"
+                                                           [(ngModel)]="creditCard.ownerCard" [tabIndex]="3" required
+                                                           [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <div class="form-group row no-gutters">
+                                                <label class="col-sm-2 my-col-form-label"
+                                                       jhiTranslate="ebwebApp.creditCard.BankIDIssueCardNew"></label>
+                                                <div class="col-sm-4 my-col-form-label-so-the-1">
+                                                    <combo-box style="" id="field_bankAccountDetailID"
+                                                               name="comboboxBankAccountDetailID"
+                                                               [nameCategory]="utilsService.NGAN_HANG"
+                                                               [showIconPlus]="true"
+                                                               [dataList]="bankPopup"
+                                                               [listColumns]="['bankCode', 'bankName']"
+                                                               displayMember="bankCode"
+                                                               valueName="id"
+                                                               [headerColumns]="['Mã ngân hàng', 'Tên ngân hàng']"
+                                                               [isObject]="false"
+                                                               [(ngModel)]="creditCard.bankIDIssueCard"
+                                                               [isRequired]="true"
+                                                               (click)="saveParent()"
+                                                               [tabindex]="4"
+                                                               [isReadOnly]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)">
+                                                    </combo-box>
+                                                </div>
+                                                <label class="col-sm-2 my-col-form-label1"
+                                                       jhiTranslate="ebwebApp.creditCard.description"></label>
+                                                <div class="col-sm-5 my-last-div-unit-2-1">
+                                                    <input type="text" class="form-control" name="description"
+                                                           id="field_description"
+                                                           [(ngModel)]="creditCard.description" maxlength="512"
+                                                           [tabIndex]="5"
+                                                           [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <div class="form-group row no-gutters">
+                                                <label class="col-sm-2 my-col-form-label"
+                                                       jhiTranslate="ebwebApp.creditCard.validity"></label>
+                                                <label class="col-sm-2 my-col-form-label2 "
+                                                       style="padding-bottom: 5px; padding-left: 0px; padding-right: 0px;padding-top: 5px"
+                                                       jhiTranslate="ebwebApp.creditCard.exFromMonth"></label>
+                                                <div class="col-sm-1 pd-l-0 pd-r-10">
+                                                    <combo-box style="" id="field_exFromMonth"
+                                                               name="exFromMonth"
+                                                               [dataList]="months"
+                                                               [listColumns]="['value']"
+                                                               displayMember="value"
+                                                               valueName="value"
+                                                               [headerColumns]="['Từ tháng']"
+                                                               [isObject]="false"
+                                                               [inPutCurrency]="'85%'"
+                                                               [(ngModel)]="creditCard.exFromMonth"
+                                                               [tabindex]="6"
+                                                               [isReadOnly]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)">
+                                                    </combo-box>
+                                                </div>
+                                                <label class="col-sm-2 my-col-form-label2 text-center"
+                                                       style="padding-bottom: 0px; padding-left: 0px; padding-right: 0px;padding-top: 0px"
+                                                       jhiTranslate="ebwebApp.creditCard.exFromYear"></label>
+                                                <div class="col-sm-1 pd-l-0 pd-r-10">
+                                                    <combo-box id="field_exFromYear"
+                                                               name="exFromYear"
+                                                               [dataList]="years"
+                                                               [listColumns]="['value']"
+                                                               displayMember="value"
+                                                               valueName="value"
+                                                               [headerColumns]="['Từ năm']"
+                                                               [isObject]="false"
+                                                               [inPutCurrency]="'85%'"
+                                                               [(ngModel)]="creditCard.exFromYear"
+                                                               [tabindex]="7"
+                                                               [isReadOnly]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)">
+                                                    </combo-box>
+                                                </div>
+                                                <label class="col-sm-2 my-col-form-label1"></label>
+                                                <label class="col-sm-2 my-col-form-label2 "
+                                                       style="padding-bottom: 5px; padding-left: 0px; padding-right: 0px;padding-top: 5px"
+                                                       jhiTranslate="ebwebApp.creditCard.exToMonth"></label>
+                                                <div class="col-sm-1 pd-l-0 pd-r-10">
+                                                    <combo-box id="field_exToMonth"
+                                                               name="exToMonth"
+                                                               [dataList]="months"
+                                                               [listColumns]="['value']"
+                                                               displayMember="value"
+                                                               valueName="value"
+                                                               [headerColumns]="['Đến tháng']"
+                                                               [isObject]="false"
+                                                               [inPutCurrency]="'85%'"
+                                                               [(ngModel)]="creditCard.exToMonth"
+                                                               [tabindex]="8"
+                                                               [isReadOnly]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)">
+                                                    </combo-box>
+                                                </div>
+                                                <label class="col-sm-2 my-col-form-label2 text-center"
+                                                       style="padding-bottom: 0px; padding-left: 0px; padding-right: 0px;padding-top: 0px; max-width: 100%"
+                                                       jhiTranslate="ebwebApp.creditCard.exToYear"></label>
+                                                <div class="col-sm-1 pd-l-0 pd-r-10">
+                                                    <combo-box id="field_exToYear" style="width: 100%"
+                                                               name="exToYear"
+                                                               [dataList]="years"
+                                                               [listColumns]="['value']"
+                                                               displayMember="value"
+                                                               valueName="value"
+                                                               [headerColumns]="['Đến năm']"
+                                                               [isObject]="false"
+                                                               [inPutCurrency]="'85%'"
+                                                               [(ngModel)]="creditCard.exToYear"
+                                                               [tabindex]="9"
+                                                               [isReadOnly]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)">
+                                                    </combo-box>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div class="col-lg-1 pd-r-0">
+                <div class="row" style="padding-left: 15px">
+                    <div *ngIf="creditCard.id "
+                         class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input"
+                               id="customCheck1" name="isActive"
+                               [(ngModel)]="creditCard.isActive"
+                               [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)">
+                        <label class="custom-control-label" for="customCheck1"
+                               jhiTranslate="ebwebApp.creditCard.isActive"></label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #content let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.saBill.saveMessage">Dữ liệu đã bị thay đổi, Bạn có muốn lưu lại?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="save()" jhiTranslate="entity.action.save">Save
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="close()" jhiTranslate="entity.action.noSave">close
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="closeContent()" jhiTranslate="entity.action.close">
+            close
+        </button>
+    </div>
+</ng-template>

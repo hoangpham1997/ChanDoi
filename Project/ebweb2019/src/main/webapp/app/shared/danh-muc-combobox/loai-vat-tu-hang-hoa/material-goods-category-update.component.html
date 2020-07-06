@@ -1,0 +1,241 @@
+<div class="container-fluid">
+    <div class="margin-tp-5 margin-0">
+        <div class="">
+            <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
+                <div class="itemw">
+                    <div class="menu-tool-bar he">
+                        <div class="ptitle">
+                            <span jhiTranslate="ebwebApp.materialGoodsCategory.home.title">Kho</span>
+                        </div>
+
+                        <div class="gr-toolbar">
+                            <a (click)="save()" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_DanhMucLoaiVatTuHangHoa_Them]"
+                               title="{{'ebwebApp.autoPrinciple.tooltipSave' | translate}}">
+                                <i class="mdi mdi-briefcase-download"></i>
+                                <span jhiTranslate="ebwebApp.mCReceipt.home.save"></span>
+                            </a>
+                            <a (click)="saveAndNew()"
+                               *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_DanhMucLoaiVatTuHangHoa_Them, ROLE_DanhMucLoaiVatTuHangHoa_Sua]"
+                               title="{{'ebwebApp.autoPrinciple.tooltipSaveAndAdd' | translate}}">
+                                <i class="mdi mdi-plus fa-plus color-green"></i>
+                                <span jhiTranslate="ebwebApp.mCReceipt.home.saveAndAddNew"></span>
+                            </a>
+                            <a (click)="close()" title="{{'ebwebApp.autoPrinciple.tooltipBack' | translate}}"><i
+                                class="mdi mdi-window-close"></i> <span
+                                jhiTranslate="ebwebApp.bank.closed"></span></a>
+                        </div>
+                    </div>
+
+                    <div class="frm-main">
+                        <div class="row no-gutters">
+                            <div class="col-lg-12">
+                                <form>
+                                    <h3 jhiTranslate="ebwebApp.materialGoodsCategory.detail.title">Thông tin chung</h3>
+                                    <div class="row no-gutters">
+                                        <div class="col-lg-12">
+                                            <div class="form-group row no-gutters">
+                                                <label class="col-sm-2 my-col-form-label-VTHH"
+                                                       jhiTranslate="ebwebApp.materialGoodsCategory.materialGoodsCategoryCode1">Mã
+                                                    loại VTHH(*)</label>
+                                                <div class="col-sm-3 pd-l-0 pd-r-10">
+                                                    <input type="text" class="form-control"
+                                                           [class.myreadonlytrue]="materialGoodsCategory.id"
+                                                           name="materialGoodsCategoryCode"
+                                                           id="field_materialGoodsCategoryCode"
+                                                           [(ngModel)]="materialGoodsCategory.materialGoodsCategoryCode"
+                                                           required
+                                                           maxlength="25"/>
+                                                </div>
+                                                <label class="col-sm-2 my-col-form-label-VTHH"
+                                                       jhiTranslate="ebwebApp.materialGoodsCategory.materialGoodsCategoryName1">Tên
+                                                    kho</label>
+                                                <div class="col-sm-3 pd-l-0 pd-r-10">
+                                                    <input type="text" class="form-control"
+                                                           jhiTranslate="ebwebApp.materialGoodsCategory.materialGoodsCategoryName"
+                                                           name="materialGoodsCategoryName"
+                                                           id="field_materialGoodsCategoryName"
+                                                           [(ngModel)]="materialGoodsCategory.materialGoodsCategoryName"
+                                                           required
+                                                           maxlength="512"/>
+                                                </div>
+                                                <label class="col-sm-2 my-col-form-label-VTHH"
+                                                       jhiTranslate="ebwebApp.materialGoodsCategory.parentID">Thuộc
+                                                    loại</label>
+                                                <div class="col-sm-2 pd-l-0 pd-r-10 my-last-div-VTHH-3-2">
+                                                    <combo-box style="" id="field_materialGoodsCategories"
+                                                               name="comboboxMaterialGoodsCategories"
+                                                               [dataList]="materialGoodsCategories"
+                                                               [listColumns]="['materialGoodsCategoryCode','materialGoodsCategoryName']"
+                                                               displayMember="materialGoodsCategoryCode"
+                                                               valueName="id"
+                                                               [headerColumns]="['Mã loại VTHH','Tên loại VTHH']"
+                                                               [isObject]="false"
+                                                               [(ngModel)]="materialGoodsCategory.parentID">
+                                                    </combo-box>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <div class="form-group row">
+                                                <div *ngIf="materialGoodsCategory.id"
+                                                     class="custom-control custom-checkbox" style="padding-left :42px">
+                                                    <input type="checkbox" class="custom-control-input" name="isActive"
+                                                           [(ngModel)]="materialGoodsCategory.isActive"
+                                                           id="customCheck1">
+                                                    <label class="custom-control-label" for="customCheck1"
+                                                           jhiTranslate="ebwebApp.materialGoodsCategory.isActive"></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<ng-template #content let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.saBill.saveMessage">Dữ liệu đã bị thay đổi, Bạn có muốn lưu lại?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="save()" jhiTranslate="entity.action.save">Save
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="close()" jhiTranslate="entity.action.noSave">close
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="closeContent()" jhiTranslate="entity.action.close">
+            close
+        </button>
+    </div>
+</ng-template>
+
+<!--
+<div class="row justify-content-center">
+    <div class="col-8">
+        <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
+            <h2 id="eb-material-goods-category-heading"
+                jhiTranslate="ebwebApp.materialGoodsCategory.home.createOrEditLabel">Create or edit a Material Goods
+                Category</h2>
+            <div>
+                <eb-alert-error></eb-alert-error>
+                <div class="form-group" [hidden]="!materialGoodsCategory.id">
+                    <label for="id" jhiTranslate="global.field.id">ID</label>
+                    <input Type="text" class="form-control" id="id" name="id"
+                           [(ngModel)]="materialGoodsCategory.id" readonly/>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.materialGoodsCategory.companyID"
+                           for="field_companyID">Company ID</label>
+                    <input Type="number" class="form-control" name="companyID" id="field_companyID"
+                           [(ngModel)]="materialGoodsCategory.companyID"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.materialGoodsCategory.branchID"
+                           for="field_branchID">Branch ID</label>
+                    <input Type="number" class="form-control" name="branchID" id="field_branchID"
+                           [(ngModel)]="materialGoodsCategory.branchID"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label"
+                           jhiTranslate="ebwebApp.materialGoodsCategory.materialGoodsCategoryCode"
+                           for="field_materialGoodsCategoryCode">Material Goods Category Code</label>
+                    <input Type="text" class="form-control" name="materialGoodsCategoryCode"
+                           id="field_materialGoodsCategoryCode"
+                           [(ngModel)]="materialGoodsCategory.materialGoodsCategoryCode" maxlength="25"/>
+                    <div
+                        [hidden]="!(editForm.controls.materialGoodsCategoryCode?.dirty && editForm.controls.materialGoodsCategoryCode?.invalid)">
+                        <small class="form-text text-danger"
+                               [hidden]="!editForm.controls.materialGoodsCategoryCode?.errors?.maxlength"
+                               jhiTranslate="entity.validation.maxlength" translateValues="{ max: 25 }">
+                            This field cannot be longer than 25 characters.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label"
+                           jhiTranslate="ebwebApp.materialGoodsCategory.materialGoodsCategoryName"
+                           for="field_materialGoodsCategoryName">Material Goods Category Name</label>
+                    <input Type="text" class="form-control" name="materialGoodsCategoryName"
+                           id="field_materialGoodsCategoryName"
+                           [(ngModel)]="materialGoodsCategory.materialGoodsCategoryName" maxlength="512"/>
+                    <div
+                        [hidden]="!(editForm.controls.materialGoodsCategoryName?.dirty && editForm.controls.materialGoodsCategoryName?.invalid)">
+                        <small class="form-text text-danger"
+                               [hidden]="!editForm.controls.materialGoodsCategoryName?.errors?.maxlength"
+                               jhiTranslate="entity.validation.maxlength" translateValues="{ max: 512 }">
+                            This field cannot be longer than 512 characters.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.materialGoodsCategory.parentID"
+                           for="field_parentID">Parent ID</label>
+                    <input Type="number" class="form-control" name="parentID" id="field_parentID"
+                           [(ngModel)]="materialGoodsCategory.parentID"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.materialGoodsCategory.isParentNode"
+                           for="field_isParentNode">Is Parent Node</label>
+                    <input Type="checkbox" class="form-control" name="isParentNode" id="field_isParentNode"
+                           [(ngModel)]="materialGoodsCategory.isParentNode"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.materialGoodsCategory.orderFixCode"
+                           for="field_orderFixCode">Order Fix Code</label>
+                    <input Type="text" class="form-control" name="orderFixCode" id="field_orderFixCode"
+                           [(ngModel)]="materialGoodsCategory.orderFixCode" maxlength="200"/>
+                    <div [hidden]="!(editForm.controls.orderFixCode?.dirty && editForm.controls.orderFixCode?.invalid)">
+                        <small class="form-text text-danger"
+                               [hidden]="!editForm.controls.orderFixCode?.errors?.maxlength"
+                               jhiTranslate="entity.validation.maxlength" translateValues="{ max: 200 }">
+                            This field cannot be longer than 200 characters.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.materialGoodsCategory.grade"
+                           for="field_grade">Grade</label>
+                    <input Type="number" class="form-control" name="grade" id="field_grade"
+                           [(ngModel)]="materialGoodsCategory.grade"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.materialGoodsCategory.isActive"
+                           for="field_isActive">Is Active</label>
+                    <input Type="checkbox" class="form-control" name="isActive" id="field_isActive"
+                           [(ngModel)]="materialGoodsCategory.isActive"/>
+                    <div [hidden]="!(editForm.controls.isActive?.dirty && editForm.controls.isActive?.invalid)">
+                        <small class="form-text text-danger"
+                               [hidden]="!editForm.controls.isActive?.errors?.required"
+                               jhiTranslate="entity.validation.required">
+                            This field is required.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.materialGoodsCategory.isSecurity"
+                           for="field_isSecurity">Is Security</label>
+                    <input Type="checkbox" class="form-control" name="isSecurity" id="field_isSecurity"
+                           [(ngModel)]="materialGoodsCategory.isSecurity"/>
+                </div>
+
+            </div>
+            <div>
+                <button Type="button" id="cancel-save" class="btn btn-secondary" (click)="previousState()">
+                    <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+                </button>
+                <button Type="submit" id="save-entity" [disabled]="editForm.form.invalid || isSaving"
+                        class="btn btn-primary">
+                    <fa-icon [icon]="'save'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+-->

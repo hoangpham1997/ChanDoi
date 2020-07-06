@@ -1,0 +1,373 @@
+<div style="padding: 0px!important;">
+    <div class="margin-tp-5 margin-0">
+        <div class="">
+            <div class="itemw">
+                <div class="menu-tool-bar header-custom">
+                    <div class="ptitle">
+                        <span jhiTranslate="ebwebApp.accountList.detail.title">Hệ thống tài khoản</span>
+                    </div>
+                    <div class="gr-toolbar">
+                        <button class="button-navigation" title="{{buttonSaveTranslate | translate}}"
+                                *ebHasSomeAuthorityOrCondition=
+                                    "[[ROLE_HeThongTaiKhoan_Them, !isEditUrl], ROLE_HeThongTaiKhoan_Sua,'ROLE_ADMIN']"
+                                (click)="save()"><i class="mdi mdi-briefcase-download"></i>
+                            <span jhiTranslate="ebwebApp.mCReceipt.home.save"></span>
+                        </button>
+                        <button class="button-navigation" title="{{buttonSaveAndNewTranslate | translate}}"
+                                *ebHasSomeAuthorityOrCondition=
+                                    "[[ROLE_HeThongTaiKhoan_Them , ROLE_HeThongTaiKhoan_Sua], 'ROLE_ADMIN', [ROLE_HeThongTaiKhoan_Them, isCreateUrl]]"
+                                (click)="saveAndNew()"><i class="mdi mdi-plus fa-plus color-green"></i>
+                            <span jhiTranslate="ebwebApp.mCReceipt.home.saveAndAddNew"></span>
+                        </button>
+                        <button class="button-navigation" title="{{buttonDeleteTranslate | translate}}"
+                                *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_HeThongTaiKhoan_Xoa]"
+                                [class.disable]="!accountList.id" (click)="delete()"><i
+                            class="mdi mdi-delete-forever"></i>
+                            <span jhiTranslate="ebwebApp.mCReceipt.home.delete"></span>
+                        </button>
+                        <button class="button-navigation" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_HeThongTaiKhoan_Xem]"
+                                title="{{buttonCloseFormTranslate | translate}}" (click)="closeForm()"><i
+                            class="mdi mdi-window-close"></i>
+                            <span jhiTranslate="ebwebApp.mCReceipt.home.close"></span>
+                        </button>
+                    </div>
+                </div>
+                <div class="frm-main">
+                    <div class="row no-gutters">
+                        <div class="col-lg-12">
+                            <h3 jhiTranslate="ebwebApp.mBCreditCard.generalInformation"></h3>
+                            <form style="border: none;">
+                                    <div class="form-group row no-gutters">
+                                        <label class="col-sm-2 my-col-form-label-HTTK"
+                                               jhiTranslate="ebwebApp.accountList.accountNumber">Số tài
+                                            khoản(*)</label>
+                                        <div class="col-sm-3 pd-l-0 pd-r-10"
+                                             [class.myreadonlytrue]="accountList.id">
+                                            <input type="text" class="form-control form-control-sm" name="accountNumber"
+                                                   id="field_accountNumber"
+                                                   [(ngModel)]="accountList.accountNumber" required
+                                                   maxlength="50"
+                                                   [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"/>
+                                        </div>
+                                        <label class="col-sm-2 my-col-form-label-HTTK"
+                                               jhiTranslate="ebwebApp.accountList.accountName">Tên tài
+                                            khoản(*)</label>
+                                        <div class="col-sm-3 pd-l-0 pd-r-10">
+                                            <input type="text" class="form-control form-control-sm" name="accountName"
+                                                   id="field_accountName"
+                                                   [(ngModel)]="accountList.accountName" required
+                                                   maxlength="50"
+                                                   [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"/>
+                                        </div>
+                                        <label class="col-sm-2 my-col-form-label-HTTK"
+                                               jhiTranslate="ebwebApp.accountList.accountNameGlobal">Tên tiếng
+                                            anh</label>
+                                        <div class="col-sm-3 pd-l-0 pd-r-10 last-div-HTTK-3-2">
+                                            <input type="text" class="form-control form-control-sm" name="accountNameGlobal"
+                                                   id="field_accountNameGlobal"
+                                                   [(ngModel)]="accountList.accountNameGlobal" maxlength="50"
+                                                   [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row no-gutters" style="padding-top: 5px">
+                                        <label class="col-sm-2 my-col-form-label-HTTK"
+                                               jhiTranslate="ebwebApp.accountList.parentAccountID">Tài khoản
+                                            tổng
+                                            hợp(*)</label>
+                                        <div class="col-sm-3 pd-l-0 pd-r-10">
+                                            <combo-box style="" id="field_parentAccountID"
+                                                       name="comboboxParentAccountID"
+                                                       [dataList]="accountLists"
+                                                       [isOutTable]="true"
+                                                       [showIconPlus]="true"
+                                                       [listColumns]="utilsService.listColumnsAccountList"
+                                                       displayMember="accountNumber"
+                                                       valueName="id"
+                                                       [headerColumns]="utilsService.listHeaderColumnsAccountList"
+                                                       [isObject]="false"
+                                                       [(ngModel)]="accountList.parentAccountID"
+                                                       [isReadOnly]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)">
+                                            </combo-box>
+                                        </div>
+                                        <label class="col-sm-2 my-col-form-label-HTTK"
+                                               jhiTranslate="ebwebApp.accountList.accountGroupKind">Tính
+                                            chất(*)</label>
+                                        <div class="col-sm-3 pd-l-0 pd-r-10">
+                                            <select
+                                                [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                class="form-control form-control-sm" name="accountGroupKind"
+                                                id="accountGroupKind"
+                                                style="background-color: #f5f7fa;"
+                                                [(ngModel)]="accountList.accountGroupKind" required>
+                                                <option [value]="0" name="debit"
+                                                        jhiTranslate="ebwebApp.accountList.debit"></option>
+                                                <option [value]="1" name="credit"
+                                                        jhiTranslate="ebwebApp.accountList.credit"></option>
+                                                <option [value]="2" name="hermaphrodite"
+                                                        jhiTranslate="ebwebApp.accountList.hermaphrodite">
+                                                </option>
+                                                <option [value]="3" name="noBalance"
+                                                        jhiTranslate="ebwebApp.accountList.noBalance">
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-2 pd-l-0 pd-r-10" style="padding-left: 25px !important;">
+                                            <div class="col-sm-12 custom-control custom-checkbox">
+                                                <input type="checkbox" name="isForeignCurrency"
+                                                       class="custom-control-input"
+                                                       [(ngModel)]="accountList.isForeignCurrency"
+                                                       id="isForeignCurrency" style="padding-left: 15px !important;"
+                                                       [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)">
+                                                <label class="custom-control-label" for="isForeignCurrency"
+                                                       jhiTranslate="ebwebApp.accountList.isForeignCurrency">Hạch
+                                                    toán ngoại lệ</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row no-gutters" style="padding-top: 5px">
+                                        <label class="col-sm-2 my-col-form-label-HTTK"
+                                               jhiTranslate="ebwebApp.accountList.description">Diễn giải</label>
+                                        <div class="col-sm-6 pd-l-0 pd-r-10 last-div-HTTK-1-0">
+                                            <input type="text" class="form-control form-control-sm" name="description"
+                                                   id="field_description"
+                                                   [(ngModel)]="accountList.description" maxlength="50"
+                                                   [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"/>
+                                        </div>
+
+                                    </div>
+                                </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="frm-main">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <h3 jhiTranslate="ebwebApp.accountList.detailBy"></h3>
+                            <form style="border: none;">
+                                    <div class="row no-gutters">
+                                        <div class="col-lg-12">
+                                            <div class="form-group row">
+                                                <label class="col-sm-2 col-form-label paddinglabel"></label>
+                                                <div class="col-sm-4 pd-l-0 pd-r-10"
+                                                     style="padding-left: 10px !important;">
+                                                    <div class="row">
+                                                        <div class="col-sm-4 custom-control custom-checkbox">
+                                                            <input type="checkbox" id="accountingObject"
+                                                                   name="accountingObject"
+                                                                   [(ngModel)]="listCheckbox[0].isChecked"
+                                                                   [value]="'0'"
+                                                                   class="custom-control-input"
+                                                                   (ngModelChange)="selectChangeAccountingObject(0)"
+                                                                   [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)">
+                                                            <label class="custom-control-label" for="accountingObject"
+                                                                   jhiTranslate="ebwebApp.accountList.accountingObject"></label>
+                                                        </div>
+                                                        <div class="col-sm-8 custom-control custom-checkbox" style="padding-right: 30px !important;">
+                                                            <select
+                                                                name="typeAccountingObject"
+                                                                id="field_typeAccountingObject"
+                                                                class="form-control form-control-sm"
+                                                                [disabled]="listCheckbox[0].isChecked === false"
+                                                                [(ngModel)]="typeAccountingObject"
+                                                                [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                            >
+                                                                <option [ngValue]="'0'" name="supplier"
+                                                                        jhiTranslate="ebwebApp.mBDeposit.supplier">
+                                                                </option>
+                                                                <option [ngValue]="'1'" name="customer"
+                                                                        jhiTranslate="ebwebApp.mBDeposit.customer"></option>
+                                                                <option [ngValue]="'2'" name="employee"
+                                                                        jhiTranslate="ebwebApp.mBDeposit.employee"></option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3 pd-l-0 pd-r-10">
+                                                    <div class="col-sm-12 custom-control custom-checkbox">
+                                                        <input type="checkbox" id="materialGoods" name="materialGoods"
+                                                               [(ngModel)]="listCheckbox[4].isChecked"
+                                                               [value]="'5'"
+                                                               class="custom-control-input"
+                                                               (ngModelChange)="selectChangeAccountingObject(4)"
+                                                               [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)">
+                                                        <label class="custom-control-label" for="materialGoods"
+                                                               jhiTranslate="ebwebApp.accountList.materialGood"></label>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-sm-3 pd-l-0 pd-r-10">
+                                                    <div class="col-sm-12 custom-control custom-checkbox">
+                                                        <input type="checkbox" id="expenseItem" name="expenseItem"
+                                                               [(ngModel)]="listCheckbox[7].isChecked"
+                                                               [value]="'8'"
+                                                               class="custom-control-input"
+                                                               (ngModelChange)="selectChangeAccountingObject(7)"
+                                                               [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)">
+                                                        <label class="custom-control-label" for="expenseItem"
+                                                               jhiTranslate="ebwebApp.accountList.expenseItem"></label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <div class="form-group row">
+                                                <label class="col-sm-2 col-form-label paddinglabel"></label>
+                                                <div class="col-sm-4 pd-l-0 pd-r-10">
+                                                    <div class="col-sm-12 custom-control custom-checkbox">
+                                                        <input type="checkbox" id="costSet" name="costSet"
+                                                               [(ngModel)]="listCheckbox[2].isChecked"
+                                                               [value]="'3'"
+                                                               class="custom-control-input"
+                                                               (ngModelChange)="selectChangeAccountingObject(2)"
+                                                               [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)">
+                                                        <label class="custom-control-label" for="costSet"
+                                                               jhiTranslate="ebwebApp.accountList.costSet"></label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3 pd-l-0 pd-r-10">
+                                                    <div class="col-sm-12 custom-control custom-checkbox">
+                                                        <input type="checkbox" id="bankAccountDetail"
+                                                               name="bankAccountDetail"
+                                                               [(ngModel)]="listCheckbox[5].isChecked"
+                                                               [value]="'6'"
+                                                               class="custom-control-input"
+                                                               (ngModelChange)="selectChangeAccountingObject(5)"
+                                                               [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)">
+                                                        <label class="custom-control-label" for="bankAccountDetail"
+                                                               jhiTranslate="ebwebApp.accountList.bankAccountDetail"></label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3 pd-l-0 pd-r-10">
+                                                    <div class="col-sm-12 custom-control custom-checkbox">
+                                                        <input type="checkbox" id="budgetItem" name="budgetItem"
+                                                               [(ngModel)]="listCheckbox[8].isChecked"
+                                                               [value]="'9'"
+                                                               class="custom-control-input"
+                                                               (ngModelChange)="selectChangeAccountingObject(8)"
+                                                               [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)">
+                                                        <label class="custom-control-label" for="budgetItem"
+                                                               jhiTranslate="ebwebApp.accountList.budgetItem"></label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <div class="form-group row">
+                                                <label class="col-sm-2 col-form-label paddinglabel"></label>
+                                                <div class="col-sm-4 pd-l-0 pd-r-10">
+                                                    <div class="col-sm-12 custom-control custom-checkbox">
+                                                        <input type="checkbox" id="eMContract" name="eMContract"
+                                                               [(ngModel)]="listCheckbox[3].isChecked"
+                                                               [value]="'4'"
+                                                               class="custom-control-input"
+                                                               (ngModelChange)="selectChangeAccountingObject(3)"
+                                                               [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)">
+                                                        <label class="custom-control-label" for="eMContract"
+                                                               jhiTranslate="ebwebApp.accountList.eMContract"></label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3 pd-l-0 pd-r-10">
+                                                    <div class="col-sm-12 custom-control custom-checkbox">
+                                                        <input type="checkbox" id="department" name="department"
+                                                               [(ngModel)]="listCheckbox[6].isChecked"
+                                                               [value]="'7'"
+                                                               class="custom-control-input"
+                                                               (ngModelChange)="selectChangeAccountingObject(6)"
+                                                               [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)">
+                                                        <label class="custom-control-label" for="department"
+                                                               jhiTranslate="ebwebApp.accountList.department"></label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3 pd-l-0 pd-r-10">
+                                                    <div class="col-sm-12 custom-control custom-checkbox">
+                                                        <input type="checkbox" id="statisticsCode"
+                                                               name="statisticsCode"
+                                                               [(ngModel)]="listCheckbox[9].isChecked"
+                                                               [value]="'10'"
+                                                               class="custom-control-input"
+                                                               (ngModelChange)="selectChangeAccountingObject(9)"
+                                                               [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)">
+                                                        <label class="custom-control-label" for="statisticsCode"
+                                                               jhiTranslate="ebwebApp.accountList.statisticsCode"></label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="accountList.id" class="col-lg-12">
+                    <div class="form-group row">
+                        <div class="col-sm-3 pd-l-0 pd-r-10">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" [(ngModel)]="accountList.isActive" name="isActive"
+                                       class="custom-control-input"
+                                       id="isActive"
+                                       [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)">
+                                <label class="custom-control-label" for="isActive"
+                                       jhiTranslate="ebwebApp.accountList.isActive">Theo dõi</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #content let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.saBill.saveMessage">Dữ liệu đã bị thay đổi, Bạn có muốn lưu lại?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="saveContent()" jhiTranslate="entity.action.save">
+            Save
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="close()"
+                jhiTranslate="ebwebApp.mBDeposit.dontSave">Don't save
+        </button>
+        <button type="button" class="btn btn-outline-danger" (click)="exit()" jhiTranslate="entity.action.close">close
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #checkUse let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.accountList.checkUse"></label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="continueSave()" jhiTranslate="ebwebApp.mBDeposit.agree">
+            Save
+        </button>
+        <button type="button" class="btn btn-outline-danger" (click)="exit()" jhiTranslate="entity.action.close">close
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #pageRedirects let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.saBill.saveMessage">Dữ liệu đã bị thay đổi. Bạn có chắc chắn muốn chuyển
+                    hướng đến trang khác?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" jhiTranslate="ebwebApp.mBDeposit.agree">
+            Save
+        </button>
+        <button type="button" class="btn btn-outline-danger" (click)="exit()" jhiTranslate="entity.action.close">close
+        </button>
+    </div>
+</ng-template>

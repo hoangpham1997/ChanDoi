@@ -1,0 +1,172 @@
+<div>
+    <h2 id="page-heading">
+        <span jhiTranslate="ebwebApp.generalLedger.home.title">General Ledgers</span>
+        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-general-ledger" [routerLink]="['/general-ledger/new']">
+            <fa-icon [icon]="'plus'"></fa-icon>
+            <span  jhiTranslate="ebwebApp.generalLedger.home.createLabel">
+            Create new General Ledger
+            </span>
+        </button>
+    </h2>
+    <eb-alert></eb-alert>
+    <br/>
+    <div class="table-responsive" *ngIf="generalLedgers">
+        <table class="table table-striped">
+            <thead>
+            <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
+            <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="branchID"><span jhiTranslate="ebwebApp.generalLedger.branchID">Branch ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="referenceID"><span jhiTranslate="ebwebApp.generalLedger.referenceID">Reference ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="detailID"><span jhiTranslate="ebwebApp.generalLedger.detailID">Detail ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="typeID"><span jhiTranslate="ebwebApp.generalLedger.typeID">Type ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="date"><span jhiTranslate="ebwebApp.generalLedger.date">Date</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="postedDate"><span jhiTranslate="ebwebApp.generalLedger.postedDate">Posted Date</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="typeLedger"><span jhiTranslate="ebwebApp.generalLedger.typeLedger">Type Ledger</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="noFBook"><span jhiTranslate="ebwebApp.generalLedger.noFBook">No F Book</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="noMBook"><span jhiTranslate="ebwebApp.generalLedger.noMBook">No M Book</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="invoiceSeries"><span jhiTranslate="ebwebApp.generalLedger.invoiceSeries">Invoice Series</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="invoiceDate"><span jhiTranslate="ebwebApp.generalLedger.invoiceDate">Invoice Date</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="invoiceNo"><span jhiTranslate="ebwebApp.generalLedger.invoiceNo">Invoice No</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="account"><span jhiTranslate="ebwebApp.generalLedger.account">Account</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="accountCorresponding"><span jhiTranslate="ebwebApp.generalLedger.accountCorresponding">Account Corresponding</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="bankAccountDetailID"><span jhiTranslate="ebwebApp.generalLedger.bankAccountDetailID">Bank Account Detail ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="bankAccount"><span jhiTranslate="ebwebApp.generalLedger.bankAccount">Bank Account</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="bankName"><span jhiTranslate="ebwebApp.generalLedger.bankName">Bank Name</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="currencyID"><span jhiTranslate="ebwebApp.generalLedger.currencyID">Currency ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="exchangeRate"><span jhiTranslate="ebwebApp.generalLedger.exchangeRate">Exchange Rate</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="debitAmount"><span jhiTranslate="ebwebApp.generalLedger.debitAmount">Debit Amount</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="debitAmountOriginal"><span jhiTranslate="ebwebApp.generalLedger.debitAmountOriginal">Debit Amount Original</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="creditAmount"><span jhiTranslate="ebwebApp.generalLedger.creditAmount">Credit Amount</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="creditAmountOriginal"><span jhiTranslate="ebwebApp.generalLedger.creditAmountOriginal">Credit Amount Original</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="reason"><span jhiTranslate="ebwebApp.generalLedger.reason">Reason</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="description"><span jhiTranslate="ebwebApp.generalLedger.description">Description</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="accountingObjectID"><span jhiTranslate="ebwebApp.generalLedger.accountingObjectID">Accounting Object ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="accountingObjectCode"><span jhiTranslate="ebwebApp.generalLedger.accountingObjectCode">Accounting Object Code</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="accountingObjectName"><span jhiTranslate="ebwebApp.generalLedger.accountingObjectName">Accounting Object Name</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="accountingObjectAddress"><span jhiTranslate="ebwebApp.generalLedger.accountingObjectAddress">Accounting Object Address</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="contactName"><span jhiTranslate="ebwebApp.generalLedger.contactName">Contact Name</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="employeeID"><span jhiTranslate="ebwebApp.generalLedger.employeeID">Employee ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="employeeCode"><span jhiTranslate="ebwebApp.generalLedger.employeeCode">Employee Code</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="employeeName"><span jhiTranslate="ebwebApp.generalLedger.employeeName">Employee Name</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="materialGoodsID"><span jhiTranslate="ebwebApp.generalLedger.materialGoodsID">Material Goods ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="materialGoodsCode"><span jhiTranslate="ebwebApp.generalLedger.materialGoodsCode">Material Goods Code</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="materialGoodsName"><span jhiTranslate="ebwebApp.generalLedger.materialGoodsName">Material Goods Name</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="repositoryID"><span jhiTranslate="ebwebApp.generalLedger.repositoryID">Repository ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="repositoryCode"><span jhiTranslate="ebwebApp.generalLedger.repositoryCode">Repository Code</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="repositoryName"><span jhiTranslate="ebwebApp.generalLedger.repositoryName">Repository Name</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="unitID"><span jhiTranslate="ebwebApp.generalLedger.unitID">Unit ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="quantity"><span jhiTranslate="ebwebApp.generalLedger.quantity">Quantity</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="unitPrice"><span jhiTranslate="ebwebApp.generalLedger.unitPrice">Unit Price</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="unitPriceOriginal"><span jhiTranslate="ebwebApp.generalLedger.unitPriceOriginal">Unit Price Original</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="mainUnitID"><span jhiTranslate="ebwebApp.generalLedger.mainUnitID">Main Unit ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="mainQuantity"><span jhiTranslate="ebwebApp.generalLedger.mainQuantity">Main Quantity</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="mainUnitPrice"><span jhiTranslate="ebwebApp.generalLedger.mainUnitPrice">Main Unit Price</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="mainConvertRate"><span jhiTranslate="ebwebApp.generalLedger.mainConvertRate">Main Convert Rate</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="formula"><span jhiTranslate="ebwebApp.generalLedger.formula">Formula</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="organizationUnitID"><span jhiTranslate="ebwebApp.generalLedger.organizationUnitID">Organization Unit ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="expenseItemID"><span jhiTranslate="ebwebApp.generalLedger.expenseItemID">Expense Item ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="budgetItemID"><span jhiTranslate="ebwebApp.generalLedger.budgetItemID">Budget Item ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="costSetID"><span jhiTranslate="ebwebApp.generalLedger.costSetID">Cost Set ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="contractID"><span jhiTranslate="ebwebApp.generalLedger.contractID">Contract ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="statisticsCodeID"><span jhiTranslate="ebwebApp.generalLedger.statisticsCodeID">Statistics Code ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="refDateTime"><span jhiTranslate="ebwebApp.generalLedger.refDateTime">Ref Date Time</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="orderPriority"><span jhiTranslate="ebwebApp.generalLedger.orderPriority">Order Priority</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let generalLedger of generalLedgers ;trackBy: trackId">
+                <td><a [routerLink]="['/general-ledger', generalLedger.id, 'view' ]">{{generalLedger.id}}</a></td>
+                <td>{{generalLedger.branchID}}</td>
+                <td>{{generalLedger.referenceID}}</td>
+                <td>{{generalLedger.detailID}}</td>
+                <td>{{generalLedger.typeID}}</td>
+                <td>{{generalLedger.date | date:'mediumDate'}}</td>
+                <td>{{generalLedger.postedDate | date:'mediumDate'}}</td>
+                <td>{{generalLedger.typeLedger}}</td>
+                <td>{{generalLedger.noFBook}}</td>
+                <td>{{generalLedger.noMBook}}</td>
+                <td>{{generalLedger.invoiceSeries}}</td>
+                <td>{{generalLedger.invoiceDate | date:'mediumDate'}}</td>
+                <td>{{generalLedger.invoiceNo}}</td>
+                <td>{{generalLedger.account}}</td>
+                <td>{{generalLedger.accountCorresponding}}</td>
+                <td>{{generalLedger.bankAccountDetailID}}</td>
+                <td>{{generalLedger.bankAccount}}</td>
+                <td>{{generalLedger.bankName}}</td>
+                <td>{{generalLedger.currencyID}}</td>
+                <td>{{generalLedger.exchangeRate}}</td>
+                <td>{{generalLedger.debitAmount}}</td>
+                <td>{{generalLedger.debitAmountOriginal}}</td>
+                <td>{{generalLedger.creditAmount}}</td>
+                <td>{{generalLedger.creditAmountOriginal}}</td>
+                <td>{{generalLedger.reason}}</td>
+                <td>{{generalLedger.description}}</td>
+                <td>{{generalLedger.accountingObjectID}}</td>
+                <td>{{generalLedger.accountingObjectCode}}</td>
+                <td>{{generalLedger.accountingObjectName}}</td>
+                <td>{{generalLedger.accountingObjectAddress}}</td>
+                <td>{{generalLedger.contactName}}</td>
+                <td>{{generalLedger.employeeID}}</td>
+                <td>{{generalLedger.employeeCode}}</td>
+                <td>{{generalLedger.employeeName}}</td>
+                <td>{{generalLedger.materialGoodsID}}</td>
+                <td>{{generalLedger.materialGoodsCode}}</td>
+                <td>{{generalLedger.materialGoodsName}}</td>
+                <td>{{generalLedger.repositoryID}}</td>
+                <td>{{generalLedger.repositoryCode}}</td>
+                <td>{{generalLedger.repositoryName}}</td>
+                <td>{{generalLedger.unitID}}</td>
+                <td>{{generalLedger.quantity}}</td>
+                <td>{{generalLedger.unitPrice}}</td>
+                <td>{{generalLedger.unitPriceOriginal}}</td>
+                <td>{{generalLedger.mainUnitID}}</td>
+                <td>{{generalLedger.mainQuantity}}</td>
+                <td>{{generalLedger.mainUnitPrice}}</td>
+                <td>{{generalLedger.mainConvertRate}}</td>
+                <td>{{generalLedger.formula}}</td>
+                <td>{{generalLedger.organizationUnitID}}</td>
+                <td>{{generalLedger.expenseItemID}}</td>
+                <td>{{generalLedger.budgetItemID}}</td>
+                <td>{{generalLedger.costSetID}}</td>
+                <td>{{generalLedger.contractID}}</td>
+                <td>{{generalLedger.statisticsCodeID}}</td>
+                <td>{{generalLedger.refDateTime | date:'mediumDate'}}</td>
+                <td>{{generalLedger.orderPriority}}</td>
+                <td class="text-right">
+                    <div class="btn-group flex-btn-group-container">
+                        <button type="submit"
+                                [routerLink]="['/general-ledger', generalLedger.id, 'view' ]"
+                                class="btn btn-info btn-sm">
+                            <fa-icon [icon]="'eye'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/general-ledger', generalLedger.id, 'edit']"
+                                class="btn btn-primary btn-sm">
+                            <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/', { outlets: { popup: 'general-ledger/'+ generalLedger.id + '/delete'} }]"
+                                replaceUrl="true"
+                                queryParamsHandling="merge"
+                                class="btn btn-danger btn-sm">
+                            <fa-icon [icon]="'times'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div *ngIf="generalLedgers && generalLedgers.length">
+        <div class="row justify-content-center">
+            <jhi-item-count [page]="page" [total]="queryCount" [maxSize]="5" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+        </div>
+        <div class="row justify-content-center">
+            <ngb-pagination [size]="'sm'" [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage" [maxSize]="5" [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage(page)"></ngb-pagination>
+        </div>
+    </div>
+</div>

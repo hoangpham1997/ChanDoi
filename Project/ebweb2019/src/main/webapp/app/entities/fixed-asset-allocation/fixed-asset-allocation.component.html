@@ -1,0 +1,92 @@
+<div>
+    <h2 id="page-heading">
+        <span jhiTranslate="ebwebApp.fixedAssetAllocation.home.title">Fixed Asset Allocations</span>
+        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-fixed-asset-allocation" [routerLink]="['/fixed-asset-allocation/new']">
+            <fa-icon [icon]="'plus'"></fa-icon>
+            <span  jhiTranslate="ebwebApp.fixedAssetAllocation.home.createLabel">
+            Create new Fixed Asset Allocation
+            </span>
+        </button>
+    </h2>
+    <eb-alert></eb-alert>
+    <br/>
+    <div class="table-responsive" *ngIf="fixedAssetAllocations">
+        <table class="table table-striped">
+            <thead>
+            <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
+            <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="objectID"><span jhiTranslate="ebwebApp.fixedAssetAllocation.objectID">Object ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="objectType"><span jhiTranslate="ebwebApp.fixedAssetAllocation.objectType">Object Type</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="rate"><span jhiTranslate="ebwebApp.fixedAssetAllocation.rate">Rate</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="orderPriority"><span jhiTranslate="ebwebApp.fixedAssetAllocation.orderPriority">Order Priority</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="fixedAssetID.id"><span jhiTranslate="ebwebApp.fixedAssetAllocation.fixedAssetID">Fixed Asset ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="expenseitemID.id"><span jhiTranslate="ebwebApp.fixedAssetAllocation.expenseitemID">Expenseitem ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="costAccount.accountNumber"><span jhiTranslate="ebwebApp.fixedAssetAllocation.costAccount">Cost Account</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="statisticscodeID.id"><span jhiTranslate="ebwebApp.fixedAssetAllocation.statisticscodeID">Statisticscode ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let fixedAssetAllocation of fixedAssetAllocations ;trackBy: trackId">
+                <td><a [routerLink]="['/fixed-asset-allocation', fixedAssetAllocation.id, 'view' ]">{{fixedAssetAllocation.id}}</a></td>
+                <td>{{fixedAssetAllocation.objectID}}</td>
+                <td>{{fixedAssetAllocation.objectType}}</td>
+                <td>{{fixedAssetAllocation.rate}}</td>
+                <td>{{fixedAssetAllocation.orderPriority}}</td>
+                <td>
+                    <div *ngIf="fixedAssetAllocation.fixedAssetID">
+                        <a [routerLink]="['../fixed-asset', fixedAssetAllocation.fixedAssetID?.id, 'view' ]" >{{fixedAssetAllocation.fixedAssetID?.id}}</a>
+                    </div>
+                </td>
+                <td>
+                    <div *ngIf="fixedAssetAllocation.expenseitemID">
+                        <a [routerLink]="['../expense-item', fixedAssetAllocation.expenseitemID?.id, 'view' ]" >{{fixedAssetAllocation.expenseitemID?.id}}</a>
+                    </div>
+                </td>
+                <td>
+                    <div *ngIf="fixedAssetAllocation.costAccount">
+                        <a [routerLink]="['../account-list', fixedAssetAllocation.costAccount?.id, 'view' ]" >{{fixedAssetAllocation.costAccount?.accountNumber}}</a>
+                    </div>
+                </td>
+                <td>
+                    <div *ngIf="fixedAssetAllocation.statisticscodeID">
+                        <a [routerLink]="['../statistics-code', fixedAssetAllocation.statisticscodeID?.id, 'view' ]" >{{fixedAssetAllocation.statisticscodeID?.id}}</a>
+                    </div>
+                </td>
+                <td class="text-right">
+                    <div class="btn-group flex-btn-group-container">
+                        <button type="submit"
+                                [routerLink]="['/fixed-asset-allocation', fixedAssetAllocation.id, 'view' ]"
+                                class="btn btn-info btn-sm">
+                            <fa-icon [icon]="'eye'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/fixed-asset-allocation', fixedAssetAllocation.id, 'edit']"
+                                class="btn btn-primary btn-sm">
+                            <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/', { outlets: { popup: 'fixed-asset-allocation/'+ fixedAssetAllocation.id + '/delete'} }]"
+                                replaceUrl="true"
+                                queryParamsHandling="merge"
+                                class="btn btn-danger btn-sm">
+                            <fa-icon [icon]="'times'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div *ngIf="fixedAssetAllocations && fixedAssetAllocations.length">
+        <div class="row justify-content-center">
+            <jhi-item-count [page]="page" [total]="queryCount" [maxSize]="5" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+        </div>
+        <div class="row justify-content-center">
+            <ngb-pagination [size]="'sm'" [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage" [maxSize]="5" [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage(page)"></ngb-pagination>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,2006 @@
+<div class="row" (click)="closeContextMenu()">
+    <div class="col-md-12">
+        <div class="menu-tool-bar he" style="line-height: 22px;">
+            <div class="gr-tool-bar" style="margin-top: 2px">
+                <button class="aprev button-navigation" (click)="previousEdit()"
+                        *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_BaoNo_Xem]"
+                        [disabled]="rowNum === totalItems || !isReadOnly || isCreateUrl || isFromRef"
+                ><i class="mdi mdi-arrow-left"></i></button>
+                <button class="anext button-navigation" (click)="nextEdit()"
+                        *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_BaoNo_Xem]"
+                        [disabled]="rowNum === 1 || !isReadOnly || isCreateUrl || isFromRef"
+                ><i class="mdi mdi-arrow-right"></i></button>
+                <button class="button-navigation" (click)="addNew($event)"
+                        *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_BaoNo_Them]"
+                        [disabled]="!isReadOnly || isCreateUrl"
+                        title="{{'ebwebApp.autoPrinciple.tooltipAdd' | translate}}"
+                ><i class="mdi mdi-plus"></i><span jhiTranslate="ebwebApp.mBTellerPaper.add">Add</span></button>
+                <button class="button-navigation" (click)="edit()" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_BaoNo_Sua]"
+                        [disabled]="mBTellerPaper.recorded || !isReadOnly || isCreateUrl || checkCloseBook(currentAccount, mBTellerPaper.postedDate)"
+                        title="{{'ebwebApp.mBTellerPaper.tooltipEdit' | translate}}"
+                ><i class="mdi mdi-rename-box"></i><span jhiTranslate="ebwebApp.mBTellerPaper.edit">Edit</span></button>
+                <button class="button-navigation" (click)="save(false)"
+                        *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_BaoNo_Them, ROLE_BaoNo_Sua]"
+                        [disabled]="mBTellerPaper.recorded || isReadOnly"
+                        title="{{'ebwebApp.mBTellerPaper.tooltipSave' | translate}}"
+                ><i class="mdi mdi-briefcase-download"></i><span jhiTranslate="ebwebApp.mBTellerPaper.save">Save</span>
+                </button>
+                <button class="button-navigation" [disabled]="mBTellerPaper.recorded || isReadOnly"
+                        *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_BaoNo_Them]"
+                        (click)="saveAndNew()"
+                        title="{{'ebwebApp.mBTellerPaper.tooltipSaveAdd' | translate}}"
+                ><i
+                    class="mdi mdi-plus"></i><span
+                    jhiTranslate="ebwebApp.mBTellerPaper.saveandcreate">Save And Create</span></button>
+                <button class="button-navigation"
+                        [disabled]="isCreateUrl || !isReadOnly || checkCloseBook(currentAccount, mBTellerPaper.postedDate)"
+                        [hidden]="mBTellerPaper.recorded"
+                        *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_BaoNo_GhiSo]"
+                        (click)="record()"
+                        title="{{'ebwebApp.mBTellerPaper.tooltipRecord' | translate}}"
+                ><i
+                    class="mdi mdi-pencil"></i><span jhiTranslate="ebwebApp.mBTellerPaper.record">Record</span></button>
+                <button class="button-navigation"
+                        [disabled]="isCreateUrl || !isReadOnly || checkCloseBook(currentAccount, mBTellerPaper.postedDate)"
+                        [hidden]="!mBTellerPaper.recorded"
+                        *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_BaoNo_GhiSo]"
+                        (click)="unrecord()"
+                        title="{{'ebwebApp.mBTellerPaper.tooltipUnrecord' | translate}}"
+                ><i
+                    class="mdi mdi-pencil-off"></i><span jhiTranslate="ebwebApp.mBTellerPaper.unrecord">Unrecord</span>
+                </button>
+                <button class="button-navigation" [disabled]="isCreateUrl || !isReadOnly"
+                        *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_BaoNo_Them]"
+                        (click)="copyAndNew()"
+                        title="{{'ebwebApp.mBTellerPaper.tooltipCopyAdd' | translate}}"
+                ><i
+                    class="mdi mdi-plus"></i><span
+                    jhiTranslate="ebwebApp.mBTellerPaper.copyandcreate">Copy And Create</span></button>
+                <button class="button-navigation" replaceUrl="true"
+                        queryParamsHandling="merge"
+                        (click)="delete()"
+                        *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_BaoNo_Xoa]"
+                        [disabled]="!isReadOnly || isCreateUrl || mBTellerPaper.recorded || checkCloseBook(currentAccount, mBTellerPaper.postedDate)"
+                        title="{{'ebwebApp.outWard.tooltipDrop' | translate}}"
+                ><i class="mdi mdi-delete-forever"></i><span jhiTranslate="ebwebApp.mBTellerPaper.deletes">Delete</span>
+                </button>
+                <div ngbDropdown class="d-inline-block"
+                     *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_BaoNo_In]">
+                    <button id="dropdownBasic1" ngbDropdownToggle [class.disableDiv]="isCreateUrl" class="button-navigation"
+                            style="background: transparent;border: none; color: #f0f0f0"><i class="mdi mdi-printer"></i><span
+                        jhiTranslate="ebwebApp.mBTellerPaper.print"></span>
+                    </button>
+                    <div ngbDropdownMenu aria-labelledby="dropdownBasic1" style="padding: 0 !important;">
+                        <button ngbDropdownItem class="custom-dropdown" *ngIf="mBTellerPaper.id&&!isCreateUrl"
+                                (click)="exportPdf(false,REPORT.ChungTuKeToan)"><span
+                            jhiTranslate="ebwebApp.mBTellerPaper.accountingledger"></span></button>
+                        <button ngbDropdownItem class="custom-dropdown" *ngIf="mBTellerPaper.id && mBTellerPaper.currencyId !== currentAccount?.organizationUnit.currencyID"
+                                (click)="exportPdf(false, REPORT.ChungTuKeToanQuyDoi)"><span
+                            jhiTranslate="ebwebApp.mBTellerPaper.accountingledgerOriginal"></span></button>
+                        <button ngbDropdownItem class="custom-dropdown" (click)="exportPdf(false, REPORT.GiayBaoNo)"><span
+                            jhiTranslate="ebwebApp.mBTellerPaper.mBTellerPaperNote"></span></button>
+                    </div>
+                </div>
+                <a (click)="closeForm()" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_BaoNo_Xem]"
+                   title="{{'ebwebApp.mBTellerPaper.tooltipClose' | translate}}">
+                    <i class="mdi mdi-window-close"></i><span
+                    jhiTranslate="ebwebApp.mBTellerPaper.close">Close</span></a>
+            </div>
+        </div>
+        <div class="tool-navbar" style="margin-bottom: -3px">
+            <div class="row">
+                <div class="col-lg-6 div-title3-responsive">
+                    <div class="line-btn" style="margin-bottom: 4px">
+                        <div class="lbtn-action">
+                            <ul class="nav nav-tabs">
+                                <li class="active">
+                                    <a class="active" data-toggle="tab" href="#home0" style="text-decoration: none;">
+                                        {{strTypeName}}
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 div-title9-responsive">
+                    <div class="row" style="justify-content: flex-end;">
+                        <label class="col-sm-3 form-check-label" id="lbl_typeid" for="field_typeid" style="font-size: 14px;
+                                            font-weight: 600;text-align: right;line-height: 35px;"
+                               jhiTranslate="ebwebApp.mBTellerPaper.typeid"
+                        >Typeid</label>
+                        <div class="col-lg-3" style="padding-right: 0px">
+                            <select style="height: 35px;width:160px;float: right;padding-top: 2px;padding-bottom: 2px;"
+                                    name="typeid"
+                                    id="field_typeid"
+                                    class="form-control form-control-sm"
+                                    [disabled]="isReadOnly"
+                                    [(ngModel)]="mBTellerPaper.typeId"
+                                    (ngModelChange)="selectedChangedType()"
+                            >
+                                <option
+                                    [ngValue]="type.id === mBTellerPaper.typeId ? mBTellerPaper.typeId : type.id"
+                                    *ngFor="let type of types;">{{type.typeName}}
+                                </option>
+                            </select>
+                        </div>
+                        <label class="col-sm-2 form-check-label" id="lbl_accountingObject0"
+                               for="field_accountingobjecttype" style="font-size: 14px;
+                                            font-weight: 600;text-align: right;line-height: 35px;"
+                               jhiTranslate="ebwebApp.mBTellerPaper.accountingobjecttype"
+                        >Accountingobjecttype</label>
+                        <div class="col-lg-3">
+                            <select style="height: 35px;width:140px;float: right;padding-top: 2px;padding-bottom: 2px;"
+                                    name="accountingobjecttype"
+                                    id="field_accountingobjecttype"
+                                    class="form-control form-control-sm"
+                                    [disabled]="isReadOnly"
+                                    [(ngModel)]="mBTellerPaper.accountingObjectType"
+                                    (ngModelChange)="selectedChangedAccountingObjectType()"
+                            >
+                                <option [ngValue]="0">Nhà cung cấp</option>
+                                <option [ngValue]="1">Khách hàng</option>
+                                <option [ngValue]="2">Nhân viên</option>
+                                <option [ngValue]="3">Khác</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="row no-gutters">
+                <div class="col-lg-9 pd-r-0 form-main-new">
+                    <form action="">
+                        <h3 jhiTranslate="ebwebApp.mBTellerPaper.generalinfo">General Information</h3>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="form-group row no-gutters no-gutters">
+                                    <label class="col-sm-2 col-form-label" for="field_bankaccountdetail"
+                                           jhiTranslate="ebwebApp.mBTellerPaper.bankAccountDetails"
+                                    >BankAccountDetails</label>
+                                    <div class="col-sm-3 pd-l-0 pd-r-10">
+                                        <combo-box style="" id="field_bankaccountdetail"
+                                                   name="bankaccountdetail"
+                                                   [isOutTable]="true"
+                                                   [dataList]="bankAccountDetails"
+                                                   [headerColumns]="utilsService.listHeaderColumnsBankAccountDetails"
+                                                   [listColumns]="utilsService.listColumnsBankAccountDetails"
+                                                   [nameCategory]="utilsService.TAI_KHOAN_NGAN_HANG"
+                                                   [showIconPlus]="true"
+                                                   displayMember="bankAccount"
+                                                   valueName="id"
+                                                   [isReadOnly]="isReadOnly"
+                                                   [isObject]="false"
+                                                   [tabindex]="1"
+                                                   [isRequired]="true"
+                                                   [(ngModel)]="mBTellerPaper.bankAccountDetailID"
+                                                   (ngModelChange)="selectedChangedBankAccountDetails()"
+                                                   (click)="saveParent()"
+                                        ></combo-box>
+                                    </div>
+                                    <div class="col-sm-7 pd-l-0 last-div-1-1">
+                                        <input type="text" class="form-control form-control-sm"
+                                               name="bankName"
+                                               [(ngModel)]="mBTellerPaper.bankName"
+                                               [readOnly]="isReadOnly"
+                                               [tabindex]="2"
+                                               maxlength="512"/>
+                                    </div>
+                                </div>
+                                <div class="form-group row no-gutters">
+                                    <label class="col-sm-2 col-form-label" for="field_autoPrinciple"
+                                           jhiTranslate="ebwebApp.mBTellerPaper.reason"
+                                    >Reason</label>
+                                    <div class="col-sm-3 pd-l-0">
+                                        <combo-box style="" id="field_autoPrinciple"
+                                                   name="autoPrinciple"
+                                                   [isOutTable]="true"
+                                                   [dataList]="autoPrinciples"
+                                                   [headerColumns]="utilsService.listHeaderColumnsAutoPrinciple"
+                                                   [listColumns]="utilsService.listColumnsAutoPrinciple"
+                                                   displayMember="autoPrincipleName"
+                                                   valueName="id"
+                                                   [isReadOnly]="isReadOnly"
+                                                   [isObject]="true"
+                                                   [(ngModel)]="autoPrinciple"
+                                                   [tabindex]="3"
+                                                   (ngModelChange)="selectedChangedAutoPrinciple()"
+                                        ></combo-box>
+                                    </div>
+                                    <div class="col-sm-7 pd-l-0 last-div-1-1">
+                                        <input type="text" class="form-control form-control-sm" name="reason"
+                                               id="field_reason"
+                                               [readOnly]="isReadOnly"
+                                               [tabindex]="4"
+                                               [(ngModel)]="mBTellerPaper.reason" maxlength="512"
+                                               (change)="changeReason()"
+                                        />
+                                    </div>
+                                </div>
+                                <div class="form-group row no-gutters">
+                                    <label class="col-sm-2 col-form-label" for="field_accountingObject"
+                                           jhiTranslate="{{mBTellerPaper.typeId === 140 ? 'ebwebApp.mBTellerPaper.paymentTo' : 'ebwebApp.mBTellerPaper.accountingObject'}}"
+                                    >AccountingObject</label>
+                                    <div class="col-sm-3 pd-l-0">
+                                        <combo-box style="" id="field_accountingObject"
+                                                   name="accountingObject"
+                                                   [isOutTable]="true"
+                                                   [dataList]="accountingObjects"
+                                                   [nameCategory]="nameCategory"
+                                                   [showIconPlus]="true"
+                                                   [listColumns]="utilsService.listColumnsAccountingObjects"
+                                                   displayMember="accountingObjectCode"
+                                                   valueName="id"
+                                                   [isReadOnly]="getCheckNCC() || isReadOnly"
+                                                   [headerColumns]="utilsService.listHeaderColumnsAccountingObject"
+                                                   [isObject]="false"
+                                                   [tabindex]="5"
+                                                   [(ngModel)]="mBTellerPaper.accountingObjectID"
+                                                   (ngModelChange)="selectedChangedAccountingObject()"
+                                                   [typeObject]="1"
+                                                   (click)="saveParent()"
+                                        ></combo-box>
+                                    </div>
+                                    <div class="col-sm-7 pd-l-0 last-div-1-1">
+                                        <input type="text" class="form-control form-control-sm"
+                                               name="accountingObjectName"
+                                               [readOnly]="isReadOnly"
+                                               [tabindex]="6"
+                                               [(ngModel)]="mBTellerPaper.accountingObjectName"
+                                               maxlength="512"/>
+                                    </div>
+                                </div>
+                                <div class="form-group row no-gutters">
+                                    <label class="col-sm-2 col-form-label" for="field_accountingObjectAddress"
+                                           jhiTranslate="{{mBTellerPaper.typeId === 140 ? 'ebwebApp.mBTellerPaper.receiver' : 'ebwebApp.mBTellerPaper.accountingobjectaddress'}}"
+                                    >Accountingobjectaddress</label>
+                                    <div class="col-sm-12 pd-l-0 last-div-1-0">
+                                        <input type="text" class="form-control form-control-sm"
+                                               [readOnly]="isReadOnly"
+                                               *ngIf="mBTellerPaper.typeId !== 140"
+                                               name="accountingObjectAddress"
+                                               id="field_accountingObjectAddress"
+                                               [tabindex]="7"
+                                               [(ngModel)]="mBTellerPaper.accountingObjectAddress"
+                                               maxlength="512">
+                                        <input type="text" class="form-control form-control-sm"
+                                               [readOnly]="isReadOnly"
+                                               *ngIf="mBTellerPaper.typeId === 140"
+                                               name="receiver"
+                                               id="field_receiver"
+                                               [tabindex]="7"
+                                               [(ngModel)]="mBTellerPaper.receiver"
+                                               maxlength="512">
+                                    </div>
+                                </div>
+                                <div class="form-group row no-gutters" *ngIf="mBTellerPaper.typeId !== 140">
+                                    <label class="col-sm-2 col-form-label"
+                                           for="field_accountingobjectbankaccount"
+                                           jhiTranslate="ebwebApp.mBTellerPaper.accountingObjectBankAccount"
+                                    >AccountingObjectBankAccount</label>
+                                    <div class="col-sm-3 pd-l-0 pd-r-10">
+                                        <combo-box style="" id="field_accountingobjectbankaccount"
+                                                   name="accountingObjectBankAccount"
+                                                   [isOutTable]="true"
+                                                   [dataList]="accountingObjectBankAccounts"
+                                                   [listColumns]="utilsService.listColumnsAccountingObjectBankAccount"
+                                                   displayMember="bankAccount"
+                                                   valueName="id"
+                                                   [isReadOnly]="isReadOnly"
+                                                   [headerColumns]="utilsService.listHeaderColumnsAccountingObjectBankAccount"
+                                                   [isObject]="false"
+                                                   [tabindex]="9"
+                                                   [(ngModel)]="mBTellerPaper.accountingObjectBankAccount"
+                                                   (ngModelChange)="selectedChangedAccountingObjectBankAccount()"
+                                        ></combo-box>
+                                    </div>
+                                    <div class="col-sm-3 pd-l-0">
+                                        <input type="text" class="form-control form-control-sm"
+                                               [readOnly]="isReadOnly"
+                                               name="bankname"
+                                               [tabindex]="10"
+                                               [(ngModel)]="mBTellerPaper.accountingObjectBankName"
+                                               maxlength="512"/>
+                                    </div>
+                                    <label class="col-sm-2 col-form-label" for="field_isemployee"
+                                           jhiTranslate="ebwebApp.mBTellerPaper.accountingObjectIsEmployee"
+                                           style="padding-left: 0px;padding-right: 0px;">Employee</label>
+                                    <div class="col-sm-2 pd-l-0 pd-r-10" style="padding-left: 0px;">
+                                        <combo-box style="" id="field_isemployee"
+                                                   name="isemployee"
+                                                   [isOutTable]="true"
+                                                   [dataList]="employees"
+                                                   [listColumns]="utilsService.listColumnsEmployees"
+                                                   [nameCategory]="utilsService.NHAN_VIEN"
+                                                   [showIconPlus]="true"
+                                                   displayMember="accountingObjectCode"
+                                                   valueName="id"
+                                                   [isReadOnly]="isReadOnly"
+                                                   [headerColumns]="utilsService.listHeaderColumnsEmployees"
+                                                   [isObject]="false"
+                                                   [tabindex]="11"
+                                                   [(ngModel)]="mBTellerPaper.employeeID"
+                                                   (click)="saveParent()"
+                                        ></combo-box>
+                                    </div>
+                                </div>
+                                <div class="form-group row no-gutters" *ngIf="mBTellerPaper.typeId === 140">
+                                    <label class="col-sm-2 col-form-label" for="field_identificationno"
+                                           jhiTranslate="ebwebApp.mBTellerPaper.identificationno"
+                                    >IdentificationNo</label>
+                                    <div class="col-sm-3 pd-l-0 pd-r-10">
+                                        <input type="text" class="form-control form-control-sm"
+                                               name="identificationno"
+                                               id="field_identificationno"
+                                               [readOnly]="isReadOnly"
+                                               [tabindex]="9"
+                                               [(ngModel)]="mBTellerPaper.identificationNo"
+                                               maxlength="30"/>
+                                    </div>
+                                    <div class="col-sm-7 pd-l-0 row justify-content-end" style="padding-right: 0">
+                                        <label class="col-sm-2 col-form-label" for="field_issuedate"
+                                               jhiTranslate="ebwebApp.mBTellerPaper.issuedate"
+                                               style="padding-right: 0;padding-left: 0;text-align: center;"
+                                        >Issue Date</label>
+                                        <div class="col-sm-4" style="padding-right: 0;padding-left: 0">
+                                            <div class="input-group">
+                                                <eb-date-picker id="field_issuedate"
+                                                                [tabindex]="10"
+                                                                [disabled]="isReadOnly"
+                                                                [isInTable]="false"
+                                                                [(ngModel)]="mBTellerPaper.issueDate" name="issueDate"></eb-date-picker>
+                                            </div>
+                                        </div>
+                                        <label class="col-sm-2 col-form-label" for="field_issueby"
+                                               jhiTranslate="ebwebApp.mBTellerPaper.issueby"
+                                               style="padding-right: 0;padding-left: 0;text-align: right;"
+                                        >Issue by</label>
+                                        <div class="col-sm-4 pd-l-0 pd-r-10" style="padding-right: 0">
+                                            <input type="text" class="form-control form-control-sm"
+                                                   name="issueby"
+                                                   id="field_issueby"
+                                                   [tabindex]="11"
+                                                   [readOnly]="isReadOnly"
+                                                   [(ngModel)]="mBTellerPaper.issueBy"
+                                                   maxlength="512"/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-lg-4 pd-only-l-10 form-main-new">
+                    <form>
+                        <h3 jhiTranslate="ebwebApp.mBTellerPaper.ledge">Chứng từ</h3>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="form-group row no-gutters">
+                                    <label class="col-sm-4 col-form-label"
+                                           for="nofbook"
+                                           jhiTranslate="ebwebApp.mBTellerPaper.nofbook"
+                                    >Nofbook</label>
+                                    <div class="col-sm-8 pd-l-0 last-div-1-0" *ngIf="displayBook === 0">
+                                        <input type="text" class="form-control form-control-sm"
+                                               name="nofbook" id="nofbook"
+                                               [readOnly]="isReadOnly"
+                                               [tabindex]="12"
+                                               [(ngModel)]="mBTellerPaper.noFBook"
+                                               required
+                                        >
+                                    </div>
+                                    <div class="col-sm-8 pd-l-0 last-div-1-0" *ngIf="displayBook === 1">
+                                        <input type="text" class="form-control form-control-sm"
+                                               name="noMbook" id="noMbook"
+                                               [readOnly]="isReadOnly"
+                                               [tabindex]="12"
+                                               [(ngModel)]="mBTellerPaper.noMBook"
+                                               required
+                                        >
+                                    </div>
+                                </div>
+                                <div class="form-group row no-gutters">
+                                    <label class="col-sm-4 col-form-label" for="field_date"
+                                           jhiTranslate="ebwebApp.mBTellerPaper.date"
+                                    >Date</label>
+                                    <div class="col-sm-8 last-div-1-0">
+                                        <eb-date-picker style="display: block" id="field_date"
+                                                        [tabindex]="13"
+                                                        [(ngModel)]="mBTellerPaper.date" name="date"
+                                                        [disabled]="isReadOnly"
+                                                        required
+                                                        (ngModelChange)="selectChangeDate()"></eb-date-picker>
+                                    </div>
+                                </div>
+                                <div class="form-group row no-gutters">
+                                    <label class="col-sm-4 col-form-label" for="field_postedDate"
+                                           jhiTranslate="ebwebApp.mBTellerPaper.posteddate"
+                                    >Posteddate</label>
+                                    <div class="col-sm-8 last-div-1-0">
+                                        <eb-date-picker style="display: block" id="field_postedDate"
+                                                        [tabindex]="14"
+                                                        [(ngModel)]="mBTellerPaper.postedDate"
+                                                        [disabled]="isReadOnly"
+                                                        name="postedDate"
+                                                        required></eb-date-picker>
+                                    </div>
+                                </div>
+                                <div class="form-group row no-gutters">
+                                    <label class="col-sm-4 col-form-label" for="field_currency"
+                                           jhiTranslate="ebwebApp.mBTellerPaper.currency"
+                                    >Currency</label>
+                                    <div class="col-sm-3 pd-l-0"
+                                         style="padding-right: 2px;padding-left: 10px;">
+                                        <combo-box style="" id="field_currency"
+                                                   name="currency"
+                                                   [isOutTable]="true"
+                                                   [tabindex]="15"
+                                                   [dataList]="currencies"
+                                                   [listColumns]="utilsService.listColumnsCurrency"
+                                                   displayMember="currencyCode"
+                                                   valueName="currencyCode"
+                                                   [headerColumns]="utilsService.listHeaderColumnsCurrency"
+                                                   [isObject]="false"
+                                                   [isReadOnly]="isReadOnly"
+                                                   [isRequired]="true"
+                                                   [(ngModel)]="mBTellerPaper.currencyId"
+                                                   (ngModelChange)="selectedChangedCurrency()"
+                                        ></combo-box>
+                                    </div>
+                                    <label class="col-sm-2 col-form-label" for="field_exchangerate"
+                                           jhiTranslate="ebwebApp.mBTellerPaper.exchangerate"
+                                           style="text-align:center;padding-left: 0px;padding-right: 0px;">Exchangerate</label>
+                                    <div class="col-sm-3 pd-l-0 last-div-2-1" id="div_exchangerate">
+                                        <input name="exchangeRate" type="text" id="field_exchangerate"
+                                               [disabled]="mBTellerPaper.currencyId === currencyCode || isReadOnly"
+                                               class="form-control form-control-sm"
+                                               [(ngModel)]="mBTellerPaper.exchangeRate"
+                                               [tabindex]="16"
+                                               ebCurrencyMask
+                                               [systemOptions]="currentAccount?.systemOption"
+                                               [type]="4"
+                                               (ngModelChange)="changeExchangeRate()"
+                                        >
+                                    </div>
+                                </div>
+                                <div class="form-group row no-gutters" *ngIf="isShowTypeLedger">
+                                    <label class="col-sm-4 col-form-label"
+                                           jhiTranslate="ebwebApp.mBTellerPaper.typeledger"
+                                           for="field_typeledger"
+                                    >Typeledger</label>
+                                    <div class="col-sm-8 pd-l-0 last-div-1-0">
+                                        <select class="form-control form-control-sm"
+                                                name="typeledger"
+                                                id="field_typeledger"
+                                                [tabindex]="17"
+                                                [disabled]="isReadOnly"
+                                                [class.noPointer]="getCheckNCC()"
+                                                [(ngModel)]="mBTellerPaper.typeLedger"
+                                        >
+                                            <option value="0" *ngIf="isShowOption1"
+                                                    jhiTranslate="ebwebApp.mBDeposit.financialBook">Sổ tài chính
+                                            </option>
+                                            <option value="1" *ngIf="isShowOption2"
+                                                    jhiTranslate="ebwebApp.mBDeposit.managementBook">Sổ quản trị
+                                            </option>
+                                            <option value="2" selected="selected"
+                                                    jhiTranslate="ebwebApp.mBDeposit.bothBooks">Sổ tài chính & Sổ quản
+                                                trị
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div
+             *ngIf="mBTellerPaper.typeId !== TYPE_UNC_TRA_TIEN_NCC && mBTellerPaper.typeId !== TYPE_SCK_TRA_TIEN_NCC && mBTellerPaper.typeId !== TYPE_STM_TRA_TIEN_NCC"
+        >
+            <ngb-tabset class="tool-navbar" (tabChange)="beforeChange($event)">
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.mBTellerPaper.detail">Detail</span>
+                    </ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content">
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="home-detail"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-detail" class="table-scroll">
+                                    <table id="main-table-detail" class="main-table"
+                                           (keydown.arrowDown)="moveArrowDown($event,12)"
+                                           (keydown.arrowUp)="moveArrowUp($event,12)"
+                                    >
+                                        <thead>
+                                        <tr>
+                                            <th scope="col" jhiTranslate="ebwebApp.mBTellerPaperDetails.description">
+                                                Description
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.mBTellerPaperDetails.debitaccount">
+                                                Debitaccount
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.mBTellerPaperDetails.creditaccount">
+                                                Creditaccount
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.mBTellerPaperDetails.amountoriginal">
+                                                Amountoriginal
+                                            </th>
+                                            <th [hidden]="mBTellerPaper.currencyId === currencyCode"
+                                                jhiTranslate="ebwebApp.mBTellerPaperDetails.amount">Amount
+                                            </th>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.mBTellerPaperDetails.accountingobject">
+                                                Accountingobject
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.mBTellerPaperDetails.budgetItem">
+                                                Budget Item
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.mBTellerPaperDetails.expenseitem">
+                                                Expenseitem
+                                            </th>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.mBTellerPaperDetails.organizationunit">
+                                                Organizationunit
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.mBTellerPaperDetails.costset">
+                                                Costset
+                                            </th>
+                                            <!--                                            <th scope="col" jhiTranslate="ebwebApp.mBTellerPaperDetails.emcontract">-->
+                                            <!--                                                Emcontract-->
+                                            <!--                                            </th>-->
+                                            <th scope="col" jhiTranslate="ebwebApp.mBTellerPaperDetails.statisticscode">
+                                                StatisticsCode
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr oncontextmenu="return false;"
+                                            (contextmenu)="onRightClick($event, mBTellerPaperDetails, detail, true, true,0, mBTellerPaperDetails.indexOf(detail))"
+                                            *ngFor="let detail of mBTellerPaperDetails;let i=index;"
+                                            (keydown.control.delete)="keyPress(detail, 'ctr + delete',0)"
+                                            (keydown.control.c)="keyPress(detail,'ctr + c', 0)"
+                                            (keydown.control.insert)="keyPress(detail,'ctr + insert', 0)"
+                                        >
+                                            <td class="cell-Table description" title="{{detail.description}}"><input type="text" autocomplete="off"
+                                                                                      class="input-Cell"
+                                                                                      name="description{{i}}"
+                                                                                      id="description{{i}}"
+                                                                                      [class.readOnly]="isReadOnly"
+                                                                                      [readOnly]="isReadOnly"
+                                                                                      [tabindex]="17 + (12 * i) + 1"
+                                                                                      [(ngModel)]="detail.description"
+                                            ></td>
+                                            <td class="cell-Table jsgrid-align-center">
+                                                <combo-box style=""
+                                                           name="debitaccount{{i}}"
+                                                           id="debitaccount{{i}}"
+                                                           [dataList]="debitAccountList"
+                                                           [listColumns]="['accountNumber','accountName']"
+                                                           displayMember="accountNumber"
+                                                           valueName="accountNumber"
+                                                           [headerColumns]="['Tài khoản','Tên tài khoản']"
+                                                           [tabindex]="17 + (12 * i) + 2"
+                                                           [isObject]="false"
+                                                           [isReadOnly]="isReadOnly"
+                                                           [isOutTable]="false"
+                                                           [(ngModel)]="detail.debitAccount"
+                                                           (ngModelChange)="calcular(detail,mBTellerPaper.typeId,'debitAccount', mBTellerPaper, mBTellerPaperDetails, mBTellerPaperDetailTaxs)"
+                                                           [isRequired]="true"
+                                                ></combo-box>
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-center">
+                                                <combo-box style=""
+                                                           name="creditaccount{{i}}"
+                                                           id="creditaccount{{i}}"
+                                                           [tabindex]="17 + (12 * i) + 3"
+                                                           [isReadOnly]="isReadOnly"
+                                                           [dataList]="creditAccountList"
+                                                           [isRequired]="true"
+                                                           [listColumns]="['accountNumber','accountName']"
+                                                           displayMember="accountNumber"
+                                                           valueName="accountNumber"
+                                                           [headerColumns]="['Tài khoản','Tên tài khoản']"
+                                                           [isObject]="false"
+                                                           [isOutTable]="false"
+                                                           [(ngModel)]="detail.creditAccount"
+                                                           (change)="calcular(detail,mBTellerPaper.typeId,'creditAccount', mBTellerPaper, mBTellerPaperDetails, mBTellerPaperDetailTaxs)"
+                                                ></combo-box>
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-right"><input type="number"
+                                                                                             class="input-Cell"
+                                                                                             name="amountoriginal{{i}}"
+                                                                                             id="amountoriginal{{i}}"
+                                                                                             [tabindex]="17 + (12 * i) + 4"
+                                                                                             [class.readOnly]="isReadOnly"
+                                                                                             [readOnly]="isReadOnly"
+                                                                                             [(ngModel)]="detail.amountOriginal"
+                                                                                             ebCurrencyMask
+                                                                                             [systemOptions]="currentAccount?.systemOption"
+                                                                                             [type]="getAmountOriginalType()"
+                                                                                             (ngModelChange)="calcular(detail,mBTellerPaper.typeId,'amountOriginal', mBTellerPaper, mBTellerPaperDetails, mBTellerPaperDetailTaxs)"
+                                            ></td>
+                                            <td [hidden]="mBTellerPaper.currencyId === currencyCode"
+                                                class="cell-Table jsgrid-align-right">
+                                                <input type="number" class="input-Cell"
+                                                       [tabindex]="17 + (12 * i) + 5"
+                                                       [class.readOnly]="isReadOnly"
+                                                       [readOnly]="isReadOnly"
+                                                       [(ngModel)]="detail.amount"
+                                                       name="amount{{i}}"
+                                                       id="amount{{i}}"
+                                                       ebCurrencyMask
+                                                       [systemOptions]="currentAccount?.systemOption"
+                                                       [type]="7"
+                                                       (ngModelChange)="calcular(detail,mBTellerPaper.typeId,'amount', mBTellerPaper, mBTellerPaperDetails, mBTellerPaperDetailTaxs)"
+                                                >
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-left">
+                                                <combo-box id="accountingObject_DT{{i}}"
+                                                           name="accountingObject_DT{{i}}"
+                                                           [tabindex]="17 + (12 * i) + 6"
+                                                           [dataList]="accounting"
+                                                           [listColumns]="utilsService.listColumnsAccountingObjects"
+                                                           [nameCategory]="nameCategory"
+                                                           [showIconPlus]="true"
+                                                           displayMember="accountingObjectCode"
+                                                           valueName="id"
+                                                           [isReadOnly]="isReadOnly"
+                                                           [headerColumns]="utilsService.listHeaderColumnsAccountingObject"
+                                                           [isObject]="false"
+                                                           [isOutTable]="false"
+                                                           [(ngModel)]="detail.accountingObjectID"
+                                                           [typeObject]="1"
+                                                           (click)="saveDetails(i,true)"
+                                                ></combo-box>
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-left">
+                                                <combo-box id="budgetItem_DT{{i}}"
+                                                           name="budgetItem_DT{{i}}"
+                                                           [tabindex]="17 + (12 * i) + 7"
+                                                           [dataList]="budgetItems"
+                                                           [listColumns]="utilsService.listColumnsBudgetItem"
+                                                           [nameCategory]="utilsService.MUC_THU_CHI"
+                                                           [showIconPlus]="true"
+                                                           displayMember="budgetItemCode"
+                                                           valueName="id"
+                                                           [isReadOnly]="isReadOnly"
+                                                           [isOutTable]="false"
+                                                           [headerColumns]="utilsService.listHeaderColumnsBudgetItem"
+                                                           [isObject]="false"
+                                                           [(ngModel)]="detail.budgetItemID"
+                                                           (click)="saveDetails(i)"
+                                                           [noGetValueParentNode]="true"
+                                                ></combo-box>
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-left">
+                                                <combo-box id="expenseItem_DT{{i}}"
+                                                           name="expenseItem_DT{{i}}"
+                                                           [tabindex]="17 + (12 * i) + 8"
+                                                           [dataList]="expenseItems"
+                                                           [nameCategory]="utilsService.KHOAN_MUC_CHI_PHI"
+                                                           [showIconPlus]="true"
+                                                           [listColumns]="utilsService.listColumnsExpenseItem"
+                                                           displayMember="expenseItemCode"
+                                                           valueName="id"
+                                                           [isReadOnly]="isReadOnly"
+                                                           [isOutTable]="false"
+                                                           [headerColumns]="utilsService.listHeaderColumnsExpenseItem"
+                                                           [isObject]="false"
+                                                           [(ngModel)]="detail.expenseItemID"
+                                                           (click)="saveDetails(i)"
+                                                           [noGetValueParentNode]="true"
+                                                ></combo-box>
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-left">
+                                                <combo-box style=""
+                                                           name="organizationUnit_DT{{i}}"
+                                                           id="organizationUnit_DT{{i}}"
+                                                           [tabindex]="17 + (12 * i) + 9"
+                                                           [dataList]="organizationUnits"
+                                                           [listColumns]="utilsService.listColumnsOrganizationUnit"
+                                                           displayMember="organizationUnitCode"
+                                                           valueName="id"
+                                                           [isReadOnly]="isReadOnly"
+                                                           [headerColumns]="utilsService.listHeaderColumnsOrganizationUnit"
+                                                           [isObject]="false"
+                                                           [isOutTable]="false"
+                                                           [nameCategory]="utilsService.PHONG_BAN"
+                                                           [showIconPlus]="true"
+                                                           [(ngModel)]="detail.departmentID"
+                                                           (click)="saveDetails(i)"
+                                                ></combo-box>
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-left">
+                                                <combo-box style=""
+                                                           name="costSet_DT{{i}}"
+                                                           id="costSet_DT{{i}}"
+                                                           [tabindex]="17 + (12 * i) + 10"
+                                                           [dataList]="costSets"
+                                                           [nameCategory]="utilsService.DOI_TUONG_TAP_HOP_CHI_PHI"
+                                                           [showIconPlus]="true"
+                                                           [listColumns]="utilsService.listColumnsCostSet"
+                                                           displayMember="costSetCode"
+                                                           valueName="id"
+                                                           [isReadOnly]="isReadOnly"
+                                                           [isOutTable]="false"
+                                                           [headerColumns]="utilsService.listHeaderColumnsCostSet"
+                                                           [isObject]="false"
+                                                           [(ngModel)]="detail.costSetID"
+                                                           (click)="saveDetails(i)"
+                                                ></combo-box>
+                                            </td>
+                                            <!--                                            <td class="cell-Table jsgrid-align-left">-->
+                                            <!--                                                <combo-box-->
+                                            <!--                                                    name="constract{{i}}"-->
+                                            <!--                                                    id="constract{{i}}"-->
+                                            <!--                                                    [tabindex]="17 + (12 * i) + 11"-->
+                                            <!--                                                    [dataList]="eMContracts"-->
+                                            <!--                                                    [nameCategory]="utilsService.HOP_DONG"-->
+                                            <!--                                                    [showIconPlus]="true"-->
+                                            <!--                                                    [listColumns]="[displayBook===0?'noFBook':'noMBook','description']"-->
+                                            <!--                                                    displayMember="{{displayBook===0?'noFBook':'noMBook'}}"-->
+                                            <!--                                                    valueName="id"-->
+                                            <!--                                                    [isReadOnly]="isReadOnly"-->
+                                            <!--                                                    [headerColumns]="['Số hợp đồng','Trích yếu']"-->
+                                            <!--                                                    [isObject]="false"-->
+                                            <!--                                                    [(ngModel)]="detail.eMContractID">-->
+                                            <!--                                                </combo-box>-->
+                                            <!--                                            </td>-->
+                                            <td class="cell-Table jsgrid-align-left">
+                                                <combo-box style=""
+                                                           name="stastic{{i}}" id="stastic{{i}}"
+                                                           [tabindex]="17 + (12 * i) + 12"
+                                                           (keydown.tab)="addIfLastInput(i,0)"
+                                                           [dataList]="statisticCodes"
+                                                           [nameCategory]="utilsService.MA_THONG_KE"
+                                                           [showIconPlus]="true"
+                                                           [listColumns]="['statisticsCode', 'statisticsCodeName']"
+                                                           displayMember="statisticsCode"
+                                                           valueName="id"
+                                                           [isReadOnly]="isReadOnly"
+                                                           [isOutTable]="false"
+                                                           [headerColumns]="['Mã thống kê', 'Tên mã thống kê']"
+                                                           [isObject]="false"
+                                                           [(ngModel)]="detail.statisticsCodeID"
+                                                           (click)="saveDetails(i)"
+                                                           [noGetValueParentNode]="true"
+                                                ></combo-box>
+                                            </td>
+                                        </tr>
+
+                                        <tr *ngIf="!isReadOnly" (click)="addNewRow($event,0)">
+                                            <td class="cell-Table description"><input type="text" class="input-Cell"
+                                                                                      autocomplete="off"
+                                                                                      value="{{'ebwebApp.purchaseOrder.addNewLine' | translate}}"
+                                                                                      name="description"
+                                                                                      id="description" readonly
+                                            ></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                          name="debitaccount"
+                                                                          id="debitaccount" readonly
+                                            ></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                          name="creditaccount"
+                                                                          id="creditaccount" readonly
+                                            ></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                          name="amountoriginal"
+                                                                          id="amountoriginal" readonly
+                                            ></td>
+                                            <td class="cell-Table" [hidden]="mBTellerPaper.currencyId === currencyCode">
+                                                <input type="text"
+                                                       class="input-Cell"
+                                                       name="amount"
+                                                       id="amount" readonly
+                                                ></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                          name="accountingObject_DT"
+                                                                          id="accountingObject_DT" readonly
+                                            ></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                          name="budgetItem_DT"
+                                                                          id="budgetItem_DT" readonly
+                                            ></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                          name="expenseItem_DT"
+                                                                          id="expenseItem_DT" readonly
+                                            ></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                          name="organizationUnit_DT"
+                                                                          id="organizationUnit_DT" readonly
+                                            ></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                          name="costSet_DT"
+                                                                          id="costSet_DT" readonly
+                                            ></td>
+                                            <!--                                            <td class="cell-Table"><input type="text" class="input-Cell"-->
+                                            <!--                                                                          name="constract" readonly-->
+                                            <!--                                                                          id="constract">-->
+                                            <!--                                            </td>-->
+                                            <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                          name="stastic" readonly
+                                                                          id="stastic">
+                                            </td>
+                                        </tr>
+                                        <tr *ngFor="let row of newArr(10 - mBTellerPaperDetails?.length)">
+                                            <td class="cell-Table description"><input type="text" class="input-Cell"
+                                                                                      readonly
+                                            ></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly
+                                            ></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly
+                                            ></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly
+                                            ></td>
+                                            <td class="cell-Table" [hidden]="mBTellerPaper.currencyId === currencyCode">
+                                                <input type="text"
+                                                       class="input-Cell" readonly
+                                                ></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly
+                                            ></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly
+                                            ></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly
+                                            ></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly
+                                            ></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly
+                                            ></td>
+                                            <!--                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly-->
+                                            <!--                                            ></td>-->
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly
+                                            ></td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot>
+                                        <tr>
+                                            <td class="cell-Table description"><input type="text" [class.noEdit]="true"
+                                                                                      class="countRow input-Cell noPointer"
+                                                                                      value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{mBTellerPaperDetails?.length}}">
+                                            </td>
+                                            <td class="cell-Table border-none"><input type="text"
+                                                                                      class="countRow input-Cell noPointer"
+                                                                                      [class.noEdit]="true"></td>
+                                            <td class="cell-Table"><input type="text" name="totalAmount_footer"
+                                                                          class="countRow input-Cell input-curency noPointer"
+                                                                          [class.noEdit]="true"></td>
+                                            <td class="cell-Table jsgrid-align-right">
+                                                <input name="totalAmountOriginal_footer" type="text"
+                                                       class="countRow input-Cell noPointer" [class.noEdit]="true"
+                                                       [ngModel]="getTotalAmountOriginal()"
+                                                       ebCurrencyMask
+                                                       [systemOptions]="currentAccount?.systemOption"
+                                                       [type]="getAmountOriginalType()"
+                                                ></td>
+                                            <td [hidden]="mBTellerPaper.currencyId === currencyCode"
+                                                class="cell-Table jsgrid-align-right">
+                                                <input type="text" class="countRow input-Cell noPointer" [class.noEdit]="true"
+                                                       [ngModel]="getTotalAmount()"
+                                                       ebCurrencyMask
+                                                       [systemOptions]="currentAccount?.systemOption"
+                                                       [type]="7"
+                                                ></td>
+                                            <td class="cell-Table border-none"><input type="text"
+                                                                                      class="countRow input-Cell noPointer"
+                                                                                      [class.noEdit]="true"></td>
+                                            <td class="cell-Table border-none"><input type="text"
+                                                                                      class="countRow input-Cell noPointer"
+                                                                                      [class.noEdit]="true"></td>
+                                            <td class="cell-Table border-none"><input type="text"
+                                                                                      class="countRow input-Cell noPointer"
+                                                                                      [class.noEdit]="true"></td>
+                                            <td class="cell-Table border-none"><input type="text"
+                                                                                      class="countRow input-Cell noPointer"
+                                                                                      [class.noEdit]="true"></td>
+                                            <td class="cell-Table border-none"><input type="text"
+                                                                                      class="countRow input-Cell noPointer"
+                                                                                      [class.noEdit]="true"></td>
+                                            <!--                                            <td class="cell-Table border-none"><input type="text"-->
+                                            <!--                                                                                      class="countRow input-Cell noPointer"-->
+                                            <!--                                                                                      readonly></td>-->
+                                            <td class="cell-Table border-none"><input type="text"
+                                                                                      class="countRow input-Cell noPointer"
+                                                                                      [class.noEdit]="true"></td>
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.mBTellerPaper.tax">Tax</span></ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content">
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="home-tax"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-tax" class="table-scroll">
+                                    <table id="main-table-tax" class="main-table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col" jhiTranslate="ebwebApp.mBTellerPaperDetailTax.description">
+                                                Description
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.mBTellerPaperDetailTax.vataccount">
+                                                VatAccount
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.mBTellerPaperDetailTax.vatrate">
+                                                VatRate
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.mBTellerPaperDetailTax.vatamount">
+                                                VatAmount
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.mBTellerPaperDetailTax.pretaxamount">
+                                                PretaxAmount
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.mBCreditCard.accountingObjectCode">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.mBCreditCard.accountingObjectName">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.mBCreditCard.taxCode">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.mBTellerPaperDetailTax.invoicetype">
+                                                InvoiceType
+                                            </th>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.mBTellerPaperDetailTax.invoiceseries">
+                                                InvoiceSeries
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.mBTellerPaperDetailTax.invoiceno">
+                                                InvoiceNo
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.mBTellerPaperDetailTax.invoicedate">
+                                                Invoicedate
+                                            </th>
+                                            <th *ngIf="isShowGoodsServicePurchase" scope="col"
+                                                jhiTranslate="ebwebApp.mBTellerPaperDetailTax.goodsservicepurchaseid">
+                                                GoodsServicePurchase
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr oncontextmenu="return false;"
+                                            (contextmenu)="onRightClick($event, mBTellerPaperDetailTaxs, detail, true, true,1, mBTellerPaperDetailTaxs.indexOf(detail))"
+                                            *ngFor="let detail of mBTellerPaperDetailTaxs;let i=index;"
+                                            (keydown.control.delete)="keyPress(detail, 'ctr + delete',1)"
+                                            (keydown.control.c)="keyPress(detail,'ctr + c', 1)"
+                                            (keydown.control.insert)="keyPress(detail,'ctr + insert', 1)"
+                                        >
+                                            <td class="cell-Table description" title="{{detail.description}}"><input type="text" autocomplete="off"
+                                                                                      class="input-Cell"
+                                                                                      name="description_tax{{i}}"
+                                                                                      id="description_tax{{i}}"
+                                                                                      [class.readOnly]="isReadOnly"
+                                                                                      [readOnly]="isReadOnly"
+                                                                                      [(ngModel)]="detail.description">
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-center">
+                                                <combo-box style=""
+                                                           name="vataccount_tax{{i}}"
+                                                           id="vataccount_tax{{i}}"
+                                                           [dataList]="vatAccountList"
+                                                           [isRequired]="true"
+                                                           [hideRequiredWhenValueTrue]="true"
+                                                           [listColumns]="['accountNumber','accountName']"
+                                                           displayMember="accountNumber"
+                                                           valueName="accountNumber"
+                                                           [isOutTable]="false"
+                                                           [headerColumns]="['Tài khoản','Tên tài khoản']"
+                                                           [isObject]="false"
+                                                           [isReadOnly]="isReadOnly"
+                                                           [(ngModel)]="detail.vATAccount"
+                                                ></combo-box>
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-left">
+                                                <!--                                                <select class="form-control form-control-sm"-->
+                                                <!--                                                        style="border: none; background: transparent"-->
+                                                <!--                                                        name="VATReate_DTax{{i}}"-->
+                                                <!--                                                        id="VATReate_DTax{{i}}"-->
+                                                <!--                                                        [(ngModel)]="detail.vATRate"-->
+                                                <!--                                                        (ngModelChange)="calcular(detail,mBTellerPaper.typeId,'vATRate',mBTellerPaper,mBTellerPaperDetails,mBTellerPaperDetailTaxs)"-->
+                                                <!--                                                >-->
+                                                <!--                                                    <option [ngValue]="null"></option>-->
+                                                <!--                                                    <option [ngValue]="0">0%</option>-->
+                                                <!--                                                    <option [ngValue]="1">5%</option>-->
+                                                <!--                                                    <option [ngValue]="2">10%</option>-->
+                                                <!--                                                    <option [ngValue]="-1">Không chịu thuế</option>-->
+                                                <!--                                                    <option [ngValue]="-2">Không tính thuế</option>-->
+                                                <!--                                                </select>-->
+                                                <combo-box name="VATReate_DTax{{i}}"
+                                                           id="VATReate_DTax{{i}}"
+                                                           [dataList]="vatRates"
+                                                           [listColumns]="['name']"
+                                                           displayMember="name"
+                                                           valueName="value"
+                                                           [headerColumns]="['% Thuế GTGT']"
+                                                           [isObject]="false"
+                                                           [isOutTable]="false"
+                                                           [isReadOnly]="isReadOnly"
+                                                           [(ngModel)]="detail.vATRate"
+                                                           (ngModelChange)="calcular(detail,mBTellerPaper.typeId,'vATRate',mBTellerPaper,mBTellerPaperDetails,mBTellerPaperDetailTaxs)"
+                                                ></combo-box>
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-right">
+                                                <input type="number"
+                                                       class="input-Cell"
+                                                       required
+                                                       name="vatamount{{i}}"
+                                                       id="vatamount{{i}}"
+                                                       [(ngModel)]="detail.vATAmount"
+                                                       ebCurrencyMask
+                                                       [class.readOnly]="isReadOnly"
+                                                       [readOnly]="isReadOnly"
+                                                       [systemOptions]="currentAccount?.systemOption"
+                                                       [type]="7"
+                                                       (ngModelChange)="calcular(detail,mBTellerPaper.typeId,'vATAmount',mBTellerPaper,mBTellerPaperDetails,mBTellerPaperDetailTaxs)"
+                                                >
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-right">
+                                                <input type="number" class="input-Cell" required
+                                                       name="pretaxamount{{i}}"
+                                                       id="pretaxamount{{i}}"
+                                                       [(ngModel)]="detail.pretaxAmount"
+                                                       ebCurrencyMask
+                                                       [class.readOnly]="isReadOnly"
+                                                       [readOnly]="isReadOnly"
+                                                       [systemOptions]="currentAccount?.systemOption"
+                                                       [type]="7"
+                                                       (ngModelChange)="calcular(detail,mBTellerPaper.typeId,'pretaxAmount',mBTellerPaper,mBTellerPaperDetails,mBTellerPaperDetailTaxs)"
+                                                >
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-left">
+                                                <combo-box style=""
+                                                           name="accountingObject_DTTax{{i}}"
+                                                           id="accountingObject_DTTax{{i}}"
+                                                           [dataList]="accounting"
+                                                           [listColumns]="utilsService.listColumnsAccountingObjects"
+                                                           displayMember="accountingObjectCode"
+                                                           valueName="id"
+                                                           [isReadOnly]="isReadOnly"
+                                                           [isOutTable]="false"
+                                                           [headerColumns]="utilsService.listHeaderColumnsAccountingObject"
+                                                           [isObject]="false"
+                                                           [(ngModel)]="detail.accountingObjectID"
+                                                           (ngModelChange)="selectChangeAccountingObjectTax(i)"
+                                                ></combo-box>
+                                            </td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                          name="accountingObjectName{{i}}"
+                                                                          id="accountingObjectName{{i}}"
+                                                                          [(ngModel)]="detail.accountingObjectName"
+                                                                          [readOnly]="isReadOnly"
+                                            ></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                          name="taxCode{{i}}"
+                                                                          id="taxCode{{i}}"
+                                                                          [(ngModel)]="detail.taxCode"
+                                                                          [readOnly]="isReadOnly"
+                                            ></td>
+                                            <td class="cell-Table">
+                                                <combo-box nameIp="invoiceTemplate_Tax{{i}}"
+                                                           idIp="invoiceTemplate_Tax{{i}}"
+                                                           [isOutTable]="true"
+                                                           [dataList]="invoiceTypes"
+                                                           [headerColumns]="['Mã loại hóa đơn', 'Tên loại hóa đơn']"
+                                                           [listColumns]="['invoiceTypeCode', 'invoiceTypeName']"
+                                                           displayMember="invoiceTypeCode"
+                                                           valueName="invoiceTypeCode"
+                                                           [isObject]="false"
+                                                           [(ngModel)]="detail.invoiceTemplate"
+                                                           [getValueDisplay]="true"
+                                                ></combo-box>
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-left"><input type="text"
+                                                                                            class="input-Cell"
+                                                                                            name="invoiceseries{{i}}"
+                                                                                            id="invoiceseries{{i}}"
+                                                                                            [class.readOnly]="isReadOnly"
+                                                                                            [readOnly]="isReadOnly"
+                                                                                            [(ngModel)]="detail.invoiceSeries"
+                                                                                            (ngModelChange)="detail.invoiceSeries = $event.toUpperCase()">
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-left"><input type="text"
+                                                                                            class="input-Cell"
+                                                                                            name="invoiceno{{i}}"
+                                                                                            id="invoiceno{{i}}"
+                                                                                            [class.readOnly]="isReadOnly"
+                                                                                            [readOnly]="isReadOnly"
+                                                                                            [(ngModel)]="detail.invoiceNo">
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-center">
+                                                <eb-date-picker [(ngModel)]="detail.invoiceDate" name="invoicedate{{i}}"
+                                                                [disabled]="isReadOnly" format="YYYY-MM-DD"
+                                                                [isInTable]="true"></eb-date-picker>
+
+                                            </td>
+                                            <td *ngIf="isShowGoodsServicePurchase" class="cell-Table jsgrid-align-left">
+                                                <combo-box style=""
+                                                           name="goodsServicePurchaseId{{i}}"
+                                                           id="goodsServicePurchaseId{{i}}"
+                                                           [dataList]="goodsServicePurchases"
+                                                           [listColumns]="utilsService.listColumnsGoodsServicePurchase"
+                                                           displayMember="goodsServicePurchaseCode"
+                                                           valueName="id"
+                                                           [isReadOnly]="isReadOnly"
+                                                           [isOutTable]="false"
+                                                           [headerColumns]="utilsService.listHeaderColumnsGoodsServicePurchase"
+                                                           [isObject]="false"
+                                                           [(ngModel)]="detail.goodsServicePurchaseId"
+                                                ></combo-box>
+                                            </td>
+
+                                        </tr>
+                                        <tr *ngIf="!isReadOnly" (click)="addNewRow($event,1)">
+                                            <td class="cell-Table description"><input type="text" class="input-Cell"
+                                                                                      name="description_tax"
+                                                                                      id="description_tax" readonly
+                                                                                      value="{{'ebwebApp.purchaseOrder.addNewLine' | translate}}"
+                                            ></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                          name="vataccount_tax"
+                                                                          id="vataccount_tax" readonly
+                                            ></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                          name="VATReate_DTax"
+                                                                          id="VATReate_DTax" readonly
+                                            ></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                          name="vatamount"
+                                                                          id="vatamount" readonly
+                                            ></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                          name="pretaxamount"
+                                                                          id="pretaxamount" readonly
+                                            ></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                          name="accountingObject_DTTax"
+                                                                          id="accountingObject_DTTax2" readonly
+                                            ></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                          name="accountingObject_DTTax"
+                                                                          id="accountingObject_DTTax3" readonly
+                                            ></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                          name="accountingObject_DTTax"
+                                                                          id="accountingObject_DTTax4" readonly
+                                            ></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                          name="invoicetype"
+                                                                          id="invoicetype" readonly
+                                            ></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                          name="invoiceseries"
+                                                                          id="invoiceseries"
+                                            ></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                          name="invoiceno"
+                                                                          id="invoiceno" readonly
+                                            ></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                          name="invoicedate"
+                                                                          id="invoicedate" readonly
+                                            ></td>
+                                            <td *ngIf="isShowGoodsServicePurchase" class="cell-Table"><input type="text" class="input-Cell"
+                                                                          name="goodsServicePurchaseId"
+                                                                          id="goodsServicePurchaseId" readonly
+                                            ></td>
+                                        </tr>
+                                        <tr *ngFor="let row of newArr(10 - mBTellerPaperDetailTaxs?.length)">
+                                            <td class="cell-Table description"><input type="text" class="input-Cell"
+                                                                                      readonly
+                                            ></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly
+                                            ></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly
+                                            ></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly
+                                            ></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly
+                                            ></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly
+                                            ></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly
+                                            ></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly
+                                            ></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly
+                                            ></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly
+                                            ></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly
+                                            ></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly
+                                            ></td>
+                                            <td *ngIf="isShowGoodsServicePurchase" class="cell-Table"><input type="text" class="input-Cell" readonly
+                                            ></td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot>
+                                        <tr>
+                                            <td class="cell-Table description"><input type="text" [class.noEdit]="true"
+                                                                                      class="countRow input-Cell noPointer"
+                                                                                      value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{mBTellerPaperDetailTaxs?.length}}">
+                                            </td>
+                                            <td class="cell-Table border-none"><input type="text"
+                                                                                      class="countRow input-Cell noPointer"
+                                                                                      [class.noEdit]="true"></td>
+                                            <td class="cell-Table"><input type="text"
+                                                                          class="countRow input-Cell noPointer"
+                                                                          [class.noEdit]="true"></td>
+                                            <td class="cell-Table jsgrid-align-right">
+                                                <input type="text" name="totalVATAmount_footer"
+                                                       class="countRow input-Cell noPointer" [class.noEdit]="true"
+                                                       [ngModel]="getTotalVATAmount()"
+                                                       ebCurrencyMask
+                                                       [systemOptions]="currentAccount?.systemOption"
+                                                       [type]="7"
+                                                ></td>
+                                            <td class="cell-Table jsgrid-align-right">
+                                                <input type="text" class="countRow input-Cell noPointer"
+                                                       name="pretaxAmount_footer"
+                                                       [ngModel]="getTotalPretaxAmount()"
+                                                       ebCurrencyMask
+                                                       [systemOptions]="currentAccount?.systemOption"
+                                                       [type]="7"
+                                                       [class.noEdit]="true"></td>
+                                            <td class="cell-Table border-none"><input type="text"
+                                                                                      class="countRow input-Cell noPointer"
+                                                                                      [class.noEdit]="true"></td>
+                                            <td class="cell-Table border-none"><input type="text"
+                                                                                      class="countRow input-Cell noPointer"
+                                                                                      [class.noEdit]="true"></td>
+                                            <td class="cell-Table border-none"><input type="text"
+                                                                                      class="countRow input-Cell noPointer"
+                                                                                      [class.noEdit]="true"></td>
+                                            <td class="cell-Table border-none"><input type="text"
+                                                                                      class="countRow input-Cell noPointer"
+                                                                                      [class.noEdit]="true"></td>
+                                            <td class="cell-Table border-none"><input type="text"
+                                                                                      class="countRow input-Cell noPointer"
+                                                                                      [class.noEdit]="true"></td>
+                                            <td class="cell-Table border-none"><input type="text"
+                                                                                      class="countRow input-Cell noPointer"
+                                                                                      [class.noEdit]="true"></td>
+                                            <td class="cell-Table border-none"><input type="text"
+                                                                                      class="countRow input-Cell noPointer"
+                                                                                      [class.noEdit]="true"></td>
+                                            <td *ngIf="isShowGoodsServicePurchase" class="cell-Table border-none"><input type="text"
+                                                                                      class="countRow input-Cell noPointer"
+                                                                                                                         [class.noEdit]="true"></td>
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span
+                        jhiTranslate="ebwebApp.mBTellerPaper.referenceledge">Reference Ledge</span></ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content">
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="home-ref"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-ref" class="table-scroll">
+                                    <table id="main-table-ref" class="main-table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col" jhiTranslate="ebwebApp.saBill.vDate">Ngày chứng từ</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.saBill.postedDate">Ngày hạch toán
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.saBill.noFBook">Số chứng từ</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.saBill.reason">Diễn giải</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let viewVoucher of viewVouchersSelected; let i = index"
+                                            oncontextmenu="return false;"
+                                            (contextmenu)="onRightClick($event, viewVouchersSelected, viewVoucher, false, true,2, viewVouchersSelected.indexOf(viewVoucher))"
+                                            (keydown.control.delete)="keyPress(i ,0)">
+                                            <td class="jsgrid-cell jsgrid-align-center">{{viewVoucher.date}}</td>
+                                            <td class="jsgrid-cell jsgrid-align-center">{{viewVoucher.postedDate}}</td>
+                                            <td class="jsgrid-cell jsgrid-align-left line-h pd-l-r-5"
+                                                (click)="utilsService.viewRefVoucher(viewVoucher)"
+                                                style="color:blue; text-decoration: underline;">{{viewVoucher.no}}
+                                            </td>
+                                            <td class="jsgrid-cell">{{viewVoucher.reason}}</td>
+                                        </tr>
+                                        <tr *ngFor="let row of newArr(10 - viewVouchersSelected?.length)">
+                                            <td class="jsgrid-cell jsgrid-align">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot [class.myreadonlytrue]="true">
+                                        <tr>
+                                            <td class="cell-Table countRow" style="width: 150px"><input type="text"
+                                                                                                        readonly
+                                                                                                        class="countRow input-Cell"
+                                                                                                        value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{viewVouchersSelected ? viewVouchersSelected?.length : 0}}">
+                                            </td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab x-placement="right" id="reference">
+                    <ng-template ngbTabTitle>
+                        <span jhiTranslate="ebwebApp.mBDeposit.reference"></span>
+                    </ng-template>
+                </ngb-tab>
+            </ngb-tabset>
+            <div class="row justify-content-end">
+                <div class="col-lg-5 pd-l-0">
+                    <div class="form-group row justify-content-end">
+                        <label class="col-sm-3 col-form-label pd-r-0"
+                               style="padding-left: 0px;padding-right: 0px;text-align: right;"
+                               jhiTranslate="ebwebApp.mBTellerPaper.totalamountoriginal"
+                               for="field_totalAmountOriginal">TotalAmountOriginal</label>
+                        <div class="col-sm-4 pd-l-0 pd-r-5" style="padding-right: 0px;margin-right: 5px;">
+                            <input [title]="getTotalAmountOriginal()" type="text" class="form-control form-control-sm"
+                                   name="totalAmountOriginal" id="field_totalAmountOriginal"
+                                   [ngModel]="getTotalAmountOriginal()"
+                                   ebCurrencyMask
+                                   [systemOptions]="currentAccount?.systemOption"
+                                   [type]="getAmountOriginalType()"
+                                   disabled
+                            />
+                        </div>
+                        <div class="col-sm-4 pd-l-0" style="padding-left: 0px;">
+                            <input type="text" class="form-control form-control-sm"
+                                   name="totalAmount" id="field_totalAmount"
+                                   [title]="getTotalAmount()"
+                                   [ngModel]="getTotalAmount()"
+                                   ebCurrencyMask
+                                   [systemOptions]="currentAccount?.systemOption"
+                                   [type]="7"
+                                   disabled
+                            />
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Trả tiền nhà cung cấp-->
+        <div
+            *ngIf="mBTellerPaper.typeId === TYPE_UNC_TRA_TIEN_NCC || mBTellerPaper.typeId === TYPE_SCK_TRA_TIEN_NCC || mBTellerPaper.typeId === TYPE_STM_TRA_TIEN_NCC"
+        >
+            <ngb-tabset class="tool-navbar">
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.mCPayment.home.voucher">Chứng từ</span>
+                    </ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content">
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="home-detail-VC"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-detail-VC" class="table-scroll">
+                                    <table id="main-table-detail-VC" class="main-table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col" jhiTranslate="ebwebApp.pPPayVendorDetail.date"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.pPPayVendorDetail.no"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.pPPayVendorDetail.dueDate"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.pPPayVendorDetail.employeeName"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.pPPayVendorDetail.account"></th>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.pPPayVendorDetail.totalDebitOriginal"></th>
+                                            <th scope="col" *ngIf="mBTellerPaper?.currencyId !==currencyCode"
+                                                jhiTranslate="ebwebApp.pPPayVendorDetail.totalDebit"></th>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.pPPayVendorDetail.debitAmountOriginal"></th>
+                                            <th scope="col" *ngIf="mBTellerPaper?.currencyId !==currencyCode"
+                                                jhiTranslate="ebwebApp.pPPayVendorDetail.debitAmount"></th>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.pPPayVendorDetail.amountOriginal"></th>
+                                            <th scope="col" *ngIf="mBTellerPaper?.currencyId !==currencyCode"
+                                                jhiTranslate="ebwebApp.pPPayVendorDetail.amount"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.pPPayVendorDetail.discountRate"></th>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.pPPayVendorDetail.discountAmountOriginal"></th>
+                                            <th scope="col" *ngIf="mBTellerPaper?.currencyId !==currencyCode"
+                                                jhiTranslate="ebwebApp.pPPayVendorDetail.discountAmount"></th>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.pPPayVendorDetail.discountAccount"></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let mBTellerPaperDetailVendor of mBTellerPaperDetailVendors;">
+                                            <td class="jsgrid-cell jsgrid-align-center" style="width: 150px">
+                                                {{mBTellerPaperDetailVendor.date| date:'dd/MM/yyyy'}}
+                                            </td>
+                                            <td (click)="viewVoucher(mBTellerPaperDetailVendor)" class="jsgrid-cell"
+                                                style="width: 150px"><a style="color:blue; text-decoration: underline;">
+                                                {{isSoTaiChinh ? mBTellerPaperDetailVendor.noFBook : mBTellerPaperDetailVendor.noMBook}}
+                                            </a></td>
+                                            <td class="jsgrid-cell jsgrid-align-center"
+                                                style="width: 150px">{{mBTellerPaperDetailVendor.dueDate| date:'dd/MM/yyyy'}}</td>
+                                            <td class="jsgrid-cell"
+                                                style="width: 150px">{{getEmployeeByID(mBTellerPaperDetailVendor.employeeID)}}</td>
+                                            <td class="jsgrid-cell"
+                                                style="width: 150px">{{mBTellerPaperDetailVendor.debitAccount}}</td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"><input type="number"
+                                                                            class="noPointer input-Cell jsgrid-align-right"
+                                                                            readonly
+                                                                            ebCurrencyMask
+                                                                            [systemOptions]="currentAccount?.systemOption"
+                                                                            [type]="DDSo_NgoaiTe"
+                                                                            [(ngModel)]="mBTellerPaperDetailVendor.payableAmountOriginal"/>
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"
+                                                *ngIf="mBTellerPaper?.currencyId !==currencyCode"><input type="number"
+                                                                                                         class="noPointer input-Cell jsgrid-align-right"
+                                                                                                         readonly
+                                                                                                         ebCurrencyMask
+                                                                                                         [systemOptions]="currentAccount?.systemOption"
+                                                                                                         [type]="DDSo_TienVND"
+                                                                                                         [(ngModel)]="mBTellerPaperDetailVendor.payableAmount"/>
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"><input
+                                                type="number"
+                                                class="noPointer input-Cell jsgrid-align-right"
+                                                readonly
+                                                ebCurrencyMask
+                                                [systemOptions]="currentAccount?.systemOption"
+                                                [type]="DDSo_NgoaiTe"
+                                                [(ngModel)]="mBTellerPaperDetailVendor.remainingAmountOriginal"/></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"
+                                                *ngIf="mBTellerPaper?.currencyId !==currencyCode"><input
+                                                type="number"
+                                                class="noPointer input-Cell jsgrid-align-right"
+                                                readonly
+                                                ebCurrencyMask
+                                                [systemOptions]="currentAccount?.systemOption"
+                                                [type]="DDSo_TienVND"
+                                                [(ngModel)]="mBTellerPaperDetailVendor.remainingAmount"/>
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px">
+                                                <input type="number"
+                                                       class="noPointer input-Cell jsgrid-align-right"
+                                                       ebCurrencyMask
+                                                       readonly
+                                                       [systemOptions]="currentAccount?.systemOption"
+                                                       [type]="DDSo_NgoaiTe"
+                                                       [(ngModel)]="mBTellerPaperDetailVendor.amountOriginal"/>
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px" *ngIf="mBTellerPaper?.currencyId !==currencyCode">
+                                                <input type="number"
+                                                       class="noPointer input-Cell jsgrid-align-right"
+                                                       readonly
+                                                       ebCurrencyMask
+                                                       [systemOptions]="currentAccount?.systemOption"
+                                                       [type]="DDSo_TienVND"
+                                                       [(ngModel)]="mBTellerPaperDetailVendor.amount"/>
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px">
+                                                <input type="number"
+                                                       class="noPointer input-Cell jsgrid-align-right"
+                                                       readonly
+                                                       ebCurrencyMask
+                                                       [systemOptions]="currentAccount?.systemOption"
+                                                       [type]="DDSo_TyLe"
+                                                       [(ngModel)]="mBTellerPaperDetailVendor.discountRate"
+                                                       max="100"/>
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"><input type="number"
+                                                                            class="noPointer input-Cell jsgrid-align-right"
+                                                                            readonly
+                                                                            ebCurrencyMask
+                                                                            [systemOptions]="currentAccount?.systemOption"
+                                                                            [type]="DDSo_NgoaiTe"
+                                                                            [(ngModel)]="mBTellerPaperDetailVendor.discountAmountOriginal"/>
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px" *ngIf="mBTellerPaper?.currencyId !==currencyCode">
+                                                <input type="number"
+                                                       class="noPointer input-Cell jsgrid-align-right"
+                                                       readonly
+                                                       ebCurrencyMask
+                                                       [systemOptions]="currentAccount?.systemOption"
+                                                       [type]="DDSo_TienVND"
+                                                       [(ngModel)]="mBTellerPaperDetailVendor.discountAmount"/>
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px">
+                                                {{mBTellerPaperDetailVendor.discountAccount}}
+                                            </td>
+                                        </tr>
+                                        <tr *ngFor="let l of newArr(9 - mBTellerPaperDetailVendors?.length)">
+                                            <td class="cell-Table jsgrid-align-center"
+                                                style="width: 150px">&nbsp;
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="cell-Table jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="cell-Table jsgrid-align-right"
+                                                style="width: 150px"
+                                                *ngIf="mBTellerPaper?.currencyId !==currencyCode">
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="cell-Table jsgrid-align-right"
+                                                style="width: 150px"
+                                                *ngIf="mBTellerPaper?.currencyId !==currencyCode">
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="cell-Table jsgrid-align-right"
+                                                style="width: 150px">
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-right"
+                                                style="width: 150px" *ngIf="mBTellerPaper?.currencyId !==currencyCode">
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="cell-Table jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="cell-Table jsgrid-align-right"
+                                                style="width: 150px">
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-right"
+                                                style="width: 150px">
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-right"
+                                                style="width: 150px" *ngIf="mBTellerPaper?.currencyId !==currencyCode">
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-right"
+                                                style="width: 150px">
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot>
+                                        <tr>
+                                            <td class="color-tfoot cell-Table" style="width: 150px"><input type="text"
+                                                                                                           [class.noEdit]="true"
+                                                                                                           class="noPointer input-Cell"
+                                                                                                           value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{mBTellerPaperDetailVendors?.length}}">
+                                            </td>
+                                            <td class="color-tfoot cell-Table" style="width: 150px"><input type="text"
+                                                                                                           class="noPointer input-Cell"
+                                                                                                           [class.noEdit]="true">
+                                            </td>
+                                            <td class="color-tfoot cell-Table" style="width: 150px"><input type="text"
+                                                                                                           class="noPointer input-Cell"
+                                                                                                           [class.noEdit]="true">
+                                            </td>
+                                            <td class="color-tfoot cell-Table" style="width: 150px"><input type="text"
+                                                                                                           class="noPointer input-Cell"
+                                                                                                           [class.noEdit]="true">
+                                            </td>
+                                            <td class="color-tfoot cell-Table" style="width: 150px"><input type="text"
+                                                                                                           class="noPointer input-Cell"
+                                                                                                           [class.noEdit]="true">
+                                            </td>
+                                            <td class="color-tfoot cell-Table" style="width: 150px"><input type="text"
+                                                                                                           class="noPointer input-Cell"
+                                                                                                           [class.noEdit]="true">
+                                            </td>
+
+                                            <td class="color-tfoot cell-Table" style="width: 150px"
+                                                *ngIf="mBTellerPaper?.currencyId !==currencyCode"><input type="text"
+                                                                                                         class="noPointer input-Cell"
+                                                                                                         [class.noEdit]="true">
+                                            </td>
+                                            <td class="color-tfoot cell-Table"
+                                                style="width: 150px">
+                                                <input type="text"
+                                                       class="noPointer input-Cell jsgrid-align-right"
+                                                       [class.noEdit]="true"
+                                                       name="amountSum"
+                                                       ebCurrencyMask
+                                                       [systemOptions]="currentAccount?.systemOption"
+                                                       [type]="DDSo_NgoaiTe"
+                                                       [ngModel]="summCPaymentDetailVendors('remainingAmountOriginal')">
+                                            </td>
+                                            <td class="color-tfoot cell-Table"
+                                                style="width: 150px"
+                                                *ngIf="mBTellerPaper?.currencyId !==currencyCode">
+                                                <input type="text"
+                                                       class="noPointer input-Cell jsgrid-align-right"
+                                                       [class.noEdit]="true"
+                                                       name="amountSum"
+                                                       ebCurrencyMask
+                                                       [systemOptions]="currentAccount?.systemOption"
+                                                       [type]="DDSo_TienVND"
+                                                       [ngModel]="summCPaymentDetailVendors('remainingAmount')">
+                                            </td>
+                                            <td class="color-tfoot cell-Table"
+                                                style="width: 150px">
+                                                <input type="text"
+                                                       class="noPointer input-Cell jsgrid-align-right"
+                                                       [class.noEdit]="true"
+                                                       name="amountSum"
+                                                       ebCurrencyMask
+                                                       [systemOptions]="currentAccount?.systemOption"
+                                                       [type]="DDSo_NgoaiTe"
+                                                       [ngModel]="summCPaymentDetailVendors('amountOriginal')">
+                                            </td>
+                                            <td class="color-tfoot cell-Table"
+                                                style="width: 150px" *ngIf="mBTellerPaper?.currencyId !==currencyCode">
+                                                <input type="text"
+                                                       class="noPointer input-Cell jsgrid-align-right"
+                                                       [class.noEdit]="true"
+                                                       name="amountSum"
+                                                       ebCurrencyMask
+                                                       [systemOptions]="currentAccount?.systemOption"
+                                                       [type]="DDSo_TienVND"
+                                                       [ngModel]="summCPaymentDetailVendors('amount')">
+                                            </td>
+                                            <td class="color-tfoot cell-Table"
+                                                style="width: 150px"><input type="text" class="noPointer input-Cell"
+                                                                            [class.noEdit]="true"></td>
+                                            <td class="color-tfoot cell-Table"
+                                                style="width: 150px">
+                                                <input type="text"
+                                                       class="noPointer input-Cell jsgrid-align-right"
+                                                       [class.noEdit]="true"
+                                                       name="amountSum"
+                                                       ebCurrencyMask
+                                                       [systemOptions]="currentAccount?.systemOption"
+                                                       [type]="DDSo_NgoaiTe"
+                                                       [ngModel]="summCPaymentDetailVendors('discountAmountOriginal')">
+                                            </td>
+                                            <td class="color-tfoot cell-Table"
+                                                style="width: 150px" *ngIf="mBTellerPaper?.currencyId !==currencyCode">
+                                                <input type="text"
+                                                       class="noPointer input-Cell jsgrid-align-right"
+                                                       [class.noEdit]="true"
+                                                       name="amountSum"
+                                                       ebCurrencyMask
+                                                       [systemOptions]="currentAccount?.systemOption"
+                                                       [type]="DDSo_TienVND"
+                                                       [ngModel]="summCPaymentDetailVendors('discountAmount')">
+                                            </td>
+                                            <td class="color-tfoot cell-Table"
+                                                style="width: 150px"><input type="text" class="noPointer input-Cell"
+                                                                            [class.noEdit]="true">
+                                            </td>
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.mBTellerPaper.detail">Detail</span>
+                    </ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content">
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="home-detail-NCC"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-detail-NCC" class="table-scroll">
+                                    <table id="main-table-detail-NCC" class="main-table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col" jhiTranslate="ebwebApp.mBTellerPaperDetails.description">
+                                                Description
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.mBTellerPaperDetails.debitaccount">
+                                                Debitaccount
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.mBTellerPaperDetails.creditaccount">
+                                                Creditaccount
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.mBTellerPaperDetails.amountoriginal">
+                                                Amountoriginal
+                                            </th>
+                                            <th scope="col" [hidden]="mBTellerPaper?.currencyId === currencyCode"
+                                                jhiTranslate="ebwebApp.mCPaymentDetails.amount">Thành tiền QĐ
+                                            </th>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.mBTellerPaperDetails.accountingobject">
+                                                Accountingobject
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.mBTellerPaperDetails.expenseitem">
+                                                Expenseitem
+                                            </th>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.mBTellerPaperDetails.organizationunit">
+                                                Organizationunit
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.mBTellerPaperDetails.costset">
+                                                Costset
+                                            </th>
+                                            <!--                                            <th scope="col" jhiTranslate="ebwebApp.mBTellerPaperDetails.emcontract">-->
+                                            <!--                                                Emcontract-->
+                                            <!--                                            </th>-->
+                                            <th scope="col" jhiTranslate="ebwebApp.mBTellerPaperDetails.statisticscode">
+                                                StatisticsCode
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let detail of mBTellerPaperDetails; let i=index; trackBy: trackMBTellerPaperDetailsById">
+                                            <td class="cell-Table description" title="{{detail.description}}"><input type="text" autocomplete="off"
+                                                                                      class="input-Cell"
+                                                                                      [class.readOnly]="isReadOnly"
+                                                                                      [readOnly]="isReadOnly"
+                                                                                      name="description_dt{{i}}"
+                                                                                      id="description_dt{{i}}"
+                                                                                      [(ngModel)]="detail.description"
+                                            ></td>
+                                            <td class="cell-Table jsgrid-align-center">
+                                                <combo-box style=""
+                                                           name="debitaccount_dt{{i}}"
+                                                           id="debitaccount_dt{{i}}"
+                                                           [isReadOnly]="isReadOnly"
+                                                           [dataList]="debitAccountList"
+                                                           [listColumns]="['accountNumber','accountName']"
+                                                           displayMember="accountNumber"
+                                                           valueName="accountNumber"
+                                                           [headerColumns]="['Tài khoản','Tên tài khoản']"
+                                                           [isObject]="false"
+                                                           [isOutTable]="false"
+                                                           [(ngModel)]="detail.debitAccount"
+                                                           (ngModelChange)="calcular(detail,mBTellerPaper.typeId,'debitAccount', mBTellerPaper, mBTellerPaperDetails, mBTellerPaperDetailTaxs)"
+                                                           [isRequired]="true"
+                                                ></combo-box>
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-center">
+                                                <combo-box style=""
+                                                           name="creditaccount_dt{{i}}"
+                                                           id="creditaccount_dt{{i}}"
+                                                           [isReadOnly]="isReadOnly"
+                                                           [dataList]="creditAccountList"
+                                                           [isRequired]="true"
+                                                           [listColumns]="['accountNumber','accountName']"
+                                                           displayMember="accountNumber"
+                                                           valueName="accountNumber"
+                                                           [isOutTable]="false"
+                                                           [headerColumns]="['Tài khoản','Tên tài khoản']"
+                                                           [isObject]="false"
+                                                           [(ngModel)]="detail.creditAccount"
+                                                           (change)="calcular(detail,mBTellerPaper.typeId,'creditAccount', mBTellerPaper, mBTellerPaperDetails, mBTellerPaperDetailTaxs)"
+                                                ></combo-box>
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-right">
+                                                <input type="text" class="input-Cell noPointer"
+                                                       name="amountOriginal{{i}}"
+                                                       ebCurrencyMask
+                                                       readonly
+                                                       [systemOptions]="currentAccount?.systemOption"
+                                                       [type]="getAmountOriginalType()"
+                                                       [(ngModel)]="detail.amountOriginal"
+                                                >
+                                            </td>
+                                            <td [hidden]="mBTellerPaper?.currencyId === currencyCode"
+                                                class="jsgrid-cell jsgrid-align-right"><input type="number"
+                                                                                              class="input-Cell noPointer"
+                                                                                              name="amount{{i}}"
+                                                                                              ebCurrencyMask
+                                                                                              readonly
+                                                                                              [type]="7"
+                                                                                              [systemOptions]="currentAccount?.systemOption"
+                                                                                              [(ngModel)]="detail.amount"
+                                            ></td>
+                                            <!--                                            <td class="jsgrid-cell jsgrid-align-left">{{getAccountingObjectCode(detail)}}</td>-->
+                                            <!--                                            <td class="jsgrid-cell jsgrid-align-left">{{getExpenseItemCode(detail)}}</td>-->
+                                            <!--                                            <td class="jsgrid-cell jsgrid-align-left">{{getDepartmentCode(detail)}}</td>-->
+                                            <!--                                            <td class="jsgrid-cell jsgrid-align-left">{{getCostSetCode(detail)}}</td>-->
+                                            <!--                                            <td class="jsgrid-cell jsgrid-align-left">{{getEMContractName(detail)}}</td>-->
+                                            <!--                                            <td class="jsgrid-cell jsgrid-align-left">{{getStatisticsCodeName(detail)}}</td>-->
+                                            <td class="cell-Table jsgrid-align-left">
+                                                <combo-box id="accountingObject1{{i}}"
+                                                           name="accountingObject{{i}}"
+                                                           [dataList]="accounting"
+                                                           [isReadOnly]="isReadOnly"
+                                                           [listColumns]="utilsService.listColumnsAccountingObjects"
+                                                           displayMember="accountingObjectCode"
+                                                           valueName="id"
+                                                           [isOutTable]="false"
+                                                           [headerColumns]="utilsService.listHeaderColumnsAccountingObject"
+                                                           [isObject]="false"
+                                                           [(ngModel)]="detail.accountingObjectID"
+                                                ></combo-box>
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-left">
+                                                <combo-box id="expenseItem_DTcc{{i}}"
+                                                           name="expenseItem_DT{{i}}"
+                                                           [isReadOnly]="isReadOnly"
+                                                           [dataList]="expenseItems"
+                                                           [listColumns]="utilsService.listColumnsExpenseItem"
+                                                           displayMember="expenseItemCode"
+                                                           valueName="id"
+                                                           [isOutTable]="false"
+                                                           [headerColumns]="utilsService.listHeaderColumnsExpenseItem"
+                                                           [isObject]="false"
+                                                           [(ngModel)]="detail.expenseItemID"
+                                                           [noGetValueParentNode]="true"
+                                                ></combo-box>
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-left">
+                                                <combo-box style=""
+                                                           name="organizationUnit_DT{{i}}"
+                                                           id="organizationUnit_DTcc{{i}}"
+                                                           [isReadOnly]="isReadOnly"
+                                                           [dataList]="organizationUnits"
+                                                           [listColumns]="utilsService.listColumnsOrganizationUnit"
+                                                           displayMember="organizationUnitCode"
+                                                           valueName="id"
+                                                           [isOutTable]="false"
+                                                           [headerColumns]="utilsService.listHeaderColumnsOrganizationUnit"
+                                                           [isObject]="false"
+                                                           [(ngModel)]="detail.departmentID"
+                                                ></combo-box>
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-left">
+                                                <combo-box style=""
+                                                           name="costSet_DTcc{{i}}"
+                                                           id="costSet_DTcc{{i}}"
+                                                           [isReadOnly]="isReadOnly"
+                                                           [dataList]="costSets"
+                                                           [listColumns]="utilsService.listColumnsCostSet"
+                                                           displayMember="costSetCode"
+                                                           valueName="id"
+                                                           [isOutTable]="false"
+                                                           [headerColumns]="utilsService.listHeaderColumnsCostSet"
+                                                           [isObject]="false"
+                                                           [(ngModel)]="detail.costSetID"
+                                                ></combo-box>
+                                            </td>
+                                            <!--                                            <td class="cell-Table jsgrid-align-left">-->
+                                            <!--                                                <combo-box-->
+                                            <!--                                                    name="constractCC{{i}}"-->
+                                            <!--                                                    id="constractCC{{i}}"-->
+                                            <!--                                                    [isReadOnly]="isReadOnly"-->
+                                            <!--                                                    [dataList]="eMContracts"-->
+                                            <!--                                                    [listColumns]="[displayBook===0?'noFBook':'noMBook','description']"-->
+                                            <!--                                                    displayMember="{{displayBook===0?'noFBook':'noMBook'}}"-->
+                                            <!--                                                    valueName="id"-->
+                                            <!--                                                    [headerColumns]="['Số hợp đồng','Trích yếu']"-->
+                                            <!--                                                    [isObject]="false"-->
+                                            <!--                                                    [(ngModel)]="detail.eMContractID">-->
+                                            <!--                                                </combo-box>-->
+                                            <!--                                            </td>-->
+                                            <td class="cell-Table jsgrid-align-left">
+                                                <combo-box style=""
+                                                           name="stasticCC{{i}}" id="stasticCC{{i}}"
+                                                           [dataList]="statisticCodes"
+                                                           [listColumns]="['statisticsCode', 'statisticsCodeName']"
+                                                           displayMember="statisticsCode"
+                                                           valueName="id"
+                                                           [isReadOnly]="isReadOnly"
+                                                           [isOutTable]="false"
+                                                           [headerColumns]="['Mã thống kê', 'Tên mã thống kê']"
+                                                           [isObject]="false"
+                                                           [(ngModel)]="detail.statisticsCodeID"
+                                                           [noGetValueParentNode]="true"
+                                                ></combo-box>
+                                            </td>
+
+                                        </tr>
+                                        <tr *ngFor="let row of newArr(10 - mBTellerPaperDetails?.length)">
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <!--                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>-->
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td [hidden]="mBTellerPaper?.currencyId === currencyCode"
+                                                class="cell-Table">
+                                                &nbsp;
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot>
+                                        <tr>
+                                            <td class="cell-Table color-tfoot"><input type="text" [class.noEdit]="true"
+                                                                                      class="color-tfoot noPointer input-Cell"
+                                                                                      value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{mBTellerPaperDetails?.length}}">
+                                            </td>
+                                            <td class="cell-Table color-tfoot"></td>
+                                            <td class="cell-Table color-tfoot"></td>
+                                            <td class="cell-Table color-tfoot jsgrid-align-right">
+                                                <input type="text" name="totalAmountOriginal_footer"
+                                                       class="noPointer input-Cell"
+                                                       [class.noEdit]="true"
+                                                       [ngModel]="getTotalAmountOriginal()"
+                                                       ebCurrencyMask
+                                                       [systemOptions]="currentAccount?.systemOption"
+                                                       [type]="getAmountOriginalType()"
+                                                ></td>
+                                            <td [hidden]="mBTellerPaper?.currencyId === currencyCode"
+                                                class="cell-Table color-tfoot jsgrid-align-right">
+                                                <input type="text" name="totalAmount_footer"
+                                                       class="noPointer input-Cell"
+                                                       [class.noEdit]="true"
+                                                       [ngModel]="getTotalAmount()"
+                                                       ebCurrencyMask
+                                                       [systemOptions]="currentAccount?.systemOption"
+                                                       [type]="7"
+                                                ></td>
+                                            <td class="cell-Table color-tfoot"></td>
+                                            <td class="cell-Table color-tfoot"></td>
+                                            <td class="cell-Table color-tfoot"></td>
+                                            <!--                                            <td class="cell-Table color-tfoot"></td>-->
+                                            <td class="cell-Table color-tfoot"></td>
+                                            <td class="cell-Table color-tfoot"></td>
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+            </ngb-tabset>
+        </div>
+        <!--Trả tiền nhà cung cấp-->
+    </div>
+    <!--display when right click mbdetail-->
+    <eb-context-menu [contextMenu]="contextMenu" [eventHandlingHere]="true" [useCopyRow]="true"></eb-context-menu>
+</div>
+<ng-template #content let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.saBill.saveMessage">Dữ liệu đã bị thay đổi, Bạn có muốn lưu lại?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="save(true)"
+                jhiTranslate="entity.action.save">Save
+        </button>
+        <button type="button" class="btn btn-outline-danger" (click)="noSaveCloseAndBackList()"
+                jhiTranslate="entity.action.noSave">close
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="closeModal()" jhiTranslate="entity.action.close">
+            close
+        </button>
+    </div>
+</ng-template>
+<ng-template #content1 let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.mBDeposit.totalAmountNotEqualVatAmount"
+                       translateValues="{param: '{{displayBook === 0 ? mBTellerPaper.noFBook : mBTellerPaper.noMBook}}'}"></label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="save(true)"
+                jhiTranslate="entity.action.save">Save
+        </button>
+        <button type="button" class="btn btn-outline-danger" (click)="closeModal()" jhiTranslate="entity.action.close">
+            close
+        </button>
+    </div>
+</ng-template>
+<!--end of new CSS-->

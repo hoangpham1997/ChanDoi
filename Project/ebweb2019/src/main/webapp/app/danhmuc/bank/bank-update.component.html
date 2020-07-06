@@ -1,0 +1,144 @@
+<eb-alert></eb-alert>
+<div class="container-fluid">
+    <div class="margin-tp-5 margin-0">
+        <div class="">
+            <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
+                <div class="itemw">
+                    <div class="menu-tool-bar he">
+                        <div class="ptitle">
+                            <span jhiTranslate="ebwebApp.bank.titled"></span>
+                        </div>
+
+                        <div class="gr-toolbar">
+                            <a (click)="save()" *ebHasSomeAuthorityOrCondition=
+                                "[[ROLE_NganHang_Them, !isEditUrl], ROLE_NganHang_Sua,'ROLE_ADMIN']" title="{{'ebwebApp.autoPrinciple.tooltipSave' | translate}}"><i class="mdi mdi-briefcase-download"></i> <span
+                                jhiTranslate="ebwebApp.bank.save"></span></a>
+                            <a (click)="saveAndNew()" *ebHasSomeAuthorityOrCondition=
+                                "[[ROLE_NganHang_Them , ROLE_NganHang_Sua], 'ROLE_ADMIN', [ROLE_NganHang_Them, isCreateUrl]]"  title="{{'ebwebApp.autoPrinciple.tooltipSaveAndAdd' | translate}}"><i class="mdi mdi-plus"></i> <span
+                                jhiTranslate="ebwebApp.bank.saveAndLoad"></span></a>
+                            <a [class.disable]="!bank.id" (click)="delete()" *ebHasAnyAuthority="['ROLE_ADMIN', ROLE_NganHang_Xoa]" title="{{'ebwebApp.autoPrinciple.tooltipDelete' | translate}}"><i class="mdi mdi-delete-forever"></i>
+                                <span jhiTranslate="ebwebApp.bank.deleted"></span></a>
+                            <a (click)="closeForm()" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_NganHang_Xem]" title="{{'ebwebApp.autoPrinciple.tooltipBack' | translate}}"><i class="mdi mdi-window-close"></i> <span
+                                jhiTranslate="ebwebApp.bank.closed"></span></a>
+                        </div>
+                    </div>
+
+                    <div class="frm-main">
+                        <div class="row ">
+                            <div class="col-lg-12">
+                                <legend style="font-size: 19px; color: #f26f21;font-weight: bold;"
+                                        jhiTranslate="ebwebApp.bank.information"></legend>
+                                <form>
+                                    <div class="row no-gutters">
+                                        <div class="col-lg-12" [hidden]="true">
+                                            <div class="form-group row no-gutters">
+                                                <label for="id" class="col-sm-2 my-col-form-label"
+                                                       jhiTranslate="global.field.id">ID</label>
+                                                <div class="col-sm-10 pd-l-0 pd-r-10">
+                                                    <input type="text" class="col-sm-10 col-form-label-sm-bank" id="id"
+                                                           name="id"
+                                                           [(ngModel)]="bank.id" readonly
+                                                           [tabIndex]="1"
+                                                           [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <div class="form-group row no-gutters">
+                                                <label class="col-sm-2 my-col-form-label"
+                                                       jhiTranslate="ebwebApp.bank.bankCode"></label>
+                                                <div class="col-sm-4 pd-l-0 pd-r-10">
+                                                    <input type="text" class="form-control" name="repositoryCode"
+                                                           id="field_repositoryCode"
+                                                           [(ngModel)]="bank.bankCode" required maxlength="25"
+                                                           [tabIndex]="2"
+                                                           [disabled]="bank.id || (!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"/>
+                                                </div>
+
+                                                <label class="col-sm-2 my-col-form-label"
+                                                       jhiTranslate="ebwebApp.bank.bankName"></label>
+                                                <div class="col-sm-4 pd-l-0 pd-r-10 my-last-div-unit-2-1">
+                                                    <input type="text" class="form-control" name="bankName"
+                                                           id="field_bankName"
+                                                           [(ngModel)]="bank.bankName" required maxlength="512"
+                                                           [tabIndex]="3"
+                                                           [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <div class="form-group row no-gutters">
+                                                <label class="col-sm-2 my-col-form-label"
+                                                       jhiTranslate="ebwebApp.bank.bankNameRepresent"></label>
+                                                <div class="col-sm-4 pd-l-0 pd-r-10">
+                                                    <input type="text" class="form-control" name="bankNameRepresent"
+                                                           id="field_repositoryName"
+                                                           [(ngModel)]="bank.bankNameRepresent" maxlength="512"
+                                                           [tabIndex]="4"
+                                                           [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"/>
+                                                </div>
+                                                <label class="col-sm-2 my-col-form-label"
+                                                       jhiTranslate="ebwebApp.bank.address"></label>
+                                                <div class="col-sm-4 col-form-label-sm-bank my-last-div-unit-2-1">
+                                                    <input type="text" class="form-control" name="address"
+                                                           id="field_address"
+                                                           [(ngModel)]="bank.address" maxlength="512"
+                                                           [tabIndex]="5"
+                                                           [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <div class="form-group row no-gutters">
+                                                <label class="col-sm-2 my-col-form-label"
+                                                       jhiTranslate="ebwebApp.bank.description"></label>
+                                                <div class="col-sm-10 col-form-label-sm-bank my-last-div-unit-2-2">
+                                                    <input type="text" class="form-control" name="description"
+                                                           id="field_description"
+                                                           [(ngModel)]="bank.description" maxlength="512"
+                                                           [tabIndex]="6"
+                                                           [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-12" [hidden]="!bank.id">
+                        <div class="row" style="padding-left: 15px">
+                            <div *ngIf="bank.id" class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="customCheck1" name="isActive"
+                                       [(ngModel)]="bank.isActive"
+                                       [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)">
+                                <label class="custom-control-label" for="customCheck1"
+                                       jhiTranslate="ebwebApp.bank.isActive"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<ng-template #content let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.saBill.saveMessage">Dữ liệu đã bị thay đổi, Bạn có muốn lưu lại?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="save()" jhiTranslate="entity.action.save">Save
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="close()" jhiTranslate="entity.action.noSave">close
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="closeContent()" jhiTranslate="entity.action.close">
+            close
+        </button>
+    </div>
+</ng-template>
+
+

@@ -1,0 +1,135 @@
+<div class="body">
+    <div class = "modal-header" style = "padding: 2px 10px; padding-top: 10px">
+        <div class="d-flex flex-wrap col-md-11">
+            <h6 class="modal-title-detail"><img src="../../../../content/images/icon-logo.png" height="24px"
+                                                width="24px"> <span
+                class="text-uppercase" jhiTranslate="ebwebApp.baoCao.soTienGuiNganHangPopup.title"></span></h6>
+        </div>
+    </div>
+    <div style="padding: 5px 25px">
+        <div>
+            <div
+                *ngIf="treeOrganizationUnits && treeOrganizationUnits?.length > 0  && treeOrganizationUnits[0].children && treeOrganizationUnits[0].children.length>0"
+                class="form-group row">
+                <label jhiTranslate="ebwebApp.baoCao.canDoiKeToan.organization" class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-10">
+                    <eb-tree-combo-box [tree]="treeOrganizationUnits"
+                                       [(ngModel)]="organizationUnit" (ngModelChange)="selectChangeOrg()"></eb-tree-combo-box>
+                </div>
+            </div>
+            <div *ngIf="isShowDependent && treeOrganizationUnits && treeOrganizationUnits?.length > 0 && treeOrganizationUnits[0].children && treeOrganizationUnits[0].children.length>0"
+                 class="form-group row">
+                <label class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-10">
+                    <label for="checkboxDependent"><input id="checkboxDependent" type="checkbox" name="checkboxDependent"
+                                                          [(ngModel)]="isDependent"></label>
+                    <label for="checkboxDependent" jhiTranslate="ebwebApp.baoCao.soQuyTienMatPopup.dependentData"></label>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label jhiTranslate="ebwebApp.baoCao.canDoiKeToan.period" class="col-sm-2 col-form-label">Chọn thời
+                    gian</label>
+                <div class="col-sm-10">
+                    <combo-box style=""
+                               name="timeLine"
+                               [dataList]="listTimeLine"
+                               [listColumns]="utilsService.listColumnsTimeLine"
+                               [isOutTable]="true"
+                               displayMember="display"
+                               valueName="value"
+                               [headerColumns]="utilsService.listHeaderColumnsTimeLine"
+                               [isObject]="false"
+                               [(ngModel)]="timeLineVoucher"
+                               (ngModelChange)="selectChangeBeginDateAndEndDate(timeLineVoucher)"
+                    ></combo-box>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label jhiTranslate="ebwebApp.saBill.invoice.fromDate" class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-4">
+                    <eb-date-picker [(ngModel)]="fromDate" name="fromdate" format="YYYY-MM-DD"></eb-date-picker>
+                </div>
+                <label jhiTranslate="ebwebApp.saBill.invoice.toDate" class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-4">
+                    <eb-date-picker [(ngModel)]="toDate" name="toDate" format="YYYY-MM-DD"></eb-date-picker>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label jhiTranslate="ebwebApp.baoCao.bangKeSoDuNganHangPopup.accountList"
+                       class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-4">
+                    <combo-box id="accountList"
+                               [dataList]="accountLists"
+                               [listColumns]="['accountNumber', 'accountName']"
+                               displayMember="accountNumber"
+                               valueName="accountNumber"
+                               [headerColumns]="['Số tài khoản','Tên tài khoản']"
+                               [isObject]="false"
+                               [isOutTable]="true"
+                               [(ngModel)]="accountNumber"
+                    ></combo-box>
+                </div>
+                <label jhiTranslate="ebwebApp.mBDeposit.currencyID"
+                       class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-4">
+                    <combo-box id="currencyCode"
+                               [dataList]="currencies"
+                               [listColumns]="['currencyCode', 'currencyName']"
+                               displayMember="currencyCode"
+                               valueName="currencyCode"
+                               [headerColumns]="['Mã loại tiền','Tên loại tiền']"
+                               [isObject]="false"
+                               [isOutTable]="true"
+                               [(ngModel)]="currencyCode"
+                    ></combo-box>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label jhiTranslate="ebwebApp.baoCao.soTienGuiNganHangPopup.bankAccountDetail"
+                       class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-10">
+                    <combo-box id="bankAccountDetail"
+                               [dataList]="(isDependent && isDungChungTKNH !== '0' && organizationUnit.parent.unitType === 0) ? bankAccountDetailsForAccType : bankAccountDetails"
+                               [listColumns]="['bankAccount', 'bankName']"
+                               displayMember="bankAccount"
+                               valueName="id"
+                               [headerColumns]="['Số TK ngân hàng','Tên TK ngân hàng']"
+                               [isObject]="false"
+                               [isOutTable]="true"
+                               [(ngModel)]="bankAccountDetailID"
+                    ></combo-box>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-10">
+                    <label for="checkboxgroupTheSameItem"><input id="checkboxgroupTheSameItem" type="checkbox"
+                                                                 name="checkboxgroupTheSameItem"
+                                                                 [(ngModel)]="groupTheSameItem"></label>
+                    <label for="checkboxgroupTheSameItem"
+                           jhiTranslate="ebwebApp.baoCao.nhatKyChungPopup.option1"></label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer" style="padding: 5px 31px">
+        <div *ngIf="currencyID && currencyCode && (currencyID !== currencyCode)" style="width: 100%">
+            <label jhiTranslate="entity.action.getData"></label>
+            <label style="padding-left: 20px" for="radio1"><input id="radio1" type="radio" [value]="true" name="radio"
+                                                                  [(ngModel)]="typeShowCurrency"
+                                                                  class="noSetDisable"></label>
+            <label jhiTranslate="entity.action.numberAmount" for="radio1">Quy đổi</label>
+            <label style="padding-left: 20px" for="radio2"><input id="radio2" type="radio" [value]="false" name="radio"
+                                                                  [(ngModel)]="typeShowCurrency"
+                                                                  class="noSetDisable"></label>
+            <label jhiTranslate="entity.action.numberAmountOriginal" for="radio2">Nguyên tệ</label>
+        </div>
+        <button id="save" (click)="showReport()" class="btn btn-success">
+            <span jhiTranslate="entity.action.preview"></span>
+        </button>
+        <button *ebHasSomeAuthorityAndCondition="[['ROLE_ADMIN', ROLE_KetXuat], isKetXuat]" class="btn btn-danger" jhiTranslate="entity.action.render" (click)="exportExcel()">Kết xuất</button>
+        <button type="button" class="btn btn-dark" (click)="activeModal.dismiss('closed')" data-dismiss="modal">
+            <span jhiTranslate="entity.action.close"></span>
+        </button>
+    </div>
+</div>

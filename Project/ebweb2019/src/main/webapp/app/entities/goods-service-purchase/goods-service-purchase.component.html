@@ -1,0 +1,70 @@
+<div>
+    <h2 id="page-heading">
+        <span jhiTranslate="ebwebApp.goodsServicePurchase.home.title">Goods Service Purchases</span>
+        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-goods-service-purchase" [routerLink]="['/goods-service-purchase/new']">
+            <fa-icon [icon]="'plus'"></fa-icon>
+            <span  jhiTranslate="ebwebApp.goodsServicePurchase.home.createLabel">
+            Create new Goods Service Purchase
+            </span>
+        </button>
+    </h2>
+    <eb-alert></eb-alert>
+    <br/>
+    <div class="table-responsive" *ngIf="goodsServicePurchases">
+        <table class="table table-striped">
+            <thead>
+            <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
+            <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="goodsServicePurchaseCode"><span jhiTranslate="ebwebApp.goodsServicePurchase.goodsServicePurchaseCode">Goods Service Purchase Code</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="goodsServicePurchaseName"><span jhiTranslate="ebwebApp.goodsServicePurchase.goodsServicePurchaseName">Goods Service Purchase Name</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="description"><span jhiTranslate="ebwebApp.goodsServicePurchase.description">Description</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="isActive"><span jhiTranslate="ebwebApp.goodsServicePurchase.isActive">Is Active</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="isSecurity"><span jhiTranslate="ebwebApp.goodsServicePurchase.isSecurity">Is Security</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let goodsServicePurchase of goodsServicePurchases ;trackBy: trackId">
+                <td><a [routerLink]="['/goods-service-purchase', goodsServicePurchase.id, 'view' ]">{{goodsServicePurchase.id}}</a></td>
+                <td>{{goodsServicePurchase.goodsServicePurchaseCode}}</td>
+                <td>{{goodsServicePurchase.goodsServicePurchaseName}}</td>
+                <td>{{goodsServicePurchase.description}}</td>
+                <td>{{goodsServicePurchase.isActive}}</td>
+                <td>{{goodsServicePurchase.isSecurity}}</td>
+                <td class="text-right">
+                    <div class="btn-group flex-btn-group-container">
+                        <button type="submit"
+                                [routerLink]="['/goods-service-purchase', goodsServicePurchase.id, 'view' ]"
+                                class="btn btn-info btn-sm">
+                            <fa-icon [icon]="'eye'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/goods-service-purchase', goodsServicePurchase.id, 'edit']"
+                                class="btn btn-primary btn-sm">
+                            <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/', { outlets: { popup: 'goods-service-purchase/'+ goodsServicePurchase.id + '/delete'} }]"
+                                replaceUrl="true"
+                                queryParamsHandling="merge"
+                                class="btn btn-danger btn-sm">
+                            <fa-icon [icon]="'times'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div *ngIf="goodsServicePurchases && goodsServicePurchases.length">
+        <div class="row justify-content-center">
+            <jhi-item-count [page]="page" [total]="queryCount" [maxSize]="5" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+        </div>
+        <div class="row justify-content-center">
+            <ngb-pagination [size]="'sm'" [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage" [maxSize]="5" [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage(page)"></ngb-pagination>
+        </div>
+    </div>
+</div>

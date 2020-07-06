@@ -1,0 +1,131 @@
+<div class="modal-body windowClass-DanhMuc-Combobox" style="padding: 20px!important;">
+    <div class="margin-tp-5 margin-0">
+        <div class="">
+            <div class="itemw">
+                <div class="menu-tool-bar header-custom">
+                    <div class="ptitle">
+                        <span jhiTranslate="ebwebApp.currency.home.title"> tiền tệ</span>
+                    </div>
+
+                    <div class="gr-toolbar">
+                        <a (click)="save()" class="saveLuu" *ebHasSomeAuthorityOrCondition=
+                            "[[ROLE_LoaiTien_Them, !isEditUrl], ROLE_LoaiTien_Sua,'ROLE_ADMIN']" title="{{'ebwebApp.autoPrinciple.tooltipSave' | translate}}"><i class="mdi mdi-briefcase-download"></i> <span
+                            jhiTranslate="ebwebApp.currency.save"></span></a>
+                        <a (click)="saveAndNew()" *ebHasSomeAuthorityOrCondition=
+                            "[[ROLE_LoaiTien_Them , ROLE_LoaiTien_Sua], 'ROLE_ADMIN', [ROLE_LoaiTien_Them, isCreateUrl]]" title="{{'ebwebApp.autoPrinciple.tooltipSaveAndAdd' | translate}}"><i class="mdi mdi-plus"></i> <span
+                            jhiTranslate="ebwebApp.currency.saveAndLoad"></span></a>
+                        <a [class.disable]="!currency.id" (click)="delete()" *ebHasAnyAuthority="['ROLE_ADMIN', ROLE_LoaiTien_Xoa]" title="{{'ebwebApp.autoPrinciple.tooltipDelete' | translate}}"><i class="mdi mdi-delete-forever"></i>
+                            <span jhiTranslate="ebwebApp.currency.deleted"></span></a>
+                        <a (click)="closeForm()" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_LoaiTien_Xem]"title="{{'ebwebApp.autoPrinciple.tooltipBack' | translate}}"><i class="mdi mdi-window-close"></i> <span
+                            jhiTranslate="ebwebApp.currency.closed"></span></a>
+                    </div>
+
+                </div>
+                <div class="frm-main">
+                    <div class="row ">
+                        <div class="col-lg-12">
+                            <legend style="font-size: 19px; color: #f26f21;font-weight: bold;"
+                                    jhiTranslate="ebwebApp.currency.information"> Thông tin
+                                chung</legend>
+                            <fieldset>
+                                <form style="border: none;">
+                                    <div class="row no-gutters">
+                                        <div class="col-lg-12">
+                                            <div class="form-group row no-gutters">
+                                                <label class="col-sm-2 my-col-form-label" style="padding-right: 0px"
+                                                       jhiTranslate="ebwebApp.currency.currencyCode"><b>mã tiền
+                                                    tệ(*)</b></label>
+                                                <div class="col-sm-3 pd-l-0 pd-r-10">
+                                                    <input type="text" class="form-control" name="currencyCode"
+                                                           id="field_currencyCode"
+                                                           [(ngModel)]="currency.currencyCode"
+                                                           maxlength="3" required
+                                                           [tabIndex]="1"
+                                                           [disabled]="currency.id || (!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"/>
+                                                </div>
+                                                <label class="col-sm-2 my-col-form-label" style="padding-right: 0px"
+                                                       jhiTranslate="ebwebApp.currency.currencyName"><b>Tên tiền
+                                                    tệ(*)</b></label>
+                                                <div class="col-sm-3 pd-l-0 pd-r-10">
+                                                    <input type="text" class="form-control" name="currencyName"
+                                                           id="field_currencyName"
+                                                           [(ngModel)]="currency.currencyName"
+                                                           maxlength="512" required
+                                                           [tabIndex]="2"
+                                                           [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"/>
+                                                </div>
+                                                <label class="col-sm-2 my-col-form-label" style="padding-right: 0px"
+                                                       jhiTranslate="ebwebApp.currency.formula"><b>Phép tính quy đổi</b></label>
+                                                <div class="col-sm-3 pd-l-0 pd-r-10 my-last-div-unit-2-2">
+                                                    <combo-box style="" id="field_forula"
+                                                               name="forula"
+                                                               [dataList]="formulaList"
+                                                               [isOutTable]="true"
+                                                               [listColumns]="['name']"
+                                                               displayMember="name"
+                                                               valueName="id"
+                                                               [headerColumns]="['Phép tính quy đổi']"
+                                                               [isObject]="false"
+                                                               [isRequired]="true"
+                                                               [(ngModel)]="currency.formula "
+                                                               [tabindex]="3"
+                                                               [isReadOnly]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)">
+                                                    </combo-box>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row no-gutters">
+                                                <label class="col-sm-2 my-col-form-label" style="padding-right: 0px"
+                                                       jhiTranslate="ebwebApp.currency.exchangeRate"><b>Tỷ
+                                                    giá</b></label>
+                                                <div class="col-sm-3 pd-l-0 pd-r-10">
+                                                    <input type="text" class="form-control" name="exchangeRate"
+                                                           id="field_exchangeRate"
+                                                           [(ngModel)]="currency.exchangeRate"
+                                                           ebCurrencyMask
+                                                           [readOnly]="currency.currencyCode === currencyCode"
+                                                           [class.myreadonlytrue]="currency.currencyCode === currencyCode"
+                                                           [allowNegative]="false"
+                                                           [systemOptions]="currentAccount?.systemOption" [type]="4"
+                                                           [tabIndex]="4"
+                                                           [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"/>
+                                                </div>
+                                                <label class="col-sm-4 my-col-form-label1" style="padding-right: 0px">
+                                                    {{getAlert()}}
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-12" *ngIf="currency.id">
+                    <div class="row" style="padding-left: 15px">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="customCheck1" name="isActive"
+                                   [(ngModel)]="currency.isActive"
+                                   [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)">
+                            <label class="custom-control-label" for="customCheck1"
+                                   jhiTranslate="ebwebApp.currency.isActive"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #content let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.saBill.saveMessage">Dữ liệu đã bị thay đổi, Bạn có muốn lưu lại?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="save()" jhiTranslate="entity.action.save">Save</button>
+        <button type="button" class="btn btn-outline-dark" (click)="close()" jhiTranslate="entity.action.noSave">close</button>
+        <button type="button" class="btn btn-outline-dark" (click)="closeContent()" jhiTranslate="entity.action.close">close</button>
+    </div>
+</ng-template>

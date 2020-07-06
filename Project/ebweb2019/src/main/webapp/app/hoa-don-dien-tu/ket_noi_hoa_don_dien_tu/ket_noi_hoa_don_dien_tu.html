@@ -1,0 +1,51 @@
+<div class="body">
+    <div class="modal-header">
+        <h4 class="modal-title">Kết nối hóa đơn điện tử</h4>
+    </div>
+    <div class="modal-body">
+        <fieldset class="border p-2">
+            <legend class="w-auto">Thiết lập tài khoản đăng nhập hệ thống hóa đơn điện tử</legend>
+            <div class="form-group">
+                <label for="supplier">Nhà cung cấp:</label>
+                <combo-box id = "supplier" name="{{'comboboxaccountingObject_DT'}}"
+                           [dataList]="suppliers"
+                           [isOutTable]="true"
+                           [listColumns]="['supplierServiceCode','supplierServiceName']"
+                           displayMember="supplierServiceName"
+                           valueName="supplierServiceCode"
+                           [headerColumns]="['Mã nhà cung cấp','Tên nhà cung cấp']"
+                           [isObject]="false"
+                           [(ngModel)]="connectEInvoice.supplierCode"
+                           (ngModelChange)="selectSupplier()"
+                ></combo-box>
+            </div>
+            <div class="form-group">
+                <label for="path">Đường dẫn truy cập:</label>
+                <input type="text" [(ngModel)]="connectEInvoice.path" autocomplete="false" class="form-control" id="path" placeholder="Nhập đường dẫn truy cập" name="path">
+            </div>
+            <div class="form-group">
+                <label for="username">Tên đăng nhập:</label>
+                <input type="text" [(ngModel)]="connectEInvoice.userName" autocomplete="false" class="form-control" id="username" placeholder="Nhập tên đăng nhập" name="username">
+            </div>
+            <div class="form-group">
+                <label for="pwd">Mật khẩu:</label>
+                <input [(ngModel)]="connectEInvoice.password" type="password" autocomplete="false" class="form-control" id="pwd" placeholder="Nhập mật khẩu" name="pwd">
+            </div>
+            <div class="radio-button" [hidden]="connectEInvoice.supplierCode === NCCDV_EINVOICE.MIV">
+                <label><input type="radio" name="sign" [value]="false" [(ngModel)]="connectEInvoice.useToken"> Ký server</label>
+                <label><input [(ngModel)]="connectEInvoice.useToken" [value]="true" type="radio" name="sign"> Ký bằng usb token</label>
+            </div>
+            <div class="checkbox" *ngIf="connectEInvoice.supplierCode === NCCDV_EINVOICE.SDS">
+                <label><input [(ngModel)]="connectEInvoice.useInvoceWait" type="checkbox" name="useInvocieWait"> Sử dụng chức năng để dành số hóa đơn</label>
+            </div>
+        </fieldset>
+    </div>
+    <div class="modal-footer">
+        <button *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_KetNoiHD]" id="save" (click)="connect()" class="btn btn-success">
+            <span>Lưu lại</span>
+        </button>
+        <button type="button" class="btn btn-dark" (click)="activeModal.dismiss('closed')" data-dismiss="modal">
+            <span jhiTranslate="entity.action.cancel">Cancel</span>
+        </button>
+    </div>
+</div>

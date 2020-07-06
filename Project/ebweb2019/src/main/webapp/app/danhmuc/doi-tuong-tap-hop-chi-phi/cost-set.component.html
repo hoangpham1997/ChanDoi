@@ -1,0 +1,117 @@
+<div >
+    <div >
+        <div class="menu-tool-bar he">
+            <div class="ptitle">
+                <span jhiTranslate="ebwebApp.costSet.home.title">Đối tượng tập hợp chi phí</span>
+            </div>
+            <div class="gr-toolbar">
+                <a (click)="addNew($event)" title="{{'ebwebApp.autoPrinciple.tooltipAdd' | translate}}"
+                   *ebHasAnyAuthority="['ROLE_ADMIN', ROLE_DanhMucDTTHCP_Them]"><i class="mdi mdi-plus"></i> <span
+                    jhiTranslate="ebwebApp.costSet.add"></span></a>
+                <a (click)="edit()" [class.disable]="!selectedRow" title="{{'ebwebApp.autoPrinciple.tooltipEdit' | translate}}"
+                   *ebHasAnyAuthority="['ROLE_ADMIN', ROLE_DanhMucDTTHCP_Sua]"><i class="mdi mdi-pen"></i> <span
+                    jhiTranslate="ebwebApp.costSet.edit"></span></a>
+                <a (click)="delete()" [class.disable]="!selectedRow" title="{{'ebwebApp.autoPrinciple.tooltipDelete' | translate}}"
+                   *ebHasAnyAuthority="['ROLE_ADMIN', ROLE_DanhMucDTTHCP_Xoa]"><i class="mdi mdi-delete"></i><span
+                    jhiTranslate="ebwebApp.costSet.delete.deleted"></span> </a>
+            </div>
+        </div>
+        <div class="frm-main frm-tables frm-padding" style="background: #cbdcf0; margin-top: 2px">
+            <div class="table-scroll voucher-table"  id="table-scroll0" style="height: auto; max-height: 700px!important;">
+                <table class="main-table" id="main-table0">
+                    <thead>
+                    <tr>
+                        <th jhiTranslate="ebwebApp.costSet.costSetCode" scope="col"></th>
+                        <th jhiTranslate="ebwebApp.costSet.costSetName" scope="col"></th>
+                        <th jhiTranslate="ebwebApp.costSet.costSetType" scope="col"></th>
+                        <th jhiTranslate="ebwebApp.costSet.deScription" scope="col"></th>
+                        <th jhiTranslate="ebwebApp.costSet.isActive" scope="col"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let costSet of costSets ;trackBy: trackId"
+                        (click)="selectMultiRow(costSet, $event, costSets)"
+                        [class.row-selected]="this.selectedRows.indexOf(costSet) !== -1"
+                        (dblclick)="edit()"
+                    >
+                        <td class="jsgrid-cell jsgrid-align-left" style="width: 150px"
+                            title="{{costSet.costSetCode}}">{{costSet.costSetCode}}</td>
+
+                        <td class="jsgrid-cell jsgrid-align-left" style="width: 150px"
+                            title="{{costSet.costSetName}}">{{costSet.costSetName}}</td>
+
+                        <td class="jsgrid-cell jsgrid-align-left" style="width: 150px"
+                            title="{{costSet.costSetType}}">{{getCostSetName(costSet.costSetType)}}</td>
+
+                        <td class="jsgrid-cell jsgrid-align-left" style="width: 150px"
+                            title="{{costSet.deScription}}">{{costSet.deScription}}</td>
+
+                        <td class="jsgrid-cell jsgrid-align-center"
+                            style="width: 150px"><input [(ngModel)]="costSet.isActive"
+                                                        class="jsgrid-cell jsgrid-align-center"
+                                                        disabled id="field_isactive"
+                                                        name="isactive" type="checkbox"/></td>
+                    </tr>
+                    <tr *ngFor="let l of newArr(20 - costSets?.length)">
+                        <td class="jsgrid-cell jsgrid-align-left" style="width: 150px"><input class="input-Cell" type="text" disabled></td>
+                        <td class="jsgrid-cell jsgrid-align-left" style="width: 150px"><input class="input-Cell" type="text" disabled></td>
+                        <td class="jsgrid-cell jsgrid-align-left" style="width: 150px"><input class="input-Cell" type="text" disabled></td>
+                        <td class="jsgrid-cell jsgrid-align-left" style="width: 150px"><input class="input-Cell" type="text" disabled></td>
+                        <td class="jsgrid-cell jsgrid-align-left" style="width: 150px"><input class="input-Cell" type="text" disabled></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!--        phân trang-->
+        <div *ngIf="costSets && costSets.length"
+             style="padding-right: 16px">
+            <div class="row justify-content-end" style="height:32px">
+                <div class="col-lg-2">
+                    <div class="form-group row">
+                        <label class="col-sm-7 col-form-label" for="itemsPerPage"
+                               style="padding-right: 0px;text-align: right;"><span
+                            jhiTranslate="ebwebApp.costSet.totalPage"></span>: {{totalItems}}</label>
+                        <div class="col-sm-5 pd-l-0">
+                            <select class="form-control form-control-sm" name="itemsPerPage"
+                                    id="itemsPerPage"
+                                    style="background-color: #f5f7fa;"
+                                    [(ngModel)]="itemsPerPage"
+                                    (ngModelChange)="selectedItemPerPage()"
+                            >
+                                <option [value]="10">10</option>
+                                <option [value]="20">20</option>
+                                <option [value]="30">30</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="justify-content-end">
+                    <ngb-pagination [size]="'sm'" [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage"
+                                    [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
+                                    (pageChange)="loadPage(page)"></ngb-pagination>
+                </div>
+            </div>
+        </div>
+        <!--        end of phan trang-->
+    </div>
+</div>
+
+<ng-template #popUpMultiDelete let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.mBDeposit.multiDeleteMessage">Bạn có chắc chắn muốn xóa những chứng từ này
+                    không?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-danger" (click)="continueDelete()"
+                jhiTranslate="entity.action.delete">
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="closePopUpDelete()"
+                jhiTranslate="ebwebApp.mBDeposit.return">
+        </button>
+    </div>
+</ng-template>

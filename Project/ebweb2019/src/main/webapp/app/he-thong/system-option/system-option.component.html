@@ -1,0 +1,1334 @@
+<div class="container-fluid">
+    <div class="margin-tp-5 margin-0">
+        <div class="">
+            <div class="itemw" style="color: #FFFFFF">
+                <div class="menu-tool-bar he">
+                    <div class="ptitle">
+                        <span jhiTranslate="ebwebApp.systemOption.home.title"></span>
+                    </div>
+                    <div class="gr-toolbar">
+                        <a title="{{buttonSaveTranslate | translate}}"
+                           *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_TuyChon_Sua]" (click)="save($event)"><i
+                            class="mdi mdi-briefcase-download"></i> <span
+                            jhiTranslate="ebwebApp.dinhMucGiaThanhThanhPham.save"></span>
+                        </a>
+                        <a *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_TuyChon_Xem]"
+                           title="{{buttonCloseFormTranslate | translate}}" (click)="closeForm()"><i
+                            class="mdi mdi-window-close"></i><span
+                            jhiTranslate="ebwebApp.receiveBill.exit"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="systemOptions && systemOptions[0]">
+                <ngb-tabset class="tool-navbar">
+                    <ngb-tab id="tab1">
+                        <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.systemOption.materialGoods"></span>
+                        </ng-template>
+                        <ng-template ngbTabContent>
+                            <div class="frm-main">
+                                <div class="row">
+                                    <div class="col-lg-6 pd-r-0">
+                                        <fieldset>
+                                            <form style="margin-bottom: 20px;">
+                                                <h3 jhiTranslate="ebwebApp.systemOption.h3.phuongPhap"></h3>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-4 col-form-label font-general"
+                                                                   style="padding-right: 0px"
+                                                                   jhiTranslate="ebwebApp.systemOption.phuongPhapTinhGiaXuatKho"><b>Phương
+                                                                pháp tính giá xuất kho
+                                                                (*)</b></label>
+                                                            <div class="col-sm-8 pd-l-0 pd-r-10"
+                                                            >
+                                                                <select class="form-control"
+                                                                        name="phuongPhapTinhGiaXuatKho"
+                                                                        id="phuongPhapTinhGiaXuatKho"
+                                                                        [(ngModel)]="systemOptions[0].data"
+                                                                        (ngModelChange)="changePhuongPhapTinhGiaXuatKho()"
+                                                                        [disabled]="(!isRoleSua)">
+                                                                    <option [value]="null">
+                                                                    </option>
+                                                                    <option [value]="0"
+                                                                            jhiTranslate="ebwebApp.systemOption.binhQuanCuoiKy">
+                                                                    </option>
+                                                                    <option [value]="1"
+                                                                            jhiTranslate="ebwebApp.systemOption.binhQuanTucThoi">
+                                                                    </option>
+                                                                    <option [value]="3"
+                                                                            jhiTranslate="ebwebApp.systemOption.dichDanh">
+                                                                    </option>
+                                                                    <option [value]="2"
+                                                                            jhiTranslate="ebwebApp.systemOption.nhapTruocXuatTruoc">
+                                                                    </option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </fieldset>
+                                    </div>
+                                    <div class="col-lg-6 pd-r-0">
+                                        <fieldset>
+                                            <form style="margin-bottom: 20px; border: none">
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group row">
+                                                            <div class="col-sm-12 pd-l-0 pd-r-10">
+                                                                <div class="custom-control custom-checkbox">
+                                                                    <input type="checkbox" class="custom-control-input"
+                                                                           name="xuatQuaSLTon"
+                                                                           id="xuatQuaSLTon"
+                                                                           [checked]="systemOptions[9].data === '1'"
+                                                                           (change)="changeCheckBox(9, $event)"
+                                                                           [disabled]="(!isRoleSua)"
+                                                                    >
+                                                                    <label class="custom-control-label"
+                                                                           for="xuatQuaSLTon"
+                                                                           jhiTranslate="ebwebApp.systemOption.xuatQuaSLTon"></label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <div class="col-sm-12 pd-l-0 pd-r-10">
+                                                                <div class="custom-control custom-checkbox">
+                                                                    <input type="checkbox" class="custom-control-input"
+                                                                           id="nhapDonGiaVon"
+                                                                           name="nhapDonGiaVon"
+                                                                           [checked]="systemOptions[10].data === '1'"
+                                                                           (change)="changeCheckBox(10, $event)"
+                                                                           [disabled]="(!isRoleSua)">
+                                                                    <label class="custom-control-label"
+                                                                           for="nhapDonGiaVon"
+                                                                           jhiTranslate="ebwebApp.systemOption.nhapDonGiaVon"></label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6 pd-r-0"
+                                         [class.myreadonlytrue]="systemOptions[0].data === '0' || systemOptions[0].data === '3'">
+                                        <fieldset>
+                                            <form style="margin-bottom: 20px;">
+                                                <h3 jhiTranslate="ebwebApp.systemOption.h3.thoiDiemTinhGiaXuatKho"></h3>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group row">
+                                                            <div class="col-sm-12">
+                                                                <div class="custom-control custom-radio">
+                                                                    <input type="radio" id="tDTGia_NgayLapCTu"
+                                                                           name="ngayLapCTu"
+                                                                           class="custom-control-input"
+                                                                           [(ngModel)]="systemOptions[1].data"
+                                                                           [value]="'1'"
+                                                                           [disabled]="(!isRoleSua)">
+                                                                    <label class="custom-control-label"
+                                                                           for="tDTGia_NgayLapCTu"
+                                                                           jhiTranslate="ebwebApp.systemOption.tDTGia_NgayLapCTu"></label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <div class="col-sm-12">
+                                                                <div class="custom-control custom-radio">
+                                                                    <input type="radio"
+                                                                           id="tDTGia_SauKhiSuDungChucNangTinhGia"
+                                                                           name="ngayLapCTu"
+                                                                           class="custom-control-input"
+                                                                           [(ngModel)]="systemOptions[1].data"
+                                                                           [value]="'0'"
+                                                                           [disabled]="(!isRoleSua)">
+                                                                    <label class="custom-control-label"
+                                                                           for="tDTGia_SauKhiSuDungChucNangTinhGia"
+                                                                           jhiTranslate="ebwebApp.systemOption.tDTGia_SauKhiSuDungChucNangTinhGia"></label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </fieldset>
+                                    </div>
+                                    <div class="col-lg-6 pd-r-0"
+                                         [class.myreadonlytrue]="systemOptions[0].data === '1' || systemOptions[0].data === '2' || systemOptions[0].data === '3' ">
+                                        <fieldset>
+                                            <form style="margin-bottom: 20px;">
+                                                <h3 jhiTranslate="ebwebApp.systemOption.h3.cachTinhGia"></h3>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group row">
+                                                            <div class="col-sm-12">
+                                                                <div class="custom-control custom-radio">
+                                                                    <input type="radio" id="tinhGiaTungKho1"
+                                                                           name="tinhGiaTungKho"
+                                                                           class="custom-control-input"
+                                                                           [(ngModel)]="systemOptions[2].data"
+                                                                           [value]="'1'"
+                                                                           [disabled]="(!isRoleSua)">
+                                                                    <label class="custom-control-label"
+                                                                           for="tinhGiaTungKho1"
+                                                                           jhiTranslate="ebwebApp.systemOption.tinhGiaTungKho1"></label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <div class="col-sm-12">
+                                                                <div class="custom-control custom-radio">
+                                                                    <input type="radio" id="tinhGiaTungKho2"
+                                                                           name="tinhGiaTungKho"
+                                                                           class="custom-control-input"
+                                                                           [(ngModel)]="systemOptions[2].data"
+                                                                           [value]="'0'"
+                                                                           [disabled]="(!isRoleSua)">
+                                                                    <label class="custom-control-label"
+                                                                           for="tinhGiaTungKho2"
+                                                                           jhiTranslate="ebwebApp.systemOption.tinhGiaTungKho2"></label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-12 col-form-label"
+                                                                   style="padding-top: 6px"></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6 pd-r-0">
+                                        <fieldset>
+                                            <form style="margin-bottom: 20px;">
+                                                <h3 jhiTranslate="ebwebApp.systemOption.h3.tuyChonKhiLapChungTuBanHang"></h3>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group row">
+                                                            <div class="col-sm-6">
+                                                                <div class="custom-control custom-radio">
+                                                                    <input type="radio" id="bHKiemPXuat1"
+                                                                           name="bHKiemPXuat"
+                                                                           class="custom-control-input"
+                                                                           [(ngModel)]="systemOptions[3].data"
+                                                                           [value]="'1'"
+                                                                           [disabled]="(!isRoleSua)">
+                                                                    <label class="custom-control-label"
+                                                                           for="bHKiemPXuat1"
+                                                                           jhiTranslate="ebwebApp.systemOption.bHKiemPXuat1"></label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-6">
+                                                                <div class="custom-control custom-radio">
+                                                                    <input type="radio" id="bHKiemPXuat2"
+                                                                           name="bHKiemPXuat"
+                                                                           class="custom-control-input"
+                                                                           [(ngModel)]="systemOptions[3].data"
+                                                                           [value]="'0'"
+                                                                           [disabled]="(!isRoleSua)">
+                                                                    <label class="custom-control-label"
+                                                                           for="bHKiemPXuat2"
+                                                                           jhiTranslate="ebwebApp.systemOption.bHKiemPXuat2"></label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <div class="col-sm-6">
+                                                                <div class="custom-control custom-radio">
+                                                                    <input type="radio" id="bHKiemHD1" name="bHKiemHD"
+                                                                           class="custom-control-input"
+                                                                           [(ngModel)]="systemOptions[4].data"
+                                                                           [value]="'1'"
+                                                                           [disabled]="(!isRoleSua)">
+                                                                    <label class="custom-control-label" for="bHKiemHD1"
+                                                                           jhiTranslate="ebwebApp.systemOption.bHKiemHD1"></label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-6">
+                                                                <div class="custom-control custom-radio">
+                                                                    <input type="radio" id="bHKiemHD2" name="bHKiemHD"
+                                                                           class="custom-control-input"
+                                                                           [(ngModel)]="systemOptions[4].data"
+                                                                           [value]="'0'"
+                                                                           [disabled]="(!isRoleSua)">
+                                                                    <label class="custom-control-label" for="bHKiemHD2"
+                                                                           jhiTranslate="ebwebApp.systemOption.bHKiemHD2"></label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </fieldset>
+                                    </div>
+                                    <div class="col-lg-6 pd-r-0">
+                                        <fieldset>
+                                            <form style="margin-bottom: 20px;">
+                                                <h3 jhiTranslate="ebwebApp.systemOption.h3.tuyChonKhiLapChungTuHangMuaTraLai"></h3>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group row">
+                                                            <div class="col-sm-6">
+                                                                <div class="custom-control custom-radio">
+                                                                    <input type="radio" id="hMTLKiemPXuat1"
+                                                                           name="hMTLKiemPXuat"
+                                                                           class="custom-control-input"
+                                                                           [(ngModel)]="systemOptions[5].data"
+                                                                           [value]="'1'"
+                                                                           [disabled]="(!isRoleSua)">
+                                                                    <label class="custom-control-label"
+                                                                           for="hMTLKiemPXuat1"
+                                                                           jhiTranslate="ebwebApp.systemOption.hMTLKiemPXuat1"></label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-6">
+                                                                <div class="custom-control custom-radio">
+                                                                    <input type="radio" id="hMTLKiemPXuat2"
+                                                                           name="hMTLKiemPXuat"
+                                                                           class="custom-control-input"
+                                                                           [(ngModel)]="systemOptions[5].data"
+                                                                           [value]="'0'"
+                                                                           [disabled]="(!isRoleSua)">
+                                                                    <label class="custom-control-label"
+                                                                           for="hMTLKiemPXuat2"
+                                                                           jhiTranslate="ebwebApp.systemOption.hMTLKiemPXuat2"></label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <div class="col-sm-6">
+                                                                <div class="custom-control custom-radio">
+                                                                    <input type="radio" id="hMTLKiemHD1"
+                                                                           name="hMTLKiemHD"
+                                                                           class="custom-control-input"
+                                                                           [(ngModel)]="systemOptions[6].data"
+                                                                           [value]="'1'"
+                                                                           [disabled]="(!isRoleSua)">
+                                                                    <label class="custom-control-label"
+                                                                           for="hMTLKiemHD1"
+                                                                           jhiTranslate="ebwebApp.systemOption.hMTLKiemHD1"></label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-6">
+                                                                <div class="custom-control custom-radio">
+                                                                    <input type="radio" id="hMTLKiemHD2"
+                                                                           name="hMTLKiemHD"
+                                                                           class="custom-control-input"
+                                                                           [(ngModel)]="systemOptions[6].data"
+                                                                           [value]="'0'"
+                                                                           [disabled]="(!isRoleSua)">
+                                                                    <label class="custom-control-label"
+                                                                           for="hMTLKiemHD2"
+                                                                           jhiTranslate="ebwebApp.systemOption.hMTLKiemHD2"></label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6 pd-r-0">
+                                        <fieldset>
+                                            <form style="margin-bottom: 20px;">
+                                                <h3 jhiTranslate="ebwebApp.systemOption.h3.tuyChonKhiLapChungTuHangBanTraLai"></h3>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group row">
+                                                            <div class="col-sm-6">
+                                                                <div class="custom-control custom-radio">
+                                                                    <input type="radio" id="hBTLKiemPNhap1"
+                                                                           name="hBTLKiemPNhap"
+                                                                           class="custom-control-input"
+                                                                           [(ngModel)]="systemOptions[7].data"
+                                                                           [value]="'1'"
+                                                                           [disabled]="(!isRoleSua)">
+                                                                    <label class="custom-control-label"
+                                                                           for="hBTLKiemPNhap1"
+                                                                           jhiTranslate="ebwebApp.systemOption.hBTLKiemPNhap1"></label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-6">
+                                                                <div class="custom-control custom-radio">
+                                                                    <input type="radio" id="hBTLKiemPNhap2"
+                                                                           name="hBTLKiemPNhap"
+                                                                           class="custom-control-input"
+                                                                           [(ngModel)]="systemOptions[7].data"
+                                                                           [value]="'0'"
+                                                                           [disabled]="(!isRoleSua)">
+                                                                    <label class="custom-control-label"
+                                                                           for="hBTLKiemPNhap2"
+                                                                           jhiTranslate="ebwebApp.systemOption.hBTLKiemPNhap2"></label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </fieldset>
+                                    </div>
+                                    <div class="col-lg-6 pd-r-0">
+                                        <fieldset>
+                                            <form style="margin-bottom: 20px;">
+                                                <h3 jhiTranslate="ebwebApp.systemOption.h3.tuyChonKhiLapChungTuHangBanGiamGia"></h3>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group row">
+                                                            <div class="col-sm-6">
+                                                                <div class="custom-control custom-radio">
+                                                                    <input type="radio" id="hBGGKiemHD1"
+                                                                           name="hBGGKiemHD"
+                                                                           class="custom-control-input"
+                                                                           [(ngModel)]="systemOptions[8].data"
+                                                                           [value]="'1'"
+                                                                           [disabled]="(!isRoleSua)">
+                                                                    <label class="custom-control-label"
+                                                                           for="hBGGKiemHD1"
+                                                                           jhiTranslate="ebwebApp.systemOption.hBGGKiemHD1"></label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-6">
+                                                                <div class="custom-control custom-radio">
+                                                                    <input type="radio" id="hBGGKiemHD2"
+                                                                           name="hBGGKiemHD"
+                                                                           class="custom-control-input"
+                                                                           [(ngModel)]="systemOptions[8].data"
+                                                                           [value]="'0'"
+                                                                           [disabled]="(!isRoleSua)">
+                                                                    <label class="custom-control-label"
+                                                                           for="hBGGKiemHD2"
+                                                                           jhiTranslate="ebwebApp.systemOption.hBGGKiemHD2"></label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </ngb-tab>
+                    <ngb-tab id="tab2">
+                        <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.systemOption.numberFormat"></span>
+                        </ng-template>
+                        <ng-template ngbTabContent>
+                            <div class="frm-main">
+                                <div class="row">
+                                    <div class="col-lg-8 pd-r-0">
+                                        <fieldset>
+                                            <form style="margin-bottom: 20px;">
+                                                <h3 jhiTranslate="ebwebApp.systemOption.h3.dinhDangSauDauPhay"></h3>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-2 col-form-label font-general"
+                                                                   style="padding-right: 0px"
+                                                                   jhiTranslate="ebwebApp.systemOption.tienVND"></label>
+                                                            <div class="col-sm-2 pd-l-0 pd-r-10">
+                                                                <input type="number"
+                                                                       class="form-control form-control-sm"
+                                                                       name="tienVND"
+                                                                       [(ngModel)]="systemOptions[11].data"
+                                                                       [max]="4" [min]="0"
+                                                                       (change)="checkInputValue(11, 4, 'ebwebApp.systemOption.tienVND')"
+                                                                       ebNumeric
+                                                                       [disabled]="(!isRoleSua)">
+                                                            </div>
+                                                            <label class="col-sm-2 col-form-label font-general"
+                                                                   style="padding-right: 0px"
+                                                                   jhiTranslate="ebwebApp.systemOption.tienNgoaiTe"></label>
+                                                            <div class="col-sm-2 pd-l-0 pd-r-10">
+                                                                <input type="number"
+                                                                       class="form-control form-control-sm"
+                                                                       name="tienNgoaiTe"
+                                                                       [(ngModel)]="systemOptions[12].data" min="0" max="4"
+                                                                       (change)="checkInputValue(12, 4, 'ebwebApp.systemOption.tienNgoaiTe')"
+                                                                       ebNumeric
+                                                                       [disabled]="(!isRoleSua)">
+                                                            </div>
+                                                            <label class="col-sm-1 col-form-label font-general"
+                                                                   style="padding-right: 0px"
+                                                                   jhiTranslate="ebwebApp.systemOption.soLuong"></label>
+                                                            <div class="col-sm-3 pd-l-0 pd-r-10">
+                                                                <input type="number"
+                                                                       class="form-control form-control-sm"
+                                                                       name="soLuong" min="0" max="8" ebNumeric
+                                                                       [(ngModel)]="systemOptions[15].data"
+                                                                       (change)="checkInputValue(15, 8, 'ebwebApp.systemOption.soLuong')"
+                                                                       [disabled]="(!isRoleSua)">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-2 col-form-label font-general"
+                                                                   style="padding-right: 0px"
+                                                                   jhiTranslate="ebwebApp.systemOption.dơnGia"></label>
+                                                            <div class="col-sm-2 pd-l-0 pd-r-10">
+                                                                <input type="number"
+                                                                       class="form-control form-control-sm"
+                                                                       name="donGia" min="0" max="4" ebNumeric
+                                                                       [(ngModel)]="systemOptions[13].data"
+                                                                       (change)="checkInputValue(13, 4, 'ebwebApp.systemOption.dơnGia')"
+                                                                       [disabled]="(!isRoleSua)">
+                                                            </div>
+                                                            <label class="col-sm-2 col-form-label font-general"
+                                                                   style="padding-right: 0px"
+                                                                   jhiTranslate="ebwebApp.systemOption.donGiaNgoaiTe"></label>
+                                                            <div class="col-sm-2 pd-l-0 pd-r-10">
+                                                                <input type="number"
+                                                                       class="form-control form-control-sm"
+                                                                       name="donGiaNgoaiTe" min="0" max="4" ebNumeric
+                                                                       [(ngModel)]="systemOptions[14].data"
+                                                                       (change)="checkInputValue(14, 4, 'ebwebApp.systemOption.donGiaNgoaiTe')"
+                                                                       [disabled]="(!isRoleSua)">
+                                                            </div>
+                                                            <label class="col-sm-1 col-form-label font-general"
+                                                                   style="padding-right: 0px"
+                                                                   jhiTranslate="ebwebApp.systemOption.tyGia"></label>
+                                                            <div class="col-sm-3 pd-l-0 pd-r-10">
+                                                                <input type="number"
+                                                                       class="form-control form-control-sm"
+                                                                       name="tyGia" min="0" max="4" ebNumeric
+                                                                       [(ngModel)]="systemOptions[16].data"
+                                                                       (change)="checkInputValue(16, 4, 'ebwebApp.systemOption.tyGia')"
+                                                                       [disabled]="(!isRoleSua)">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-2 col-form-label font-general"
+                                                                   style="padding-right: 0px"
+                                                                   jhiTranslate="ebwebApp.systemOption.heSoTyLe"></label>
+                                                            <div class="col-sm-2 pd-l-0 pd-r-10">
+                                                                <input type="number"
+                                                                       class="form-control form-control-sm"
+                                                                       name="heSoTyLe" min="0" max="4" ebNumeric
+                                                                       [(ngModel)]="systemOptions[17].data"
+                                                                       (change)="checkInputValue(17, 4, 'ebwebApp.systemOption.heSoTyLe')"
+                                                                       [disabled]="(!isRoleSua)">
+                                                            </div>
+                                                            <label class="col-sm-2 col-form-label font-general"
+                                                                   style="padding-right: 0px"
+                                                                   jhiTranslate="ebwebApp.systemOption.tyLePhanBo"></label>
+                                                            <div class="col-sm-2 pd-l-0 pd-r-10">
+                                                                <input type="number"
+                                                                       class="form-control form-control-sm"
+                                                                       name="tyLePhanBo" min="0" max="10" ebNumeric
+                                                                       [(ngModel)]="systemOptions[18].data"
+                                                                       (change)="checkInputValue(18, 10, 'ebwebApp.systemOption.tyLePhanBo')"
+                                                                       [disabled]="(!isRoleSua)">
+                                                            </div>
+                                                            <div class="col-sm-1 pd-l-0 pd-r-10">
+                                                            </div>
+                                                            <div class="col-sm-3 pd-l-0 pd-r-10">
+                                                                <button class="btn btn-success btn-sm"
+                                                                        style="font-size: 14px;width: 100%; padding-left: 0px"
+                                                                        (click)="resetFormatNumber()">
+                                                                    <i class="mdi mdi-magnify"
+                                                                       aria-hidden="true"
+                                                                       style="margin-right: 5px"></i><span
+                                                                    jhiTranslate="ebwebApp.systemOption.resetDefault"></span>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                        <br><br><br><br><br>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </fieldset>
+                                    </div>
+                                    <div class="col-lg-4 pd-r-0">
+                                        <fieldset>
+                                            <form style="margin-bottom: 20px">
+                                                <h3 jhiTranslate="ebwebApp.systemOption.h3.hienThiSo"></h3>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group row">
+                                                            <label class="font-general"
+                                                                   style="padding-right: 0px; width: 40% !important;"
+                                                                   jhiTranslate="ebwebApp.systemOption.hienThiSoAm"></label>
+                                                            <div style="width: 60% !important;">
+                                                                <select class="form-control"
+                                                                        name="hienThiSoAm"
+                                                                        id="hienThiSoAm"
+                                                                        [(ngModel)]="systemOptions[19].data"
+                                                                        [disabled]="(!isRoleSua)">
+                                                                    <option [value]="0">(n)
+                                                                    </option>
+                                                                    <option [value]="1"
+                                                                    >-n
+                                                                    </option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="font-general"
+                                                                   style="padding-right: 0px; width: 40% !important;"
+                                                                   jhiTranslate="ebwebApp.systemOption.cachDocTienLe"></label>
+                                                            <div style="width: 60% !important;">
+                                                                <select class="form-control"
+                                                                        name="cachDocTienLe"
+                                                                        id="cachDocTienLe"
+                                                                        [(ngModel)]="systemOptions[20].data"
+                                                                        [disabled]="(!isRoleSua)">
+                                                                    <option [value]="0"
+                                                                            jhiTranslate="ebwebApp.systemOption.linh">
+                                                                    </option>
+                                                                    <option [value]="1"
+                                                                            jhiTranslate="ebwebApp.systemOption.le">
+                                                                    </option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </fieldset>
+                                        <fieldset>
+                                            <form style="margin-bottom: 20px">
+                                                <h3 jhiTranslate="ebwebApp.systemOption.h3.dauNganCach"></h3>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group row">
+                                                            <label class="font-general"
+                                                                   style="padding-right: 0px; width: 40% !important;"
+                                                                   jhiTranslate="ebwebApp.systemOption.nganCachHangNghin"></label>
+                                                            <div  style="width: 60% !important;">
+                                                                <select class="form-control"
+                                                                        name="nganCachHangNghin"
+                                                                        id="nganCachHangNghin"
+                                                                        [(ngModel)]="systemOptions[21].data"
+                                                                        [disabled]="(!isRoleSua)">
+                                                                    <option [value]="'.'">.
+                                                                    </option>
+                                                                    <option [value]="','">,
+                                                                    </option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="font-general"
+                                                                   style="padding-right: 0px; width: 40% !important;"
+                                                                   jhiTranslate="ebwebApp.systemOption.nganCachHangDonVi"></label>
+                                                            <div style="width: 60% !important;">
+                                                                <select class="form-control"
+                                                                        name="nganCachHangDonVi"
+                                                                        id="nganCachHangDonVi"
+                                                                        [(ngModel)]="systemOptions[22].data"
+                                                                        [disabled]="(!isRoleSua)">
+                                                                    <option [value]="'.'">.
+                                                                    </option>
+                                                                    <option [value]="','">,
+                                                                    </option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </ngb-tab>
+                    <ngb-tab id="tab3" *ngIf="genCodes">
+                        <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.systemOption.voucherNumber"></span>
+                        </ng-template>
+                        <ng-template ngbTabContent>
+                            <div class="frm-main frm-mains nobg" style="background: #cbdcf0; margin-top: 5px">
+                                <div class="row">
+                                    <div class="col-lg-12" style="margin-top: 5px">
+                                        <label for="radio1" style="padding-left: 10px">
+                                            <input id="radio1" type="radio"
+                                                   [value]="'0'" name="radio"
+                                                   [(ngModel)]="systemOptions[58].data"
+                                            ></label>
+                                        <label for="radio1">Tăng số từ trái sang phải</label>
+                                        <label for="radio2" style="padding-left: 10px">
+                                            <input id="radio2" type="radio"
+                                                   [value]="'1'" name="radio"
+                                                   [(ngModel)]="systemOptions[58].data"
+                                            ></label>
+                                        <label for="radio2">Tăng số từ phải sang trái</label>
+                                    </div>
+                                </div>
+                                <div id="table-scroll0" class="table-scroll" style="height: 700px !important;">
+                                    <table id="main-table0" class="main-table"
+                                           (keydown.arrowDown)="moveArrowDown($event,5)"
+                                           (keydown.arrowUp)="moveArrowUp($event,5)">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col" jhiTranslate="ebwebApp.systemOption.soThuTu"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.systemOption.typeID"></th>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.systemOption.giaTriHienTai"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.systemOption.soKyTuPhanSo"></th>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.systemOption.tienTo"></th>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.systemOption.hauTo"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.systemOption.soHienThi"></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let genCode of genCodes ;let i = index; trackBy: trackId">
+                                            <td title="{{i+1}}"
+                                                class="jsgrid-cell jsgrid-align-center"
+                                                style="width: 150px">{{i + 1}}</td>
+                                            <td title="{{genCode.typeGroupName}}"
+                                                class="jsgrid-cell jsgrid-align-left"
+                                                style="width: 150px">{{genCode.typeGroupName}}</td>
+                                            <td title="{{genCode.currentValue}}"
+                                                class="jsgrid-cell jsgrid-align-center"
+                                                style="width: 150px"><input type="text" class="input-Cell" name="currentValue"
+                                                                            [(ngModel)]="genCode.currentValue"
+                                                                            (ngModelChange)="changeNumberDisplay(i)"
+                                                                            [disabled]="(!isRoleSua)"
+                                                                            [tabIndex]="1 + (5*i) + 1"/>
+                                            </td>
+                                            <td title="{{genCode.length}}"
+                                                class="jsgrid-cell jsgrid-align-center"
+                                                style="width: 150px"><input type="text" class="input-Cell" name="currentValue"
+                                                                            [(ngModel)]="genCode.length"
+                                                                            (ngModelChange)="changeNumberDisplay(i)"
+                                                                            [disabled]="(!isRoleSua)"
+                                                                            ebNumeric
+                                                                            [tabIndex]="1 + (5*i) + 2"/>
+                                            </td>
+                                            <td title="{{genCode.prefix}}"
+                                                class="jsgrid-cell jsgrid-align-left"
+                                                style="width: 150px"><input type="text" class="input-Cell" name="currentValue"
+                                                                            [(ngModel)]="genCode.prefix"
+                                                                            (ngModelChange)="changeNumberDisplay(i)"
+                                                                            [disabled]="(!isRoleSua)"
+                                                                            [tabIndex]="1 + (5*i) + 3"/>
+                                            </td>
+                                            <td title="{{genCode.suffix}}"
+                                                class="jsgrid-cell jsgrid-align-left"
+                                                style="width: 150px"><input type="text" class="input-Cell" name="currentValue"
+                                                                            [(ngModel)]="genCode.suffix"
+                                                                            (ngModelChange)="changeNumberDisplay(i)"
+                                                                            [disabled]="(!isRoleSua)"
+                                                                            [tabIndex]="1 + (5*i) + 4"/>
+                                            </td>
+                                            <td title="{{genCode.numberDisplay}}"
+                                                class="jsgrid-cell jsgrid-align-left"
+                                                style="width: 150px"><input type="text" class="input-Cell" name="currentValue"
+                                                                            [(ngModel)]="genCode.numberDisplay"
+                                                                            [disabled]="true"
+                                                                            [disabled]="(!isRoleSua)"
+                                                                            [tabIndex]="1 + (5*i) + 5"/></td>
+
+                                        </tr>
+                                        <tr
+                                            *ngFor="let l of newArr(20 - genCodes?.length)">
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot>
+                                        <!--                                        <tr>-->
+                                        <!--                                            <td class="cell-Table countRow"-->
+                                        <!--                                                colspan="5">{{'ebwebApp.mBDeposit.countLine'| translate}}-->
+                                        <!--                                                : {{accountDefaultCategories?.length}}-->
+                                        <!--                                            </td>-->
+                                        <!--                                        </tr>-->
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </ngb-tab>
+                    <ngb-tab id="tab4">
+                        <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.systemOption.otherSetting"></span>
+                        </ng-template>
+                        <ng-template ngbTabContent>
+                            <div class="frm-main">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <fieldset>
+                                            <form style="margin-bottom: 20px;">
+                                                <h3 jhiTranslate="ebwebApp.systemOption.h3.danhMucDungRiengOCacChiNhanh"></h3>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group row">
+                                                            <div class="col-sm-3">
+                                                                <div class="custom-control custom-checkbox">
+                                                                    <input type="checkbox" class="custom-control-input"
+                                                                           id="accountingObject"
+                                                                           name="accountingObject"
+                                                                           [checked]="systemOptions[37].data === '1'"
+                                                                           (change)="changeCheckBox(37, $event)"
+                                                                           [disabled]="(!isRoleSua)">
+                                                                    <label class="custom-control-label"
+                                                                           for="accountingObject"
+                                                                           jhiTranslate="ebwebApp.systemOption.accountingObject"></label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-3">
+                                                                <div class="custom-control custom-checkbox">
+                                                                    <input type="checkbox" class="custom-control-input"
+                                                                           id="costSet"
+                                                                           name="costSet"
+                                                                           [checked]="systemOptions[42].data === '1'"
+                                                                           (change)="changeCheckBox(42, $event)"
+                                                                           [disabled]="(!isRoleSua)">
+                                                                    <label class="custom-control-label"
+                                                                           for="costSet"
+                                                                           jhiTranslate="ebwebApp.systemOption.costSet"></label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-3">
+                                                                <div class="custom-control custom-checkbox">
+                                                                    <input type="checkbox" class="custom-control-input"
+                                                                           id="creditCard"
+                                                                           name="creditCard"
+                                                                           [checked]="systemOptions[44].data === '1'"
+                                                                           (change)="changeCheckBox(44, $event)"
+                                                                           [disabled]="(!isRoleSua)"
+                                                                    >
+                                                                    <label class="custom-control-label"
+                                                                           for="creditCard"
+                                                                           jhiTranslate="ebwebApp.systemOption.creditCard"></label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-3">
+                                                                <div class="custom-control custom-checkbox">
+                                                                    <input type="checkbox" class="custom-control-input"
+                                                                           id="bankAccountDetail"
+                                                                           name="bankAccountDetail"
+                                                                           [checked]="systemOptions[43].data === '1'"
+                                                                           (change)="changeCheckBox(43, $event)"
+                                                                           [disabled]="(!isRoleSua)">
+                                                                    <label class="custom-control-label"
+                                                                           for="bankAccountDetail"
+                                                                           jhiTranslate="ebwebApp.systemOption.bankAccountDetail"></label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <div class="col-sm-3">
+                                                                <div class="custom-control custom-checkbox">
+                                                                    <input type="checkbox" class="custom-control-input"
+                                                                           id="materialGoods"
+                                                                           name="materialGoods"
+                                                                           [checked]="systemOptions[38].data === '1'"
+                                                                           (change)="changeCheckBox(38, $event)"
+                                                                           [disabled]="(!isRoleSua)">
+                                                                    <label class="custom-control-label"
+                                                                           for="materialGoods"
+                                                                           jhiTranslate="ebwebApp.systemOption.materialGoods"></label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-3">
+                                                                <div class="custom-control custom-checkbox">
+                                                                    <input type="checkbox" class="custom-control-input"
+                                                                           id="repository"
+                                                                           name="repository"
+                                                                           [checked]="systemOptions[39].data === '1'"
+                                                                           (change)="changeCheckBox(39, $event)"
+                                                                           [disabled]="(!isRoleSua)"
+                                                                    >
+                                                                    <label class="custom-control-label"
+                                                                           for="repository"
+                                                                           jhiTranslate="ebwebApp.systemOption.repository"></label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6 pd-r-0">
+                                        <fieldset>
+                                            <form style="margin-bottom: 20px;">
+                                                <h3 jhiTranslate="ebwebApp.systemOption.h3.manHinhHienThi"></h3>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-4 col-form-label font-general"
+                                                                   style="padding-right: 0px"
+                                                                   jhiTranslate="ebwebApp.systemOption.chungTuChuaDuocGhiSo"></label>
+                                                            <div class="col-sm-8 pd-l-0 pd-r-10">
+                                                                <button class="color-div btn-success"
+                                                                        (click)="openModelDelete(colorPickerModal,'color1')"
+                                                                        [ngStyle]="{'background-color': color || 'black'}"
+                                                                        [disabled]="(!isRoleSua)"></button>
+                                                                <span class="text ml-2">{{color}}</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-4 col-form-label font-general"
+                                                                   style="padding-right: 0px"
+                                                                   jhiTranslate="ebwebApp.systemOption.soAmTrenBaoCao"></label>
+                                                            <div class="col-sm-8 pd-l-0 pd-r-10">
+                                                                <button class="color-div btn-success"
+                                                                        (click)="openModelDelete(colorPickerModal,'color2')"
+                                                                        [ngStyle]="{'background-color': color2 || 'black'}"
+                                                                        [disabled]="(!isRoleSua)"></button>
+                                                                <span class="text ml-2">{{color2}}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </fieldset>
+                                    </div>
+                                    <div class="col-lg-6 pd-r-0">
+                                        <fieldset>
+                                            <form style="margin-bottom: 20px;">
+                                                <h3 jhiTranslate="ebwebApp.systemOption.h3.tinhTyGiaXuatQuy"></h3>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-3 col-form-label font-general"
+                                                                   style="padding-right: 0px"
+                                                                   jhiTranslate="ebwebApp.systemOption.phuongPhapTinh"></label>
+                                                            <div class="col-sm-9 pd-l-0 pd-r-10">
+                                                                <select class="form-control"
+                                                                        name="phuongPhapTinh"
+                                                                        id="phuongPhapTinh"
+                                                                        [(ngModel)]="systemOptions[25].data"
+                                                                        [disabled]="(!isRoleSua)">
+                                                                    <option [value]="0"
+                                                                            jhiTranslate="ebwebApp.systemOption.binhQuanCuoiKy">
+                                                                    </option>
+                                                                    <option [value]="1"
+                                                                            jhiTranslate="ebwebApp.systemOption.binhQuanTucThoi">
+                                                                    </option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-3 col-form-label font-general"
+                                                                   style="padding-right: 0px"
+                                                                   jhiTranslate="ebwebApp.systemOption.tKXuLyChenhLechLai"></label>
+                                                            <div class="col-sm-3 pd-l-0 pd-r-10">
+                                                                <combo-box style=""
+                                                                           id="field_ComboboxtKXuLyChenhLechLai"
+                                                                           name="comboboxtKXuLyChenhLechLai"
+                                                                           [dataList]="accountLists"
+                                                                           [isOutTable]="true"
+                                                                           [showIconPlus]="true"
+                                                                           [listColumns]="utilsService.listColumnsAccountList"
+                                                                           displayMember="accountNumber"
+                                                                           valueName="id"
+                                                                           [headerColumns]="utilsService.listHeaderColumnsAccountList"
+                                                                           [(ngModel)]="systemOptions[26].data"
+                                                                           [isObject]="false"
+                                                                           [isReadOnly]="(!isRoleSua)">
+                                                                </combo-box>
+                                                            </div>
+                                                            <label class="col-sm-3 col-form-label font-general"
+                                                                   style="padding-right: 0px"
+                                                                   jhiTranslate="ebwebApp.systemOption.tKXuLyChenhLechLo"></label>
+                                                            <div class="col-sm-3 pd-l-0 pd-r-10">
+                                                                <combo-box style="" id="field_ComboboxtKXuLyChenhLechLo"
+                                                                           name="tKXuLyChenhLechLo"
+                                                                           [dataList]="accountLists"
+                                                                           [isOutTable]="true"
+                                                                           [showIconPlus]="true"
+                                                                           [listColumns]="utilsService.listColumnsAccountList"
+                                                                           displayMember="accountNumber"
+                                                                           valueName="id"
+                                                                           [headerColumns]="utilsService.listHeaderColumnsAccountList"
+                                                                           [(ngModel)]="systemOptions[27].data"
+                                                                           [isObject]="false"
+                                                                           [isReadOnly]="(!isRoleSua)">
+                                                                </combo-box>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6 pd-r-0">
+                                        <fieldset>
+                                            <form style="margin-bottom: 20px;">
+                                                <h3 jhiTranslate="ebwebApp.systemOption.h3.thietLapPhanBo"></h3>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-4 col-form-label font-general"
+                                                                   style="padding-right: 0px"
+                                                                   jhiTranslate="ebwebApp.systemOption.phanBoChiPhiTraTruoc"></label>
+                                                            <div class="col-sm-8 pd-l-0 pd-r-10">
+                                                                <select class="form-control"
+                                                                        name="phanBoChiPhiTraTruoc"
+                                                                        id="phanBoChiPhiTraTruoc"
+                                                                        [(ngModel)]="systemOptions[32].data"
+                                                                        [disabled]="(!isRoleSua)">
+                                                                    <option [value]="0"
+                                                                            jhiTranslate="ebwebApp.systemOption.phanBoDeuHangKy">
+                                                                    </option>
+                                                                    <option [value]="1"
+                                                                            jhiTranslate="ebwebApp.systemOption.phanBoTheoNgayGhiNhanCP">
+                                                                    </option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-4 col-form-label font-general"
+                                                                   style="padding-right: 0px"
+                                                                   jhiTranslate="ebwebApp.systemOption.phanBoCongCuDungCu"></label>
+                                                            <div class="col-sm-8 pd-l-0 pd-r-10">
+                                                                <select class="form-control"
+                                                                        name="phanBoCongCuDungCu"
+                                                                        id="phanBoCongCuDungCu"
+                                                                        [(ngModel)]="systemOptions[33].data"
+                                                                        [disabled]="(!isRoleSua)">
+                                                                    <option [value]="0"
+                                                                            jhiTranslate="ebwebApp.systemOption.phanBoDeuHangKy">
+                                                                    </option>
+                                                                    <option [value]="1"
+                                                                            jhiTranslate="ebwebApp.systemOption.phanBoTheoNgayGhiTang">
+                                                                    </option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </fieldset>
+                                    </div>
+                                    <div class="col-lg-6 pd-r-0">
+                                        <fieldset>
+                                            <form style="margin-bottom: 20px;">
+                                                <h3 jhiTranslate="ebwebApp.systemOption.h3.tienLuong"></h3>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-3 col-form-label font-general"
+                                                                   style="padding-right: 0px"
+                                                                   jhiTranslate="ebwebApp.systemOption.tinhLuongDuaTren"></label>
+                                                            <div class="col-sm-9 pd-l-0 pd-r-10">
+                                                                <select class="form-control"
+                                                                        name="tinhLuongDuaTren"
+                                                                        id="tinhLuongDuaTren"
+                                                                        [(ngModel)]="systemOptions[34].data"
+                                                                        [disabled]="(!isRoleSua)">
+                                                                    <option [value]="0"
+                                                                            jhiTranslate="ebwebApp.systemOption.luongThoaThuan">
+                                                                    </option>
+                                                                    <option [value]="1"
+                                                                            jhiTranslate="ebwebApp.systemOption.luongHeSo">
+                                                                    </option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <br>
+                                                        <br>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <fieldset>
+                                            <form style="margin-bottom: 20px;">
+                                                <h3 jhiTranslate="ebwebApp.systemOption.h3.thietLapKhac"></h3>
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <div class="form-group row">
+                                                            <div class="col-sm-3">
+                                                                <div class="custom-control custom-checkbox">
+                                                                    <input type="checkbox" class="custom-control-input"
+                                                                           id="tichHopHoaDonDienTu"
+                                                                           name="tichHopHoaDonDienTu"
+                                                                           [checked]="systemOptions[57].data === '1'"
+                                                                           (change)="changeCheckBox(57, $event)"
+                                                                           [disabled]="(!isRoleSua)">
+                                                                    <label class="custom-control-label"
+                                                                           for="tichHopHoaDonDienTu"
+                                                                           jhiTranslate="ebwebApp.systemOption.tichHopHoaDonDienTu"></label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-3">
+                                                                <div class="custom-control custom-checkbox">
+                                                                    <input type="checkbox" class="custom-control-input"
+                                                                           id="suDungThemSoQuanTri"
+                                                                           name="suDungThemSoQuanTri"
+                                                                           [checked]="systemOptions[35].data === '1'"
+                                                                           (change)="changeCheckBox(35, $event)"
+                                                                           [disabled]="(!isRoleSua)">
+                                                                    <label class="custom-control-label"
+                                                                           for="suDungThemSoQuanTri"
+                                                                           jhiTranslate="ebwebApp.systemOption.suDungThemSoQuanTri"></label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-3">
+                                                                <div class="custom-control custom-checkbox">
+                                                                    <input type="checkbox" class="custom-control-input"
+                                                                           id="suDungButtonEnter"
+                                                                           name="suDungButtonEnter"
+                                                                           [checked]="systemOptions[59].data === '1'"
+                                                                           (change)="changeCheckBox(59, $event)"
+                                                                           [disabled]="true"
+                                                                    >
+                                                                    <label class="custom-control-label"
+                                                                           for="suDungButtonEnter"
+                                                                           jhiTranslate="ebwebApp.systemOption.suDungButtonEnter"></label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-3">
+                                                                <div class="form-group row">
+                                                                    <label class="col-sm-6 col-form-label font-general"
+                                                                           style="padding-right: 0px; padding-top: 0px"
+                                                                           jhiTranslate="ebwebApp.systemOption.cachGhiSoKhiNhapChungTu"></label>
+                                                                    <div class="col-sm-6 pd-l-0 pd-r-10" style="padding-left: 15px !important;">
+                                                                        <select class="form-control"
+                                                                                name="cachGhiSoKhiNhapChungTu"
+                                                                                id="cachGhiSoKhiNhapChungTu"
+                                                                                [(ngModel)]="systemOptions[29].data"
+                                                                                [disabled]="(!isRoleSua)">
+                                                                            <option [value]="0"
+                                                                                    jhiTranslate="ebwebApp.systemOption.luuVaDongThoiGhiSo">
+                                                                            </option>
+                                                                            <option [value]="1"
+                                                                                    jhiTranslate="ebwebApp.systemOption.luuVaKhongGhiSo">
+                                                                            </option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <div class="col-sm-3">
+                                                                <div class="custom-control custom-checkbox">
+                                                                    <input type="checkbox" class="custom-control-input"
+                                                                           id="choPhepChiQuaTonQuy"
+                                                                           name="choPhepChiQuaTonQuy"
+                                                                           [checked]="systemOptions[30].data === '1'"
+                                                                           (change)="changeCheckBox(30, $event)"
+                                                                           [disabled]="(!isRoleSua)"
+                                                                    >
+                                                                    <label class="custom-control-label"
+                                                                           for="choPhepChiQuaTonQuy"
+                                                                           jhiTranslate="ebwebApp.systemOption.choPhepChiQuaTonQuy"></label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-3">
+                                                                <div class="custom-control custom-checkbox">
+                                                                    <input type="checkbox" class="custom-control-input"
+                                                                           id="canhBaoKhiKhongChonNhanVienBanHang"
+                                                                           name="canhBaoKhiKhongChonNhanVienBanHang"
+                                                                           [checked]="systemOptions[31].data === '1'"
+                                                                           (change)="changeCheckBox(31, $event)"
+                                                                           [disabled]="(!isRoleSua)"
+                                                                    >
+                                                                    <label class="custom-control-label"
+                                                                           for="canhBaoKhiKhongChonNhanVienBanHang"
+                                                                           jhiTranslate="ebwebApp.systemOption.canhBaoKhiKhongChonNhanVienBanHang"></label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-3">
+                                                                <div class="custom-control custom-checkbox">
+                                                                    <input type="checkbox" class="custom-control-input"
+                                                                           id="hienThiChuChanKhiDocTenBangChu"
+                                                                           name="hienThiChuChanKhiDocTenBangChu"
+                                                                           [checked]="systemOptions[28].data === '1'"
+                                                                           (change)="changeCheckBox(28, $event)"
+                                                                           [disabled]="(!isRoleSua)">
+                                                                    <label class="custom-control-label"
+                                                                           for="hienThiChuChanKhiDocTenBangChu"
+                                                                           jhiTranslate="ebwebApp.systemOption.hienThiChuChanKhiDocTenBangChu"></label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-sm-3">
+                                                                <div class="custom-control custom-checkbox">
+                                                                    <input type="checkbox" class="custom-control-input"
+                                                                           id="hanCheTaiKhoanKhiNhapLieu"
+                                                                           name="hanCheTaiKhoanKhiNhapLieu"
+                                                                           [checked]="systemOptions[36].data === '1'"
+                                                                               (change)="changeCheckBox(36, $event)"
+                                                                           [disabled]="(!isRoleSua)"
+                                                                    >
+                                                                    <label class="custom-control-label"
+                                                                           for="hanCheTaiKhoanKhiNhapLieu"
+                                                                           jhiTranslate="ebwebApp.systemOption.hanCheTaiKhoanKhiNhapLieu"></label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </ngb-tab>
+                </ngb-tabset>
+                <!--display when right click mbdetail-->
+            </div>
+        </div>
+    </div>
+</div>
+<footer>
+</footer>
+
+<ng-template #colorPickerModal let-d="dismiss">
+    <form name="colorPickerModal">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                    (click)="d('Close')">&times;
+            </button>
+        </div>
+        <div class="modal-body">
+            <eb-color-picker (selectedColor)="selectedColor = $event"></eb-color-picker>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="d('Close')">
+                <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+            </button>
+            <button type="submit" class="btn btn-success" (click)="selectColor(); d('Close')">
+                <span jhiTranslate="entity.action.ok">Đồng ý</span>
+            </button>
+        </div>
+    </form>
+</ng-template>
+<ng-template #content let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.saBill.saveMessage">Dữ liệu đã bị thay đổi, Bạn có muốn lưu lại?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="saveContent()" jhiTranslate="entity.action.save">
+            Save
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="close()"
+                jhiTranslate="ebwebApp.mBDeposit.dontSave">Don't save
+        </button>
+        <button type="button" class="btn btn-outline-danger" (click)="exit()" jhiTranslate="entity.action.close">close
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #popupPPTinhGiaXuatKho let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.systemOption.thayDoiPPTinhGiaXK">Việc sửa đổi phương pháp tính giá xuất
+                    kho mới có thể ảnh hưởng đến dữ liệu hiện tại. Bạn có chắc chắn muốn lưu lại thiết lập?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="continueSave()"
+                jhiTranslate="entity.action.save">
+            Save
+        </button>
+        <button type="button" class="btn btn-outline-danger" (click)="exit()" jhiTranslate="entity.action.close">close
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #popupQuestionShowError let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.systemOption.errorChangeGeneralToPrivateUse"></label>
+                <br>
+                <label jhiTranslate="ebwebApp.systemOption.questionShowError">Bạn có muốn xem dữ liệu trùng?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="continueShowPopup()" jhiTranslate="entity.action.ok">
+            Save
+        </button>
+        <button type="button" class="btn btn-outline-danger" (click)="exit()" jhiTranslate="entity.action.close">close
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #popupPrivateToGeneralUse let-modal>
+    <div class="modal-header" style="padding: 10px">
+            <div class="row" style="padding-left: 3%">
+                <h3 jhiTranslate="ebwebApp.systemOption.titlePopup"></h3>
+            </div>
+    </div>
+    <div class="modal-body" style="padding: 1rem">
+        <div class="frm-main frm-tables frm-padding">
+            <div id="table-scroll0" class="table-scroll">
+                <table style="min-width: 100%; min-height: 100%">
+                    <thead>
+                    <tr>
+                        <th scope="col" jhiTranslate="ebwebApp.systemOption.category"></th>
+                        <th scope="col" jhiTranslate="ebwebApp.systemOption.codeCategory"></th>
+                        <th scope="col" jhiTranslate="ebwebApp.systemOption.nameCategory"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let p of privateToGeneralUses ; let i = index; trackBy: trackId">
+                        <td title="{{p.nameCategory}}" class="jsgrid-cell jsgrid-align-left"
+                            style="width: 30%">{{p.nameCategory}}</td>
+                        <td title="{{p.code}}" class="jsgrid-cell jsgrid-align-left"
+                            style="width: 30%">{{p.code}}</td>
+                        <td title="{{p.name}}" class="jsgrid-cell jsgrid-align-left"
+                            style="width: 40%">{{p.name}}</td>
+                    </tr>
+                    <tr *ngFor="let l of newArr(9 - privateToGeneralUses.length)">
+                        <td class="cell-Table jsgrid-align-center"
+                            style="width: 150px">&nbsp;
+                        </td>
+                        <td  class="cell-Table jsgrid-align-center"
+                            style="width: 150px">&nbsp;
+                        </td>
+                        <td class="cell-Table jsgrid-align-center"
+                            style="width: 150px">&nbsp;
+                        </td>
+                    </tr>
+                    </tbody>
+<!--                    <tfoot [class.myreadonlytrue]="true">-->
+<!--                    <tr>-->
+<!--                        <td class="cell-Table countRow" colspan="5" style="width: 150px"><input type="text"-->
+<!--                                                                                                readonly-->
+<!--                                                                                                class="countRow input-Cell"-->
+<!--                                                                                                value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{data.listFail?.length}}">-->
+<!--                        </td>-->
+<!--                    </tr>-->
+<!--                    </tfoot>-->
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="modalRef.close()"
+                jhiTranslate="ebwebApp.mBDeposit.home.exit">
+        </button>
+    </div>
+</ng-template>
+

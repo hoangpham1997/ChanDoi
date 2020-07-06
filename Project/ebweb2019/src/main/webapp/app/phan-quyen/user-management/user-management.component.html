@@ -1,0 +1,143 @@
+<!--add by anmt-->
+<div >
+    <div >
+        <div class="menu-tool-bar he">
+            <div class="ptitle">
+                <span style="text-transform: uppercase"
+                      jhiTranslate="userManagement.home.userManager">UserManager</span>
+            </div>
+            <div class="gr-toolbar">
+                <a (click)="addNew($event)"
+                   title="{{'ebwebApp.autoPrinciple.tooltipAdd' | translate}}"
+                ><i class="mdi mdi-plus"></i>
+                    <span jhiTranslate="ebwebApp.mBTellerPaper.add">Add</span></a>
+                <a *ngIf="selectedRow"
+                   [class.disable]="selectedRowRes?.isSystem"
+                   (click)="delete()"
+                   title="{{'ebwebApp.outWard.tooltipDrop' | translate}}"
+                ><i class="mdi mdi-delete"></i><span jhiTranslate="ebwebApp.mBTellerPaper.deletes">Delete</span></a>
+                <a (click)="navigatePermissionUser()"
+                   [class.disable]="!selectedRow"
+                ><i class="mdi mdi-account-edit"></i><span jhiTranslate="userManagement.home.authority">Authority</span></a>
+            </div>
+        </div>
+        <div class="frm-main frm-tables frm-padding" style="background: #cbdcf0; margin-top: 5px">
+            <div id="table-scroll0" class="table-scroll">
+                <table id="main-table0" class="main-table">
+                    <thead>
+                    <tr>
+                        <th scope="col" style="width: 150px" jhiTranslate="userManagement.login">
+                            Login
+                        </th>
+                        <th scope="col" style="width: 150px" jhiTranslate="userManagement.fullName">
+                            FullName
+                        </th>
+                        <th scope="col" style="width: 250px" jhiTranslate="userManagement.company">
+                            Company
+                        </th>
+                        <th scope="col" style="width: 150px" jhiTranslate="userManagement.isActive">
+                            IsActive
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let user of users ; trackBy: trackIdentity"
+                        [class.selected]="user === selectedRow"
+                        (click)="onSelect(user)"
+                        (dblclick)="doubleClickRow(selectedRow)">
+                        <td [title]="user.login ? user.login : ''" class="ellipsis jsgrid-cell jsgrid-align-left">{{user.login}}</td>
+                        <td [title]="user.fullName ? user.fullName : ''" class="ellipsis jsgrid-cell jsgrid-align-left"
+                        >{{user.fullName}}</td>
+                        <td [title]="user.job ? user.job : ''" class="ellipsis jsgrid-cell jsgrid-align-left"
+                        >{{user.job}}</td>
+                        <td class="jsgrid-cell jsgrid-align-center">
+                            <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" name="activated"
+                                   id="activated" [ngModel]="user.activated" disabled>
+                            <label class="custom-control-label" for="activated"></label>
+                        </div>
+                        </td>
+                    </tr>
+                    <tr *ngFor="let row of newArr(itemsPerPage - users?.length)">
+                        <td class="jsgrid-cell">&nbsp;</td>
+                        <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                        <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                        <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!--        phân trang-->
+        <div *ngIf="users && users.length"
+             style="padding-right: 16px;">
+            <div class="row justify-content-end" style="height: 32px">
+                <div class="col-lg-3">
+                    <div class="form-group row">
+                        <label class="col-sm-7 col-form-label" for="itemsPerPage"
+                               style="padding-right: 0px;text-align: right;"><span
+                            jhiTranslate="ebwebApp.mBDeposit.totalPage"></span>: {{totalItems}}</label>
+                        <div class="col-sm-5 pd-l-0">
+                            <select class="form-control form-control-sm" name="itemsPerPage"
+                                    id="itemsPerPage"
+                                    style="background-color: #f5f7fa;"
+                                    [(ngModel)]="itemsPerPage"
+                                    (ngModelChange)="selectedItemPerPage()"
+                            >
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="30">30</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="justify-content-end">
+                    <ngb-pagination [size]="'sm'" [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage"
+                                    [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
+                                    (pageChange)="loadPage(page)"></ngb-pagination>
+                </div>
+            </div>
+        </div>
+        <!--        end of phan trang-->
+        <div>
+            <ngb-tabset class="tool-navbar">
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span
+                        jhiTranslate="userManagement.role.title">Role</span></ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content">
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="home-ref"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-ref" class="table-scroll">
+                                    <table id="main-table-ref" class="main-table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col" jhiTranslate="userManagement.role.code">Code</th>
+                                            <th scope="col" jhiTranslate="userManagement.role.name">Name
+                                            </th>
+                                            <th scope="col" jhiTranslate="userManagement.role.description">Description</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let ebGroup of ebGroups; let i = index">
+                                            <td [title]="ebGroup.code ? ebGroup.code : ''" class="ellipsis jsgrid-cell jsgrid-align-left">{{ebGroup.code}}</td>
+                                            <td [title]="ebGroup.name ? ebGroup.name : ''" class="ellipsis jsgrid-cell jsgrid-align-left">{{ebGroup.name}}</td>
+                                            <td [title]="ebGroup.description ? ebGroup.description : ''" class="ellipsis jsgrid-cell jsgrid-align-left">{{ebGroup.description}}</td>
+                                        </tr>
+                                        <tr *ngFor="let row of newArr(10 - ebGroups?.length)">
+                                            <td class="jsgrid-cell jsgrid-align">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+            </ngb-tabset>
+        </div>
+    </div>
+</div>
+<!--end of anmt-->

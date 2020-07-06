@@ -1,0 +1,80 @@
+<div>
+    <h2 id="page-heading">
+        <span jhiTranslate="ebwebApp.fixedAssetAccessories.home.title">Fixed Asset Accessories</span>
+        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-fixed-asset-accessories" [routerLink]="['/fixed-asset-accessories/new']">
+            <fa-icon [icon]="'plus'"></fa-icon>
+            <span  jhiTranslate="ebwebApp.fixedAssetAccessories.home.createLabel">
+            Create new Fixed Asset Accessories
+            </span>
+        </button>
+    </h2>
+    <eb-alert></eb-alert>
+    <br/>
+    <div class="table-responsive" *ngIf="fixedAssetAccessories">
+        <table class="table table-striped">
+            <thead>
+            <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
+            <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="fixedAssetAccessoriesName"><span jhiTranslate="ebwebApp.fixedAssetAccessories.fixedAssetAccessoriesName">Fixed Asset Accessories Name</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="fixedAssetAccessoriesQuantity"><span jhiTranslate="ebwebApp.fixedAssetAccessories.fixedAssetAccessoriesQuantity">Fixed Asset Accessories Quantity</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="fixedAssetAccessoriesAmount"><span jhiTranslate="ebwebApp.fixedAssetAccessories.fixedAssetAccessoriesAmount">Fixed Asset Accessories Amount</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="orderPriority"><span jhiTranslate="ebwebApp.fixedAssetAccessories.orderPriority">Order Priority</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="fixedAssetID.id"><span jhiTranslate="ebwebApp.fixedAssetAccessories.fixedAssetID">Fixed Asset ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="fixedAssetAccessoriesUnitID.id"><span jhiTranslate="ebwebApp.fixedAssetAccessories.fixedAssetAccessoriesUnitID">Fixed Asset Accessories Unit Code</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let fixedAssetAccessories of fixedAssetAccessories ;trackBy: trackId">
+                <td><a [routerLink]="['/fixed-asset-accessories', fixedAssetAccessories.id, 'view' ]">{{fixedAssetAccessories.id}}</a></td>
+                <td>{{fixedAssetAccessories.fixedAssetAccessoriesName}}</td>
+                <td>{{fixedAssetAccessories.fixedAssetAccessoriesQuantity}}</td>
+                <td>{{fixedAssetAccessories.fixedAssetAccessoriesAmount}}</td>
+                <td>{{fixedAssetAccessories.orderPriority}}</td>
+                <td>
+                    <div *ngIf="fixedAssetAccessories.fixedAssetID">
+                        <a [routerLink]="['../fixed-asset', fixedAssetAccessories.fixedAssetID?.id, 'view' ]" >{{fixedAssetAccessories.fixedAssetID?.fixedAssetCode}}</a>
+                    </div>
+                </td>
+                <td>
+                    <div *ngIf="fixedAssetAccessories.fixedAssetAccessoriesUnitID">
+                        <a [routerLink]="['../unit', fixedAssetAccessories.fixedAssetAccessoriesUnitID?.id, 'view' ]" >{{fixedAssetAccessories.fixedAssetAccessoriesUnitID?.unitName}}</a>
+                    </div>
+                </td>
+                <td class="text-right">
+                    <div class="btn-group flex-btn-group-container">
+                        <button type="submit"
+                                [routerLink]="['/fixed-asset-accessories', fixedAssetAccessories.id, 'view' ]"
+                                class="btn btn-info btn-sm">
+                            <fa-icon [icon]="'eye'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/fixed-asset-accessories', fixedAssetAccessories.id, 'edit']"
+                                class="btn btn-primary btn-sm">
+                            <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/', { outlets: { popup: 'fixed-asset-accessories/'+ fixedAssetAccessories.id + '/delete'} }]"
+                                replaceUrl="true"
+                                queryParamsHandling="merge"
+                                class="btn btn-danger btn-sm">
+                            <fa-icon [icon]="'times'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div *ngIf="fixedAssetAccessories && fixedAssetAccessories.length">
+        <div class="row justify-content-center">
+            <jhi-item-count [page]="page" [total]="queryCount" [maxSize]="5" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+        </div>
+        <div class="row justify-content-center">
+            <ngb-pagination [size]="'sm'" [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage" [maxSize]="5" [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage(page)"></ngb-pagination>
+        </div>
+    </div>
+</div>

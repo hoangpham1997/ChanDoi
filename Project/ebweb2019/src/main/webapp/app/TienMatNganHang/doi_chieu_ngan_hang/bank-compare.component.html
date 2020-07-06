@@ -1,0 +1,320 @@
+<div class="container-fluid">
+    <div class="margin-tp-5 margin-0">
+        <div class="">
+            <div class="itemw">
+                <div class="menu-tool-bar he">
+                    <a><i class="mdi mdi-briefcase-download"></i> Thực hiện đối chiếu</a>
+                    <a [routerLink]="['/view-bank-compare']"><i class="mdi mdi-view-list"></i> Xem chứng từ đối
+                        chiếu</a>
+                    <a [routerLink]="['/un-bank-compare']"><i class="mdi mdi-delete-forever"></i> Bỏ đối chiếu</a>
+                    <a><i class="mdi mdi-window-close"></i> Đóng</a>
+                    <div class="form-s">
+                        <form style="margin-top: 2px">
+                            <i class="mdi mdi-magnify"></i>
+                            <span>Tìm nhanh</span>
+                            <input type="text" style="height:31px; width: 65%;" placeholder="Nhập số CT cùng loại">
+                        </form>
+                    </div>
+                </div>
+                <div class="tool-navbar">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="lbtn-action">
+                                <a href="#" class="active">Đối chiếu ngân hàng</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="frm-main">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <form>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">Tài khoản ngân hàng</label>
+                                            <div class="col-sm-3">
+                                                <select type="text" class="form-control form-control-sm"
+                                                        name="bankAccountCode" [(ngModel)]="bankAccountID">
+                                                    <option
+                                                        [ngValue]="bank.id === bankAccountID ? bankAccountID : bank.id"
+                                                        *ngFor="let bank of bankAccounts; trackBy: trackBankAccountById">{{bank.bankAccount}}</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-sm-7 pd-l-0">
+                                                <input type="text" class="form-control form-control-sm"
+                                                       name="bankAccountName"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-2 col-form-label">Ngày đối chiếu</label>
+                                            <div class="col-sm-2">
+                                                <input type="date" class="form-control form-control-sm" name="date"
+                                                       [(ngModel)]="date"/>
+                                            </div>
+                                            <label class="col-sm-1 col-form-label">Loại tiền</label>
+                                            <div class="col-sm-2">
+                                                <select type="text" class="form-control form-control-sm"
+                                                        name="currencyID" id="field_currencyID"
+                                                        [(ngModel)]="currencyID">
+                                                    <option
+                                                        [ngValue]="cu.currencyCode === currencyID ? currencyID : cu.currencyCode"
+                                                        *ngFor="let cu of currencys; trackBy: trackCurrencyIDById">{{cu.currencyCode}}</option>
+                                                </select>
+                                            </div>
+                                            <label class="col-sm-2 col-form-label">Số dư tại ngân hàng</label>
+                                            <div class="col-sm-2">
+                                                <input type="text" class="form-control form-control-sm"
+                                                       name="amountBank"/>
+                                            </div>
+                                            <div class="col-sm-1">
+                                                <button class="form-control form-control-sm btn btn-success btn-sm"
+                                                        (click)="getData(date, currencyID, bankAccountID)">Lấy số liệu
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="tool-navbar" style="margin-bottom: -14px;">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="line-btn" style="margin-bottom: 15px">
+                                <div class="lbtn-action">
+                                    <a class="active" data-toggle="tab" href="#home">Danh sách chứng từ thu tiền</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content">
+                    <!--                    <div class="frm-main frm-padding tab-pane fade in active show" style="background: #cbdcf0">-->
+                    <div class="table-scroll">
+                        <table class="main-table">
+                            <thead>
+                            <tr>
+                                <th scope="col"><input type="checkbox"/></th>
+                                <th scope="col">Ngày chứng từ</th>
+                                <th scope="col">Số chứng từ</th>
+                                <th scope="col">Đối tượng nộp</th>
+                                <th scope="col">Số tiền</th>
+                                <th scope="col">Diễn giải</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr *ngFor="let item of collectionVouchers1 ;">
+                                <td style="text-align: center"><input type="checkbox" [(ngModel)]="item.status"/></td>
+                                <td>{{item.date | date:'mediumDate'}}</td>
+                                <td>{{item.no}}</td>
+                                <td><select name="accountingobjectID" [(ngModel)]="item.accountingObject">
+                                    <option [ngValue]="a.id === item.accountingObject ? item.accountingObject : a.id"
+                                            *ngFor="let a of accountingObjects; trackBy: trackAccountingObjectById">{{a.accountingObjectCode}}</option>
+                                </select></td>
+                                <td>{{item.amountOriginal}}</td>
+                                <td>{{item.description}}</td>
+                            </tr>
+                            <tr>
+                                <td class="cell-Table"><input type="checkbox"
+                                ></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                            </tr>
+                            <tr>
+                                <td class="cell-Table"><input type="checkbox"
+                                ></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                            </tr>
+                            <tr>
+                                <td class="cell-Table"><input type="checkbox"
+                                ></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                            </tr>
+                            <tr>
+                                <td class="cell-Table"><input type="checkbox"
+                                ></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                            </tr>
+                            <tr>
+                                <td class="cell-Table"><input type="checkbox"
+                                ></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                            </tr>
+                            <tr>
+                                <td class="cell-Table"><input type="checkbox"
+                                ></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!--                    </div>-->
+                </div>
+                <div class="tool-navbar" style="margin-bottom: -14px;">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="line-btn" style="margin-bottom: 15px">
+                                <div class="lbtn-action">
+                                    <a class="active" data-toggle="tab" href="#home">Danh sách chứng từ chi tiền</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-content">
+                    <!--                    <div class="frm-main frm-padding tab-pane fade in active show" style="background: #cbdcf0">-->
+                    <div class="table-scroll">
+                        <table class="main-table">
+                            <thead>
+                            <tr>
+                                <th scope="col"><input type="checkbox"/></th>
+                                <th scope="col">Ngày chứng từ</th>
+                                <th scope="col">Số chứng từ</th>
+                                <th scope="col">Đối tượng nhận</th>
+                                <th scope="col">Số tiền</th>
+                                <th scope="col">Diễn giải</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr *ngFor="let item of collectionVouchers1 ;">
+                                <td style="text-align: center"><input type="checkbox" [(ngModel)]="item.status"/></td>
+                                <td>{{item.date | date:'mediumDate'}}</td>
+                                <td>{{item.no}}</td>
+                                <td><select name="accountingobjectID" [(ngModel)]="item.accountingObject">
+                                    <option [ngValue]="a.id === item.accountingObject ? item.accountingObject : a.id"
+                                            *ngFor="let a of accountingObjects; trackBy: trackAccountingObjectById">{{a.accountingObjectCode}}</option>
+                                </select></td>
+                                <td>{{item.amountOriginal}}</td>
+                                <td>{{item.description}}</td>
+                            </tr>
+                            <tr>
+                                <td class="cell-Table"><input type="checkbox"
+                                ></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                            </tr>
+                            <tr>
+                                <td class="cell-Table"><input type="checkbox"
+                                ></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                            </tr>
+                            <tr>
+                                <td class="cell-Table"><input type="checkbox"
+                                ></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                            </tr>
+                            <tr>
+                                <td class="cell-Table"><input type="checkbox"
+                                ></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                            </tr>
+                            <tr>
+                                <td class="cell-Table"><input type="checkbox"
+                                ></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                            </tr>
+                            <tr>
+                                <td class="cell-Table"><input type="checkbox"
+                                ></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                            </tr>
+                            </tbody>
+
+                        </table>
+                    </div>
+                    <!--                    </div>-->
+                </div>
+                <div class="frm-main">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="form-group row">
+                                <label class="col-sm-6 col-form-label">0/0 Thu</label>
+                                <label class="col-sm-6 col-form-label">0</label>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-6 col-form-label">0/0 Chi</label>
+                                <label class="col-sm-6 col-form-label">0</label>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="form-group row">
+                                <div class="col-sm-12">
+                                    <input type="text" class="form-control form-control-sm">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="form-group row">
+                                <label class="col-sm-6 col-form-label">Số đối chiếu</label>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control form-control-sm">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-6 col-form-label">Số dư ngân hàng</label>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control form-control-sm">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-6 col-form-label">Chênh lệch</label>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control form-control-sm">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

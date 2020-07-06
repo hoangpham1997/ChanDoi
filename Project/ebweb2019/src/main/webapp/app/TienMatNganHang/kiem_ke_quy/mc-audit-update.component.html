@@ -1,0 +1,649 @@
+<div class="container-fluid" (click)="disableContextMenu()">
+    <div class="margin-tp-5 margin-0">
+        <div class="">
+            <div class="itemw">
+                <div class="menu-tool-bar he" style="line-height: 16px;">
+                    <div class="gr-tool-bar2">
+                        <button (click)="move(1)" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_KiemKeQuy]"
+                           [disabled]="rowNum >= totalItems || isEdit || isViewFromRef"
+                           class="aprev button-navigation"><i class="mdi mdi-arrow-left"></i></button>
+                        <button (click)="move(-1)" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_KiemKeQuy]"
+                           [disabled]="rowNum <= 1 || isEdit || isViewFromRef"
+                           class="anext button-navigation"><i class="mdi mdi-arrow-right"></i></button>
+                        <button (click)="addNew($event)" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_Them]"
+                           [disabled]="isEdit"  title="{{'ebwebApp.outWard.tooltipAdd' | translate}}" class="button-navigation"
+                        ><i class="mdi mdi-plus"></i><span jhiTranslate="ebwebApp.mCAudit.home.add"></span></button>
+                        <button (click)="edit()" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_Sua]" class="button-navigation"
+                           [disabled]="isEdit" title="{{'ebwebApp.outWard.tooltipEdit' | translate}}"
+                        ><i class="mdi mdi-rename-box"></i><span jhiTranslate="ebwebApp.mCAudit.home.edit"></span></button>
+                        <button (click)="save(true)" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_Them, ROLE_Sua]" class="button-navigation"
+                           [disabled]="!isEdit" title="{{'ebwebApp.outWard.tooltipSave' | translate}}"
+                        ><i class="mdi mdi-briefcase-download"></i> <span jhiTranslate="ebwebApp.mCAudit.home.save"></span></button>
+                        <button (click)="saveAndNew()" [disabled]="!isEdit"  title="{{'ebwebApp.outWard.tooltipSaveAndAdd' | translate}}"
+                           *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_Them]" class="button-navigation"
+                        ><i class="mdi mdi-briefcase-download"></i><span jhiTranslate="ebwebApp.mCAudit.home.saveAndAdd"></span></button>
+                        <button [disabled]="isEdit" class="button-navigation"
+                                *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_Them]"
+                                (click)="copyAndNew()"><i
+                            class="mdi mdi-plus"></i><span jhiTranslate="ebwebApp.mCAudit.home.copyAndCreate"></span></button>
+                        <button (click)="delete()" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_Xoa]" class="button-navigation"
+                           [disabled]="isEdit" title="{{'ebwebApp.outWard.tooltipDrop' | translate}}"
+                        ><i class="mdi mdi-delete-forever"></i><span jhiTranslate="ebwebApp.mCAudit.home.delete"></span></button>
+                        <button class="dropdown-toggle button-navigation" data-toggle="dropdown"
+                           *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_In]"
+                           [disabled]="isEdit || (!isEdit && mCAudit.currencyID !== currencyAccount)"
+                           href="#" role="button"><i class="mdi mdi-printer"></i><span
+                            jhiTranslate="ebwebApp.mCAudit.home.print"></span></button>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-item">
+                                <a (click)="exportPdf(false, 0)">
+                                    <span jhiTranslate="ebwebApp.mCAudit.home.mCAuditReport"></span>
+                                </a>
+                            </div>
+                        </div>
+                        <button (click)="closeForm()" class="button-navigation"><i class="mdi mdi-window-close"></i><span
+                            jhiTranslate="ebwebApp.mCAudit.home.exit"
+                        ></span></button>
+                    </div>
+                </div>
+                <div class="tool-navbar">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="line-btn" style="margin-bottom: 4px">
+                                <div class="lbtn-action">
+                                    <ul class="nav nav-tabs">
+                                        <li class="active"><a class="active myreadonlytrue" data-toggle="tab"
+                                                              href="#home0"
+                                                              jhiTranslate="ebwebApp.mCAudit.home.title">Kiểm kê quỹ</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row no-gutters">
+                    <div class="col-lg-9 pd-r-0 form-main-new">
+                        <form>
+                            <h3 jhiTranslate="ebwebApp.common.generalInformation">Thông tin chung</h3>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group row no-gutters">
+                                        <label class="col-sm-3 col-form-label"
+                                               jhiTranslate="ebwebApp.mCAudit.description">Diễn
+                                            giải</label>
+                                        <div class="col-sm-9 pd-l-0 last-div-1-0">
+                                            <input type="text" class="form-control form-control-sm"
+                                                   name="description"
+                                                   autocomplete="off"
+                                                   [(ngModel)]="mCAudit.description"
+                                                    (ngModelChange)="changeReason()"
+                                                   [tabindex]="1"/>
+                                        </div>
+
+                                    </div>
+                                    <div class="form-group row no-gutters">
+                                        <label class="col-sm-3 col-form-label"
+                                               jhiTranslate="ebwebApp.mCAudit.summary">Kết quả kiểm kê</label>
+                                        <div class="col-sm-9 pd-l-0 last-div-1-0">
+                                            <input type="text" class="form-control form-control-sm" name="summary"
+                                                   id="field_summary"
+                                                   autocomplete="off"
+                                                   [(ngModel)]="mCAudit.summary"
+                                                   [tabindex]="2" maxlength="225"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row no-gutters">
+                                        <label class="col-sm-3 col-form-label"
+                                               jhiTranslate="ebwebApp.mCAudit.currencyID">Loại tiền</label>
+                                        <div class="col-sm-3 pd-l-0 pd-r-10">
+                                            <combo-box style="" id="field_currencyID"
+                                                       name="comboboxcurrencyID"
+                                                       [isOutTable]="true"
+                                                       [isRequired]="true"
+                                                       [dataList]="currencys"
+                                                       [listColumns]="utilsService.listColumnsCurrency"
+                                                       displayMember="currencyCode"
+                                                       valueName="currencyCode"
+                                                       [headerColumns]="utilsService.listHeaderColumnsCurrency"
+                                                       [isObject]="false"
+                                                       [(ngModel)]="mCAudit.currencyID"
+                                                       (ngModelChange)="getTotalBalanceAmount(mCAudit)"
+                                                       [tabindex]="3"
+                                            ></combo-box>
+                                        </div>
+                                        <label class="col-sm-5 col-form-label"
+                                               jhiTranslate="ebwebApp.mCAudit.totalBalanceAmount">Số dư theo sổ
+                                            quỹ</label>
+                                        <div class="col-sm-3 pd-l-0 last-div-2-1">
+                                            <input type="number" class="form-control form-control-sm noEdit"
+                                                   name="totalBalanceAmount" id="field_totalBalanceAmount"
+                                                   [(ngModel)]="mCAudit.totalBalanceAmount"
+                                                   (ngModelChange)="calculateDifferAmount(mCAudit)"
+                                                   ebCurrencyMask
+                                                   [systemOptions]="account?.systemOption"
+                                                   [type]="mCAudit.currencyID === currencyAccount ? 7 : 8" readonly
+                                                   [tabindex]="4"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row no-gutters">
+                                        <label class="col-sm-3 col-form-label"
+                                               jhiTranslate="ebwebApp.mCAudit.totalAuditAmount">Số tiền kiểm
+                                            kê</label>
+                                        <div class="col-sm-3 pd-l-0 pd-r-10">
+                                            <input type="number" class="form-control form-control-sm noEdit"
+                                                   name="totalAuditAmount" id="field_totalAuditAmount"
+                                                   [(ngModel)]="mCAudit.totalAuditAmount"
+                                                   (ngModelChange)="calculateDifferAmount(mCAudit)"
+                                                   ebCurrencyMask
+                                                   [systemOptions]="account?.systemOption"
+                                                   [type]="mCAudit.currencyID === currencyAccount ? 7 : 8" readonly
+                                                   [tabindex]="5"/>
+                                        </div>
+                                        <label class="col-sm-5 col-form-label"
+                                               jhiTranslate="ebwebApp.mCAudit.differAmount">Số tiền chênh
+                                            lệch</label>
+                                        <div class="col-sm-3 pd-l-0 last-div-2-1">
+                                            <input type="number" class="form-control form-control-sm noEdit"
+                                                   name="differAmount" id="field_differAmount"
+                                                   autocomplete="off"
+                                                   [(ngModel)]="mCAudit.differAmount"
+                                                   ebCurrencyMask
+                                                   [systemOptions]="account?.systemOption"
+                                                   [type]="mCAudit.currencyID === currencyAccount ? 7 : 8"
+                                                   [tabindex]="6"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-lg-4 pd-only-l-10 form-main-new">
+                        <form>
+                            <h3 jhiTranslate="ebwebApp.common.license">Chứng từ</h3>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group row no-gutters-small">
+                                        <label class="col-sm-4 col-form-label" jhiTranslate="ebwebApp.mCAudit.no">Số
+                                            chứng từ</label>
+                                        <div class="col-sm-8 pd-l-0 last-div-1-0">
+                                            <input type="text" class="form-control form-control-sm" name="no"
+                                                   id="field_no"
+                                                   [(ngModel)]="mCAudit.no" maxlength="25" required
+                                                   [tabindex]="9"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row no-gutters-small">
+                                        <label class="col-sm-4 col-form-label"
+                                               jhiTranslate="ebwebApp.mCAudit.date"
+                                               for="field_date">Ngày chứng từ</label>
+
+                                        <div class="col-sm-8 last-div-1-0">
+                                            <eb-date-picker id="field_date"
+                                                            [(ngModel)]="mCAudit.date" name="date"
+                                                            [isInTable]="false"
+                                                            [tabindex]="10"
+                                            ></eb-date-picker>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row no-gutters-small">
+                                        <label class="col-sm-4 col-form-label"
+                                               jhiTranslate="ebwebApp.mCAudit.auditDate"
+                                               for="field_auditDate">Ngày kiểm kê</label>
+                                        <div class="col-sm-8 last-div-1-0">
+                                            <eb-date-picker id="field_auditDate"
+                                                            [(ngModel)]="mCAudit.auditDate" name="auditDate"
+                                                            (ngModelChange)="getTotalBalanceAmount(mCAudit, true)"
+                                                            [isInTable]="false"
+                                                            [isTime]="true"
+                                                            [isSecond]="true"
+                                                            [tabindex]="11"
+                                                            (keydown.tab)="addNewRowInGrid()"
+                                            ></eb-date-picker>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <ngb-tabset class="tool-navbar" (tabChange)="beforeChange($event)">
+                        <ngb-tab>
+                            <ng-template ngbTabTitle><span
+                                jhiTranslate="ebwebApp.mCAudit.home.details"></span></ng-template>
+                            <ng-template ngbTabContent>
+                                <div class="tab-content">
+                                    <div class="frm-main frm-padding tab-pane fade in active show"
+                                         id="home-detail"
+                                         style="background: #cbdcf0">
+                                        <div id="table-scroll-detail" class="table-scroll">
+                                            <table id="main-table-detail" class="main-table"
+                                                   (keydown.arrowDown)="moveArrowDown($event,4)"
+                                                   (keydown.arrowUp)="moveArrowUp($event,4)">
+                                                <thead>
+                                                <tr>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.mCAuditDetail.valueOfMoney">
+                                                        Mệnh giá tiền
+                                                    </th>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.mCAuditDetail.quantity">
+                                                        Số lượng
+                                                    </th>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.mCAuditDetail.amount">Số
+                                                        tiền
+                                                    </th>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.mCAuditDetail.description">
+                                                        Diễn giải
+                                                    </th>
+                                                </tr>
+                                                </thead>
+                                                <tbody >
+                                                <tr oncontextmenu="return false;"
+                                                    (contextmenu)="onRightClick($event, newmCAuditDetails, mCAuditDetail, true, true, 0, true)"
+                                                    *ngFor="let mCAuditDetail of newmCAuditDetails; let i = index"
+                                                    (keydown.control.delete)="keyPress(mCAuditDetail,0)"
+                                                    (keydown.control.insert)="addNewRow(0, true)"
+                                                    (keydown.control.c)="copyRow(mCAuditDetail, 0)">
+                                                    <td class="cell-Table"><input type="number"
+                                                                                  class="input-Cell jsgrid-align-right"
+                                                                                  name="valueOfMoney{{i}}"
+                                                                                  id="valueOfMoney{{i}}"
+                                                                                  [(ngModel)]="mCAuditDetail.valueOfMoney"
+                                                                                  (ngModelChange)="calculateAmount(mCAuditDetail)"
+                                                                                  ebCurrencyMask
+                                                                                  [systemOptions]="account?.systemOption"
+                                                                                  [type]="9"
+                                                                                  min="0"
+                                                                                  (focus)="actionFocus(1, i, 'valueOfMoney')"
+                                                                                  [tabindex]="12 + (4 * i) + 1"/>
+                                                    </td>
+                                                    <td class="cell-Table"><input type="number"
+                                                                                  class="input-Cell jsgrid-align-right"
+                                                                                  name="quantity{{i}}"
+                                                                                  id="quantity{{i}}"
+                                                                                  [(ngModel)]="mCAuditDetail.quantity"
+                                                                                  (ngModelChange)="calculateAmount(mCAuditDetail)"
+                                                                                  ebCurrencyMask
+                                                                                  [systemOptions]="account?.systemOption"
+                                                                                  [type]="9"
+                                                                                  min="0"
+                                                                                  (focus)="actionFocus(1, i, 'quantity')"
+                                                                                  [tabindex]="12 + (4 * i) + 2"/>
+                                                    </td>
+                                                    <td class="cell-Table"><input type="number"
+                                                                                  class="input-Cell jsgrid-align-right noEdit"
+                                                                                  name="amount{{i}}"
+                                                                                  id="amount{{i}}"
+                                                                                  [(ngModel)]="mCAuditDetail.amount"
+                                                                                  (ngModelChange)="calculateTotalAmount(newmCAuditDetails)"
+                                                                                  ebCurrencyMask
+                                                                                  [systemOptions]="account?.systemOption"
+                                                                                  [type]="9"
+                                                                                  [tabindex]="12 + (4 * i) + 3"/>
+                                                    </td>
+                                                    <td class="cell-Table"><input type="text"
+                                                                                  class="input-Cell jsgrid-align-left"
+                                                                                  name="description{{i}}"
+                                                                                  id="description{{i}}"
+                                                                                  [(ngModel)]="mCAuditDetail.description"
+                                                                                  maxlength="225"
+                                                                                  [tabindex]="12 + (4 * i) + 4"
+                                                                                  (focus)="actionFocus(1, i, 'description')"
+                                                                                  (keydown.tab)="addIfLastInput(i,0)">
+                                                    </td>
+                                                </tr>
+                                                <tr *ngIf="isEdit" class="addNewRow"
+                                                    (click)="addNewRow(0)">
+                                                    <td class="cell-Table"><input type="text"
+                                                                                  class="input-Cell"
+                                                                                  name="valueOfMoney"
+                                                                                  id="valueOfMoney"
+                                                                                  value="Thêm dòng mới ....">
+                                                    </td>
+                                                    <td class="cell-Table"><input type="text" class="input-Cell" id="quantity"></td>
+                                                    <td class="cell-Table"><input type="text" class="input-Cell"></td>
+                                                    <td class="cell-Table"><input type="text" class="input-Cell" id="description"></td>
+                                                </tr>
+                                                <tr *ngFor="let l of newArr(9 - newmCAuditDetails?.length)">
+                                                    <td class="jsgrid-cell">&nbsp;</td>
+                                                    <td class="jsgrid-cell">&nbsp;</td>
+                                                    <td class="jsgrid-cell">&nbsp;</td>
+                                                    <td class="jsgrid-cell">&nbsp;</td>
+                                                </tr>
+                                                </tbody>
+                                                <tfoot>
+                                                <tr>
+                                                    <td class="cell-Table"><input type="text" readonly
+                                                                                  class="countRow input-Cell"
+                                                                                  value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{newmCAuditDetails?.length}}">
+                                                    </td>
+                                                    <td class="cell-Table"><input type="text"
+                                                                                  class="countRow input-Cell jsgrid-align-right"
+                                                                                  readonly
+                                                                                  name="amountSum"
+                                                                                  [ngModel]="sum('quantity')"
+                                                                                  ebCurrencyMask
+                                                                                  [systemOptions]="account?.systemOption"
+                                                                                  [type]="9"></td>
+                                                    <td class="cell-Table"><input type="text"
+                                                                                  name="totalAmountOriginal_footer"
+                                                                                  class="countRow input-Cell jsgrid-align-right"
+                                                                                  [(ngModel)]="mCAudit.totalAuditAmount"
+                                                                                  readonly
+                                                                                  ebCurrencyMask
+                                                                                  [systemOptions]="account?.systemOption"
+                                                                                  [type]="9">
+                                                    </td>
+                                                    <td class="cell-Table"><input type="text"
+                                                                                  class="countRow input-Cell"
+                                                                                  readonly></td>
+                                                </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </ngb-tab>
+                        <ngb-tab>
+                            <ng-template ngbTabTitle><span
+                                jhiTranslate="ebwebApp.mCAudit.home.member"></span></ng-template>
+                            <ng-template ngbTabContent>
+                                <div class="tab-content">
+                                    <div class="frm-main frm-padding tab-pane fade in active show"
+                                         id="home-tax"
+                                         style="background: #cbdcf0">
+                                        <div id="table-scroll-tax" class="table-scroll">
+                                            <table id="main-table-tax" class="main-table"
+                                                   (keydown.arrowDown)="moveArrowDown($event,5)"
+                                                   (keydown.arrowUp)="moveArrowUp($event,5)">
+                                                <thead>
+                                                <tr>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.mCAuditDetailMember.accountingObjectID">
+                                                        Mã nhân viên
+                                                    </th>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.mCAuditDetailMember.accountingObjectName">
+                                                        Họ tên
+                                                    </th>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.mCAuditDetailMember.accountingObjectTitle">
+                                                        Chức vụ
+                                                    </th>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.mCAuditDetailMember.role">
+                                                    </th>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.mCAuditDetailMember.organizationUnitID">
+                                                        Phòng ban
+                                                    </th>
+                                                </tr>
+                                                </thead>
+                                                <tbody >
+                                                <tr oncontextmenu="return false;"
+                                                    (contextmenu)="onRightClick($event, newmCAuditDetailMember, mCAuditDetailMember, true, true, 1, true)"
+                                                    *ngFor="let mCAuditDetailMember of newmCAuditDetailMember; let i = index"
+                                                    (keydown.control.delete)="keyPress(mCAuditDetailMember,1)"
+                                                    (keydown.control.insert)="addNewRow(1, true)"
+                                                    (keydown.control.c)="copyRow(mCAuditDetailMember, 1)">
+                                                    <td class="cell-Table">
+                                                        <combo-box style=""
+                                                                   class="jsgrid-align-left"
+                                                                   nameIp="accountingObjectID{{i}}"
+                                                                   idIp="accountingObjectID{{i}}"
+                                                                   [dataList]="employees"
+                                                                   [listColumns]="utilsService.listColumnsAccountingObjects"
+                                                                   displayMember="accountingObjectCode"
+                                                                   valueName="id"
+                                                                   [headerColumns]="utilsService.listHeaderColumnsAccountingObject"
+                                                                   [isObject]="true"
+                                                                   [(ngModel)]="mCAuditDetailMember.accountingObject"
+                                                                   (ngModelChange)="selectEmployeeMC(mCAuditDetailMember)"
+                                                                   [nameCategory]="utilsService.NHAN_VIEN"
+                                                                   [showIconPlus]="true"
+                                                                   (click)="saveDetails(i)"
+                                                                   (focusInput)="actionFocus(0, i, 'accountingObjectID')"
+                                                                   [tabindex]="12 + (5 * i * 2) + 1"
+                                                        ></combo-box>
+                                                    </td>
+                                                    <td class="cell-Table"><input type="text"
+                                                                                  class="input-Cell jsgrid-align-left"
+                                                                                  name="accountingObjectName{{i}}"
+                                                                                  id="accountingObjectName{{i}}"
+                                                                                  [(ngModel)]="mCAuditDetailMember.accountingObjectName"
+                                                                                  (focus)="actionFocus(1, i, 'accountingObjectName')"
+                                                                                  [tabindex]="12 + (5 * i * 2) + 2"/>
+                                                    </td>
+                                                    <td class="cell-Table"><input type="text"
+                                                                                  class="input-Cell jsgrid-align-left"
+                                                                                  name="accountingObjectTitle{{i}}"
+                                                                                  id="accountingObjectTitle{{i}}"
+                                                                                  [(ngModel)]="mCAuditDetailMember.accountingObjectTitle"
+                                                                                  (focus)="actionFocus(1, i, 'accountingObjectTitle')"
+                                                                                  [tabindex]="12 + (5 * i * 2) + 3"/>
+                                                    </td>
+                                                    <td class="cell-Table"><input type="text"
+                                                                                  class="input-Cell jsgrid-align-left"
+                                                                                  name="role{{i}}"
+                                                                                  id="role{{i}}"
+                                                                                  [(ngModel)]="mCAuditDetailMember.role"
+                                                                                  (focus)="actionFocus(1, i, 'role')"
+                                                                                  [tabindex]="12 + (5 * i * 2) + 4"/>
+                                                    </td>
+                                                    <td class="cell-Table">
+                                                        <combo-box style=""
+                                                                   idIp="branchID{{i}}"
+                                                                   nameIp="branchID{{i}}"
+                                                                   class="jsgrid-align-left"
+                                                                   [dataList]="organizationUnits"
+                                                                   [listColumns]="utilsService.listColumnsOrganizationUnit"
+                                                                   displayMember="organizationUnitCode"
+                                                                   valueName="id"
+                                                                   [headerColumns]="utilsService.listHeaderColumnsOrganizationUnit"
+                                                                   [isObject]="true"
+                                                                   [(ngModel)]="mCAuditDetailMember.organizationUnit"
+                                                                   (focusInput)="actionFocus(0, i, 'branchID')"
+                                                                   [tabindex]="12 + (5 * i * 2) + 5"
+                                                                   (keydown.tab)="addIfLastInput(i,1)"
+                                                        ></combo-box>
+                                                    </td>
+                                                </tr>
+                                                <tr *ngIf="isEdit" class="addNewRow"
+                                                    (click)="addNewRow(1)">
+                                                    <td class="cell-Table"><input type="text"
+                                                                                  class="input-Cell"
+                                                                                  name="accountingObjectID"
+                                                                                  id="accountingObjectID"
+                                                                                  value="Thêm dòng mới ....">
+                                                    </td>
+                                                    <td class="cell-Table"><input type="text" class="input-Cell" id="accountingObjectName"></td>
+                                                    <td class="cell-Table"><input type="text" class="input-Cell" id="accountingObjectTitle"></td>
+                                                    <td class="cell-Table"><input type="text" class="input-Cell" id="role"></td>
+                                                    <td class="cell-Table"><input type="text" class="input-Cell" id="branchID"></td>
+                                                </tr>
+                                                <tr *ngFor="let l of newArr(9 - newmCAuditDetailMember?.length)">
+                                                    <td class="jsgrid-cell">&nbsp;</td>
+                                                    <td class="jsgrid-cell">&nbsp;</td>
+                                                    <td class="jsgrid-cell">&nbsp;</td>
+                                                    <td class="jsgrid-cell">&nbsp;</td>
+                                                    <td class="jsgrid-cell">&nbsp;</td>
+                                                </tr>
+                                                </tbody>
+                                                <tfoot>
+                                                <tr>
+                                                    <td class="cell-Table"><input type="text" readonly
+                                                                                  class="countRow input-Cell"
+                                                                                  value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{newmCAuditDetailMember?.length}}">
+                                                    </td>
+                                                    <td class="cell-Table"><input type="text"
+                                                                                  class="countRow input-Cell"
+                                                                                  readonly></td>
+                                                    <td class="cell-Table"><input type="text"
+                                                                                  class="countRow input-Cell"
+                                                                                  readonly></td>
+                                                    <td class="cell-Table"><input type="text"
+                                                                                  class="countRow input-Cell"
+                                                                                  readonly></td>
+                                                    <td class="cell-Table"><input type="text"
+                                                                                  class="countRow input-Cell"
+                                                                                  readonly></td>
+                                                </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </ngb-tab>
+                        <ngb-tab id="refdoc">
+                            <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.saBill.refDoc"></span>
+                            </ng-template>
+                            <ng-template ngbTabContent>
+                                <div class="tab-content">
+                                    <div class="frm-main frm-padding tab-pane fade in active show"
+                                         id="home-ref2"
+                                         style="background: #cbdcf0">
+                                        <div id="table-scroll-ref2" class="table-scroll">
+                                            <table id="main-table-ref2" class="main-table">
+                                                <thead>
+                                                <tr>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.saBill.vDate">Ngày chứng
+                                                        từ
+                                                    </th>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.saBill.postedDate">Ngày
+                                                        hạch toán
+                                                    </th>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.saBill.noFBook">Số chứng
+                                                        từ
+                                                    </th>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.saBill.reason">Diễn giải
+                                                    </th>
+                                                </tr>
+                                                </thead>
+                                                <tbody >
+                                                <tr *ngFor="let viewVoucher of viewVouchersSelected; let i = index"
+                                                    oncontextmenu="return false;"
+                                                    (contextmenu)="onRightClick($event, viewVouchersSelected, viewVoucher, false, true, 2, false)"
+                                                    (keydown.control.delete)="keyPress(i ,2)">
+                                                    <td class="jsgrid-cell jsgrid-align-center">{{viewVoucher.date}}</td>
+                                                    <td class="jsgrid-cell jsgrid-align-center">{{viewVoucher.postedDate}}</td>
+                                                    <td class="jsgrid-cell" (click)="utilsService.viewRefVoucher(viewVoucher)" style="color:blue; text-decoration: underline;">{{viewVoucher.no}}</td>
+                                                    <td class="jsgrid-cell">{{viewVoucher.reason}}</td>
+                                                </tr>
+                                                <tr *ngFor="let l of newArr(10 - viewVouchersSelected?.length)">
+                                                    <td class="cell-Table"><input type="text"
+                                                                                  class="input-Cell"
+                                                                                  readonly></td>
+                                                    <td class="cell-Table"><input type="text"
+                                                                                  class="input-Cell"
+                                                                                  readonly></td>
+                                                    <td class="cell-Table"><input type="text"
+                                                                                  class="input-Cell"
+                                                                                  readonly></td>
+                                                    <td class="cell-Table"><input type="text"
+                                                                                  class="input-Cell"
+                                                                                  readonly></td>
+                                                </tr>
+                                                </tbody>
+                                                <tfoot>
+                                                <tr>
+                                                    <td class="cell-Table countRow">
+                                                        <input type="text" readonly
+                                                               class="input-Cell"
+                                                               value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{viewVouchersSelected?.length}}">
+                                                    </td>
+                                                    <td class="countRow"></td>
+                                                    <td class="countRow"></td>
+                                                    <td class="countRow"></td>
+                                                </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </ngb-tab>
+                        <ngb-tab x-placement="right" id="reference"
+                                 [disabled]="!isEdit">
+                            <ng-template ngbTabTitle>
+                                <span jhiTranslate="ebwebApp.mBDeposit.reference"></span>
+                            </ng-template>
+                        </ngb-tab>
+                    </ngb-tabset>
+            </div>
+        </div>
+    </div>
+<!--    <div *ngIf="contextmenu.value&&isShowDetail.value">-->
+<!--        <app-contextmenu [Details]="newmCAuditDetails" [selectedDetail]="selectedDetail.value"-->
+<!--                         [x]="contextmenuX.value" [y]="contextmenuY.value">-->
+<!--        </app-contextmenu>-->
+<!--    </div>-->
+<!--    <div *ngIf="contextmenu.value&&isShowDetailMember.value">-->
+<!--        <app-contextmenu [DetailTaxs]="newmCAuditDetailMember"-->
+<!--                         [selectedDetailTax]="selectedDetailMember.value" [x]="contextmenuX.value"-->
+<!--                         [y]="contextmenuY.value">-->
+<!--        </app-contextmenu>-->
+<!--    </div>-->
+</div>
+<eb-context-menu [contextMenu]="contextMenu" [eventHandlingHere]="true" [useCopyRow]="true"></eb-context-menu>
+<ng-template #content let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.saBill.saveMessage">Dữ liệu đã bị thay đổi, Bạn có muốn lưu lại?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="save(true)"
+                jhiTranslate="entity.action.save">Save
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="close()" jhiTranslate="entity.action.noSave">close
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="closeContent()" jhiTranslate="entity.action.close">
+            close
+        </button>
+    </div>
+</ng-template>
+<ng-template #question let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label *ngIf="isCompare" jhiTranslate="ebwebApp.mCAudit.questionView1"
+                       translateValues="{no: '{{voucherNo}}'}"></label>
+                <label *ngIf="!isCompare" jhiTranslate="ebwebApp.mCAudit.questionView2"
+                       translateValues="{no: '{{voucherNo}}'}"></label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="closeQuestion()"
+                jhiTranslate="entity.action.no"></button>
+        <button type="button" class="btn btn-outline-success" (click)="viewVoucher()"
+                jhiTranslate="entity.action.yes"></button>
+    </div>
+</ng-template>
+<ng-template #info let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label *ngIf="clickEdit" jhiTranslate="ebwebApp.mCAudit.infoEdit"></label>
+                <label *ngIf="!clickEdit" jhiTranslate="ebwebApp.mCAudit.infoDel"></label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="clickEdit ? editVoucher() : deleteVoucher()"
+                jhiTranslate="entity.action.ok"></button>
+        <button type="button" class="btn btn-outline-dark" (click)="closeModalRef()"
+                jhiTranslate="entity.action.close"></button>
+    </div>
+</ng-template>

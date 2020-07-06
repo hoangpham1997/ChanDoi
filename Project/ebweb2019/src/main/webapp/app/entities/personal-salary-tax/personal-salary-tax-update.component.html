@@ -1,0 +1,105 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
+            <h2 id="eb-personal-salary-tax-heading" jhiTranslate="ebwebApp.personalSalaryTax.home.createOrEditLabel">Create or edit a Personal Salary Tax</h2>
+            <div>
+                <eb-alert-error></eb-alert-error>
+                <div class="form-group" [hidden]="!personalSalaryTax.id">
+                    <label for="id" jhiTranslate="global.field.id">ID</label>
+                    <input type="text" class="form-control" id="id" name="id"
+                        [(ngModel)]="personalSalaryTax.id" readonly />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.personalSalaryTax.personalSalaryTaxName" for="field_personalSalaryTaxName">Personal Salary Tax Name</label>
+                    <input type="text" class="form-control" name="personalSalaryTaxName" id="field_personalSalaryTaxName"
+                        [(ngModel)]="personalSalaryTax.personalSalaryTaxName" required maxlength="512"/>
+                    <div [hidden]="!(editForm.controls.personalSalaryTaxName?.dirty && editForm.controls.personalSalaryTaxName?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.personalSalaryTaxName?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.personalSalaryTaxName?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 512 }">
+                        This field cannot be longer than 512 characters.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.personalSalaryTax.personalSalaryTaxGrade" for="field_personalSalaryTaxGrade">Personal Salary Tax Grade</label>
+                    <input type="number" class="form-control" name="personalSalaryTaxGrade" id="field_personalSalaryTaxGrade"
+                        [(ngModel)]="personalSalaryTax.personalSalaryTaxGrade" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.personalSalaryTax.salaryType" for="field_salaryType">Salary Type</label>
+                    <input type="number" class="form-control" name="salaryType" id="field_salaryType"
+                        [(ngModel)]="personalSalaryTax.salaryType" required/>
+                    <div [hidden]="!(editForm.controls.salaryType?.dirty && editForm.controls.salaryType?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.salaryType?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.controls.salaryType?.errors?.number" jhiTranslate="entity.validation.number">
+                            This field should be a number.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.personalSalaryTax.taxRate" for="field_taxRate">Tax Rate</label>
+                    <input type="number" class="form-control" name="taxRate" id="field_taxRate"
+                        [(ngModel)]="personalSalaryTax.taxRate" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.personalSalaryTax.fromAmount" for="field_fromAmount">From Amount</label>
+                    <input type="number" class="form-control" name="fromAmount" id="field_fromAmount"
+                        [(ngModel)]="personalSalaryTax.fromAmount" required/>
+                    <div [hidden]="!(editForm.controls.fromAmount?.dirty && editForm.controls.fromAmount?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.fromAmount?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.controls.fromAmount?.errors?.number" jhiTranslate="entity.validation.number">
+                            This field should be a number.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.personalSalaryTax.toAmount" for="field_toAmount">To Amount</label>
+                    <input type="number" class="form-control" name="toAmount" id="field_toAmount"
+                        [(ngModel)]="personalSalaryTax.toAmount" required/>
+                    <div [hidden]="!(editForm.controls.toAmount?.dirty && editForm.controls.toAmount?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.toAmount?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.controls.toAmount?.errors?.number" jhiTranslate="entity.validation.number">
+                            This field should be a number.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.personalSalaryTax.isActive" for="field_isActive">Is Active</label>
+                    <input type="checkbox" class="form-control" name="isActive" id="field_isActive"
+                        [(ngModel)]="personalSalaryTax.isActive" />
+                    <div [hidden]="!(editForm.controls.isActive?.dirty && editForm.controls.isActive?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.isActive?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                    </div>
+                </div>
+
+            </div>
+            <div>
+                <button type="button" id="cancel-save" class="btn btn-secondary"  (click)="previousState()">
+                    <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+                </button>
+                <button type="submit" id="save-entity" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">
+                    <fa-icon [icon]="'save'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

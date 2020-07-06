@@ -1,0 +1,223 @@
+<div class="body">
+    <div class="modal-header" style="padding: 2px 10px; padding-top: 10px">
+        <div class="d-flex flex-wrap col-md-11">
+            <h6 class="modal-title-detail"><img
+                src="../../../../content/images/icon-logo.png" height="25px"
+                width="25px"> <span
+                class="text-uppercase" jhiTranslate="ebwebApp.baoCao.tongHopChiPhiTheoKhoanMucChiPhiPopup.title"></span>
+            </h6>
+        </div>
+    </div>
+    <div style="padding: 5px 25px">
+        <div>
+            <div
+                *ngIf="treeOrganizationUnits && treeOrganizationUnits?.length > 0 && treeOrganizationUnits[0].children && treeOrganizationUnits[0].children.length>0"
+                class="form-group row">
+                <label jhiTranslate="ebwebApp.baoCao.canDoiKeToan.organization" class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-10">
+                    <eb-tree-combo-box [tree]="treeOrganizationUnits"
+                                       [(ngModel)]="organizationUnit"
+                                       (ngModelChange)="selectChangeOrg()"></eb-tree-combo-box>
+                </div>
+            </div>
+            <div
+                *ngIf="isShowDependent && treeOrganizationUnits && treeOrganizationUnits?.length > 0 && treeOrganizationUnits[0].children && treeOrganizationUnits[0].children.length>0"
+                class="form-group row">
+                <label class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-10">
+                    <label for="checkboxDependent"><input id="checkboxDependent" type="checkbox"
+                                                          name="checkboxDependent"
+                                                          [(ngModel)]="isDependent"
+                                                          (ngModelChange)="selectChangeIsDependent()"></label>
+                    <label for="checkboxDependent"
+                           jhiTranslate="ebwebApp.baoCao.soQuyTienMatPopup.dependentData"></label>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label jhiTranslate="ebwebApp.baoCao.canDoiKeToan.period" class="col-sm-2 col-form-label">Chọn thời
+                    gian</label>
+                <div class="col-sm-10">
+                    <combo-box style=""
+                               name="timeLine"
+                               [dataList]="listTimeLine"
+                               [listColumns]="utilsService.listColumnsTimeLine"
+                               [isOutTable]="true"
+                               displayMember="display"
+                               valueName="value"
+                               [headerColumns]="utilsService.listHeaderColumnsTimeLine"
+                               [isObject]="false"
+                               [(ngModel)]="timeLineVoucher"
+                               (ngModelChange)="selectChangeBeginDateAndEndDate(timeLineVoucher)"
+                    ></combo-box>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label jhiTranslate="ebwebApp.saBill.invoice.fromDate" class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-4">
+                    <eb-date-picker [(ngModel)]="fromDate" name="fromdate" format="YYYY-MM-DD"></eb-date-picker>
+                </div>
+                <label jhiTranslate="ebwebApp.saBill.invoice.toDate" class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-4">
+                    <eb-date-picker [(ngModel)]="toDate" name="toDate" format="YYYY-MM-DD"></eb-date-picker>
+                </div>
+            </div>
+            <!--            <div class="form-group row">-->
+            <!--                <label class="col-sm-2 col-form-label"></label>-->
+            <!--                <div class="col-sm-10">-->
+            <!--                    <label for="checkboxgroupTheSameItem"><input id="checkboxgroupTheSameItem" type="checkbox" name="checkboxgroupTheSameItem"-->
+            <!--                                                  [(ngModel)]="groupTheSameItem"></label>-->
+            <!--                    <label for="checkboxgroupTheSameItem" jhiTranslate="ebwebApp.baoCao.nhatKyChungPopup.option1"></label>-->
+            <!--                </div>-->
+            <!--            </div>-->
+        </div>
+        <div style="height: 190px !important;">
+            <eb-tree-grid #child [tree]="listParentExpenseItem" [navigateForm]="navigateFormExpenseItem" [listTHead]="listTHeadExpenseItem" [nameSearch]="nameSearchExpenseItem"
+                          [listKey]="listKeyExpenseItem" [isShowSearch]="true" [listSearch]="listSearchExpenseItem" [keySearchs]="keySearchExpenseItem" [isPopup]="true"></eb-tree-grid>
+<!--            <table class="main-table">-->
+<!--                <thead>-->
+<!--                <tr>-->
+<!--                    <th scope="col">-->
+<!--                        <div class="custom-control custom-checkbox">-->
+<!--                            <input type="checkbox" class="custom-control-input" id="check-all2" [checked]="isCheckAllExpenseItem()" (change)="checkAllExpenseItem()">-->
+<!--                            <label class="custom-control-label" for="check-all2"></label>-->
+<!--                        </div>-->
+<!--                    </th>-->
+<!--                    <th scope="col" jhiTranslate="ebwebApp.baoCao.tongHopChiPhiTheoKhoanMucChiPhiPopup.expenseItemCode">Mã khoản mục chi phí</th>-->
+<!--                    <th scope="col" jhiTranslate="ebwebApp.baoCao.tongHopChiPhiTheoKhoanMucChiPhiPopup.expenseItemName">Tên khoản mục chi phí</th>-->
+<!--                </tr>-->
+<!--                <tr>-->
+<!--                    <th class="col" class="jsgrid-align-center sticky-35"-->
+<!--                        style="background: #fff !important; padding: 0px 10px !important;">-->
+<!--                    </th>-->
+<!--                    <th class="col" class="jsgrid-align-left sticky-35"-->
+<!--                        style="background: #fff !important; padding: 0px 10px !important;"><input-->
+<!--                        type="text" placeholder="{{'ebwebApp.accountDefault.searchHere' | translate}}"-->
+<!--                        class="input-Cell"-->
+<!--                        autocomplete="off"-->
+<!--                        name="accountNumber"-->
+<!--                        [(ngModel)]="expenseItemCode"-->
+<!--                        (ngModelChange)="changeSearchExpenseItem()">-->
+<!--                    </th>-->
+<!--                    <th class="col" class="jsgrid-align-left sticky-35"-->
+<!--                        style="background: #fff !important; padding: 0px 10px !important;"><input-->
+<!--                        type="text"-->
+<!--                        autocomplete="off"-->
+<!--                        placeholder="{{'ebwebApp.accountDefault.searchHere' | translate}}"-->
+<!--                        class="input-Cell"-->
+<!--                        name="accountName"-->
+<!--                        [(ngModel)]="expenseItemName"-->
+<!--                        (ngModelChange)="changeSearchExpenseItem()"-->
+<!--                    >-->
+<!--                    </th>-->
+<!--                </tr>-->
+<!--                </thead>-->
+<!--                <tbody>-->
+<!--                <tr *ngFor="let item of expenseItems, let i = index">-->
+<!--                    <td class="text-center">-->
+<!--                        <div class="custom-control custom-checkbox">-->
+<!--                            <input type="checkbox" class="custom-control-input" name="{{'checkbox2' + i}}"-->
+<!--                                   id="{{'checkbox2' + i}}" [(ngModel)]="item.checked" (click)="check(item)">-->
+<!--                            <label class="custom-control-label" for="{{'checkbox2' + i}}"></label>-->
+<!--                        </div>-->
+<!--                    </td>-->
+<!--                    <td class="jsgrid-align-left">-->
+<!--                        {{item.expenseItemCode}}-->
+<!--                    </td>-->
+<!--                    <td class="jsgrid-align-left">-->
+<!--                        {{item.expenseItemName}}-->
+<!--                    </td>-->
+<!--                </tr>-->
+<!--                <tr *ngFor="let l of newArr(8 - expenseItems?.length)">-->
+<!--                    <td class="cell-Table jsgrid-align-center"-->
+<!--                    >&nbsp;-->
+<!--                    </td>-->
+<!--                    <td class="cell-Table jsgrid-align-right"-->
+<!--                    ></td>-->
+<!--                    <td class="cell-Table jsgrid-align-right">-->
+<!--                    </td>-->
+<!--                </tr>-->
+<!--                </tbody>-->
+<!--            </table>-->
+        </div>
+        <div style="height: 190px !important;">
+            <eb-tree-grid #child [tree]="listParentAccountList" [navigateForm]="navigateFormAccountList" [listTHead]="listTHeadAccountList" [nameSearch]="nameSearchAccountList"
+                          [listKey]="listKeyAccountList" [isShowSearch]="true" [listSearch]="listSearchAccountList" [keySearchs]="keySearchAccountList" [isPopup]="true"></eb-tree-grid>
+<!--            <table class="main-table">-->
+<!--                <thead>-->
+<!--                <tr>-->
+<!--                    <th scope="col">-->
+<!--                        <div class="custom-control custom-checkbox">-->
+<!--                            <input type="checkbox" class="custom-control-input" id="check-all" [checked]="isCheckAllAccountList()" (change)="checkAllAccountList()">-->
+<!--                            <label class="custom-control-label" for="check-all"></label>-->
+<!--                        </div>-->
+<!--                    </th>-->
+<!--                    <th scope="col" jhiTranslate="ebwebApp.baoCao.socaiHTNhatKyChung.accountNumber">Số tài khoản</th>-->
+<!--                    <th scope="col" jhiTranslate="ebwebApp.baoCao.socaiHTNhatKyChung.accountName">Tên tài khoản</th>-->
+<!--                </tr>-->
+<!--                <tr>-->
+<!--                    <th class="col" class="jsgrid-align-center sticky-35"-->
+<!--                        style="background: #fff !important; padding: 0px 10px !important;">-->
+<!--                    </th>-->
+<!--                    <th class="col" class="jsgrid-align-left sticky-35"-->
+<!--                        style="background: #fff !important; padding: 0px 10px !important;"><input-->
+<!--                        type="text" placeholder="{{'ebwebApp.accountDefault.searchHere' | translate}}"-->
+<!--                        class="input-Cell"-->
+<!--                        autocomplete="off"-->
+<!--                        name="accountNumber"-->
+<!--                        [(ngModel)]="accountNumber"-->
+<!--                        (ngModelChange)="changeSearchAccount()">-->
+<!--                    </th>-->
+<!--                    <th class="col" class="jsgrid-align-left sticky-35"-->
+<!--                        style="background: #fff !important; padding: 0px 10px !important;"><input-->
+<!--                        type="text"-->
+<!--                        autocomplete="off"-->
+<!--                        placeholder="{{'ebwebApp.accountDefault.searchHere' | translate}}"-->
+<!--                        class="input-Cell"-->
+<!--                        name="accountName"-->
+<!--                        [(ngModel)]="accountName"-->
+<!--                        (ngModelChange)="changeSearchAccount()"-->
+<!--                    >-->
+<!--                    </th>-->
+<!--                </tr>-->
+<!--                </thead>-->
+<!--                <tbody>-->
+<!--                <tr *ngFor="let item of accountLists, let i = index">-->
+<!--                    <td class="text-center">-->
+<!--                        <div class="custom-control custom-checkbox">-->
+<!--                            <input type="checkbox" class="custom-control-input" name="{{'checkbox' + i}}"-->
+<!--                                   id="{{'checkbox' + i}}" [(ngModel)]="item.checked" (click)="check(item)">-->
+<!--                            <label class="custom-control-label" for="{{'checkbox' + i}}"></label>-->
+<!--                        </div>-->
+<!--                    </td>-->
+<!--                    <td class="jsgrid-align-left">-->
+<!--                        {{item.accountNumber}}-->
+<!--                    </td>-->
+<!--                    <td class="jsgrid-align-left">-->
+<!--                        {{item.accountName}}-->
+<!--                    </td>-->
+<!--                </tr>-->
+<!--                <tr *ngFor="let l of newArr(8 - accountLists?.length)">-->
+<!--                    <td class="cell-Table jsgrid-align-center"-->
+<!--                    >&nbsp;-->
+<!--                    </td>-->
+<!--                    <td class="cell-Table jsgrid-align-right"-->
+<!--                    ></td>-->
+<!--                    <td class="cell-Table jsgrid-align-right">-->
+<!--                    </td>-->
+<!--                </tr>-->
+<!--                </tbody>-->
+<!--            </table>-->
+        </div>
+    </div>
+    <div class="modal-footer" style="padding: 5px 31px">
+        <button id="save" (click)="showReport()" class="btn btn-success">
+            <span jhiTranslate="entity.action.preview"></span>
+        </button>
+        <button *ebHasSomeAuthorityAndCondition="[['ROLE_ADMIN', ROLE_KetXuat], isKetXuat]" class="btn btn-danger"
+                jhiTranslate="entity.action.render" (click)="exportExcel()">Kết xuất
+        </button>
+        <button type="button" class="btn btn-dark" (click)="activeModal.dismiss('closed')" data-dismiss="modal">
+            <span jhiTranslate="entity.action.close"></span>
+        </button>
+    </div>
+</div>

@@ -1,0 +1,123 @@
+<div class="container-fluid">
+    <div class="margin-tp-5 margin-0">
+        <div class="">
+            <div class="itemw" style="color: #FFFFFF">
+                <div class="menu-tool-bar he">
+                    <div class="ptitle">
+                        <span jhiTranslate="ebwebApp.repository.home.title"></span>
+                    </div>
+                    <div class="gr-toolbar">
+                        <a (click)="addNew($event)" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_DanhMucKho_Them]" title="{{'ebwebApp.autoPrinciple.tooltipAdd' | translate}}"><i class="mdi mdi-plus" ></i> <span jhiTranslate="ebwebApp.repository.add"></span></a>
+                        <a *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_DanhMucKho_Sua]" [hidden]="!selectedRow" (click)="edit()" title="{{'ebwebApp.autoPrinciple.tooltipEdit' | translate}}">
+                            <i class="mdi mdi-pen" ></i> <span jhiTranslate="ebwebApp.repository.edit"></span></a>
+                        <!--                        [routerLink]="['/account-list', selectedRow.id, 'edit']"-->
+                        <a *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_DanhMucKho_Xoa]" [hidden]="!selectedRow" (click)="delete()" title="{{'ebwebApp.autoPrinciple.tooltipDelete' | translate}}">
+                            <i class="mdi mdi-delete"></i><span jhiTranslate="ebwebApp.repository.delete1"></span> </a>
+                        <!--                        [routerLink]="['/', { outlets: { popup: 'account-list/'+ selectedRow.id + '/delete'} }]"-->
+                        <!--                        replaceUrl="true"-->
+                    </div>
+                </div>
+            </div>
+            <div class="frm-main frm-mains nobg no-highlight" style="background: #cbdcf0; margin-top: 5px">
+                <div id="table-scroll0" class="table-scroll" style="max-height: 700px !important;">
+                    <table id="main-table0" class="main-table">
+                        <thead>
+                        <tr>
+                            <th scope="col" jhiTranslate="ebwebApp.repository.repositoryCode"></th>
+                            <th scope="col" jhiTranslate="ebwebApp.repository.repositoryName"></th>
+                            <th scope="col" jhiTranslate="ebwebApp.repository.defaultAccount"></th>
+                            <th scope="col" jhiTranslate="ebwebApp.repository.isActive"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let repository of repositories ;trackBy: trackId"
+                            [class.row-selected]="this.selectedRows.indexOf(repository) !== -1"
+                            (click)="selectMultiRow(repository, $event, repositories)"
+                            (dblclick)="edit()"
+                            [class.selected]="repository === selectedRow"
+                        >
+                            <td class="jsgrid-cell jsgrid-align-left"
+                                style="width: 150px">{{repository.repositoryCode}}</td>
+                            <td class="jsgrid-cell jsgrid-align-left"
+                                style="width: 150px">{{repository.repositoryName}}</td>
+                            <td class="jsgrid-cell jsgrid-align-center"
+                                style="width: 150px">{{repository.defaultAccount}}</td>
+                            <td class="jsgrid-cell jsgrid-align-center"
+                                style="width: 150px"><input type="checkbox"
+                                                            class="jsgrid-cell jsgrid-align-center"
+                                                            name="isactive" id="field_isactive"
+                                                            [(ngModel)]="repository.isActive" disabled/></td>
+                        </tr>
+                        <tr *ngFor="let row of newArr(20 - repositories?.length)">
+                            <td class="jsgrid-cell">&nbsp;</td>
+                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                        </tr>
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <td class="cell-Table border-none"><input type="text" readonly
+                                                                      class="countRow input-Cell"
+                                                                      value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{repositories?.length}}"></td>
+                            <td class="cell-Table border-none"><input type="text" class="countRow input-Cell" readonly></td>
+                            <td class="cell-Table border-none"><input type="text" class="countRow input-Cell" readonly></td>
+                            <td class="cell-Table border-none"><input type="text" class="countRow input-Cell" readonly></td>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+            <div *ngIf="repositories && repositories?.length"
+                 style="padding-right: 16px">
+                <div class="row justify-content-end" style="height:32px">
+                    <div class="col-lg-2">
+                        <div class="form-group row">
+                            <label class="col-sm-7 col-form-label" for="itemsPerPage"
+                                   style="padding-right: 0px;text-align: right;"><span
+                                jhiTranslate="ebwebApp.mBDeposit.totalPage"></span>: {{totalItems}}</label>
+                            <div class="col-sm-5 pd-l-0">
+                                <select class="form-control form-control-sm" name="itemsPerPage"
+                                        id="itemsPerPage"
+                                        style="background-color: #f5f7fa;"
+                                        [(ngModel)]="itemsPerPage"
+                                        (ngModelChange)="selectedItemPerPage()"
+                                >
+                                    <option [value]="20">20</option>
+                                    <option [value]="30">30</option>
+                                    <option [value]="40">40</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="justify-content-end">
+                        <ngb-pagination [size]="'sm'" [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage"
+                                        [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
+                                        (pageChange)="loadPage(page)"></ngb-pagination>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #deletePopup let-d="dismiss">
+    <form  name="deleteForm" (ngSubmit)="confirmDeleteList()">
+        <div class="modal-header">
+            <h4 class="modal-title" jhiTranslate="entity.delete.title">Confirm delete operation</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                    (click)="modalRef.close()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <eb-alert-error></eb-alert-error>
+            <p id="eb-delete-sAOrder-heading" jhiTranslate="ebwebApp.mBDeposit.multiDeleteMessages">Are you sure you want to delete this SA Order?</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="modalRef.close()">
+                <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+            </button>
+            <button id="eb-confirm-delete-sAOrder" type="submit" class="btn btn-danger">
+                <fa-icon [icon]="'times'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.delete">Delete</span>
+            </button>
+        </div>
+    </form>
+</ng-template>

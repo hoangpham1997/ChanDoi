@@ -1,0 +1,51 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
+            <h2 id="eb-sale-discount-policy-heading" jhiTranslate="ebwebApp.saleDiscountPolicy.home.createOrEditLabel">Create or edit a Sale Discount Policy</h2>
+            <div>
+                <eb-alert-error></eb-alert-error>
+                <div class="form-group" [hidden]="!saleDiscountPolicy.id">
+                    <label for="id" jhiTranslate="global.field.id">ID</label>
+                    <input type="text" class="form-control" id="id" name="id"
+                        [(ngModel)]="saleDiscountPolicy.id" readonly />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.saleDiscountPolicy.quantityFrom" for="field_quantityFrom">Quantity From</label>
+                    <input type="number" class="form-control" name="quantityFrom" id="field_quantityFrom"
+                        [(ngModel)]="saleDiscountPolicy.quantityFrom" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.saleDiscountPolicy.quantityTo" for="field_quantityTo">Quantity To</label>
+                    <input type="number" class="form-control" name="quantityTo" id="field_quantityTo"
+                        [(ngModel)]="saleDiscountPolicy.quantityTo" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.saleDiscountPolicy.discountType" for="field_discountType">Discount Type</label>
+                    <input type="number" class="form-control" name="discountType" id="field_discountType"
+                        [(ngModel)]="saleDiscountPolicy.discountType" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.saleDiscountPolicy.discountResult" for="field_discountResult">Discount Result</label>
+                    <input type="number" class="form-control" name="discountResult" id="field_discountResult"
+                        [(ngModel)]="saleDiscountPolicy.discountResult" />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.saleDiscountPolicy.materialGoods" for="field_materialGoods">Material Goods</label>
+                    <select class="form-control" id="field_materialGoods" name="materialGoods" [(ngModel)]="saleDiscountPolicy.materialGoods" >
+                        <option [ngValue]="null"></option>
+                        <option [ngValue]="materialGoodsOption.id === saleDiscountPolicy.materialGoods?.id ? saleDiscountPolicy.materialGoods : materialGoodsOption" *ngFor="let materialGoodsOption of materialgoods; trackBy: trackMaterialGoodsById">{{materialGoodsOption.id}}</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <button type="button" id="cancel-save" class="btn btn-secondary"  (click)="previousState()">
+                    <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+                </button>
+                <button type="submit" id="save-entity" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">
+                    <fa-icon [icon]="'save'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

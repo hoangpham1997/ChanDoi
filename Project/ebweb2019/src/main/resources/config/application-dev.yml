@@ -1,0 +1,173 @@
+# ===================================================================
+# Spring Boot configuration for the "dev" profile.
+#
+# This configuration overrides the application.yml file.
+#
+# More information on profiles: https://www.jhipster.tech/profiles/
+# More information on configuration properties: https://www.jhipster.tech/common-application-properties/
+# ===================================================================
+
+# ===================================================================
+# Standard Spring Boot properties.
+# Full reference is available at:
+# http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
+# ===================================================================
+
+logging:
+    level:
+        ROOT: DEBUG
+        io.github.jhipster: DEBUG
+        vn.softdreams.ebweb: DEBUG
+
+spring:
+    profiles:
+        active: dev
+        include:
+            - swagger
+            # Uncomment to activate TLS for the dev profile
+            #- tls
+    devtools:
+        restart:
+            enabled: true
+        livereload:
+            enabled: false # we use Webpack dev server + BrowserSync for livereload
+    jackson:
+        serialization.indent_output: true
+    datasource:
+        type: com.zaxxer.hikari.HikariDataSource
+        url: jdbc:sqlserver://172.16.10.72:1433;database=EASYBOOKS
+#        url: jdbc:sqlserver://172.16.1.109:1433;database=EASYBOOKS
+        username: sa
+#        password: yourStrong(!)Password
+        password: 123456a@
+        poolName: ebweb
+        hikari:
+            auto-commit: false
+            data-source-properties:
+                cachePrepStmts: true
+                prepStmtCacheSize: 250
+                prepStmtCacheSqlLimit: 2048
+                useServerPrepStmts: true
+            maximumPoolSize: 1000
+            minimumIdle: 20
+            maxLifetime: 1800000
+            idleTimeout: 180000
+            connectionTimeout: 200000
+        jpa:
+            database-platform: org.hibernate.dialect.SQLServer2012Dialect
+            database: SQL_SERVER
+            show-sql: true
+            properties:
+                hibernate.cache.use_second_level_cache: false
+                hibernate.cache.use_query_cache: false
+                hibernate.generate_statistics: true
+                hibernate.cache.region.factory_class: io.github.jhipster.config.jcache.BeanClassLoaderAwareJCacheRegionFactory
+                hibernate.id.new_generator_mappings: true
+    datasourceReport:
+        type: com.zaxxer.hikari.HikariDataSource
+        url: jdbc:sqlserver://172.16.10.72:1433;database=EASYBOOKS
+        username: sa
+        password: 123456a@
+        poolName: ebweb
+        hikari:
+            auto-commit: false
+            data-source-properties:
+                cachePrepStmts: true
+                prepStmtCacheSize: 250
+                prepStmtCacheSqlLimit: 2048
+                useServerPrepStmts: true
+            maximumPoolSize: 1000
+            minimumIdle: 20
+            maxLifetime: 1800000
+            idleTimeout: 180000
+            connectionTimeout: 200000
+        jpa:
+            database-platform: org.hibernate.dialect.SQLServer2012Dialect
+            database: SQL_SERVER
+            show-sql: true
+            properties:
+                hibernate.cache.use_second_level_cache: false
+                hibernate.cache.use_query_cache: false
+                hibernate.generate_statistics: true
+                hibernate.cache.region.factory_class: io.github.jhipster.config.jcache.BeanClassLoaderAwareJCacheRegionFactory
+                hibernate.id.new_generator_mappings: true
+    liquibase:
+        contexts: dev
+        enabled: false
+    mail:
+        host: mail.softdreams.vn
+        port: 25
+        username: no-reply@easybooks.vn
+        password: Sds@202o
+        properties.mail.smtp.auth: true
+        properties.mail.smtp.starttls.enable: true
+    messages:
+        cache-duration: PT1S # 1 second, see the ISO 8601 standard
+    thymeleaf:
+        cache: false
+
+server:
+    #    ssl:
+    #        key-store: classpath:config/tls/app.easybooks.vn.p12
+    #        key-store-password: eb@2020
+    #        key-store-type: PKCS12
+    #        key-alias: app.easybooks.vn
+    port: 8080
+    http:
+        port: 80
+
+# ===================================================================
+# JHipster specific properties
+#
+# Full reference is available at: https://www.jhipster.tech/common-application-properties/
+# ===================================================================
+
+jhipster:
+    http:
+        version: V_1_1 # To use HTTP/2 you will need to activate TLS (see application-tls.yml)
+    cache: # Cache configuration
+        ehcache: # Ehcache configuration
+            time-to-live-seconds: 3600 # By default objects stay 1 hour in the cache
+            max-entries: 100 # Number of objects in each cache entry
+    # CORS is only enabled by default with the "dev" profile, so BrowserSync can access the API
+    cors:
+        allowed-origins: "*"
+        allowed-methods: "*"
+        allowed-headers: "*"
+        exposed-headers: "Authorization,Link,X-Total-Count"
+        allow-credentials: true
+        max-age: 1800
+    security:
+        authentication:
+            jwt:
+                # This token must be encoded using Base64 (you can Type `echo 'secret-key'|base64` on your command line)
+                base64-secret: OWQ5M2MxZjIyMTgxMjNiMTM4M2Q2NTk1ZGM3MjYyNzAzMjQ3NTJlZDljMzJkMmZkNjQ4MzU2Mjk0YzJjZjViMWY5YzdkN2MzNjZhMmRhNDMyOTI1ZGNmYTM2OWUxYWE0NWVjMzBjODVhOWVkNTUyMzVjZTc5YmI5MjgyM2M3MTE=
+                # Token is valid 24 hours
+                token-validity-in-seconds: 86400
+                token-validity-in-seconds-for-remember-me: 2592000
+    mail: # specific JHipster mail property, for standard properties see MailProperties
+        from: no-reply@easybooks.vn
+        base-url: http://127.0.0.1:8080
+    metrics: # DropWizard Metrics configuration, used by MetricsConfiguration
+        jmx:
+            enabled: true
+        logs: # Reports Dropwizard metrics in the logs
+            enabled: false
+            report-frequency: 60 # in seconds
+    logging:
+        logstash: # Forward logs to logstash over a socket, used by LoggingConfiguration
+            enabled: false
+            host: localhost
+            port: 5000
+            queue-size: 512
+
+# ===================================================================
+# Application specific properties
+# Add your own application properties here, see the ApplicationProperties class
+# to have Type-safe configuration, like in the JHipsterProperties above
+#
+# More documentation is available at:
+# https://www.jhipster.tech/common-application-properties/
+# ===================================================================
+
+# application:

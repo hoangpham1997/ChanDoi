@@ -1,0 +1,136 @@
+<div class="pd-10 bg-modal">
+    <label class="font_custom" jhiTranslate="ebwebApp.outWard.titleSelectIWVoucher"></label>
+    <div class="modal-body">
+        <div class="row">
+            <!-- chọn đối tượng-->
+            <div class="col-3 row">
+                <div class="col-12">
+                    <label jhiTranslate="ebwebApp.receiveBill.detail.time">Chọn thời gian</label>
+                    <combo-box style=""
+                               name="timeLine"
+                               [dataList]="listTimeLine"
+                               [listColumns]="utilsService.listColumnsTimeLine"
+                               [isOutTable]="true"
+                               displayMember="display"
+                               valueName="value"
+                               [headerColumns]="utilsService.listHeaderColumnsTimeLine"
+                               [isObject]="false"
+                               [(ngModel)]="timeLineVoucher"
+                               (ngModelChange)="selectChangeBeginDateAndEndDate(timeLineVoucher)"
+                    ></combo-box>
+                </div>
+            </div>
+            <div class="col-5 row">
+                <div class="form-group col-6">
+                    <label jhiTranslate="ebwebApp.saBill.invoice.fromDate">date</label>
+                    <eb-date-picker [(ngModel)]="fromDate" name="fromdate" format="YYYYMMDD"></eb-date-picker>
+                </div>
+                <div class="form-group col-6">
+                    <label jhiTranslate="ebwebApp.saBill.invoice.toDate">date</label>
+                    <eb-date-picker [(ngModel)]="toDate" name="fromdate" format="YYYYMMDD"></eb-date-picker>
+                </div>
+            </div>
+            <div class="col-2">
+                <div>
+                    <button class="btn btn-success btn-sm ebwebApp.receiveBill.getData margin-top-search" (click)="search()"><i
+                        class="mdi mdi-magnify"
+                        aria-hidden="true"></i><span jhiTranslate="ebwebApp.receiveBill.getData" style="font-size: 14px"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+        <!--        //table-->
+    <div class="frm-main frm-padding tab-pane fade in active show" id="home-ref"style="background: #cbdcf0">
+        <div id="table-scroll-ref" class="table-scroll set-index">
+            <table class="main-table">
+                <thead>
+                <tr>
+                    <th scope="col" jhiTranslate="ebwebApp.pPInvoice.noFBook"></th>
+                    <th scope="col" jhiTranslate="ebwebApp.pPInvoice.date"></th>
+                    <th scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.repositoryId">Kho</th>
+                    <th scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.unitId">Đơn vị tính</th>
+                    <th scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.unitPriceOriginal">Đơn giá</th>
+                    <th scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.quantity">Số lượng</th>
+                    <th scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.amountOriginal">Thành tiền</th>
+                    <th scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.lotNo">Số lô</th>
+                    <th scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.expiryDate">Hạn dùng</th>
+                    <th scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.mainUnitId">ĐVT chính</th>
+                    <th scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.mainQuantity">Số lượng theo ĐVC</th>
+                    <th scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.mainUnitPrice">Đơn giá theo ĐVC</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let item of listVouchers, let i = index"
+                    [class.selected]="selected && item.id === selected.id"
+                    (click)="selectedVoucher(item)">
+                    <td class="jsgrid-align-left">
+                        {{sessionWork ? item.noMBook : item.noFBook}}
+                    </td>
+                    <td class="jsgrid-align-center">
+                        {{item.date | date:'dd/MM/yyyy'}}
+                    </td>
+                    <td class="jsgrid-align-left">
+                        {{item.repositoryCode}}
+                    </td>
+                    <td class="jsgrid-align-left">
+                        {{item.unitName}}
+                    </td>
+                    <td class="jsgrid-align-right">
+                        {{item.unitPrice | ebcurrency:1:currentAccount}}
+                    </td>
+                    <td class="jsgrid-align-right">
+                        {{item.quantity | ebcurrency:3:currentAccount}}
+                    </td>
+                    <td class="jsgrid-align-right">
+                        {{item.amount | ebcurrency:7:currentAccount}}
+                    </td>
+                    <td class="jsgrid-align-left">
+                        {{item.lotNo}}
+                    </td>
+                    <td class="jsgrid-align-center">
+                        {{item.expiryDate | date:'dd/MM/yyyy'}}
+                    </td>
+                    <td class="jsgrid-align-left">
+                        {{item.mainUnitName}}
+                    </td>
+                    <td class="jsgrid-align-right">
+                        {{item.mainQuantity | ebcurrency:3:currentAccount}}
+                    </td>
+                    <td class="jsgrid-align-right">
+                        {{item.mainUnitPrice | ebcurrency:1:currentAccount}}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="modal-body" style="padding: 20px 20px 0 0 !important;">
+        <div class="row justify-content-end" style="height:32px">
+            <div class="col-lg-2">
+                <div class="form-group row">
+                    <label class="col-sm-7 col-form-label text-right" for="itemsPerPage">
+                        <span jhiTranslate="ebwebApp.mCPayment.total"></span> : {{totalItems}}
+                    </label>
+                    <div class="col-sm-5 pd-l-0">
+                        <select class="form-control form-control-sm" name="itemsPerPage" id="itemsPerPage"
+                                style="background-color: #f5f7fa;" [(ngModel)]="itemsPerPage" (ngModelChange)="search()" >
+                            <option [value]="10">10</option>
+                            <option [value]="20">20</option>
+                            <option [value]="30">30</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="justify-content-end">
+                <ngb-pagination [size]="'sm'" [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage"
+                                [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
+                                (pageChange)="search()"></ngb-pagination>
+            </div>
+        </div>
+    </div>
+    <div class="float-right" style="margin: 10px">
+        <button type="button" class="btn btn-light" (click)="apply()" >Đồng ý</button>
+        <button type="button" class="btn btn-light" (click)="close()">Hủy bỏ</button>
+    </div>
+</div>

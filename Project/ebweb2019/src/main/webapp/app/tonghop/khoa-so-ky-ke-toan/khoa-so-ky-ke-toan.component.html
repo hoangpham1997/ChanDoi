@@ -1,0 +1,86 @@
+<div>
+    <div class="modal-header css-header">
+        <div class="d-flex flex-wrap col-md-11">
+            <img style="margin-top: 3px" src="../../../content/images/icon-logo.png" height="25px"
+                 width="25px">
+            <h3 style="padding-left: 10px" class="modal-title-detail">
+                <span jhiTranslate="ebwebApp.lockBook.title"></span></h3>
+        </div>
+    </div>
+    <div class="modal-body css-body">
+        <div class="form">
+            <div class="form-group row">
+                <label class="offset-sm-1 col-form-label"> {{translate.instant('ebwebApp.lockBook.dateLockOld')}}</label>
+                <span class="col-form-label" style="padding-left: 15px">{{this.dateLockOld|date:'dd/MM/yyyy'}}</span>
+            </div>
+            <div class="form-group row">
+                <label class="offset-sm-1 col-form-label pd-r-10"><img src="../../../content/images/lock.png"
+                                                                       height="30px"
+                                                                       width="30px"> {{translate.instant('ebwebApp.lockBook.choseDateLockNew')}}</label>
+                <div class="pd-l-0 pd-r-10">
+                    <eb-date-picker name="postedDate" [(ngModel)]="this.dateLockNew"></eb-date-picker>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="offset-sm-1 col-form-label pd-r-10">
+                    <img src="../../../content/images/warning.png" height="30px"
+                         width="30px"> {{translate.instant('ebwebApp.lockBook.note')}}
+                </label>
+            </div>
+        </div>
+        <div *ngIf="orgTreeDtoModel?.length > 0" id="table-scroll0" class="table-scroll-popup" style="z-index: 0; height: 180px;max-height: 180px;">
+            <table class="main-table">
+                <thead>
+                <tr>
+                    <th scope="col width-100">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="check-all-ks" [checked]="isCheckAll()" (change)="checkAll()">
+                            <label class="custom-control-label" for="check-all-ks"></label>
+                        </div>
+                    </th>
+                    <th scope="col" jhiTranslate="ebwebApp.lockBook.branchName">Chi nhánh</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let item of orgTreeDtoModel, let i = index">
+                    <td class="text-center width-100 jsgrid-cell td-intable">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" name="{{'checkboxKS' + i}}"
+                                   id="{{'checkboxKS' + i}}" [(ngModel)]="item.checked" (click)="check(item)">
+                            <label class="custom-control-label" for="{{'checkboxKS' + i}}"></label>
+                        </div>
+                    </td>
+                    <td class="jsgrid-align-left td-intable">
+                        {{item.text}}
+                    </td>
+                </tr>
+                <tr *ngFor="let l of newArr(5 - orgTreeDtoModel?.length)">
+                    <td class="jsgrid-cell td-intable">&nbsp;</td>
+                    <td class="jsgrid-cell td-intable">&nbsp;</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" jhiTranslate="entity.action.ok" (click)="accept()">Đồng
+            ý
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="activeModal.dismiss('closed')"
+                jhiTranslate="entity.action.close">Đóng
+        </button>
+    </div>
+</div>
+<ng-template #content let-q="dismiss">
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.lockBook.mess" translateValues="{count: '{{count}}'}"></label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="openPopupXuLyGhiSo()" jhiTranslate="entity.action.ok">Đồng ý</button>
+        <button type="button" class="btn btn-outline-dark" (click)="modalRefMess.close()" jhiTranslate="entity.action.close">Đóng</button>
+    </div>
+</ng-template>

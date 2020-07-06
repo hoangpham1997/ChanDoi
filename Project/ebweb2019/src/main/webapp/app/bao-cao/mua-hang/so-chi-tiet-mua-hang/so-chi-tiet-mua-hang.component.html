@@ -1,0 +1,342 @@
+<div class="body">
+    <div class="modal-header" style="padding: 2px 10px; padding-top: 10px">
+        <div class="d-flex flex-wrap col-md-11">
+            <h6 *ngIf="reportType === BaoCao.MuaHang.SO_CHI_TIET_MUA_HANG" class="modal-title-detail"><img
+                src="../../../../content/images/icon-logo.png" height="25px"
+                width="25px"> <span
+                class="text-uppercase" jhiTranslate="ebwebApp.baoCao.soChiTietMuaHang"></span></h6>
+            <h6 *ngIf="reportType === BaoCao.BanHang.SO_CHI_TIET_BAN_HANG" class="modal-title-detail"><img
+                src="../../../../content/images/icon-logo.png" height="25px"
+                width="25px"> <span
+                class="text-uppercase" jhiTranslate="ebwebApp.baoCao.soChiTietBanHang"></span></h6>
+        </div>
+    </div>
+    <div style="padding: 5px 25px">
+        <div id="groupForm">
+            <div class="form-group row no-gutters"
+                 *ngIf="treeOrganizationUnits && treeOrganizationUnits?.length > 0  && treeOrganizationUnits[0].children && treeOrganizationUnits[0].children.length>0">
+                <label class="col-ct-2 col-form-label" style="max-width: 14% !important;"
+                       jhiTranslate="ebwebApp.baoCao.canDoiKeToan.organization">Đơn vị/
+                    Tổ chức</label>
+                <div class="my-last-div-1-0">
+                    <eb-tree-combo-box [tree]="treeOrganizationUnits"
+                                       [(ngModel)]="sessionSearch.data.organizationUnit"
+                                       (ngModelChange)="changeOrganizationUnit()"></eb-tree-combo-box>
+                </div>
+            </div>
+            <div class="form-group row"
+                 *ngIf="isShowDependent && treeOrganizationUnits && treeOrganizationUnits.length > 0 && treeOrganizationUnits[0].children && treeOrganizationUnits[0].children.length > 0">
+                <label class="col-sm-2 col-form-label pd-lable"></label>
+                <div class="col-sm-10 custom-control custom-checkbox" style="padding-left: 15px !important;">
+                    <input class="custom-control-input" type="checkbox" name="isBill1" id="inlineCheckbox"
+                           value="option" [(ngModel)]="sessionSearch.data.dependent" (ngModelChange)="changeDependent()">
+                    <label class="custom-control-label" for="inlineCheckbox" style="font-size: 14px;"
+                           jhiTranslate="ebwebApp.baoCao.similarBranch"></label>
+                </div>
+            </div>
+            <div class="form-group row no-gutters">
+                <label class="col-ct-2 col-form-label" style="max-width: 14% !important;"
+                       jhiTranslate="ebwebApp.baoCao.canDoiKeToan.period"> Kỳ báo cáo</label>
+                <div class="my-last-div-3-2">
+                    <combo-box style=""
+                               name="timeLine"
+                               [dataList]="listTimeLine"
+                               [listColumns]="utilsService.listColumnsTimeLine"
+                               [isOutTable]="true"
+                               displayMember="display"
+                               valueName="value"
+                               [headerColumns]="utilsService.listHeaderColumnsTimeLine"
+                               [isObject]="false"
+                               [(ngModel)]="sessionSearch.data.timeLineVoucher"
+                               (ngModelChange)="selectChangeBeginDateAndEndDate(sessionSearch.data.timeLineVoucher)"
+                    ></combo-box>
+                </div>
+                <label class="col-ct-2 col-form-label" style="max-width: 12% !important;"
+                       jhiTranslate="ebwebApp.saBill.invoice.fromDate"> Từ ngày </label>
+                <div style="padding: 0 !important; width: calc(20%) !important;">
+                    <eb-date-picker [(ngModel)]="sessionSearch.data.fromDate"
+                                    (ngModelChange)="changeSessionSearch()"
+                                    name="fromdate" format="YYYYMMDD"></eb-date-picker>
+                </div>
+                <label class="col-ct-2 col-form-label" style="max-width: 12% !important;" id="lb_toDate"
+                       jhiTranslate="ebwebApp.saBill.invoice.toDate"> Đến ngày</label>
+                <div style="padding: 0 !important; width: calc(20%) !important;">
+                    <eb-date-picker [(ngModel)]="sessionSearch.data.toDate"
+                                    (ngModelChange)="changeSessionSearch()"
+                                    name="todate" format="YYYYMMDD"></eb-date-picker>
+                </div>
+            </div>
+            <div class="form-group row no-gutters">
+                <label *ngIf="reportType === BaoCao.MuaHang.SO_CHI_TIET_MUA_HANG" class="col-ct-2 col-form-label"
+                       style="max-width: 14% !important;" id="lbTaiKhoan" jhiTranslate="ebwebApp.pPInvoice.employee">Nhân
+                    viên</label>
+                <div *ngIf="reportType === BaoCao.MuaHang.SO_CHI_TIET_MUA_HANG" class="my-last-div-3-2">
+                    <combo-box
+                        name="creditaccount"
+                        id="creditaccount"
+                        [dataList]="employees"
+                        [listColumns]="utilsService.listColumnsEmployees"
+                        displayMember="accountingObjectCode"
+                        valueName="id"
+                        [headerColumns]="utilsService.listHeaderColumnsEmployees"
+                        [isObject]="true"
+                        [isOutTable]="true"
+                        [(ngModel)]="sessionSearch.data.employee"
+                        (ngModelChange)="changeSessionSearch()"
+                    ></combo-box>
+                </div>
+                <label *ngIf="reportType === BaoCao.MuaHang.SO_CHI_TIET_MUA_HANG" class="col-ct-2 col-form-label"
+                       style="max-width: 12% !important;"
+                       jhiTranslate="ebwebApp.baoCao.soChiTietVatLieuDungCuSPHH.categoryMG">Loại vật tư hàng hóa</label>
+                <div *ngIf="reportType === BaoCao.MuaHang.SO_CHI_TIET_MUA_HANG"
+                     style="padding: 0 !important; width: calc(20%) !important;">
+                    <combo-box style="" id="field_materialGoodsCategoryID"
+                               [dataList]="materialGoodsCategories"
+                               [isOutTable]="true"
+                               [listColumns]="utilsService.listColumnsmaterialGoodsCategory"
+                               displayMember="materialGoodsCategoryName"
+                               valueName="id"
+                               [headerColumns]="utilsService.listHeaderColumnsmaterialGoodsCategor"
+                               [isObject]="false"
+                               [(ngModel)]="sessionSearch.data.materialGoodsCategoryID"
+                               (ngModelChange)="onChangMaterialGoodsCategory()">
+                    </combo-box>
+                </div>
+                <label *ngIf="reportType === BaoCao.BanHang.SO_CHI_TIET_BAN_HANG" class="col-ct-2 col-form-label"
+                       style="max-width: 14% !important;"
+                       jhiTranslate="ebwebApp.baoCao.soChiTietVatLieuDungCuSPHH.categoryMG">Loại vật tư hàng hóa</label>
+                <div *ngIf="reportType === BaoCao.BanHang.SO_CHI_TIET_BAN_HANG" class="my-last-div-3-2">
+                    <combo-box style="" id="field_materialGoodsCategoryID"
+                               [dataList]="materialGoodsCategories"
+                               [isOutTable]="true"
+                               [listColumns]="utilsService.listColumnsmaterialGoodsCategory"
+                               displayMember="materialGoodsCategoryName"
+                               valueName="id"
+                               [headerColumns]="utilsService.listHeaderColumnsmaterialGoodsCategor"
+                               [isObject]="false"
+                               [(ngModel)]="sessionSearch.data.materialGoodsCategoryID"
+                               (ngModelChange)="onChangMaterialGoodsCategory()">
+                    </combo-box>
+                </div>
+                <label class="col-ct-2 col-form-label" style="max-width: 12% !important;"
+                       *ngIf="reportType === BaoCao.MuaHang.SO_CHI_TIET_MUA_HANG"
+                       jhiTranslate="ebwebApp.accountingObjectGroup.supplierGroupCode">Nhóm NCC</label>
+                <div *ngIf="reportType === BaoCao.MuaHang.SO_CHI_TIET_MUA_HANG"
+                     style="padding: 0 !important; width: calc(20%) !important;">
+                    <combo-box id="accountingObjectGroup"
+                               [dataList]="accountingObjectGroups"
+                               [listColumns]="utilsService.listColumnsCustomer"
+                               [headerColumns]="utilsService.listHeaderColumnsCustomer"
+                               displayMember="accountingObjectGroupCode"
+                               valueName="id"
+                               [isObject]="false"
+                               [isOutTable]="true"
+                               [(ngModel)]="sessionSearch.data.accountingObjectGroupID"
+                               (ngModelChange)="selectChangeAccountingObjectGroup()"
+                    ></combo-box>
+                </div>
+                <label class="col-ct-2 col-form-label" style="max-width: 12% !important;"
+                       *ngIf="reportType === BaoCao.BanHang.SO_CHI_TIET_BAN_HANG"
+                       jhiTranslate="ebwebApp.accountingObjectGroup.customerGroupCode">Nhóm khách hàng</label>
+                <div *ngIf="reportType === BaoCao.BanHang.SO_CHI_TIET_BAN_HANG"
+                     style="padding: 0 !important; width: calc(52%) !important;">
+                    <combo-box id="accountingObjectGroup"
+                               [dataList]="accountingObjectGroups"
+                               [listColumns]="utilsService.listColumnsCustomer"
+                               [headerColumns]="utilsService.listHeaderColumnsCustomer"
+                               displayMember="accountingObjectGroupCode"
+                               valueName="id"
+                               [isObject]="false"
+                               [isOutTable]="true"
+                               [(ngModel)]="sessionSearch.data.accountingObjectGroupID"
+                               (ngModelChange)="selectChangeAccountingObjectGroup()"
+                    ></combo-box>
+                </div>
+            </div>
+        </div>
+        <div id="table-scroll0" class="table-scroll" style="z-index: 0;height: 190px;">
+            <table class="main-table" style="min-width: 0px">
+                <thead>
+                <tr>
+                    <th scope="col" style="top: -1px !important; min-width: 50px !important;">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="check-all" [checked]="isCheckAll()"
+                                   (change)="checkAll()">
+                            <label class="custom-control-label" for="check-all"></label>
+                        </div>
+                    </th>
+                    <th scope="col" jhiTranslate="ebwebApp.accountingObject.supplierCode" style="top: -1px !important;"
+                        *ngIf="reportType === BaoCao.MuaHang.SO_CHI_TIET_MUA_HANG">mã nhà cc
+                    </th>
+                    <th scope="col" jhiTranslate="ebwebApp.accountingObject.supplierName" style="top: -1px !important;"
+                        *ngIf="reportType === BaoCao.MuaHang.SO_CHI_TIET_MUA_HANG">Tên nhà cc
+                    </th>
+                    <th scope="col" jhiTranslate="ebwebApp.accountingObject.contactAddress"
+                        style="top: -1px !important;"
+                        *ngIf="reportType === BaoCao.MuaHang.SO_CHI_TIET_MUA_HANG">địa chỉ
+                    </th
+                    >
+                    <th scope="col" jhiTranslate="ebwebApp.accountingObject.customerCode" style="top: -1px !important;"
+                        *ngIf="reportType === BaoCao.BanHang.SO_CHI_TIET_BAN_HANG">mã kh
+                    </th>
+                    <th scope="col" jhiTranslate="ebwebApp.accountingObject.customerName" style="top: -1px !important;"
+                        *ngIf="reportType === BaoCao.BanHang.SO_CHI_TIET_BAN_HANG">Tên kh
+                    </th>
+                    <th scope="col" jhiTranslate="ebwebApp.accountingObject.contactAddress"
+                        style="top: -1px !important;"
+                        *ngIf="reportType === BaoCao.BanHang.SO_CHI_TIET_BAN_HANG">địa chỉ
+                    </th>
+                </tr>
+                <tr>
+                    <th class="col" class="jsgrid-align-center sticky-35"
+                        style="background: #fff !important; padding: 0px 10px !important;max-width: 20px !important;">
+                    </th>
+                    <th class="col" class="jsgrid-align-left sticky-35"
+                        style="background: #fff !important; padding: 0px 10px !important;"><input
+                        type="text"
+                        placeholder="{{'ebwebApp.accountDefault.searchHere' | translate}}"
+                        class="input-Cell"
+                        name="searchCustomerCode"
+                        [(ngModel)]="sessionSearch.data.customerCode"
+                        (ngModelChange)="changeSupplierACFilter()">
+                    </th>
+                    <th class="col" class="jsgrid-align-left sticky-35"
+                        style="background: #fff !important; padding: 0px 10px !important;"><input
+                        type="text"
+                        placeholder="{{'ebwebApp.accountDefault.searchHere' | translate}}"
+                        class="input-Cell"
+                        name="searchCustomerName"
+                        [(ngModel)]="sessionSearch.data.customerName"
+                        (ngModelChange)="changeSupplierACFilter()"
+                    >
+                    </th>
+                    <th class="col" class="jsgrid-align-left sticky-35"
+                        style="background: #fff !important; padding: 0px 10px !important;"><input
+                        type="text"
+                        placeholder="{{'ebwebApp.accountDefault.searchHere' | translate}}"
+                        class="input-Cell"
+                        name="searchCustomerAddress"
+                        [(ngModel)]="sessionSearch.data.customerAddress"
+                        (ngModelChange)="changeSupplierACFilter()"
+                    >
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let item of accountingObjectFilter, let i = index" (click)="check(item)">
+                    <td class="text-center" style="max-width: 20px !important; width: 20px;">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" name="{{'checkbox' + i}}"
+                                   id="{{'checkbox' + i}}" [(ngModel)]="item.checked" (click)="check(item)">
+                            <label class="custom-control-label" for="{{'checkbox' + i}}"></label>
+                        </div>
+                    </td>
+                    <td class="jsgrid-align-left">
+                        {{item.accountingObjectCode}}
+                    </td>
+                    <td class="jsgrid-align-left ellip">
+                        {{item.accountingObjectName}}
+                    </td>
+                    <td class="jsgrid-align-left ellip">
+                        {{item.accountingObjectAddress}}
+                    </td>
+                </tr>
+                <tr *ngFor="let item of newArr(8 - accountingObjectFilter?.length), let i = index">
+                    <td class="jsgrid-align-left">&nbsp;</td>
+                    <td class="jsgrid-align-left">&nbsp;</td>
+                    <td class="jsgrid-align-left">&nbsp;</td>
+                    <td class="jsgrid-align-left">&nbsp;</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="table-scroll2" class="table-scroll" style="z-index: 0;height: 190px;">
+            <table class="main-table" style="min-width: 0px">
+                <thead>
+                <tr>
+                    <th scope="col" style="max-width: 20px; width: 20px;top: -1px !important;">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="check-all-m"
+                                   [checked]="isCheckAllMateria()" (change)="checkAllMateria()">
+                            <label class="custom-control-label" for="check-all-m"></label>
+                        </div>
+                    </th>
+                    <th scope="col" jhiTranslate="ebwebApp.purchaseOrder.productCode" style="top: -1px !important;">Mã
+                        hàng
+                    </th>
+                    <th scope="col" jhiTranslate="ebwebApp.purchaseOrder.productName" style="top: -1px !important;">Tên
+                        hàng
+                    </th>
+                </tr>
+                <tr>
+                    <th class="col" class="jsgrid-align-center sticky-35"
+                        style="background: #fff !important; padding: 0px 10px !important;max-width: 20px;">
+                    </th>
+                    <th class="col" class="jsgrid-align-left sticky-35"
+                        style="background: #fff !important; padding: 0px 10px !important;"><input
+                        type="text" placeholder="{{'ebwebApp.accountDefault.searchHere' | translate}}"
+                        class="input-Cell"
+                        name="searchMgCodeFilter"
+                        [(ngModel)]="sessionSearch.data.mgCodeFilter"
+                        (ngModelChange)="changeMGFilter()">
+                    </th>
+                    <th class="col" class="jsgrid-align-left sticky-35"
+                        style="background: #fff !important; padding: 0px 10px !important;"><input
+                        type="text"
+                        placeholder="{{'ebwebApp.accountDefault.searchHere' | translate}}"
+                        class="input-Cell"
+                        name="searchMgNameFilter"
+                        [(ngModel)]="sessionSearch.data.mgNameFilter"
+                        (ngModelChange)="changeMGFilter()"
+                    >
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let item of materialGoodsFilter, let i = index">
+                    <td class="text-center" style="max-width: 20px; width: 20px;">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" name="{{'ck' + i}}"
+                                   id="{{'ck' + i}}" [(ngModel)]="item.checked" (click)="checkMateria(item)">
+                            <label class="custom-control-label" for="{{'ck' + i}}"></label>
+                        </div>
+                    </td>
+                    <td class="jsgrid-align-left">
+                        {{item.materialGoodsCode}}
+                    </td>
+                    <td class="jsgrid-align-left">
+                        {{item.materialGoodsName}}
+                    </td>
+                </tr>
+                <tr *ngFor="let item of newArr(8 - materialGoodsFilter?.length), let i = index">
+                    <td class="jsgrid-align-left">&nbsp;</td>
+                    <td class="jsgrid-align-left">&nbsp;</td>
+                    <td class="jsgrid-align-left">&nbsp;</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <!--        <div *ngIf="status" class="form-group row" style="padding-top:5px">-->
+        <!--            <div class="col-sm-8">-->
+        <!--                <label for="groupCheckbox"><input id="groupCheckbox" type="checkbox" name="groupCheckbox"-->
+        <!--                                                  [(ngModel)]="isSimilarSum"></label>-->
+        <!--                <label for="groupCheckbox" jhiTranslate="ebwebApp.baoCao.nhatKyChungPopup.option1"></label>-->
+        <!--            </div>-->
+    </div>
+    <div class="modal-footer" style="padding: 5px 31px">
+        <!--        <button *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_KetXuat]" class="btn btn-success" jhiTranslate="entity.action.render" (click)="export()">Kết xuất</button>-->
+        <!--        <button id="save" (click)="accept()" class="btn btn-success">-->
+        <!--            <span jhiTranslate="entity.action.ok"></span>-->
+        <!--        </button>-->
+        <button id="save" (click)="accept()" class="btn btn-success">
+            <span jhiTranslate="entity.action.preview"></span>
+        </button>
+        <button *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_KetXuat]" class="btn btn-danger"
+                jhiTranslate="entity.action.render" (click)="export()">Kết xuất
+        </button>
+        <button type="button" class="btn btn-dark" (click)="activeModal.dismiss('closed')" data-dismiss="modal">
+            <span jhiTranslate="entity.action.close"></span>
+        </button>
+    </div>
+</div>
+

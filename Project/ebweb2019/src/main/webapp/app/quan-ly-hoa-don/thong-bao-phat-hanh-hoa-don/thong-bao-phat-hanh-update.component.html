@@ -1,0 +1,261 @@
+<div class="container-fluid">
+    <div class="margin-tp-5 margin-0">
+        <div class="">
+            <div class="itemw">
+                <div class="menu-tool-bar he">
+                    <div class="ptitle">
+                        <span jhiTranslate="ebwebApp.iaPublishInvoice.home.title">Thông báo phát hành hóa đơn</span>
+                    </div>
+                    <div class="gr-toolbar">
+                        <a title="{{'ebwebApp.outWard.tooltipSave' | translate}}" *ebHasSomeAuthority="['ROLE_ADMIN', this.isEditUrl ? !ROLE_THEM : ROLE_THEM, ROLE_SUA]" (click)="save()" class="saveLuu"><i
+                            class="mdi mdi-briefcase-download"></i> <span
+                            jhiTranslate="ebwebApp.autoPrinciple.save"></span></a>
+                        <div [class.disableDiv]="isEdit" ngbDropdown class="d-inline-block" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_IN]" style="padding-left: 10px" title="{{'ebwebApp.outWard.tooltipPrint' | translate}}">
+                            <button id="dropdownBasic1" ngbDropdownToggle [class.disableDiv]="!iaPublishInvoice.id"
+                                    style="background: transparent;border: none; color: #f0f0f0" (click)="print()">
+                                <fa-icon [icon]="'print'"></fa-icon>
+                                <span
+                                    jhiTranslate="ebwebApp.mBTellerPaper.print"></span>
+                            </button>
+                            <div ngbDropdownMenu aria-labelledby="dropdownBasic1" class="fix-drop">
+                                <button ngbDropdownItem class="text-left" style="border: none; width: 100%;" (click)="exportPDF(false,1)"><span
+                                    jhiTranslate="ebwebApp.iaPublishInvoice.temp1"></span></button>
+                                <button ngbDropdownItem class="text-left" style="border: none; width: 100%;" (click)="exportPDF(false,2)"><span
+                                    jhiTranslate="ebwebApp.iaPublishInvoice.temp2"></span></button>
+                            </div>
+                        </div>
+                        <a (click)="closeForm()" style="margin-left: 0px; padding-left: 5px" title="{{'ebwebApp.outWard.tooltipBack' | translate}}">
+                            <i class="mdi mdi-window-close"></i>
+                            <span jhiTranslate="ebwebApp.autoPrinciple.closed"></span>
+                        </a>
+                    </div>
+                </div>
+                <div [class.isReadonly]="!checkEditRoleSua && (checkEditRoleThem || !checkEditRoleThem) && isEditUrl">
+                    <div class="frm-main">
+                        <div class="form-group row">
+                            <div class="col-3 row no-gutters">
+                                <label class="col-form-label-1">
+                                    <span jhiTranslate="ebwebApp.iaPublishInvoice.date">Ngày lập</span>
+                                </label>
+                                <div class="col-sm-auto pd-l-0 pd-r-30 type-1">
+                                <eb-date-picker id="date" [(ngModel)]="iaPublishInvoice.date" name="date"
+                                                format="YYYY-MM-DD" [isRequired]="true"
+                                                (ngModelChange)="onChangeDate()" [disabled]="(!checkEditRoleSua && isEditUrl) || (!checkEditRoleThem && isNew)"></eb-date-picker>
+                            </div>
+                            </div>
+                            <div class="col-5 row">
+                                <label class="col-form-label-2"><span jhiTranslate="ebwebApp.iaPublishInvoice.no">Số Thông Báo Phát Hành</span></label>
+                                <div class="col-sm-auto pd-l-0 pd-r-30 type-2">
+                                <input id="no" name="no" type="text" class="form-control form-control-sm height-28"
+                                       [(ngModel)]="iaPublishInvoice.no" [disabled]="(!checkEditRoleSua && isEditUrl) || (!checkEditRoleThem && isNew)">
+                            </div>
+                            </div>
+                            <div class="col-4 row">
+                                <label class="col-form-label-3" for="representationInLaw">
+                                    <span jhiTranslate="ebwebApp.iaPublishInvoice.representationInLaw">Người đại diện pháp luật</span>
+                                </label>
+                                <div class="col-sm-auto pd-l-0 pd-r-30 type-3">
+                                <input id="representationInLaw" name="representationInLaw" type="text"
+                                       class="form-control form-control-sm height-28"
+                                       [(ngModel)]="iaPublishInvoice.representationInLaw"
+                                       [disabled]="(!checkEditRoleSua && isEditUrl) || (!checkEditRoleThem && isNew)">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-3 row no-gutters">
+                                <label class="col-form-label-4"><span jhiTranslate="ebwebApp.iaPublishInvoice.status">Trạng thái</span></label>
+                                <div class="col-sm-auto pd-l-0 pd-r-30 type-4">
+                                <select  name="status" class="form-control form-control-sm"
+                                        [(ngModel)]="iaPublishInvoice.status"
+                                        [disabled]="(!checkEditRoleSua && isEditUrl) || (!checkEditRoleThem && isNew)">
+                                    <option [ngValue]="CHUA_CO_HIEU_LUC" jhiTranslate="ebwebApp.iARegisterInvoice.status.0">
+                                        Chưa có hiệu lực
+                                    </option>
+                                    <option [ngValue]="DA_CO_HIEU_LUC" jhiTranslate="ebwebApp.iARegisterInvoice.status.1">
+                                        Đã có hiệu lực
+                                    </option>
+                                </select>
+                            </div>
+                            </div>
+                            <div class="col-9 row">
+                                <label class="col-form-label-5" jhiTranslate="ebwebApp.iaPublishInvoice.receiptedTaxOffical">receiptedTaxOffical</label>
+                                <div class="col-sm-auto pd-l-0 pd-r-30 type-5">
+                                <input name="receiptedTaxOffical" type="text" class="form-control form-control-sm height-28"
+                                       [(ngModel)]="iaPublishInvoice.receiptedTaxOffical"
+                                       [disabled]="(!checkEditRoleSua && isEditUrl) || (!checkEditRoleThem && isNew)">
+                                </div>
+                             </div>
+                        </div>
+                    </div>
+                    <div class="tab-content" [class.isReadonly]="(!checkEditRoleSua && isEditUrl) || (!checkEditRoleThem && isNew)">
+                        <div class="frm-main frm-padding tab-pane fade in active show" id="home-detail"
+                             style="background: #cbdcf0">
+                            <div class="table-scroll">
+                                <table id="main-table-detail" class="main-table">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col" style="min-width: 80px !important;">
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="check-all"
+                                                       [(ngModel)]="checkAllBox" (ngModelChange)="checkAll()">
+                                                <label class="custom-control-label" for="check-all"></label>
+                                            </div>
+                                        </th>
+                                        <th scope="col">
+                                            <span jhiTranslate="ebwebApp.iAReport.hinhThucHoaDon">Hình thức</span>
+                                        </th>
+                                        <th scope="col">
+                                            <span jhiTranslate="ebwebApp.iAReport.loaiHoaDon">Loại hóa đơn</span>
+                                        </th>
+                                        <th scope="col">
+                                            <span jhiTranslate="ebwebApp.iAReport.mauSoHD">Mẫu số</span>
+                                        </th>
+                                        <th scope="col">
+                                            <span jhiTranslate="ebwebApp.iAReport.kyTuHD">Ký hiệu</span>
+                                        </th>
+                                        <th scope="col">
+                                            <span jhiTranslate="ebwebApp.iaPublishInvoice.quantity">Số lượng</span>
+                                        </th>
+                                        <th scope="col">
+                                            <span jhiTranslate="ebwebApp.iaPublishInvoice.fromNo">Từ số</span>
+                                        </th>
+                                        <th scope="col">
+                                            <span jhiTranslate="ebwebApp.iaPublishInvoice.toNo">Đến số</span>
+                                        </th>
+                                        <th scope="col">
+                                        <span
+                                            jhiTranslate="ebwebApp.iaPublishInvoice.startUsing">Ngày bắt đầu sử dụng</span>
+                                        </th>
+                                        <th scope="col">
+                                            <span jhiTranslate="ebwebApp.iaPublishInvoice.companyName">companyName</span>
+                                        </th>
+                                        <th scope="col">
+                                        <span
+                                            jhiTranslate="ebwebApp.iaPublishInvoice.companyTaxCode">companyTaxCode</span>
+                                        </th>
+                                        <th scope="col">
+                                            <span jhiTranslate="ebwebApp.iaPublishInvoice.contractNo">contractNo</span>
+                                        </th>
+                                        <th scope="col">
+                                            <span jhiTranslate="ebwebApp.iaPublishInvoice.contractDate">contractDate</span>
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr *ngFor="let iaReport of iaPublishInvoiceDetails; let i = index">
+                                        <td class="text-center">
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox"
+                                                       class="custom-control-input"
+                                                       name="{{'checkbox' + i}}"
+                                                       id="{{'checkbox' + i}}"
+                                                       [(ngModel)]="iaReport.isCheck"
+                                                       (ngModelChange)="isCheckAll()">
+                                                <label class="custom-control-label"
+                                                       for="{{'checkbox' + i}}"></label>
+                                            </div>
+                                        </td>
+                                        <td title="{{iaReport.invoiceForm}}" class="jsgrid-cell">
+                                         <span *ngIf="iaReport.invoiceForm === HD_DIEN_TU"
+                                               jhiTranslate="ebwebApp.iAReport.hinhThucHoaDon.0">
+                                            Hóa đơn điện tử
+                                        </span>
+                                            <span *ngIf="iaReport.invoiceForm === HD_DAT_IN"
+                                                  jhiTranslate="ebwebApp.iAReport.hinhThucHoaDon.1">
+                                            Hóa đơn đặt in
+                                        </span>
+                                            <span *ngIf="iaReport.invoiceForm === HD_TU_IN"
+                                                  jhiTranslate="ebwebApp.iAReport.hinhThucHoaDon.2">
+                                            Hóa đơn tự in
+                                        </span>
+                                        </td>
+                                        <td title="{{iaReport?.invoiceType?.invoiceTypeName}}"
+                                            class="jsgrid-cell">
+                                            {{iaReport?.invoiceType?.invoiceTypeName | truncateCharacters: 30:true }}
+                                        </td>
+                                        <td title="{{iaReport.invoiceTemplate}}"
+                                            class="jsgrid-cell">{{iaReport.invoiceTemplate}}</td>
+                                        <td title="{{iaReport.invoiceSeries}}"
+                                            class="jsgrid-cell">{{iaReport.invoiceSeries}}</td>
+                                        <td class="cell-Table">
+                                            <input type="number" [(ngModel)]="iaReport.quantity"
+                                                   class="input-Cell text-right"
+                                                   name="quantity{{i}}" (blur)="updateToNoByIndex(i)">
+                                        </td>
+                                        <td class="cell-Table">
+                                            <input type="text" [(ngModel)]="iaReport.fromNo" class="input-Cell text-right"
+                                                   name="fromNo{{i}}" (blur)="updateToNoByIndex(i)">
+                                        </td>
+                                        <td class="cell-Table">
+                                            <input type="text" [(ngModel)]="iaReport.toNo" class="input-Cell text-right"
+                                                   name="toNo{{i}}" disabled>
+                                        </td>
+                                        <td class="cell-Table jsgrid-align-center date-input-cell">
+                                            <eb-date-picker [(ngModel)]="iaReport.startUsingHolder" [isInTable]="true"
+                                                            name="startUsing{{i}}">
+                                            </eb-date-picker>
+                                        </td>
+                                        <td class="cell-Table">
+                                            <input type="text" [(ngModel)]="iaReport.companyName" class="input-Cell"
+                                                   name="companyName{{i}}">
+                                        </td>
+                                        <td class="cell-Table">
+                                            <input type="text" [(ngModel)]="iaReport.companyTaxCode" class="input-Cell"
+                                                   name="companyTaxCode{{i}}">
+                                        </td>
+                                        <td class="cell-Table">
+                                            <input type="text" [(ngModel)]="iaReport.contractNo" class="input-Cell"
+                                                   name="contractNo{{i}}">
+                                        </td>
+                                        <td class="cell-Table jsgrid-align-center date-input-cell">
+                                            <eb-date-picker [(ngModel)]="iaReport.contractDateHolder" [isInTable]="true"
+                                                            name="contractDate{{i}}">
+                                            </eb-date-picker>
+                                        </td>
+                                    </tr>
+                                    <tr *ngFor="let item of newArr(10 - (iaReports?.length || 0)); let i = index">
+                                        <td class="jsgrid-cell">&nbsp;</td>
+                                        <td class="jsgrid-cell">&nbsp;</td>
+                                        <td class="jsgrid-cell">&nbsp;</td>
+                                        <td class="jsgrid-cell">&nbsp;</td>
+                                        <td class="jsgrid-cell">&nbsp;</td>
+                                        <td class="jsgrid-cell">&nbsp;</td>
+                                        <td class="jsgrid-cell">&nbsp;</td>
+                                        <td class="jsgrid-cell">&nbsp;</td>
+                                        <td class="jsgrid-cell">&nbsp;</td>
+                                        <td class="jsgrid-cell">&nbsp;</td>
+                                        <td class="jsgrid-cell">&nbsp;</td>
+                                        <td class="jsgrid-cell">&nbsp;</td>
+                                        <td class="jsgrid-cell">&nbsp;</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #content let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.saBill.saveMessage">Dữ liệu đã bị thay đổi, Bạn có muốn lưu lại?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="save()" jhiTranslate="entity.action.save">Save
+        </button>
+        <button type="button" class="btn btn-outline-danger" (click)="close()" jhiTranslate="entity.action.noSave">
+            Save
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="modalRef.close(); isClosing = false"
+                jhiTranslate="entity.action.close">close
+        </button>
+    </div>
+</ng-template>

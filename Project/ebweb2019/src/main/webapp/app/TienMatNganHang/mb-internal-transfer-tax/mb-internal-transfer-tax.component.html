@@ -1,0 +1,94 @@
+<div>
+    <h2 id="page-heading">
+        <span jhiTranslate="ebwebApp.mBInternalTransferTax.home.title">MB Internal Transfer Taxes</span>
+        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-mb-internal-transfer-tax" [routerLink]="['/mb-internal-transfer-tax/new']">
+            <fa-icon [icon]="'plus'"></fa-icon>
+            <span  jhiTranslate="ebwebApp.mBInternalTransferTax.home.createLabel">
+            Create new MB Internal Transfer Tax
+            </span>
+        </button>
+    </h2>
+    <eb-alert></eb-alert>
+    <br/>
+    <div class="table-responsive" *ngIf="mBInternalTransferTaxes">
+        <table class="table table-striped">
+            <thead>
+            <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
+            <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="description"><span jhiTranslate="ebwebApp.mBInternalTransferTax.description">Description</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="vatAmount"><span jhiTranslate="ebwebApp.mBInternalTransferTax.vatAmount">Vat Amount</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="vatAmountOriginal"><span jhiTranslate="ebwebApp.mBInternalTransferTax.vatAmountOriginal">Vat Amount Original</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="vatRate"><span jhiTranslate="ebwebApp.mBInternalTransferTax.vatRate">Vat Rate</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="vatAccount"><span jhiTranslate="ebwebApp.mBInternalTransferTax.vatAccount">Vat Account</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="pretaxAmount"><span jhiTranslate="ebwebApp.mBInternalTransferTax.pretaxAmount">Pretax Amount</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="pretaxAmountOriginal"><span jhiTranslate="ebwebApp.mBInternalTransferTax.pretaxAmountOriginal">Pretax Amount Original</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="invoiceType"><span jhiTranslate="ebwebApp.mBInternalTransferTax.invoiceType">Invoice Type</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="invoiceDate"><span jhiTranslate="ebwebApp.mBInternalTransferTax.invoiceDate">Invoice Date</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="invoiceNo"><span jhiTranslate="ebwebApp.mBInternalTransferTax.invoiceNo">Invoice No</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="invoiceSeries"><span jhiTranslate="ebwebApp.mBInternalTransferTax.invoiceSeries">Invoice Series</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="goodsServicePurchaseID"><span jhiTranslate="ebwebApp.mBInternalTransferTax.goodsServicePurchaseID">Goods Service Purchase ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="accountingObjectID"><span jhiTranslate="ebwebApp.mBInternalTransferTax.accountingObjectID">Accounting Object ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="orderPriority"><span jhiTranslate="ebwebApp.mBInternalTransferTax.orderPriority">Order Priority</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="mBInternalTransfer.id"><span jhiTranslate="ebwebApp.mBInternalTransferTax.mBInternalTransfer">M B Internal Transfer</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let mBInternalTransferTax of mBInternalTransferTaxes ;trackBy: trackId">
+                <td><a [routerLink]="['/mb-internal-transfer-tax', mBInternalTransferTax.id, 'view' ]">{{mBInternalTransferTax.id}}</a></td>
+                <td>{{mBInternalTransferTax.description}}</td>
+                <td>{{mBInternalTransferTax.vatAmount}}</td>
+                <td>{{mBInternalTransferTax.vatAmountOriginal}}</td>
+                <td>{{mBInternalTransferTax.vatRate}}</td>
+                <td>{{mBInternalTransferTax.vatAccount}}</td>
+                <td>{{mBInternalTransferTax.pretaxAmount}}</td>
+                <td>{{mBInternalTransferTax.pretaxAmountOriginal}}</td>
+                <td>{{mBInternalTransferTax.invoiceType}}</td>
+                <td>{{mBInternalTransferTax.invoiceDate | date:'mediumDate'}}</td>
+                <td>{{mBInternalTransferTax.invoiceNo}}</td>
+                <td>{{mBInternalTransferTax.invoiceSeries}}</td>
+                <td>{{mBInternalTransferTax.goodsServicePurchaseID}}</td>
+                <td>{{mBInternalTransferTax.accountingObjectID}}</td>
+                <td>{{mBInternalTransferTax.orderPriority}}</td>
+                <td>
+                    <div *ngIf="mBInternalTransferTax.mBInternalTransfer">
+                        <a [routerLink]="['../mb-internal-transfer', mBInternalTransferTax.mBInternalTransfer?.id, 'view' ]" >{{mBInternalTransferTax.mBInternalTransfer?.id}}</a>
+                    </div>
+                </td>
+                <td class="text-right">
+                    <div class="btn-group flex-btn-group-container">
+                        <button type="submit"
+                                [routerLink]="['/mb-internal-transfer-tax', mBInternalTransferTax.id, 'view' ]"
+                                class="btn btn-info btn-sm">
+                            <fa-icon [icon]="'eye'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/mb-internal-transfer-tax', mBInternalTransferTax.id, 'edit']"
+                                class="btn btn-primary btn-sm">
+                            <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/', { outlets: { popup: 'mb-internal-transfer-tax/'+ mBInternalTransferTax.id + '/delete'} }]"
+                                replaceUrl="true"
+                                queryParamsHandling="merge"
+                                class="btn btn-danger btn-sm">
+                            <fa-icon [icon]="'times'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div *ngIf="mBInternalTransferTaxes && mBInternalTransferTaxes.length">
+        <div class="row justify-content-center">
+            <jhi-item-count [page]="page" [total]="queryCount" [maxSize]="5" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+        </div>
+        <div class="row justify-content-center">
+            <ngb-pagination [size]="'sm'" [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage" [maxSize]="5" [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage(page)"></ngb-pagination>
+        </div>
+    </div>
+</div>

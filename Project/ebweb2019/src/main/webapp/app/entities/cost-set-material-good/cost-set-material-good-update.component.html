@@ -1,0 +1,66 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
+            <h2 id="eb-cost-set-material-good-heading" jhiTranslate="ebwebApp.costSetMaterialGood.home.createOrEditLabel">Create or edit a Cost Set Material Good</h2>
+            <div>
+                <eb-alert-error></eb-alert-error>
+                <div class="form-group" [hidden]="!costSetMaterialGood.id">
+                    <label for="id" jhiTranslate="global.field.id">ID</label>
+                    <input type="text" class="form-control" id="id" name="id"
+                        [(ngModel)]="costSetMaterialGood.id" readonly />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.costSetMaterialGood.deScription" for="field_deScription">Mô tả</label>
+                    <input type="text" class="form-control" name="deScription" id="field_deScription"
+                        [(ngModel)]="costSetMaterialGood.deScription" maxlength="512"/>
+                    <div [hidden]="!(editForm.controls.deScription?.dirty && editForm.controls.deScription?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.deScription?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 512 }">
+                        This field cannot be longer than 512 characters.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.costSetMaterialGood.orderPriority" for="field_orderPriority">Thứ tự ưu tiên</label>
+                    <input type="number" class="form-control" name="orderPriority" id="field_orderPriority"
+                        [(ngModel)]="costSetMaterialGood.orderPriority" />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.costSetMaterialGood.costSet" for="field_costSet">Cost Set</label>
+                    <select class="form-control" id="field_costSet" name="costSet" [(ngModel)]="costSetMaterialGood.costSet"  required>
+                        <option *ngIf="!editForm.value.costSet" [ngValue]="null" selected></option>
+                        <option [ngValue]="costSetOption.id === costSetMaterialGood.costSet?.id ? costSetMaterialGood.costSet : costSetOption" *ngFor="let costSetOption of costsets; trackBy: trackCostSetById">{{costSetOption.costSetCode}}</option>
+                    </select>
+                </div>
+                <div [hidden]="!(editForm.controls.costSet?.dirty && editForm.controls.costSet?.invalid)">
+                    <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.costSet?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                    </small>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.costSetMaterialGood.materialGoods" for="field_materialGoods">Material Goods</label>
+                    <select class="form-control" id="field_materialGoods" name="materialGoods" [(ngModel)]="costSetMaterialGood.materialGoods" required>
+                        <option *ngIf="!editForm.value.materialGoods" [ngValue]="null" selected></option>
+                        <option [ngValue]="materialGoodsOption.id === costSetMaterialGood.materialGoods?.id ? costSetMaterialGood.materialGoods : materialGoodsOption" *ngFor="let materialGoodsOption of materialgoods; trackBy: trackMaterialGoodsById">{{materialGoodsOption.materialGoodsCode}}</option>
+                    </select>
+                </div>
+                <div [hidden]="!(editForm.controls.materialGoods?.dirty && editForm.controls.materialGoods?.invalid)">
+                    <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.materialGoods?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                    </small>
+                </div>
+            </div>
+            <div>
+                <button type="button" id="cancel-save" class="btn btn-secondary"  (click)="previousState()">
+                    <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+                </button>
+                <button type="submit" id="save-entity" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">
+                    <fa-icon [icon]="'save'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

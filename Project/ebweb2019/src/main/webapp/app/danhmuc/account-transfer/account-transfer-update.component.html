@@ -1,0 +1,236 @@
+<div style="padding: 0px!important;">
+    <div class="margin-tp-5 margin-0">
+        <div class="">
+            <div class="itemw">
+                <div class="menu-tool-bar header-custom">
+                    <div class="ptitle">
+                        <span jhiTranslate="ebwebApp.accountTransfer.detail.title"></span>
+                    </div>
+
+                    <div class="gr-toolbar">
+                        <button class="button-navigation" title="{{buttonSaveTranslate | translate}}"
+                                *ebHasSomeAuthorityOrCondition=
+                                    "[[ROLE_TaiKhoanKetChuyen_Them, !isEditUrl], ROLE_TaiKhoanKetChuyen_Sua,'ROLE_ADMIN']"
+                                (click)="save()"><i
+                            class="mdi mdi-briefcase-download"></i>
+                            <span jhiTranslate="ebwebApp.mCReceipt.home.save"></span>
+                        </button>
+                        <button class="button-navigation" title="{{buttonSaveAndNewTranslate | translate}}"
+                                *ebHasSomeAuthorityOrCondition=
+                                    "[[ROLE_TaiKhoanKetChuyen_Them , ROLE_TaiKhoanKetChuyen_Sua], 'ROLE_ADMIN', [ROLE_TaiKhoanKetChuyen_Them, isCreateUrl]]"
+                                (click)="saveAndNew()"><i
+                            class="mdi mdi-plus fa-plus color-green"></i>
+                            <span jhiTranslate="ebwebApp.mCReceipt.home.saveAndAddNew"></span>
+                        </button>
+                        <button class="button-navigation" title="{{buttonDeleteTranslate | translate}}"
+                                *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_TaiKhoanKetChuyen_Xoa]"
+                                [disabled]="!accountTransfer.id" (click)="delete()"><i
+                            class="mdi mdi-delete-forever"></i>
+                            <span jhiTranslate="ebwebApp.mCReceipt.home.delete"></span>
+                        </button>
+                        <button class="button-navigation"
+                                *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_TaiKhoanKetChuyen_Xem]"
+                                title="{{buttonCloseFormTranslate | translate}}" (click)="closeForm()"><i
+                            class="mdi mdi-window-close"></i>
+                            <span jhiTranslate="ebwebApp.mCReceipt.home.close"></span>
+                        </button>
+                    </div>
+                </div>
+                <div class="frm-main">
+                    <div class="row no-gutters">
+                        <div class="col-lg-12">
+                            <form style="border: none;">
+                            <fieldset>
+                                <legend style="font-size: 19px; color: #f26f21;font-weight: bold;">
+                                    Thông tin chung
+                                </legend>
+                            </fieldset>
+                                <div class="form-group row no-gutters">
+                                    <label class="col-sm-6 my-col-form-label-130"
+                                           jhiTranslate="ebwebApp.accountTransfer.accountTransferOrder*"></label>
+                                    <div class="col-sm-2 pd-l-0 pd-r-10 my-col-form-label-15">
+                                        <input type="number" class="form-control"
+                                               name="accountTransferOrder"
+                                               id="field_accountTransferOrder"
+                                               [(ngModel)]="accountTransfer.accountTransferOrder"
+                                               ebCurrencyMask
+                                               [allowNegative]="false"
+                                               [systemOptions]="currentAccount?.systemOption"
+                                               required
+                                               [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"/>
+                                    </div>
+                                    <label class="col-sm-6 my-col-form-label-110"
+                                           jhiTranslate="ebwebApp.accountTransfer.accountTransferCode*"></label>
+                                    <div class="col-sm-2 pd-l-0 pd-r-10 my-col-form-label-15">
+                                        <input type="text" class="form-control"
+                                               name="accountTransferCode"
+                                               id="field_accountTransferCode"
+                                               [(ngModel)]="accountTransfer.accountTransferCode"
+                                               required
+                                               [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"/>
+                                    </div>
+                                    <label class="col-sm-6 my-col-form-label-70"
+                                           jhiTranslate="ebwebApp.accountTransfer.accountFrom*"></label>
+                                    <div class="col-sm-2 pd-l-0 pd-r-10 my-col-form-label-15">
+                                        <combo-box style="" id="field_accountFrom"
+                                                   name="comboboxAccountFrom"
+                                                   [dataList]="accountLists"
+                                                   [isOutTable]="true"
+                                                   [showIconPlus]="true"
+                                                   [listColumns]="utilsService.listColumnsAccountList"
+                                                   displayMember="accountNumber"
+                                                   valueName="accountNumber"
+                                                   [headerColumns]="utilsService.listHeaderColumnsAccountList"
+                                                   [isObject]="false"
+                                                   [isRequired]="true"
+                                                   [(ngModel)]="accountTransfer.fromAccount"
+                                                   [isReadOnly]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)">
+                                        </combo-box>
+                                    </div>
+                                    <label class="col-sm-6 my-col-form-label-120"
+                                           jhiTranslate="ebwebApp.accountTransfer.accountTo*"
+                                           style="padding-right: 15px;"></label>
+                                    <div class="col-sm-1 pd-l-0 pd-r-10 my-last-div-4-3">
+                                        <combo-box style="" id="field_accountTo"
+                                                   name="comboboxAccountTo"
+                                                   [dataList]="accountLists"
+                                                   [isOutTable]="true"
+                                                   [showIconPlus]="true"
+                                                   [listColumns]="utilsService.listColumnsAccountList"
+                                                   displayMember="accountNumber"
+                                                   valueName="accountNumber"
+                                                   [headerColumns]="utilsService.listHeaderColumnsAccountList"
+                                                   [isObject]="false"
+                                                   [isRequired]="true"
+                                                   [(ngModel)]="accountTransfer.toAccount"
+                                                   [isReadOnly]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)">
+                                        </combo-box>
+                                    </div>
+                                </div>
+                                <div class="form-group row no-gutters" style="padding-top: 5px">
+                                    <label class="col-sm-2 my-col-form-label-130"
+                                           jhiTranslate="ebwebApp.accountTransfer.description"></label>
+                                    <div class="col-sm-10 pd-l-0 pd-r-10 my-col-form-label-3">
+                                        <input type="text" class="form-control" name="description"
+                                               id="field_description"
+                                               [(ngModel)]="accountTransfer.description"
+                                               [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"/>
+                                    </div>
+                                    <label class="col-sm-6 my-col-form-label-120"
+                                           jhiTranslate="ebwebApp.accountTransfer.fromAccountData*"></label>
+                                    <div class="col-sm-6 pd-l-0 pd-r-10 my-last-div-2-1">
+                                        <select
+                                            [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                            style="height: 35px; float: right; padding-right: 5px; padding-left: 5px;"
+                                            name="accountingObjectType"
+                                            id="field_accountingObjectType"
+                                            class="form-control form-control-sm"
+                                            [(ngModel)]="accountTransfer.fromAccountData" required>
+                                            <option [ngValue]="0"
+                                                    jhiTranslate="ebwebApp.accountTransfer.debit">
+                                            </option>
+                                            <option [ngValue]="1"
+                                                    jhiTranslate="ebwebApp.accountTransfer.credit"></option>
+                                            <option [ngValue]="2"
+                                                    jhiTranslate="ebwebApp.accountTransfer.debit-credit"></option>
+                                            <option [ngValue]="3"
+                                                    jhiTranslate="ebwebApp.accountTransfer.credit-debit"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row no-gutters" style="padding-top: 5px">
+                                    <label class="col-sm-6 my-col-form-label-130"
+                                           jhiTranslate="ebwebApp.accountTransfer.debitAccount*"></label>
+                                    <div class="col-sm-6 pd-l-0 pd-r-10 my-col-form-label-15">
+                                        <select
+                                            [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                            style="height: 35px; float: right; padding-right: 5px; padding-left: 5px;"
+                                            name="debitAccount"
+                                            id="field_debitAccount"
+                                            class="form-control form-control-sm"
+                                            [(ngModel)]="accountTransfer.debitAccount" required>
+                                            <option [ngValue]="0"
+                                                    jhiTranslate="ebwebApp.accountTransfer.accountFrom">
+                                            </option>
+                                            <option [ngValue]="1"
+                                                    jhiTranslate="ebwebApp.accountTransfer.accountTo"></option>
+                                        </select>
+                                    </div>
+                                    <label class="col-sm-6 my-col-form-label-100"
+                                           jhiTranslate="ebwebApp.accountTransfer.creditAccount*"></label>
+                                    <div class="col-sm-6 pd-l-0 pd-r-10 my-col-form-label-15">
+                                        <select
+                                            [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                            style="height: 35px; float: right; padding-right: 5px; padding-left: 5px;"
+                                            name="creditAccount"
+                                            id="field_creditAccount"
+                                            class="form-control form-control-sm"
+                                            [(ngModel)]="accountTransfer.creditAccount" required>
+                                            <option [ngValue]="0"
+                                                    jhiTranslate="ebwebApp.accountTransfer.accountFrom">
+                                            </option>
+                                            <option [ngValue]="1"
+                                                    jhiTranslate="ebwebApp.accountTransfer.accountTo"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="accountTransfer.id" class="col-lg-12">
+                    <div class="form-group row">
+                        <div class="col-sm-3 pd-l-0 pd-r-10">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" [(ngModel)]="accountTransfer.isActive" name="isActive"
+                                       class="custom-control-input"
+                                       [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                       id="isActive">
+                                <label class="custom-control-label" for="isActive"
+                                       jhiTranslate="ebwebApp.accountTransfer.isActive">Theo dõi</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #content let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.saBill.saveMessage">Dữ liệu đã bị thay đổi, Bạn có muốn lưu lại?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="saveContent()" jhiTranslate="entity.action.save">
+            Save
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="close()"
+                jhiTranslate="ebwebApp.mBDeposit.dontSave">Don't save
+        </button>
+        <button type="button" class="btn btn-outline-danger" (click)="exit()" jhiTranslate="entity.action.close">close
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #pageRedirects let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.saBill.saveMessage">Dữ liệu đã bị thay đổi. Bạn có chắc chắn muốn chuyển
+                    hướng đến trang khác?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" jhiTranslate="ebwebApp.mBDeposit.agree">
+            Save
+        </button>
+        <button type="button" class="btn btn-outline-danger" (click)="exit()" jhiTranslate="entity.action.close">close
+        </button>
+    </div>
+</ng-template>

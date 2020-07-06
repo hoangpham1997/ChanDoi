@@ -1,0 +1,80 @@
+<div>
+    <h2 id="page-heading">
+        <span jhiTranslate="ebwebApp.timeSheetSymbols.home.title">Time Sheet Symbols</span>
+        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-time-sheet-symbols" [routerLink]="['/time-sheet-symbols/new']">
+            <fa-icon [icon]="'plus'"></fa-icon>
+            <span  jhiTranslate="ebwebApp.timeSheetSymbols.home.createLabel">
+            Create new Time Sheet Symbols
+            </span>
+        </button>
+    </h2>
+    <eb-alert></eb-alert>
+    <br/>
+    <div class="table-responsive" *ngIf="timeSheetSymbols">
+        <table class="table table-striped">
+            <thead>
+            <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
+            <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="timeSheetSymbolsCode"><span jhiTranslate="ebwebApp.timeSheetSymbols.timeSheetSymbolsCode">Time Sheet Symbols Code</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="timeSheetSymbolsName"><span jhiTranslate="ebwebApp.timeSheetSymbols.timeSheetSymbolsName">Time Sheet Symbols Name</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="salaryRate"><span jhiTranslate="ebwebApp.timeSheetSymbols.salaryRate">Salary Rate</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="isDefault"><span jhiTranslate="ebwebApp.timeSheetSymbols.isDefault">Is Default</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="isHalfDayDefault"><span jhiTranslate="ebwebApp.timeSheetSymbols.isHalfDayDefault">Is Half Day Default</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="isHalfDay"><span jhiTranslate="ebwebApp.timeSheetSymbols.isHalfDay">Is Half Day</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="overTimeSymbol"><span jhiTranslate="ebwebApp.timeSheetSymbols.overTimeSymbol">Over Time Symbol</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="isOverTime"><span jhiTranslate="ebwebApp.timeSheetSymbols.isOverTime">Is Over Time</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="isActive"><span jhiTranslate="ebwebApp.timeSheetSymbols.isActive">Is Active</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="isSecurity"><span jhiTranslate="ebwebApp.timeSheetSymbols.isSecurity">Is Security</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let timeSheetSymbols of timeSheetSymbols ;trackBy: trackId">
+                <td><a [routerLink]="['/time-sheet-symbols', timeSheetSymbols.id, 'view' ]">{{timeSheetSymbols.id}}</a></td>
+                <td>{{timeSheetSymbols.timeSheetSymbolsCode}}</td>
+                <td>{{timeSheetSymbols.timeSheetSymbolsName}}</td>
+                <td>{{timeSheetSymbols.salaryRate}}</td>
+                <td>{{timeSheetSymbols.isDefault}}</td>
+                <td>{{timeSheetSymbols.isHalfDayDefault}}</td>
+                <td>{{timeSheetSymbols.isHalfDay}}</td>
+                <td>{{timeSheetSymbols.overTimeSymbol}}</td>
+                <td>{{timeSheetSymbols.isOverTime}}</td>
+                <td>{{timeSheetSymbols.isActive}}</td>
+                <td>{{timeSheetSymbols.isSecurity}}</td>
+                <td class="text-right">
+                    <div class="btn-group flex-btn-group-container">
+                        <button type="submit"
+                                [routerLink]="['/time-sheet-symbols', timeSheetSymbols.id, 'view' ]"
+                                class="btn btn-info btn-sm">
+                            <fa-icon [icon]="'eye'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/time-sheet-symbols', timeSheetSymbols.id, 'edit']"
+                                class="btn btn-primary btn-sm">
+                            <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/', { outlets: { popup: 'time-sheet-symbols/'+ timeSheetSymbols.id + '/delete'} }]"
+                                replaceUrl="true"
+                                queryParamsHandling="merge"
+                                class="btn btn-danger btn-sm">
+                            <fa-icon [icon]="'times'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div *ngIf="timeSheetSymbols && timeSheetSymbols.length">
+        <div class="row justify-content-center">
+            <jhi-item-count [page]="page" [total]="queryCount" [maxSize]="5" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+        </div>
+        <div class="row justify-content-center">
+            <ngb-pagination [size]="'sm'" [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage" [maxSize]="5" [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage(page)"></ngb-pagination>
+        </div>
+    </div>
+</div>

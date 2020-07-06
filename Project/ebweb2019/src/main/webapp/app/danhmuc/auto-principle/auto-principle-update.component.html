@@ -1,0 +1,151 @@
+<div class="modal-body windowClass-DanhMuc-Combobox" style="padding-top: 0px;padding-left: 0px;padding-right: 0px;padding-bottom: 0px" >
+    <div class="margin-tp-5 margin-0">
+        <div class="">
+            <div class="itemw">
+                <div class="menu-tool-bar header-custom">
+                    <div class="ptitle">
+                        <span jhiTranslate="ebwebApp.autoPrinciple.category"></span>
+                    </div>
+
+                    <div class="gr-toolbar">
+                        <a (click)="save()" *ebHasSomeAuthorityOrCondition=
+                            "[[ROLE_DinhKhoanTuDong_Them, !isEditUrl], ROLE_DinhKhoanTuDong_Sua,'ROLE_ADMIN']"
+                           title="{{'ebwebApp.autoPrinciple.tooltipSave' | translate}}"><i class="mdi mdi-briefcase-download"></i><span jhiTranslate="ebwebApp.autoPrinciple.save"></span></a>
+                        <a (click)="saveAndNew()"  *ebHasSomeAuthorityOrCondition=
+                            "[[ROLE_DinhKhoanTuDong_Them , ROLE_DinhKhoanTuDong_Sua], 'ROLE_ADMIN', [ROLE_DinhKhoanTuDong_Them, isCreateUrl]]" title="{{'ebwebApp.autoPrinciple.tooltipSaveAndAdd' | translate}}"><i class="mdi mdi-plus"></i><span jhiTranslate="ebwebApp.autoPrinciple.saveAndLoad"></span></a>
+                        <a [class.disable]="!autoPrinciple.id"(click)="delete()" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_DinhKhoanTuDong_Xoa]" title="{{'ebwebApp.autoPrinciple.tooltipDelete' | translate}}"><i class="mdi mdi-delete-forever"></i> <span jhiTranslate="ebwebApp.autoPrinciple.deleted"></span></a>
+                        <a class="button-navigation" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_DinhKhoanTuDong_Xem]"
+                           title="{{'ebwebApp.autoPrinciple.tooltipBack' | translate" (click)="closeForm()"><i
+                            class="mdi mdi-window-close"></i>
+                            <span jhiTranslate="ebwebApp.autoPrinciple.closed"></span>
+                        </a>
+                    </div>
+                </div>
+                <div class="frm-main">
+                    <div class="row ">
+                        <div class="col-lg-12">
+                            <fieldset>
+                                <legend style="font-size: 19px; color: #f26f21;font-weight: bold;"
+                                        jhiTranslate="ebwebApp.autoPrinciple.information"> Thông tin chung
+                                </legend>
+                                <fieldset>
+                                <form style="border: none;">
+                                    <div class="row no-gutters">
+                                        <div class="col-lg-12">
+                                            <div class="form-group row no-gutters">
+                                                <label class="col-sm-2 my-col-form-label" style="padding-right: 0px" jhiTranslate="ebwebApp.autoPrinciple.typeIdNew"><b>Loại
+                                                    chứng từ (*)</b></label>
+                                                <div class="col-sm-3 pd-l-0 pd-r-10">
+                                                    <combo-box style="" id="field_typeID"
+                                                               name="comboboxListType"
+                                                               [dataList]="types"
+                                                               [isOutTable]="true"
+                                                               [listColumns]="listColumnsType"
+                                                               displayMember="typeName"
+                                                               valueName="id"
+                                                               [isRequired]="true"
+                                                               [headerColumns]="listHeaderColumnsType"
+                                                               [isObject]="false"
+                                                               [(ngModel)]="autoPrinciple.typeId"
+                                                               [tabindex]="1"
+                                                               [isReadOnly]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)">
+                                                    </combo-box>
+                                                </div>
+                                                <label class="col-sm-2 my-col-form-label" style="padding-right: 0px" jhiTranslate="ebwebApp.autoPrinciple.autoPrincipleNameNew"><b>Tên
+                                                    Định Khoản (*)</b></label>
+                                                <div class="col-sm-3 pd-l-0 pd-r-10">
+                                                    <input type="text" class="form-control" name="autoPrincipleName"
+                                                           id="field_autoPrincipleName"
+                                                           [(ngModel)]="autoPrinciple.autoPrincipleName"
+                                                           maxlength="512" required [tabindex]="2"
+                                                           [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"/>
+                                                </div>
+                                                <label class="col-sm-2 my-col-form-label text-center" style="padding-right: 0px" jhiTranslate="ebwebApp.autoPrinciple.debitAccount"><b>Tài
+                                                    Khoản Nợ</b> </label>
+                                                <div class="col-sm-2 pd-l-0 pd-r-10 my-last-div-unit-2-2">
+                                                    <combo-box style="" id="field_debitAccount"
+                                                               name="comboboxDebitAccount"
+                                                               [dataList]="accountLists"
+                                                               [listColumns]="listColumnsAccount"
+                                                               displayMember="accountNumber"
+                                                               valueName="accountNumber"
+                                                               [headerColumns]="listHeaderColumnsAccount"
+                                                               [isObject]="false"
+                                                               [(ngModel)]="autoPrinciple.debitAccount"
+                                                               [tabindex]="3"
+                                                               [isReadOnly]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)">
+                                                    </combo-box>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <div class="form-group row no-gutters">
+                                                <label class="col-sm-2 my-col-form-label" style="padding-right: 0px" jhiTranslate="ebwebApp.autoPrinciple.creditAccount"><b>Tài
+                                                    Khoản Có</b></label>
+                                                <div class="col-sm-3 col-form-label-sm">
+                                                    <combo-box style="" id="field_creditAccount"
+                                                               name="comboboxCreditAccount"
+                                                               [dataList]="accountLists"
+                                                               [isOutTable]="true"
+                                                               [listColumns]="listColumnsAccount"
+                                                               displayMember="accountNumber"
+                                                               valueName="accountNumber"
+                                                               [headerColumns]="listHeaderColumnsAccount"
+                                                               [isObject]="false"
+                                                               [(ngModel)]="autoPrinciple.creditAccount"
+                                                               [tabindex]="4"
+                                                               [isReadOnly]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)">
+                                                    </combo-box>
+                                                </div>
+                                                <label class="col-sm-2 my-col-form-label" style="padding-right: 0px" jhiTranslate="ebwebApp.autoPrinciple.description"><b>Mô
+                                                    tả</b></label>
+                                                <div class="col-sm-6 col-form-label-sm my-last-div-unit-2-1">
+                                                    <input type="text" class="form-control" name="description"
+                                                           id="field_description"
+                                                           [(ngModel)]="autoPrinciple.description" maxlength="512"
+                                                           [tabindex]="5"
+                                                           [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"/>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </form>
+                                </fieldset>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-12" *ngIf="autoPrinciple.id" >
+                    <div class="row" style="padding-left: 15px">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="customCheck1" name="isActive"
+                                   [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                   [(ngModel)]="autoPrinciple.isActive">
+                            <label class="custom-control-label" for="customCheck1" jhiTranslate="ebwebApp.autoPrinciple.isActive" ></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #content let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.saBill.saveMessage">Dữ liệu đã bị thay đổi, Bạn có muốn lưu lại?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="save()" jhiTranslate="entity.action.save">Save</button>
+        <button type="button" class="btn btn-outline-dark" (click)="close()" jhiTranslate="entity.action.noSave">close</button>
+        <button type="button" class="btn btn-outline-dark" (click)="closeContent()" jhiTranslate="entity.action.close">close</button>
+    </div>
+</ng-template>
+
+
+

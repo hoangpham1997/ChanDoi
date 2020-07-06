@@ -1,0 +1,289 @@
+<eb-alert></eb-alert>
+<div class="container-fluid">
+    <div class="margin-tp-5 margin-0">
+        <div class="">
+            <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
+                <div class="itemw">
+                    <div class="menu-tool-bar he">
+                        <div class="ptitle">
+                            <span jhiTranslate="ebwebApp.bankAccountDetails.home.title">Ngân hàng</span>
+                        </div>
+                        <div class="gr-toolbar">
+                            <a (click)="save()" *ebHasSomeAuthorityOrCondition=
+                                "[[ROLE_DanhMucTaiKhoanNganHang_Them, !isEditUrl], ROLE_DanhMucTaiKhoanNganHang_Sua,'ROLE_ADMIN']"
+                               title="{{'ebwebApp.autoPrinciple.tooltipSave' | translate}}"><i
+                                class="mdi mdi-briefcase-download"></i>
+                                <span jhiTranslate="ebwebApp.mCReceipt.home.save"></span>
+                            </a>
+                            <a (click)="saveAndNew()"
+                               *ebHasSomeAuthorityOrCondition=
+                                   "[[ROLE_DanhMucTaiKhoanNganHang_Them , ROLE_DanhMucTaiKhoanNganHang_Sua], 'ROLE_ADMIN', [ROLE_DanhMucTaiKhoanNganHang_Them, isCreateUrl]]"
+                               title="{{'ebwebApp.autoPrinciple.tooltipSaveAndAdd' | translate}}"><i
+                                class="mdi mdi-plus fa-plus color-green"></i>
+                                <span jhiTranslate="ebwebApp.mCReceipt.home.saveAndAddNew"></span>
+                            </a>
+                            <a (click)="delete()" [class.disable]="!bankAccountDetails.id"
+                               *ebHasAnyAuthority="['ROLE_ADMIN', ROLE_DanhMucTaiKhoanNganHang_Xoa]"
+                               title="{{'ebwebApp.autoPrinciple.tooltipDelete' | translate}}"><i
+                                class="mdi mdi-delete-forever"></i> <span
+                                jhiTranslate="ebwebApp.bankAccountDetails.delete1"
+                            ></span>
+                            </a>
+                            <a *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_DanhMucTaiKhoanNganHang_Xem]" (click)="closeForm()" title="{{'ebwebApp.autoPrinciple.tooltipBack' | translate}}"><i
+                                class="mdi mdi-window-close"></i>
+                                <span jhiTranslate="ebwebApp.mCReceipt.home.close"></span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="frm-main">
+                        <div class="row no-gutters">
+                            <div class="col-lg-12">
+                                <form>
+                                    <h3 jhiTranslate="ebwebApp.bankAccountDetails.detail.title">Thông tin chung</h3>
+                                    <div class="row no-gutters">
+                                        <div class="col-lg-12" [hidden]="true">
+                                            <div class="form-group row no-gutters">
+                                                <label for="id" class="col-sm-2 col-form-label"
+                                                       jhiTranslate="global.field.id">ID</label>
+                                                <div class="col-sm-10 pd-l-0 pd-r-10">
+                                                    <input type="text" class="col-sm-10 col-form-label-sm" id="id"
+                                                           name="id"
+                                                           [(ngModel)]="bankAccountDetails.id" readonly/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <div class="form-group row no-gutters">
+                                                <label class="col-sm-2 my-col-form-label-KH"
+                                                       jhiTranslate="ebwebApp.bankAccountDetails.bankAccountNumber">Số
+                                                    tài khoản(*)</label>
+                                                <div class="col-sm-3 pd-l-0 pd-r-10">
+                                                    <input type="text" class="form-control" name="bankAccountNumber"
+                                                           id="field_bankAccount"
+                                                           [(ngModel)]="bankAccountDetails.bankAccount" required
+                                                           maxlength="50" [tabindex]="1"
+                                                           [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"/>
+                                                </div>
+                                                <label class="col-sm-2 my-col-form-label-KH"
+                                                       jhiTranslate="ebwebApp.bankAccountDetails.bankName1">Tên ngân
+                                                    hàng(*)</label>
+                                                <div class="col-sm-3 pd-l-0 pd-r-10">
+                                                    <combo-box style="" id="field_bankAccountDetailID"
+                                                               name="comboboxBankAccountDetailID"
+                                                               [dataList]="bankPopup"
+                                                               [nameCategory]="utilsService.NGAN_HANG"
+                                                               [showIconPlus]="true"
+                                                               [listColumns]="listColumnsBank"
+                                                               displayMember="bankName"
+                                                               valueName="id"
+                                                               [headerColumns]="listHeaderColumnsBank"
+                                                               [isObject]="true"
+                                                               [isRequired]="true"
+                                                               [(ngModel)]="bankAccountDetails.bankID"
+                                                               [tabindex]="2"
+                                                               [isReadOnly]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                                (click)="saveParent()">
+                                                        <!--                                                                   (ngModelChange)="selectChangeBank(mBDeposit.bankAccountDetails)" required>-->
+                                                    </combo-box>
+                                                </div>
+                                                <label class="col-sm-2 my-col-form-label-KH"
+                                                       jhiTranslate="ebwebApp.bankAccountDetails.bankBranchName">Mở tại
+                                                    chi nhánh</label>
+                                                <div class="col-sm-2 pd-l-0 pd-r-10 my-last-div-KH-3-2">
+                                                    <input type="text" class="form-control" name="bankBranchName"
+                                                           id="field_bankBranchName"
+                                                           [(ngModel)]="bankAccountDetails.bankBranchName"
+                                                           maxlength="512" [tabindex]="3"
+                                                           [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <div class="form-group row no-gutters">
+                                                <label class="col-sm-2 my-col-form-label-KH"
+                                                       jhiTranslate="ebwebApp.bankAccountDetails.address">Địa chỉ
+                                                    mở</label>
+                                                <div class="col-sm-7 col-form-label-sm my-col-form-label-KH-2">
+                                                    <input type="text" class="form-control" name="address"
+                                                           id="field_address"
+                                                           [(ngModel)]="bankAccountDetails.address" maxlength="512"
+                                                           [tabindex]="4"
+                                                           [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"/>
+                                                </div>
+                                                <label class="col-sm-2 my-col-form-label-KH"
+                                                       jhiTranslate="ebwebApp.bankAccountDetails.description">Ghi
+                                                    chú</label>
+                                                <div class="col-sm-3 col-form-label-sm my-last-div-KH-3-2">
+                                                    <input type="text" class="form-control" name="description"
+                                                           id="field_description"
+                                                           [(ngModel)]="bankAccountDetails.description"
+                                                           maxlength="512" [tabindex]="5"
+                                                           [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="form-group row">
+                                    <div *ngIf="bankAccountDetails.id" class="custom-control custom-checkbox"
+                                         style="padding-left :42px">
+                                        <input type="checkbox" class="custom-control-input" name="isActive"
+                                               [(ngModel)]="bankAccountDetails.isActive" id="customCheck1"
+                                               [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)">
+                                        <label class="custom-control-label" for="customCheck1"
+                                               jhiTranslate="ebwebApp.bankAccountDetails.isActive"></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<ng-template #content let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.saBill.saveMessage">Dữ liệu đã bị thay đổi, Bạn có muốn lưu lại?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="save()" jhiTranslate="entity.action.save">Save
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="close()" jhiTranslate="entity.action.noSave">close
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="closeContent()" jhiTranslate="entity.action.close">
+            close
+        </button>
+    </div>
+</ng-template>
+
+
+<!--<div class="row justify-content-center">-->
+<!--    <div class="col-8">-->
+<!--        <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">-->
+<!--            <h2 id="eb-bank-account-details-heading" jhiTranslate="ebwebApp.bankAccountDetails.home.createOrEditLabel">Create or edit a Bank Account Details</h2>-->
+<!--            <div>-->
+<eb-alert-error></eb-alert-error>
+<!--                <div class="form-group" [hidden]="!bankAccountDetails.id">-->
+<!--                    <label for="id" jhiTranslate="global.field.id">ID</label>-->
+<!--                    <input Type="text" class="form-control" id="id" name="id"-->
+<!--                        [(ngModel)]="bankAccountDetails.id" readonly />-->
+<!--                </div>-->
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="ebwebApp.bankAccountDetails.bankAccount" for="field_bankAccount">Bank Account</label>-->
+<!--                    <input Type="text" class="form-control" name="bankAccount" id="field_bankAccount"-->
+<!--                        [(ngModel)]="bankAccountDetails.bankAccount" required maxlength="50"/>-->
+<!--                    <div [hidden]="!(editForm.controls.bankAccount?.dirty && editForm.controls.bankAccount?.invalid)">-->
+<!--                        <small class="form-text text-danger"-->
+<!--                        [hidden]="!editForm.controls.bankAccount?.errors?.required" jhiTranslate="entity.validation.required">-->
+<!--                        This field is required.-->
+<!--                        </small>-->
+<!--                        <small class="form-text text-danger"-->
+<!--                        [hidden]="!editForm.controls.bankAccount?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 50 }">-->
+<!--                        This field cannot be longer than 50 characters.-->
+<!--                        </small>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="ebwebApp.bankAccountDetails.bankName" for="field_bankName">Bank Name</label>-->
+<!--                    <input Type="text" class="form-control" name="bankName" id="field_bankName"-->
+<!--                        [(ngModel)]="bankAccountDetails.bankName" required maxlength="512"/>-->
+<!--                    <div [hidden]="!(editForm.controls.bankName?.dirty && editForm.controls.bankName?.invalid)">-->
+<!--                        <small class="form-text text-danger"-->
+<!--                        [hidden]="!editForm.controls.bankName?.errors?.required" jhiTranslate="entity.validation.required">-->
+<!--                        This field is required.-->
+<!--                        </small>-->
+<!--                        <small class="form-text text-danger"-->
+<!--                        [hidden]="!editForm.controls.bankName?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 512 }">-->
+<!--                        This field cannot be longer than 512 characters.-->
+<!--                        </small>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="ebwebApp.bankAccountDetails.address" for="field_address">Address</label>-->
+<!--                    <input Type="text" class="form-control" name="address" id="field_address"-->
+<!--                        [(ngModel)]="bankAccountDetails.address" maxlength="512"/>-->
+<!--                    <div [hidden]="!(editForm.controls.address?.dirty && editForm.controls.address?.invalid)">-->
+<!--                        <small class="form-text text-danger"-->
+<!--                        [hidden]="!editForm.controls.address?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 512 }">-->
+<!--                        This field cannot be longer than 512 characters.-->
+<!--                        </small>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="ebwebApp.bankAccountDetails.description" for="field_description">Description</label>-->
+<!--                    <input Type="text" class="form-control" name="description" id="field_description"-->
+<!--                        [(ngModel)]="bankAccountDetails.description" maxlength="512"/>-->
+<!--                    <div [hidden]="!(editForm.controls.description?.dirty && editForm.controls.description?.invalid)">-->
+<!--                        <small class="form-text text-danger"-->
+<!--                        [hidden]="!editForm.controls.description?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 512 }">-->
+<!--                        This field cannot be longer than 512 characters.-->
+<!--                        </small>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="ebwebApp.bankAccountDetails.bankBranchName" for="field_bankBranchName">Bank Branch Name</label>-->
+<!--                    <input Type="text" class="form-control" name="bankBranchName" id="field_bankBranchName"-->
+<!--                        [(ngModel)]="bankAccountDetails.bankBranchName" maxlength="512"/>-->
+<!--                    <div [hidden]="!(editForm.controls.bankBranchName?.dirty && editForm.controls.bankBranchName?.invalid)">-->
+<!--                        <small class="form-text text-danger"-->
+<!--                        [hidden]="!editForm.controls.bankBranchName?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 512 }">-->
+<!--                        This field cannot be longer than 512 characters.-->
+<!--                        </small>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="ebwebApp.bankAccountDetails.isActive" for="field_isActive">Is Active</label>-->
+<!--                    <input Type="checkbox" class="form-control" name="isActive" id="field_isActive"-->
+<!--                        [(ngModel)]="bankAccountDetails.isActive" />-->
+<!--                    <div [hidden]="!(editForm.controls.isActive?.dirty && editForm.controls.isActive?.invalid)">-->
+<!--                        <small class="form-text text-danger"-->
+<!--                        [hidden]="!editForm.controls.isActive?.errors?.required" jhiTranslate="entity.validation.required">-->
+<!--                        This field is required.-->
+<!--                        </small>-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<div [hidden]="true" class="form-group">
+    <label class="form-control-label" jhiTranslate="ebwebApp.bankAccountDetails.bankID" for="field_bankID">Bank
+        ID</label>
+    <select class="form-control" id="field_bankID" name="bankID" [(ngModel)]="bankAccountDetails.bankID" required>
+        <option *ngIf="!editForm.value.bankID" [ngValue]="null" selected></option>
+        <option [ngValue]="bankOption.id === bankAccountDetails.bankID?.id ? bankAccountDetails.bankID : bankOption"
+                *ngFor="let bankOption of banks; trackBy: trackBankById">{{bankOption.id}}</option>
+    </select>
+</div>
+<div [hidden]="!(editForm.controls.bankID?.dirty && editForm.controls.bankID?.invalid)">
+    <small class="form-text text-danger"
+           [hidden]="!editForm.controls.bankID?.errors?.required" jhiTranslate="entity.validation.required">
+        This field is required.
+    </small>
+</div>
+<div [hidden]="true" class="form-group">
+    <label class="form-control-label" jhiTranslate="ebwebApp.bankAccountDetails.branchID" for="field_branchID">Branch
+        ID</label>
+    <select class="form-control" id="field_branchID" name="branchID" [(ngModel)]="bankAccountDetails.branchID">
+        <option [ngValue]="null"></option>
+        <option
+            [ngValue]="organizationUnitOption.id === bankAccountDetails.branchID?.id ? bankAccountDetails.branchID : organizationUnitOption"
+            *ngFor="let organizationUnitOption of organizationunits; trackBy: trackOrganizationUnitById">{{organizationUnitOption.branchID}}</option>
+    </select>
+</div>
+<!--            </div>-->
+<!--            <div [hidden]="true">-->
+<!--                <button Type="button" id="cancel-save" class="btn btn-secondary"  (click)="previousState()">-->
+<!--                    <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>-->
+<!--                </button>-->
+<!--                <button Type="submit" id="save-entity" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">-->
+<!--                    <fa-icon [icon]="'save'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>-->
+<!--                </button>-->
+<!--            </div>-->
+<!--        </form>-->
+<!--    </div>-->
+<!--</div>-->

@@ -1,0 +1,124 @@
+<div >
+    <div >
+        <div class="menu-tool-bar he">
+            <div class="ptitle">
+                <span class="text-uppercase edit-color" jhiTranslate="ebwebApp.iARegisterInvoice.home.title">Khởi tạo mẫu hóa đơn</span>
+            </div>
+            <div class="gr-toolbar">
+                <button class="button-navigation" title="{{'ebwebApp.outWard.tooltipAdd' | translate}}" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_THEM]" (click)="addNew()"><i class="mdi mdi-plus"></i> <span
+                    jhiTranslate="ebwebApp.purchaseOrder.add">Thêm</span></button>
+                <button class="button-navigation" title="{{'ebwebApp.outWard.tooltipDrop' | translate}}" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_XOA]" [disabled]="!selectedID" (click)="delete()">
+                    <i class="mdi mdi-delete"></i>
+                    <span jhiTranslate="ebwebApp.purchaseOrder.delete">Xóa</span>
+                </button>
+                <button class="button-navigation" title="{{'ebwebApp.outWard.tooltipExport' | translate}}" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_KETXUAT]" [disabled]="!selectedID" (click)="export()">
+                    <i class="mdi mdi-file-export"></i> <span jhiTranslate="entity.action.render">Kết xuất</span>
+                </button>
+            </div>
+        </div>
+        <div class="frm-main frm-mains nobg" style="background: #cbdcf0; margin-top: 5px">
+            <div id="table-scroll0" class="table-scroll voucher-table" style="height: 626px !important;">
+                <table id="main-table0" class="main-table">
+                    <thead class="header-table">
+                    <tr>
+                        <th scope="col" style="width: 150px" jhiTranslate="ebwebApp.iARegisterInvoice.date">Ngày đăng ký
+                        </th>
+                        <th scope="col" style="width: 150px" jhiTranslate="ebwebApp.iARegisterInvoice.no">Số đăng ký
+                        </th>
+                        <th scope="col" style="width: 150px" jhiTranslate="ebwebApp.iARegisterInvoice.description">Nội dung
+                        </th>
+                        <th scope="col" style="width: 150px" jhiTranslate="ebwebApp.iARegisterInvoice.signer">Người ký
+                        </th>
+                        <th scope="col" style="width: 150px" jhiTranslate="ebwebApp.iARegisterInvoice.status">Trạng thái
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let item of iaRegisterInvoices; let i = index"
+                        [class.selected]="item === selectedRow"
+                        (click)="selectMultiRow(item, $event, iaRegisterInvoices); clickRow(item.id, i)"
+                        [class.row-selected]="this.selectedRows.indexOf(item) !== -1"
+                        (dblclick)="saveSearchData(item.id, i); doubleClickRow(item)">
+                        <td title="{{item.date | date: 'dd/MM/yyyy'}}" class="jsgrid-cell text-center">{{item.date | date: 'dd/MM/yyyy'}}</td>
+                        <td title="{{item.no}}" class="jsgrid-cell">{{item.no}}</td>
+                        <td title="{{item.description}}" class="jsgrid-cell">{{item.description}}</td>
+                        <td title="{{item.signer}}" class="jsgrid-cell">{{item.signer}}</td>
+
+                        <td title="{{item.status}}" class="jsgrid-cell">
+                            <span *ngIf="item.status === 0"
+                                  jhiTranslate="ebwebApp.iARegisterInvoice.status.0">
+                                Chưa có hiệu lực
+                            </span>
+                            <span *ngIf="item.status === 1"
+                                  jhiTranslate="ebwebApp.iARegisterInvoice.status.1">
+                                Đã có hiệu lực
+                            </span>
+                        </td>
+                    </tr>
+                    <tr *ngFor="let item of newArr(20 - (iaRegisterInvoices?.length || 0)); let i = index">
+                        <td class="jsgrid-cell">&nbsp;</td>
+                        <td class="jsgrid-cell">&nbsp;</td>
+                        <td class="jsgrid-cell">&nbsp;</td>
+                        <td class="jsgrid-cell">&nbsp;</td>
+                        <td class="jsgrid-cell">&nbsp;</td>
+                    </tr>
+                    </tbody>
+<!--                    <tfoot>-->
+<!--                    <tr>-->
+<!--                        <td class="cell-Table" colspan="5">-->
+<!--                            <input type="text" readonly class="color-tfoot input-Cell"-->
+<!--                                   value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{iaRegisterInvoices?.length || 0}}"></td>-->
+<!--                    </tr>-->
+<!--                    </tfoot>-->
+                </table>
+            </div>
+        </div>
+        <div *ngIf="iaRegisterInvoices && iaRegisterInvoices.length"
+             style="padding-right: 16px;">
+            <div class="row justify-content-end" style="height: 32px">
+                <div class="col-lg-2 edit-css">
+                    <div class="form-group row">
+                        <label class="col-sm-7 col-form-label pt-1 pr-0 text-right" for="itemsPerPage"
+                               jhiTranslate="ebwebApp.purchaseOrder.total">Tổng số</label>
+                        <label class="col-sm-1 col-form-label total pt-1">{{totalItems}}</label>
+                        <div class="col-sm-4 pd-l-0 responsive">
+                            <select class="form-control form-control-sm pl-2 pt-1 pb-1" name="itemsPerPage"
+                                    id="itemsPerPage"
+                                    [(ngModel)]="itemsPerPage"
+                                    (ngModelChange)="search()">
+                                <option value="20">20</option>
+                                <option value="30">30</option>
+                                <option value="40">40</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="justify-content-end margin-top">
+                    <ngb-pagination [size]="'sm'" [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage"
+                                    [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
+                                    (pageChange)="loadPage(page)"></ngb-pagination>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Check xóa nhiều chứng từ-->
+<ng-template #popUpMultiDelete let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.mBDeposit.multiDeleteMessage">Bạn có chắc chắn muốn xóa những chứng từ này
+                    không?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-danger" (click)="continueDelete()"
+                jhiTranslate="entity.action.delete">
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="closePopUpDelete()"
+                jhiTranslate="ebwebApp.mBDeposit.return">
+        </button>
+    </div>
+</ng-template>

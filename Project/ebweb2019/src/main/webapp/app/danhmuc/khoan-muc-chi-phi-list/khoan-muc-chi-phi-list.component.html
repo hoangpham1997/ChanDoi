@@ -1,0 +1,121 @@
+<div class="container-fluid">
+    <div class="margin-tp-5 margin-0">
+        <div class="">
+            <div class="itemw" style="color: #FFFFFF">
+                <div class="menu-tool-bar he">
+                    <div class="ptitle">
+                        <span jhiTranslate="ebwebApp.expenseItem.home.title">khoan muc chi phi</span>
+                    </div>
+                    <div class="gr-toolbar">
+                        <a title="{{buttonAddTranslate | translate}}" (click)="addNew($event)"
+                           *ebHasAnyAuthority="['ROLE_ADMIN', ROLE_IExpenseItem_Them]"><i
+                            class="mdi mdi-plus"></i> <span
+                            jhiTranslate="ebwebApp.expenseItem.add">thêm</span></a>
+                        <a title="{{buttonEditTranslate | translate}}" [class.disable]="exPenLists.length === 0" (click)="edit()"
+                           *ebHasAnyAuthority="['ROLE_ADMIN', ROLE_IExpenseItem_Sua]"><i
+                            class="mdi mdi-pen"></i><span
+                            jhiTranslate="ebwebApp.expenseItem.edit">sửa</span></a>
+                        <a title="{{buttonDeleteTranslate | translate}}" [class.disable]="exPenLists.length === 0" (click)="delete()"
+                           *ebHasAnyAuthority="['ROLE_ADMIN', ROLE_IExpenseItem_Xoa]"><i
+                            class="mdi mdi-delete"></i><span
+                            jhiTranslate="ebwebApp.expenseItem.delete"></span></a>
+                    </div>
+                </div>
+            </div>
+            <div class="frm-main frm-mains nobg" style="background: #cbdcf0; margin-top: 5px">
+                    <eb-tree-grid #child [tree]="listParenExpense" [navigateForm]="navigateForm" [listTHead]="listTHead"
+                                  [listKey]="listKey"></eb-tree-grid>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #deleteModal let-dismissDelete="dismiss">
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label  *ngIf="this.selectedRows && this.selectedRows.length <= 1"jhiTranslate="ebwebApp.mBDeposit.delete.question">Xóa</label>
+                <label *ngIf="this.selectedRows && this.selectedRows.length > 1"  jhiTranslate="ebwebApp.mBDeposit.multiDeleteMessage">Xóa</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="deleteAfter();dismissDelete('Close')"
+                jhiTranslate="entity.action.delete">
+            Save
+        </button>
+        <button type="button" class="btn btn-outline-danger" (click)="dismissDelete('Close')"
+                jhiTranslate="entity.action.cancel">close
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #deleteDetailModal>
+    <div class="modal-body">
+        <div class="form">
+            <div class="row">
+                <label class="col-sm-4 col-form-label"
+                       jhiTranslate="ebwebApp.expenseItem.deleteMultiTotal">Tong</label>
+                <label name="countSuccessVoucher"
+                       type="text" class="col-sm-8 col-form-label">{{handlingResult.countTotalVouchers}}</label>
+            </div>
+            <div class="row">
+                <label class="col-sm-4 col-form-label"
+                       jhiTranslate="ebwebApp.expenseItem.deleteMultiSuccess">Thanh cong</label>
+                <label name="countSuccessVoucher"
+                       type="text" class="col-sm-8 col-form-label">{{handlingResult.countSuccessVouchers}}</label>
+            </div>
+            <div class="row">
+                <label class="col-sm-4 col-form-label"
+                       jhiTranslate="ebwebApp.expenseItem.deleteMultiFail">That bai</label>
+                <label name="countSuccessVoucher"
+                       type="text" class="col-sm-8 col-form-label">{{handlingResult.countFailVouchers}}</label>
+            </div>
+        </div>
+        <div class="frm-main frm-tables frm-padding" style="background: #cbdcf0; margin-top: 5px"
+             [class.myreadonlytrue]="true">
+            <div id="table-scroll0" class="table-scroll">
+                <table id="main-table0" class="main-table">
+                    <thead>
+                    <tr>
+                        <th scope="col" jhiTranslate="ebwebApp.expenseItem.code"></th>
+                        <th scope="col" jhiTranslate="ebwebApp.expenseItem.name"></th>
+                        <th scope="col" jhiTranslate="ebwebApp.mBDeposit.nguyenNhan"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let fail of handlingResult.listFailCategory">
+                        <td class="jsgrid-cell jsgrid-align-left"
+                            style="width: 150px">{{fail.code}}</td>
+                        <td class="jsgrid-cell jsgrid-align-left"
+                            style="width: 300px">{{fail.name}}</td>
+                        <td class="jsgrid-cell jsgrid-align-left" [jhiTranslate]="fail.des === 'NUT_CHA' ? 'ebwebApp.expenseItem.errorParent' : 'ebwebApp.expenseItem.licenseError'"
+                            style="width: 300px"></td>
+                    </tr>
+                    <tr *ngFor="let arr of newArr(10 - handlingResult.listFailCategory?.length )">
+                        <td class="jsgrid-cell jsgrid-align-left"
+                            style="width: 150px">&nbsp;</td>
+                        <td class="jsgrid-cell jsgrid-align-left"
+                            style="width: 300px">&nbsp;</td>
+                        <td class="jsgrid-cell jsgrid-align-left"
+                            style="width: 300px">&nbsp;</td>
+                    </tr>
+                    </tbody>
+                    <tfoot [class.myreadonlytrue]="true">
+                    <tr>
+                        <td class="cell-Table countRow" colspan="5" style="width: 150px"><input type="text"
+                                                                                                readonly
+                                                                                                class="countRow input-Cell"
+                                                                                                value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{handlingResult.listFailCategory?.length}}">
+                        </td>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="closeDeleteMultiDetail()"
+                jhiTranslate="ebwebApp.mBDeposit.home.exit">
+        </button>
+    </div>
+</ng-template>

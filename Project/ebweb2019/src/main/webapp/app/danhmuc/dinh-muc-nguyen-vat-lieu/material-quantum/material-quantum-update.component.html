@@ -1,0 +1,386 @@
+<div style="padding: 0px!important;" (click)="closeContextMenu()">
+    <div class="margin-tp-5 margin-0">
+        <div class="">
+            <div class="itemw">
+                <div class="menu-tool-bar header-custom">
+                    <div class="ptitle">
+                        <span jhiTranslate="ebwebApp.materialQuantum.detail.title"></span>
+                    </div>
+
+                    <div class="gr-toolbar">
+                        <a title="{{buttonSaveTranslate | translate}}"
+                           *ebHasSomeAuthorityOrCondition=
+                               "[[ROLE_DinhMucNguyenVatLieu_Them, !isEditUrl], ROLE_DinhMucNguyenVatLieu_Sua,'ROLE_ADMIN']"
+                           (click)="save()"><i
+                            class="mdi mdi-briefcase-download"></i>
+                            <span jhiTranslate="ebwebApp.mCReceipt.home.save"></span>
+                        </a>
+                        <a title="{{buttonSaveAndNewTranslate | translate}}"
+                           *ebHasSomeAuthorityOrCondition=
+                               "[[ROLE_DinhMucNguyenVatLieu_Them , ROLE_DinhMucNguyenVatLieu_Sua], 'ROLE_ADMIN', [ROLE_DinhMucNguyenVatLieu_Them, isCreateUrl]]"
+                           (click)="saveAndNew()"><i
+                            class="mdi mdi-plus fa-plus color-green"></i>
+                            <span jhiTranslate="ebwebApp.mCReceipt.home.saveAndAddNew"></span>
+                        </a>
+                        <a title="{{buttonDeleteTranslate | translate}}"
+                           *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_DinhMucNguyenVatLieu_Xoa]"
+                           [class.disable]="!materialQuantum.id" (click)="delete()"><i
+                            class="mdi mdi-delete-forever"></i>
+                            <span jhiTranslate="ebwebApp.mCReceipt.home.delete"></span>
+                        </a>
+                        <a *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_DinhMucNguyenVatLieu_Xem]" x
+                           title="{{buttonCloseFormTranslate | translate}}" (click)="closeForm()"><i
+                            class="mdi mdi-window-close"></i>
+                            <span jhiTranslate="ebwebApp.mCReceipt.home.close"></span>
+                        </a>
+                    </div>
+                </div>
+                <div class="frm-main">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <fieldset>
+                                <legend style="font-size: 19px; color: #f26f21;font-weight: bold;">
+                                    Thông tin chung
+                                </legend>
+                                <form style="border: none;">
+                                    <div class="row no-gutters">
+                                        <div class="col-lg-12">
+                                            <div class="form-group row no-gutters">
+                                                <label class="my-col-form-label-100 text-center" style="padding-top: 5px"
+                                                       jhiTranslate="ebwebApp.materialQuantum.objectID"></label>
+                                                <div class="col-sm-2 pd-l-0 pd-r-10">
+                                                    <combo-box style=""
+                                                               name="objectID"
+                                                               [dataList]="objectsMaterialQuantum"
+                                                               [listColumns]="listColumnsMaterialQuantum"
+                                                               displayMember="objectCode"
+                                                               valueName="objectID"
+                                                               [headerColumns]="listHeaderColumnsMaterialQuantum"
+                                                               [isObject]="false"
+                                                               [(ngModel)]="materialQuantum.objectID"
+                                                               [isRequired]="true"
+                                                               [isReadOnly]="materialQuantum.id"
+                                                               [isOutTable]="true"
+                                                               [hideRequiredWhenValueTrue]="true"
+                                                               (ngModelChange)="selectChangeAfterSelect()"
+                                                               [tabindex]="1"
+                                                    ></combo-box>
+                                                </div>
+                                                <label class="my-col-form-label-100 text-center" style="padding-top: 5px"
+                                                       jhiTranslate="ebwebApp.materialQuantum.objectName"></label>
+                                                <div class="my-last-div-4-3">
+                                                    <input type="text" class="form-control form-control-sm"
+                                                           name="objectName" [(ngModel)]="objectName"
+                                                           id="field_objectName" required/>
+                                                </div>
+                                                <label class="my-col-form-label-80 text-center" style="padding-top: 5px"
+                                                       jhiTranslate="ebwebApp.materialQuantum.fromDate"></label>
+                                                <div class="my-col-form-label-41">
+                                                    <eb-date-picker name="fromDate"
+                                                                    id="field_fromDate"
+                                                                    [(ngModel)]="materialQuantum.fromDate"
+                                                                    [isRequired]="true"
+                                                                    [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                                    [tabindex]="2"
+                                                    ></eb-date-picker>
+                                                </div>
+                                                <label class="my-col-form-label-80 text-center" style="padding-top: 5px"
+                                                       jhiTranslate="ebwebApp.materialQuantum.toDate"></label>
+                                                <div class="my-col-form-label-41">
+                                                    <eb-date-picker name="toDate"
+                                                                    id="field_toDate"
+                                                                    [(ngModel)]="materialQuantum.toDate"
+                                                                    [isRequired]="true"
+                                                                    [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                                    [tabindex]="3"
+                                                    ></eb-date-picker>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row" style="padding-top: 15px">
+                                        <div id="table-scroll-detail" class="table-scroll">
+                                            <table id="main-table-detail" class="main-table"
+                                                   [class.myreadonlytrue]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                   (keydown.arrowDown)="moveArrowDown($event,6)"
+                                                   (keydown.arrowUp)="moveArrowUp($event,6)">
+                                                <thead>
+                                                <tr>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.materialQuantumDetails.materialGoodsID"></th>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.materialQuantumDetails.description"></th>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.materialQuantumDetails.unitID"></th>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.materialQuantumDetails.quantity">
+                                                    </th>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.materialQuantumDetails.unitPrice"></th>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.materialQuantumDetails.amount">
+                                                    </th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr oncontextmenu="return false;"
+                                                    (contextmenu)="onRightClick($event, materialQuantumDetails, detail, true, true,0, materialQuantumDetails.indexOf(detail))"
+                                                    *ngFor="let detail of utilsService.getSortArray(materialQuantumDetails);let i=index;"
+                                                    (keydown.control.delete)="keyControlDelete(materialQuantumDetails.indexOf(detail),0)"
+                                                    (keydown.control.c)="keyControlC(materialQuantumDetails.indexOf(detail))"
+                                                    (keydown.control.insert)="keyControlC(null)">
+                                                    <td class="cell-Table">
+                                                        <combo-box style=""
+                                                                   name="{{'materialGoodsID_DT'+i}}"
+                                                                   [dataList]="materialGoodsInStock"
+                                                                   [listColumns]="utilsService.listColumnsMaterialGoodsPPService"
+                                                                   displayMember="materialGoodsCode"
+                                                                   valueName="id"
+                                                                   [headerColumns]="utilsService.listHeaderMaterialGoods"
+                                                                   [isObject]="false"
+                                                                   [(ngModel)]="detail.materialGoodsID"
+                                                                   [hideRequiredWhenValueTrue]="true"
+                                                                   [isOutTable]="false"
+                                                                   (ngModelChange)="selectChangeAfterSelectDetails(i)"
+                                                                   [isReadOnly]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                                   [tabindex]="3 + (6 * i) + 1"
+                                                        ></combo-box>
+                                                    </td>
+                                                    <td class="cell-Table jsgrid-align-left">
+                                                        <input type="text" class="input-Cell"
+                                                               name="diengiai{{i}}"
+                                                               id="diengiai{{i}}"
+                                                               [(ngModel)]="detail.description"
+                                                               [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                               [tabindex]="3 + (6 * i) + 2">
+                                                    </td>
+                                                    <td class="cell-Table">
+                                                        <combo-box style=""
+                                                                   name="{{'unitID_DT'+i}}"
+                                                                   [dataList]="units"
+                                                                   [listColumns]="utilsService.listColumnsUnit"
+                                                                   displayMember="unitName"
+                                                                   valueName="id"
+                                                                   [headerColumns]="utilsService.listHeaderColumnsUnit"
+                                                                   [isObject]="false"
+                                                                   [(ngModel)]="detail.unitID"
+                                                                   [isOutTable]="false"
+                                                                   [isReadOnly]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                                   [tabindex]="3 + (6 * i) + 3"
+                                                        ></combo-box>
+                                                    </td>
+                                                    <td class="cell-Table">
+                                                        <input type="number" class="input-Cell text-right"
+                                                               name="quantity{{i}}"
+                                                               id="quantity{{i}}"
+                                                               [(ngModel)]="detail.quantity"
+                                                               ebCurrencyMask
+                                                               [systemOptions]="currentAccount?.systemOption"
+                                                               [type]="3"
+                                                               (ngModelChange)="calTotalAmount(i)"
+                                                               [allowNegative]="false"
+                                                               [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                               [tabindex]="3 + (6 * i) + 4">
+                                                    </td>
+                                                    <td class="cell-Table">
+                                                        <input type="number" class="input-Cell text-right"
+                                                               name="unitPrice{{i}}"
+                                                               id="unitPrice{{i}}"
+                                                               [(ngModel)]="detail.unitPrice"
+                                                               ebCurrencyMask
+                                                               [systemOptions]="currentAccount?.systemOption"
+                                                               [type]="1"
+                                                               (ngModelChange)="calTotalAmount(i)"
+                                                               [allowNegative]="false"
+                                                               [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                               [tabindex]="3 + (6 * i) + 5">
+                                                    </td>
+                                                    <td class="cell-Table">
+                                                        <input type="number" class="input-Cell text-right"
+                                                               name="amount{{i}}"
+                                                               id="amount{{i}}"
+                                                               [(ngModel)]="detail.amount"
+                                                               ebCurrencyMask
+                                                               [systemOptions]="currentAccount?.systemOption"
+                                                               [type]="7"
+                                                               [allowNegative]="false"
+                                                               [tabindex]="3 + (6 * i) + 6"
+                                                               [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                               (keydown.tab)="addIfLastInput(i)">
+                                                    </td>
+                                                </tr>
+                                                <tr [hidden]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)" (click)="AddnewRow($event,0)">
+                                                    <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                                  value="{{'ebwebApp.mBDeposit.insertRow'| translate}}"
+                                                                                  readonly></td>
+                                                    <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                                  readonly>
+                                                    </td>
+                                                    <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                                  readonly>
+                                                    </td>
+                                                    <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                                  readonly>
+                                                    </td>
+                                                    <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                                  readonly>
+                                                    </td>
+                                                    <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                                  readonly>
+                                                    </td>
+
+                                                </tr>
+                                                <tr (contextmenu)="onRightClick($event, materialQuantumDetails, null, true, false, 0, null)"
+                                                    *ngFor="let l of newArr(9 - materialQuantumDetails.length)">
+                                                    <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                                  readonly>
+                                                    </td>
+                                                    <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                                  readonly>
+                                                    </td>
+                                                    <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                                  readonly>
+                                                    </td>
+                                                    <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                                  readonly>
+                                                    </td>
+                                                    <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                                  readonly>
+                                                    </td>
+                                                    <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                                  readonly>
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                                <tfoot>
+                                                <tr>
+                                                    <td class="cell-Table" colspan="6"><input type="text" readonly
+                                                                                              class="countRow input-Cell"
+                                                                                              value="{{'ebwebApp.mBDeposit.countLine'| translate}} : {{materialQuantumDetails?.length}}">
+                                                    </td>
+                                                </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </form>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+                <!--                <div class="col-lg-12">-->
+                <!--                    <div class="form-group row">-->
+                <!--                        <div class="col-sm-3 pd-l-0 pd-r-10">-->
+                <!--                            <div class="custom-control custom-checkbox">-->
+                <!--                                <input type="checkbox" [(ngModel)]="materialQuantum.isActive" name="isActive"-->
+                <!--                                       class="custom-control-input"-->
+                <!--                                       id="isActive">-->
+                <!--                                <label class="custom-control-label" for="isActive"-->
+                <!--                                       jhiTranslate="ebwebApp.accountList.isActive">Theo dõi</label>-->
+                <!--                            </div>-->
+                <!--                        </div>-->
+                <!--                    </div>-->
+                <!--                </div>-->
+            </div>
+        </div>
+    </div>
+</div>
+<eb-context-menu [contextMenu]="contextMenu" [eventHandlingHere]="true" [useCopyRow]="true"></eb-context-menu>
+<ng-template #content let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.saBill.saveMessage">Dữ liệu đã bị thay đổi, Bạn có muốn lưu lại?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="saveContent()" jhiTranslate="entity.action.save">
+            Save
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="close()"
+                jhiTranslate="ebwebApp.mBDeposit.dontSave">Don't save
+        </button>
+        <button type="button" class="btn btn-outline-danger" (click)="exit()" jhiTranslate="entity.action.close">close
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #pageRedirects let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.saBill.saveMessage">Dữ liệu đã bị thay đổi. Bạn có chắc chắn muốn chuyển
+                    hướng đến trang khác?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" jhiTranslate="ebwebApp.mBDeposit.agree">
+            Save
+        </button>
+        <button type="button" class="btn btn-outline-danger" (click)="exit()" jhiTranslate="entity.action.close">close
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #editConstrainRSIInwardOutward let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.materialQuantum.editConstrainRSIInwardOutward">Định mức này đã phát sinh
+                    liên kết với chứng từ khác. Thực hiện sửa đổi định mức sẽ phải xóa bỏ
+                    toàn bộ liên kết. Bạn có muốn tiếp tục?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" jhiTranslate="ebwebApp.mBDeposit.agree">
+            Save
+        </button>
+        <button type="button" class="btn btn-outline-danger" (click)="exit()" jhiTranslate="entity.action.close">close
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #deleteConstrainRSIInwardOutward let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.materialQuantum.deleteConstrainRSIInwardOutward">Định mức này đã phát sinh
+                    liên kết với chứng từ khác. Thực hiện xóa định mức sẽ phải xóa bỏ toàn
+                    bộ liên kết. Bạn có muốn tiếp tục?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" jhiTranslate="ebwebApp.mBDeposit.agree">
+            Save
+        </button>
+        <button type="button" class="btn btn-outline-danger" (click)="exit()" jhiTranslate="entity.action.close">close
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #confirmEdit let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.materialQuantum.editConstrainRSIInwardOutward">Định mức này đã phát sinh
+                    liên kết với chứng từ khác. Thực hiện sửa đổi định mức sẽ phải xóa bỏ toàn bộ liên kết. Bạn có muốn
+                    tiếp tục?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" jhiTranslate="ebwebApp.mBDeposit.agree"
+                (click)="continueSave()">
+            Save
+        </button>
+        <button type="button" class="btn btn-outline-danger" (click)="exit()" jhiTranslate="entity.action.close">close
+        </button>
+    </div>
+</ng-template>
+
+<!--<button (click)="showEditConstrainRSIInwardOutward(editConstrainRSIInwardOutward)" ></button>-->
+<!--<button (click)="showDeleteConstrainRSIInwardOutward(deleteConstrainRSIInwardOutward)" ></button>-->

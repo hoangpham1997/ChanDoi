@@ -1,0 +1,675 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.10.0.final using JasperReports Library version 6.10.0-unknown  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Report_MBDeposit" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" uuid="82931e45-f449-46cb-a05a-7aac5bfc5b16">
+	<property name="com.jaspersoft.studio.unit." value="mm"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<parameter name="IsDisplayNameInReport" class="java.lang.Boolean"/>
+	<parameter name="AccountingObjectName" class="java.lang.String"/>
+	<parameter name="AccountingObjectAddress" class="java.lang.String"/>
+	<parameter name="CurrencyID" class="java.lang.String"/>
+	<parameter name="No" class="java.lang.String"/>
+	<parameter name="Date" class="java.lang.String"/>
+	<parameter name="TotalAmount" class="java.lang.String"/>
+	<parameter name="Manager" class="java.lang.String"/>
+	<parameter name="CompanyName" class="java.lang.String"/>
+	<parameter name="CompanyAddress" class="java.lang.String"/>
+	<parameter name="ExchangeRate" class="java.lang.String"/>
+	<parameter name="TotalAmountOriginal" class="java.lang.String"/>
+	<parameter name="Total" class="java.lang.String"/>
+	<parameter name="Parameter1" class="java.lang.String"/>
+	<parameter name="Accountant" class="java.lang.String"/>
+	<parameter name="AmountInWord" class="java.lang.String"/>
+	<parameter name="TaxCode" class="java.lang.String"/>
+	<parameter name="ConversionPair" class="java.lang.String"/>
+	<parameter name="header1" class="java.lang.String"/>
+	<parameter name="header2" class="java.lang.String"/>
+	<parameter name="header0" class="java.lang.String"/>
+	<parameter name="isForeignCurrency" class="java.lang.Boolean"/>
+	<parameter name="Reason" class="java.lang.String"/>
+	<parameter name="isCheckDemo" class="java.lang.Boolean"/>
+	<parameter name="pathDemo" class="java.lang.String"/>
+	<parameter name="CheckShow" class="java.lang.Boolean"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="debitAccount" class="java.lang.String"/>
+	<field name="description" class="java.lang.String"/>
+	<field name="creditAccount" class="java.lang.String"/>
+	<field name="amount" class="java.math.BigDecimal"/>
+	<field name="amountOriginalToString" class="java.lang.String"/>
+	<field name="amountOriginal" class="java.math.BigDecimal"/>
+	<variable name="rowCount" class="java.lang.Integer" resetType="None">
+		<variableExpression><![CDATA[$V{rowCount} == null ? 0 : $V{rowCount}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<background>
+		<band height="400" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<printWhenExpression><![CDATA[Boolean.TRUE.equals($P{isCheckDemo})]]></printWhenExpression>
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="62" y="0" width="408" height="400" uuid="e6a77cbe-e612-4bc9-a34d-08e2ad155095">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA[$P{pathDemo} != null ? $P{pathDemo} : ""]]></imageExpression>
+			</image>
+		</band>
+	</background>
+	<title>
+		<band height="49" splitType="Stretch">
+			<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.FreeLayout"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="10" y="10" width="370" height="18" isPrintWhenDetailOverflows="true" uuid="db9dde1c-dd2f-4783-a308-d37366d89680"/>
+				<textElement verticalAlignment="Middle" markup="html">
+					<font fontName="Times New Roman" size="11" isBold="false" isItalic="false" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{header0}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="38" splitType="Stretch">
+			<printWhenExpression><![CDATA[(($V{PAGE_NUMBER} == 1) ? Boolean.TRUE : Boolean.FALSE)]]></printWhenExpression>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="8" width="555" height="30" uuid="d2a568b5-14fe-41f3-aa64-23519b9e2190"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="16" isBold="true" isItalic="false" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[CHỨNG TỪ KẾ TOÁN]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="27">
+			<printWhenExpression><![CDATA[($V{PAGE_NUMBER} > 1 && $V{REPORT_COUNT} < $P{REPORT_MAX_COUNT}) || ($V{rowCount} == 1 && $V{PAGE_NUMBER} > 1)]]></printWhenExpression>
+			<staticText>
+				<reportElement key="" positionType="Float" stretchType="RelativeToTallestObject" x="10" y="9" width="66" height="18" isPrintWhenDetailOverflows="true" uuid="e2bed6e0-67b7-4f77-95a5-28889f73f6f4"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" isItalic="false" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[STT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="76" y="9" width="204" height="18" isPrintWhenDetailOverflows="true" uuid="fc894259-9860-4562-9182-850c3eebcb16"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" isItalic="false" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Diễn giải]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="364" y="9" width="86" height="18" isPrintWhenDetailOverflows="true" uuid="4a8aeece-c90b-4ee4-93da-f0fe866e8313"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" isItalic="false" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Ghi Có]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="280" y="9" width="84" height="18" isPrintWhenDetailOverflows="true" uuid="dd9e1b0c-e414-4618-a570-1133e8a69aab"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" isItalic="false" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Ghi Nợ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="450" y="9" width="98" height="18" isPrintWhenDetailOverflows="true" uuid="2fefcc92-72f4-482e-95a9-e030e796981c"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" isItalic="false" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Thành tiền]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="18">
+			<printWhenExpression><![CDATA[$V{REPORT_COUNT} == 1 ? Boolean.TRUE : Boolean.FALSE]]></printWhenExpression>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="76" y="0" width="304" height="18" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" uuid="259667c7-4b25-43dc-8772-5b9166364ffb">
+					<printWhenExpression><![CDATA[$P{CheckShow} == null || $P{CheckShow}.equals( false )]]></printWhenExpression>
+				</reportElement>
+				<box bottomPadding="4"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="false" isItalic="false" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{AccountingObjectName} != null ? $P{AccountingObjectName} : "...................................................................................................")]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="448" y="0" width="107" height="18" isPrintWhenDetailOverflows="true" uuid="1723a798-c041-4ac5-8437-94aac451f3b0"/>
+				<box bottomPadding="4"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="false" isItalic="false" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{No}  != null ? $P{No} : "................................"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="398" y="0" width="50" height="18" isPrintWhenDetailOverflows="true" uuid="dd7c98b0-b115-4e3a-af4c-bcb623fe9cfa"/>
+				<box bottomPadding="4"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="false" isItalic="false" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Số:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement isPrintRepeatedValues="false" x="10" y="0" width="66" height="18" isRemoveLineWhenBlank="true" uuid="1103fc15-ac9d-4c27-82fe-8eb675d3e24e">
+					<printWhenExpression><![CDATA[$P{CheckShow} == null || $P{CheckShow}.equals( false )]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font fontName="Times New Roman" size="11"/>
+				</textElement>
+				<text><![CDATA[Đối tượng:]]></text>
+			</staticText>
+		</band>
+		<band height="18">
+			<printWhenExpression><![CDATA[$V{REPORT_COUNT} == 1 ? Boolean.TRUE : Boolean.FALSE]]></printWhenExpression>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="76" y="0" width="304" height="18" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" uuid="253fa550-51c1-4d33-a90a-e48c3efde1a2">
+					<printWhenExpression><![CDATA[$P{CheckShow} == null || $P{CheckShow}.equals( false )]]></printWhenExpression>
+				</reportElement>
+				<box bottomPadding="4"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="false" isItalic="false" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{AccountingObjectAddress} != null ? $P{AccountingObjectAddress} :  "...................................................................................................")]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="398" y="0" width="50" height="18" isPrintWhenDetailOverflows="true" uuid="eb4c68ad-5f07-440c-8e89-947d95ccf51f"/>
+				<box bottomPadding="4"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="false" isItalic="false" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Ngày:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="448" y="0" width="107" height="18" isPrintWhenDetailOverflows="true" uuid="6550427b-4959-40ac-8966-5bf085301fb1"/>
+				<box bottomPadding="4"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="false" isItalic="false" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Date}   != null ? $P{Date} : "............................."]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement isPrintRepeatedValues="false" x="10" y="0" width="66" height="18" isRemoveLineWhenBlank="true" uuid="382870fa-f8d2-4a3b-b178-1cdc3169c4a9">
+					<printWhenExpression><![CDATA[$P{CheckShow} == null || $P{CheckShow}.equals( false )]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font fontName="Times New Roman" size="11"/>
+				</textElement>
+				<text><![CDATA[Địa chỉ:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="0" width="66" height="18" uuid="7a0b0871-929b-4582-b0ab-c4b6bd9e3232">
+					<printWhenExpression><![CDATA[$P{CheckShow} != null && !$P{CheckShow}.equals( false )]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font fontName="Times New Roman" size="11"/>
+				</textElement>
+				<text><![CDATA[Diễn giải:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="76" y="0" width="304" height="18" isPrintWhenDetailOverflows="true" uuid="a3c8ee55-0dcd-47e0-a184-a9c52e569ea8">
+					<printWhenExpression><![CDATA[$P{CheckShow} != null && !$P{CheckShow}.equals( false )]]></printWhenExpression>
+				</reportElement>
+				<box bottomPadding="4"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="false" isItalic="false" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{Reason} != null ? $P{Reason} :  "...................................................................................................")]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="18">
+			<printWhenExpression><![CDATA[$V{REPORT_COUNT} == 1 ? Boolean.TRUE : Boolean.FALSE]]></printWhenExpression>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="76" y="0" width="304" height="18" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" uuid="9f234e74-7f12-4ce0-a93e-0c8eeaa82037">
+					<printWhenExpression><![CDATA[$P{CheckShow} == null || $P{CheckShow}.equals( false )]]></printWhenExpression>
+				</reportElement>
+				<box bottomPadding="4"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="false" isItalic="false" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{Reason} != null ? $P{Reason} :  "...................................................................................................")]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="398" y="0" width="50" height="18" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" uuid="fb023ba5-21bf-4717-9ead-af4e38b2ba95">
+					<printWhenExpression><![CDATA[!$P{isForeignCurrency}]]></printWhenExpression>
+				</reportElement>
+				<box bottomPadding="4"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="false" isItalic="false" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Loại tiền:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="448" y="0" width="107" height="18" isRemoveLineWhenBlank="true" isPrintWhenDetailOverflows="true" uuid="c104a3d0-93aa-45ee-add3-27e9e76d524b">
+					<printWhenExpression><![CDATA[!$P{isForeignCurrency}]]></printWhenExpression>
+				</reportElement>
+				<box bottomPadding="4"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="false" isItalic="false" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{CurrencyID}    != null ? $P{CurrencyID} : "......................."]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="10" y="0" width="66" height="18" isRemoveLineWhenBlank="true" uuid="1a10cc68-b09b-4738-9953-9196135ceda1">
+					<printWhenExpression><![CDATA[$P{CheckShow} == null || $P{CheckShow}.equals( false )]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font fontName="Times New Roman" size="11"/>
+				</textElement>
+				<text><![CDATA[Diễn giải:]]></text>
+			</staticText>
+		</band>
+		<band height="27">
+			<printWhenExpression><![CDATA[$V{REPORT_COUNT} == 1 ? Boolean.TRUE : Boolean.FALSE]]></printWhenExpression>
+			<staticText>
+				<reportElement key="" positionType="Float" stretchType="RelativeToTallestObject" x="10" y="9" width="66" height="18" isPrintWhenDetailOverflows="true" uuid="7a6a089c-5088-47f7-aaa6-42881fd1ecea"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" isItalic="false" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[STT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="76" y="9" width="204" height="18" isPrintWhenDetailOverflows="true" uuid="f7be0ebc-58f2-4866-bd1f-444acca7fce0"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" isItalic="false" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Diễn giải]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="280" y="9" width="84" height="18" isPrintWhenDetailOverflows="true" uuid="6f98b875-0f91-4ac4-a169-723ef88ca758"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" isItalic="false" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Ghi Nợ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="364" y="9" width="86" height="18" isPrintWhenDetailOverflows="true" uuid="1be8d987-3088-4b1e-947a-ee7828b3275c"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" isItalic="false" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Ghi Có]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="450" y="9" width="98" height="18" isPrintWhenDetailOverflows="true" uuid="54f6c83b-4008-4c25-8910-6db85e8fec6e"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" isItalic="false" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Thành tiền]]></text>
+			</staticText>
+		</band>
+		<band height="20" splitType="Prevent">
+			<printWhenExpression><![CDATA[$V{REPORT_COUNT} ==1]]></printWhenExpression>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="10" y="0" width="66" height="20" isPrintWhenDetailOverflows="true" uuid="fb8084ad-3537-4b14-869d-20f59b293a65"/>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+					<topPen lineWidth="0.25" lineStyle="Solid"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.0" lineStyle="Dotted"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isItalic="false" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="76" y="0" width="204" height="20" isPrintWhenDetailOverflows="true" uuid="853e2846-29a1-4108-9931-0516c60c945e">
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+					<topPen lineWidth="0.25" lineStyle="Solid"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.0" lineStyle="Dotted"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isItalic="false" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{description}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="280" y="0" width="84" height="20" isPrintWhenDetailOverflows="true" uuid="9f425527-28e7-4283-86f0-f309f135e4ea"/>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+					<topPen lineWidth="0.25" lineStyle="Solid"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.0" lineStyle="Dotted"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isItalic="false" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{debitAccount}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="364" y="0" width="86" height="20" isPrintWhenDetailOverflows="true" uuid="f379edda-cd81-4719-94c0-047859bca83d"/>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+					<topPen lineWidth="0.25" lineStyle="Solid"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.0" lineStyle="Dotted"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isItalic="false" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{creditAccount}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="450" y="0" width="98" height="20" isPrintWhenDetailOverflows="true" uuid="61b30dec-45b5-4a5d-833c-c950061a6f7e"/>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+					<topPen lineWidth="0.25" lineStyle="Solid"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.0" lineStyle="Dotted"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isItalic="false" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{amountOriginalToString}]]></textFieldExpression>
+			</textField>
+			<returnValue toVariable="rowCount">
+				<expression><![CDATA[1]]></expression>
+			</returnValue>
+		</band>
+		<band height="20" splitType="Prevent">
+			<printWhenExpression><![CDATA[$V{REPORT_COUNT} >1]]></printWhenExpression>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="76" y="0" width="204" height="20" isPrintWhenDetailOverflows="true" uuid="167a736b-eab9-4918-b635-d5b22befd8bc">
+					<property name="com.jaspersoft.studio.unit.leftIndent" value="mm"/>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+					<topPen lineWidth="0.25" lineStyle="Dotted"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.0" lineStyle="Dotted"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isItalic="false" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{description}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="450" y="0" width="98" height="20" isPrintWhenDetailOverflows="true" uuid="44e5aa45-42ae-4f28-b6fc-c15716b7558c"/>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+					<topPen lineWidth="0.25" lineStyle="Dotted"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.0" lineStyle="Dotted"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isItalic="false" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{amountOriginalToString}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="280" y="0" width="84" height="20" isPrintWhenDetailOverflows="true" uuid="8343b4e0-15ec-4460-abdd-5d9d5759dffd"/>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+					<topPen lineWidth="0.25" lineStyle="Dotted"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.0" lineStyle="Dotted"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isItalic="false" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{debitAccount}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="10" y="0" width="66" height="20" isPrintWhenDetailOverflows="true" uuid="f4a0f17d-1a7d-407c-aca8-3cd4f01bf47e"/>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+					<topPen lineWidth="0.25" lineStyle="Dotted"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.0" lineStyle="Dotted"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isItalic="false" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="364" y="0" width="86" height="20" isPrintWhenDetailOverflows="true" uuid="f524b859-e40b-41e9-ab85-3389f4ac0d8f"/>
+				<box>
+					<pen lineWidth="0.5" lineStyle="Solid"/>
+					<topPen lineWidth="0.25" lineStyle="Dotted"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.0" lineStyle="Dotted"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isItalic="false" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{creditAccount}]]></textFieldExpression>
+			</textField>
+			<returnValue toVariable="rowCount">
+				<expression><![CDATA[1]]></expression>
+			</returnValue>
+		</band>
+		<band height="16" splitType="Prevent">
+			<printWhenExpression><![CDATA[(($V{REPORT_COUNT} == $P{REPORT_MAX_COUNT}.intValue()) ? Boolean.TRUE : Boolean.FALSE)]]></printWhenExpression>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="10" y="0" width="440" height="16" isPrintWhenDetailOverflows="true" uuid="546a2cb9-fc34-47de-8a8b-61cbfcca972f"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="true" isItalic="false" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+					<paragraph leftIndent="14"/>
+				</textElement>
+				<text><![CDATA[Cộng]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="450" y="0" width="98" height="16" isPrintWhenDetailOverflows="true" uuid="840cb22c-1945-4136-b3aa-eb5076987ed6"/>
+				<box>
+					<pen lineWidth="0.25" lineStyle="Solid"/>
+					<leftPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="true" isItalic="false" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Total}]]></textFieldExpression>
+			</textField>
+			<returnValue toVariable="rowCount">
+				<expression><![CDATA[0]]></expression>
+			</returnValue>
+		</band>
+		<band height="28" splitType="Prevent">
+			<printWhenExpression><![CDATA[(($V{REPORT_COUNT} == $P{REPORT_MAX_COUNT}.intValue()) ? Boolean.TRUE : Boolean.FALSE)]]></printWhenExpression>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="135" y="14" width="413" height="14" isPrintWhenDetailOverflows="true" uuid="3c773ee7-2a02-43db-93ba-6b5b8ecf4e71"/>
+				<textElement textAlignment="Justified" verticalAlignment="Top">
+					<font fontName="Times New Roman" size="11" isBold="true" isItalic="true" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{AmountInWord} != null ? $P{AmountInWord}  : "............................................................"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="10" y="14" width="125" height="14" isPrintWhenDetailOverflows="true" uuid="f0ceb9b2-33ea-4384-a2a4-a7c3ea57e392">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<textElement verticalAlignment="Top" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="false" isItalic="false" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Thành tiền bằng chữ:]]></text>
+			</staticText>
+		</band>
+		<band height="44" splitType="Prevent">
+			<printWhenExpression><![CDATA[(($V{REPORT_COUNT} == $P{REPORT_MAX_COUNT}.intValue()) ? Boolean.TRUE : Boolean.FALSE) && !$P{isForeignCurrency}]]></printWhenExpression>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="10" y="0" width="538" height="14" isPrintWhenDetailOverflows="true" uuid="f785079d-1f72-43d1-8416-bb76fa7767c5">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="false" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Tỷ giá:     " + ($P{ExchangeRate} != null ? ($P{ExchangeRate} + $P{ConversionPair}) : "...................................................................................")]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="10" y="15" width="538" height="14" isPrintWhenDetailOverflows="true" uuid="d09a9b06-eb2f-4696-b674-366ad5a24832">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="false" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Số tiền quy đổi:     " + ($P{TotalAmount} != null ? $P{TotalAmount}  : "......................................................................")]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="105" splitType="Prevent">
+			<printWhenExpression><![CDATA[(($V{REPORT_COUNT} == $P{REPORT_MAX_COUNT}.intValue()) ? Boolean.TRUE : Boolean.FALSE)]]></printWhenExpression>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="30" y="5" width="140" height="14" isPrintWhenDetailOverflows="true" uuid="82128078-c008-4e53-8c85-68539b8124ab">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="11" isBold="true" isItalic="false" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Kế toán trưởng]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="30" y="19" width="140" height="14" isPrintWhenDetailOverflows="true" uuid="51219076-6c6e-4636-a46a-3376a3c9a2d9">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="false" isItalic="true" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[(Ký, họ tên)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="400" y="5" width="125" height="14" isPrintWhenDetailOverflows="true" uuid="24243948-0abb-45aa-b83f-60c4b79fd3c5">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="true" isItalic="false" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[Giám đốc]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="400" y="19" width="125" height="14" isPrintWhenDetailOverflows="true" uuid="5def529c-fbf1-4247-bcab-e549c8125488">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="false" isItalic="true" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[(Ký, họ tên, đóng dấu)]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="30" y="81" width="140" height="24" isPrintWhenDetailOverflows="true" uuid="4c199ef5-28a7-4896-a965-f4020fad679e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="true" isItalic="false" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Accountant}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="400" y="81" width="125" height="24" isPrintWhenDetailOverflows="true" uuid="1ab84bcc-7502-4225-99ae-5f4fe3c1bd63"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="11" isBold="true" isItalic="false" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Manager}]]></textFieldExpression>
+			</textField>
+			<returnValue toVariable="rowCount">
+				<expression><![CDATA[0]]></expression>
+			</returnValue>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch">
+			<printWhenExpression><![CDATA[(($V{REPORT_COUNT} < $P{REPORT_MAX_COUNT}.intValue()) ? Boolean.TRUE : Boolean.FALSE) || $V{rowCount} ==1]]></printWhenExpression>
+			<textField>
+				<reportElement stretchType="RelativeToTallestObject" x="10" y="0" width="538" height="0" uuid="aec7c6f4-459e-4653-b3f9-e4ceed5ebc78"/>
+				<box>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textFieldExpression><![CDATA["Text Field"]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="11" splitType="Stretch">
+			<staticText>
+				<reportElement x="-20" y="0" width="82" height="11" uuid="351d3eb4-88d2-4cdb-afdb-5c991072af97">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="8" isBold="false" isItalic="true" pdfFontName="Times-Roman" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[EasyBooks]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+</jasperReport>

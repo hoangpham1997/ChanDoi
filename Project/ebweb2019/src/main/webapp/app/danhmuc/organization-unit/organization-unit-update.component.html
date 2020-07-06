@@ -1,0 +1,902 @@
+<div class="container-fluid">
+    <div class="margin-tp-5 margin-0">
+        <div class="">
+            <div class="itemw">
+                <div class="menu-tool-bar he">
+                    <div class="ptitle">
+                        <span jhiTranslate="ebwebApp.organizationUnit.home.title"></span>
+                    </div>
+                    <div class="gr-toolbar">
+                        <a title="{{buttonSaveTranslate | translate}}"
+                           *ebHasSomeAuthorityOrCondition=
+                               "[[ROLE_CoCauToChuc_Them, !isEditUrl], ROLE_CoCauToChuc_Sua,'ROLE_ADMIN', ROLE_MGT]"
+                           (click)="save()"
+                        ><i
+                            class="mdi mdi-briefcase-download"></i>
+                            <span jhiTranslate="ebwebApp.mCReceipt.home.save"></span>
+                        </a>
+                        <a title="{{buttonSaveAndNewTranslate | translate}}"
+                           *ebHasSomeAuthorityOrCondition=
+                               "[[ROLE_CoCauToChuc_Them , ROLE_CoCauToChuc_Sua], ROLE_MGT, 'ROLE_ADMIN', [ROLE_CoCauToChuc_Them, isCreateUrl]]"
+                           (click)="saveAndNew()"><i
+                            class="mdi mdi-plus fa-plus color-green"></i>
+                            <span jhiTranslate="ebwebApp.mCReceipt.home.saveAndAddNew"></span>
+                        </a>
+                        <a title="{{buttonDeleteTranslate | translate}}"
+                           *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_CoCauToChuc_Xoa, ROLE_MGT]"
+                           [class.disable]="!organizationUnit.id" (click)="delete()"><i
+                            class="mdi mdi-delete"></i>
+                            <span jhiTranslate="ebwebApp.mCReceipt.home.delete"></span>
+                        </a>
+                        <a *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_CoCauToChuc_Xem, ROLE_MGT]"
+                           title="{{buttonCloseFormTranslate | translate}}" (click)="closeForm()"><i
+                            class="mdi mdi-window-close"></i>
+                            <span jhiTranslate="ebwebApp.mCReceipt.home.close"></span>
+                        </a>
+                    </div>
+                </div>
+                <div class="frm-main">
+                    <div class="row">
+                        <div class="col-lg-7"></div>
+                        <div class="col-lg-5">
+                            <div class="form-group row">
+                                <div class="col-sm-6 jsgrid-align-center" style="padding-top: 5px!important;"><label
+                                    class="col-sm-12"
+                                    jhiTranslate="ebwebApp.organizationUnit.unitType" style="padding-right: 5px">Cấp tổ
+                                    chức</label></div>
+                                <div *ngIf="!isAdminWithTotalPackage" class="col-sm-6" style="padding-left: 0px">
+                                    <select
+                                        [disabled]="(((organizationUnit.unitType === 0 || organizationUnit.unitType === 1) && !isCreateUrl) || ((!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl))) && isComType"
+                                        name="unitType" id="field_unitType" class="form-control form-control-sm"
+                                        [(ngModel)]="organizationUnit.unitType"
+                                        (change)="selectChangeUnitType()">
+                                        <option *ngIf="(organizationUnit?.unitType === 0 && organizationUnit.id) || (comType === 3  && isUserID === null && !this.currentAccount.organizationUnit.parentID)"
+                                                [ngValue]="0"
+                                                jhiTranslate="ebwebApp.organizationUnit.corporations">Tổng
+                                            cty/cty
+                                        </option>
+                                        <option *ngIf="((organizationUnit?.unitType === 1 && organizationUnit.id) || comType === 2 || (comType === 3 && !isUserID)) && currentUserUnitType === 0 || (organizationUnit.id && organizationUnit.unitType === 1) || (!organizationUnit.id && currentUserUnitType === 0)"
+                                                [ngValue]="1"
+                                                jhiTranslate="ebwebApp.organizationUnit.branch">Chi
+                                            nhánh
+                                        </option>
+                                        <option [ngValue]="2"
+                                                jhiTranslate="ebwebApp.organizationUnit.representativeOffice">Văn phòng
+                                            đại diện
+                                        </option>
+                                        <option [ngValue]="3" jhiTranslate="ebwebApp.organizationUnit.placeOfBusiness">
+                                            Địa điểm kinh doanh
+                                        </option>
+                                        <option [ngValue]="4" jhiTranslate="ebwebApp.organizationUnit.department">Phòng
+                                            ban
+                                        </option>
+                                        <option [ngValue]="5" jhiTranslate="ebwebApp.organizationUnit.other">Khác
+                                        </option>
+                                    </select>
+                                </div>
+                                <div *ngIf="isAdminWithTotalPackage" class="col-sm-6" style="padding-left: 0px">
+                                    <select [disabled]="((!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)) && isComType"
+                                            name="unitType" id="field_unitType_totalPackage"
+                                            class="form-control form-control-sm"
+                                            [(ngModel)]="organizationUnit.unitType"
+                                            (change)="selectChangeUnitType()">
+                                        <option [ngValue]="0"
+                                                jhiTranslate="ebwebApp.organizationUnit.corporations">Tổng
+                                            cty/cty
+                                        </option>
+                                        <option [ngValue]="1"
+                                                jhiTranslate="ebwebApp.organizationUnit.branch">Chi
+                                            nhánh
+                                        </option>
+                                        <option [ngValue]="2"
+                                                jhiTranslate="ebwebApp.organizationUnit.representativeOffice">Văn phòng
+                                            đại diện
+                                        </option>
+                                        <option [ngValue]="3" jhiTranslate="ebwebApp.organizationUnit.placeOfBusiness">
+                                            Địa điểm kinh doanh
+                                        </option>
+                                        <option [ngValue]="4" jhiTranslate="ebwebApp.organizationUnit.department">Phòng
+                                            ban
+                                        </option>
+                                        <option [ngValue]="5" jhiTranslate="ebwebApp.organizationUnit.other">Khác
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <form *ngIf="organizationUnit.unitType === 0 || organizationUnit.unitType === 1">
+                        <h3 jhiTranslate="ebwebApp.organizationUnit.generalInformation">Thông tin chung</h3>
+                        <div class="row">
+                            <div class="col-lg-2">
+                                <div class="form-group row">
+                                    <label class="col-sm-12 col-form-label"
+                                           jhiTranslate="ebwebApp.organizationUnit.organizationUnitCode*">Mã
+                                        tổ chức/đơn vị (*)</label>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-12 col-form-label"
+                                           jhiTranslate="ebwebApp.organizationUnit.taxCode">Mã
+                                        số thuế</label>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-12 col-form-label"
+                                           jhiTranslate="ebwebApp.organizationUnit.address">Địa
+                                        chỉ</label>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-12 col-form-label"
+                                           jhiTranslate="ebwebApp.organizationUnit.phoneNumber">Điện
+                                        thoại</label>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-12 col-form-label"
+                                           jhiTranslate="ebwebApp.organizationUnit.businessRegistrationNumber">Số
+                                        ĐKKD </label>
+                                </div>
+                                <!--                                <div class="form-group row">-->
+                                <!--                                    <label class="col-sm-12 col-form-label">Kiểu hạch toán </label>-->
+                                <!--                                </div>-->
+                            </div>
+                            <div class="col-lg-10">
+                                <div class="form-group row">
+                                    <div class="col-sm-2">
+                                        <input type="text" class="form-control form-control-sm"
+                                               name="organizationUnitCode" id="field_organizationUnitCode"
+                                               [(ngModel)]="organizationUnit.organizationUnitCode"
+                                               [disabled]="organizationUnit.id"
+                                               required/>
+                                    </div>
+                                    <label class="col-sm-2 col-form-label" for="field_organizationUnitName1"
+                                           jhiTranslate="ebwebApp.organizationUnit.organizationUnitName*">Tên tổ chức
+                                        / đơn vị (*)</label>
+                                    <div class="col-sm-8">
+                                        <input *ngIf="!isAdminWithTotalPackage" type="text"
+                                               class="form-control form-control-sm"
+                                               name="organizationUnitName" id="field_organizationUnitName1"
+                                               [(ngModel)]="organizationUnit.organizationUnitName"
+                                               [disabled]="((!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)) && organizationUnit.id&& isComType"
+                                               required/>
+                                        <input *ngIf="isAdminWithTotalPackage" type="text"
+                                               class="form-control form-control-sm"
+                                               name="organizationUnitName" id="field_organizationUnitName2"
+                                               [(ngModel)]="organizationUnit.organizationUnitName"
+                                               required/>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-2">
+                                        <input type="text" class="form-control form-control-sm" name="taxCode"
+                                               id="field_taxCode"
+                                               [disabled]="((!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl))  && organizationUnit.id&& isComType"
+                                               [(ngModel)]="organizationUnit.taxCode"/>
+                                    </div>
+                                    <label class="col-sm-2 col-form-label" for="field_organizationUnitEName"
+                                           jhiTranslate="ebwebApp.organizationUnit.organizationUnitEName">Tên tiếng
+                                        anh</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control form-control-sm"
+                                               name="organizationUnitEName" id="field_organizationUnitEName"
+                                               [disabled]="((!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl))  && organizationUnit.id&& isComType"
+                                               [(ngModel)]="organizationUnit.organizationUnitEName"/>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-12">
+                                        <input type="text" class="form-control form-control-sm" name="address"
+                                               id="field_address"
+                                               [disabled]="((!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)) && isComType"
+                                               [(ngModel)]="organizationUnit.address"/>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-2">
+                                        <input type="text" class="form-control form-control-sm" name="phoneNumber"
+                                               id="field_phoneNumber"
+                                               [disabled]="((!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)) && isComType"
+                                               [(ngModel)]="organizationUnit.phoneNumber"/>
+                                    </div>
+                                    <label class="col-sm-2 col-form-label"
+                                           for="field_parentID"
+                                           jhiTranslate="ebwebApp.organizationUnit.parentID">Thuộc</label>
+                                    <div class="col-sm-8">
+                                        <combo-box style="" id="field_parentID"
+                                                   name="comboboxParentID"
+                                                   [dataList]="((organizationUnit.unitType === 0 || organizationUnit.unitType === 1) && organizationUnit.id) ? allOrganizationUnits : organizationUnits"
+                                                   [isOutTable]="true"
+                                                   [showIconPlus]="true"
+                                                   [listColumns]="listColumnsOrganizationUnit"
+                                                   displayMember="organizationUnitCode"
+                                                   valueName="id"
+                                                   [headerColumns]="listHeaderColumnsOrganizationUnit"
+                                                   [isObject]="false"
+                                                   [(ngModel)]="organizationUnit.parentID"
+                                                   [isReadOnly]="(((organizationUnit.unitType === 0 || organizationUnit.unitType === 1) && !isCreateOrg)|| ((!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)))&& isComType || (organizationUnit.unitType === 1 || organizationUnit.unitType === 0) && organizationUnit.id"
+                                        >
+                                        </combo-box>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-2">
+                                        <input type="text" class="form-control form-control-sm"
+                                               name="businessRegistrationNumber" id="field_businessRegistrationNumber"
+                                               [(ngModel)]="organizationUnit.businessRegistrationNumber"
+                                               [disabled]="((!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl))&& isComType"/>
+                                    </div>
+                                    <label class="col-sm-2 col-form-label"
+                                           jhiTranslate="ebwebApp.organizationUnit.issueDate"
+                                           for="field_issueDate">Issue Date</label>
+                                    <div class="col-sm-2">
+                                        <eb-date-picker id="field_issueDate"
+                                                        [(ngModel)]="organizationUnit.issueDate" name="fromDate"
+                                                        [disabled]="((!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl))&& isComType"></eb-date-picker>
+                                    </div>
+                                    <label class="col-sm-2 col-form-label text-right"
+                                           jhiTranslate="ebwebApp.organizationUnit.issueBy" for="field_issueBy">Issue
+                                        By</label>
+                                    <div class="col-sm-4">
+                                        <input type="text" class="form-control form-control-sm" name="issueBy"
+                                               id="field_issueBy"
+                                               [(ngModel)]="organizationUnit.issueBy"
+                                               [disabled]="((!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl))&& isComType"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row" *ngIf="organizationUnit.unitType === 1">
+                            <label class="col-sm-2 col-form-label" jhiTranslate="ebwebApp.organizationUnit.accType">Kiểu
+                                hạch toán </label>
+                            <div class="col-sm-2">
+                                <select name="accType" id="field_accType" class="form-control form-control-sm"
+                                        [(ngModel)]="organizationUnit.accType"
+                                        [disabled]="((!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl))&& isComType">
+                                    <option [ngValue]="0" jhiTranslate="ebwebApp.organizationUnit.dependent">Hạch toán
+                                        phụ thuộc
+                                    </option>
+                                    <option [ngValue]="1" jhiTranslate="ebwebApp.organizationUnit.independence">Hạch
+                                        toán độc lập
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-sm-1"></div>
+                            <div class="col-sm-7" [hidden]="organizationUnit.accType === 1"
+                                 style="padding-right: 0px; padding-left: 55px">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" [(ngModel)]="organizationUnit.isPrivateVAT"
+                                           name="isPrivateVAT"
+                                           class="custom-control-input"
+                                           style="padding-top: 10px"
+                                           id="isPrivateVAT"
+                                           [disabled]="((!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl))&& isComType">
+                                    <label class="custom-control-label col-form-label" for="isPrivateVAT" style="padding-top: 0px"
+                                           jhiTranslate="ebwebApp.organizationUnit.taxDeclaration">Kê khai thuế
+                                        GTGT, TTĐB riêng</label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <form
+                          *ngIf="organizationUnit.unitType === 2 || organizationUnit.unitType === 3 || organizationUnit.unitType === 4 || organizationUnit.unitType === 5">
+                        <h3 jhiTranslate="ebwebApp.organizationUnit.generalInformation">Thông tin chung</h3>
+                        <div class="row">
+                            <div class="col-lg-2">
+                                <div class="form-group row">
+                                    <label class="col-sm-12 col-form-label"
+                                           jhiTranslate="ebwebApp.organizationUnit.organizationUnitCode*">Mã tổ chức/đơn
+                                        vị (*)</label>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-12 col-form-label"
+                                           jhiTranslate="ebwebApp.organizationUnit.costAccount">Tài khoản chi phí
+                                        lương</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-10">
+                                <div class="form-group row">
+                                    <div class="col-sm-2">
+                                        <input type="text" class="form-control form-control-sm"
+                                               name="organizationUnitCodeByUnitType"
+                                               id="field_organizationUnitCodeByUnitType"
+                                               [(ngModel)]="organizationUnit.organizationUnitCode"
+                                               [disabled]="organizationUnit.id"
+                                               required/>
+                                    </div>
+                                    <label class="col-sm-2 col-form-label" for="field_organizationUnitNameByUnitType"
+                                           jhiTranslate="ebwebApp.organizationUnit.organizationUnitName*">Tên
+                                        tổ chức
+                                        / đơn vị (*)</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control form-control-sm"
+                                               name="organizationUnitNameByUnitType"
+                                               id="field_organizationUnitNameByUnitType"
+                                               [(ngModel)]="organizationUnit.organizationUnitName"
+                                               [disabled]="((!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl))&& isComType"
+                                               required/>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-2">
+                                        <combo-box style="" id="field_costAccount"
+                                                   name="comboboxcostAccount"
+                                                   [dataList]="accountLists"
+                                                   [isOutTable]="true"
+                                                   [showIconPlus]="true"
+                                                   [listColumns]="utilsService.listColumnsAccountList"
+                                                   displayMember="accountNumber"
+                                                   valueName="accountNumber"
+                                                   [headerColumns]="utilsService.listHeaderColumnsAccountList"
+                                                   [isObject]="false"
+                                                   [(ngModel)]="organizationUnit.costAccount"
+                                                   [isReadOnly]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)">
+                                        </combo-box>
+                                    </div>
+                                    <label class="col-sm-2 col-form-label" for="field_parentIDByUnitType"
+                                           jhiTranslate="ebwebApp.organizationUnit.parentID">Thuộc</label>
+                                    <div class="col-sm-8">
+                                        <combo-box style="" id="field_parentIDByUnitType"
+                                                   name="comboboxParentID"
+                                                   [dataList]="organizationUnits"
+                                                   [isOutTable]="true"
+                                                   [showIconPlus]="true"
+                                                   [listColumns]="listColumnsOrganizationUnit"
+                                                   displayMember="organizationUnitCode"
+                                                   valueName="id"
+                                                   [headerColumns]="listHeaderColumnsOrganizationUnit"
+                                                   [isObject]="false"
+                                                   [(ngModel)]="organizationUnit.parentID"
+                                                   [isReadOnly]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)">
+                                        </combo-box>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <form *ngIf="organizationUnit.unitType === 0">
+                        <h3 jhiTranslate="ebwebApp.organizationUnit.accountingData">Dữ liệu kế toán </h3>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label"
+                                           jhiTranslate="ebwebApp.organizationUnit.accountingType">Chế độ kế
+                                        toán</label>
+                                    <div class="col-sm-4">
+                                        <select name="accountingType" id="field_accountingType"
+                                                class="form-control form-control-sm"
+                                                [(ngModel)]="organizationUnit.accountingType" [disabled]="true">
+                                            <option [ngValue]="0" jhiTranslate="ebwebApp.organizationUnit.mode200/2014">
+                                                Chế độ kế toán theo thông tư
+                                                200/2014/TT-BTC
+                                            </option>
+                                            <option [ngValue]="1" jhiTranslate="ebwebApp.organizationUnit.mode133/2016">
+                                                Chế độ kế toán theo thông tư 133/2016/TT-BTC
+                                            </option>
+                                            <option [ngValue]="2" jhiTranslate="ebwebApp.organizationUnit.mode133/2018">
+                                                Chế độ kế toán theo thông tư 132/2018/TT-BTC
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <label class="col-sm-4 col-form-label"
+                                           jhiTranslate="ebwebApp.organizationUnit.financialYear">Năm tài chính</label>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label"
+                                           jhiTranslate="ebwebApp.organizationUnit.fromDate" for="field_fromDate">Từ
+                                        ngày</label>
+                                    <div class="col-sm-4">
+                                        <eb-date-picker id="field_fromDate"
+                                                        [(ngModel)]="organizationUnit.fromDate" name="fromDate"
+                                                        [disabled]="((!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl))&& isComType"></eb-date-picker>
+                                    </div>
+                                    <label class="col-sm-4 col-form-label"
+                                           jhiTranslate="ebwebApp.organizationUnit.toDate">Đến ngày</label>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label"
+                                           jhiTranslate="ebwebApp.organizationUnit.accountingStartDate">Ngày bắt đầu
+                                        hạch toán</label>
+                                    <div class="col-sm-4">
+                                        <eb-date-picker id="field_accountingStartDate"
+                                                        [(ngModel)]="organizationUnit.startDate"
+                                                        name="accountingStartDate"
+                                                        [disabled]="((!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl))&& isComType"></eb-date-picker>
+                                    </div>
+                                    <label class="col-sm-4" jhiTranslate="ebwebApp.organizationUnit.currencyID">Đồng
+                                        tiền hạch toán</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group row">
+                                    <div class="col-sm-4">
+                                        <input type="number" class="form-control form-control-sm" name="financialYear"
+                                               id="field_financialYear"
+                                               [(ngModel)]="organizationUnit.financialYear" ebNumeric min="0"
+                                               [disabled]="((!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl))&& isComType"/>
+                                    </div>
+                                    <label class="col-sm-4 col-form-label"
+                                           jhiTranslate="ebwebApp.organizationUnit.taxCalculationMethod">Phương pháp
+                                        tính thuế</label>
+                                    <div class="col-sm-4">
+                                        <select name="taxCalculationMethod" id="field_taxCalculationMethod"
+                                                class="form-control form-control-sm"
+                                                [(ngModel)]="organizationUnit.taxCalculationMethod"
+                                                (ngModelChange)="changeTaxCalculationMethod()"
+                                                [disabled]="((!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl))&& isComType">
+                                            <option [ngValue]="0"
+                                                    jhiTranslate="ebwebApp.organizationUnit.deductionMethod">Phương pháp
+                                                khấu trừ
+                                            </option>
+                                            <option [ngValue]="1" jhiTranslate="ebwebApp.organizationUnit.directMethod">
+                                                Phương pháp trực tiếp
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-4">
+                                        <eb-date-picker id="field_toDate"
+                                                        [(ngModel)]="organizationUnit.toDate" name="toDate"
+                                                        [disabled]="((!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl))&& isComType"></eb-date-picker>
+                                    </div>
+                                    <label *ngIf="organizationUnit.taxCalculationMethod === 0"
+                                           class="col-sm-4 col-form-label"
+                                           jhiTranslate="ebwebApp.organizationUnit.goodsServicePurchaseID">Nhóm HDDV mua
+                                        vào</label>
+                                    <div *ngIf="organizationUnit.taxCalculationMethod === 0" class="col-sm-4">
+                                        <combo-box style="" id="field_goodsServicePurchaseID"
+                                                   name="comboboxGoodsServicePurchaseID"
+                                                   [dataList]="goodsServicePurchases"
+                                                   [isOutTable]="true"
+                                                   [showIconPlus]="true"
+                                                   [listColumns]="utilsService.listColumnsGoodsServicePurchase"
+                                                   displayMember="goodsServicePurchaseCode"
+                                                   valueName="id"
+                                                   [headerColumns]="utilsService.listHeaderColumnsGoodsServicePurchase"
+                                                   [isObject]="false"
+                                                   [(ngModel)]="organizationUnit.goodsServicePurchaseID"
+                                                   [isReadOnly]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)">
+                                        </combo-box>
+                                    </div>
+                                    <label *ngIf="organizationUnit.taxCalculationMethod === 1"
+                                           class="col-sm-4 col-form-label"
+                                           jhiTranslate="ebwebApp.organizationUnit.careerGroupID"></label>
+                                    <div *ngIf="organizationUnit.taxCalculationMethod === 1" class="col-sm-4">
+                                        <combo-box style="" id="field_careerGroupID"
+                                                   name="careerGroupID"
+                                                   [dataList]="careersGroups"
+                                                   [isOutTable]="true"
+                                                   [showIconPlus]="true"
+                                                   [listColumns]="utilsService.listColumnsCareerGroups"
+                                                   displayMember="careerGroupCode"
+                                                   valueName="id"
+                                                   [headerColumns]="utilsService.listHeaderColumnsCareerGroups"
+                                                   [isObject]="false"
+                                                   [(ngModel)]="organizationUnit.careerGroupID"
+                                                   [isReadOnly]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)">
+                                        </combo-box>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-4">
+                                        <combo-box style="" id="field_currencyID"
+                                                   name="comboboxCurrencyID"
+                                                   [dataList]="currencies"
+                                                   [isOutTable]="true"
+                                                   [showIconPlus]="true"
+                                                   [listColumns]="utilsService.listColumnsCurrency"
+                                                   displayMember="currencyCode"
+                                                   valueName="currencyCode"
+                                                   [headerColumns]="utilsService.listHeaderColumnsCurrency"
+                                                   [isObject]="false"
+                                                   [(ngModel)]="organizationUnit.currencyID"
+                                                   [isReadOnly]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)">
+                                        </combo-box>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </form>
+                    <form *ngIf="organizationUnit.unitType === 0 || organizationUnit.unitType === 1">
+                        <h3 jhiTranslate="ebwebApp.organizationUnit.displayOnReport">Thông tin hiển thị lên báo
+                            cáo </h3>
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-6 col-form-label"
+                                           jhiTranslate="ebwebApp.organizationUnit.website">Website</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control form-control-sm" name="email"
+                                               id="field_email"
+                                               [(ngModel)]="organizationUnitOptionReport.website"
+                                               [disabled]="((!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl))&& isComType"/>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-6 col-form-label"
+                                           jhiTranslate="ebwebApp.organizationUnit.bankAccountDetail">Giám đốc</label>
+                                    <div class="col-sm-6">
+                                        <combo-box style="" id="field_bankAccountDetail"
+                                                   name="comboboxBankAccountDetail"
+                                                   [dataList]="bankAccountDetails"
+                                                   [isOutTable]="true"
+                                                   [showIconPlus]="true"
+                                                   [nameCategory]="utilsService.TAI_KHOAN_NGAN_HANG"
+                                                   [listColumns]="utilsService.listColumnsBankAccountDetails"
+                                                   displayMember="bankAccount"
+                                                   valueName="id"
+                                                   [headerColumns]="utilsService.listHeaderColumnsBankAccountDetails"
+                                                   [isObject]="false"
+                                                   [(ngModel)]="organizationUnitOptionReport.bankAccountDetailID"
+                                                   [isReadOnly]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                   (click)="saveParent()">
+                                        </combo-box>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-6 col-form-label"
+                                           jhiTranslate="ebwebApp.organizationUnit.director">Giám đốc</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control form-control-sm" name="director"
+                                               id="field_director"
+                                               [(ngModel)]="organizationUnitOptionReport.director"
+                                               [disabled]="((!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl))&& isComType"/>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-6 col-form-label"
+                                           jhiTranslate="ebwebApp.organizationUnit.chiefAccountant">Kế toán
+                                        trưởng</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control form-control-sm" name="chiefAccountant"
+                                               id="field_chiefAccountant"
+                                               [(ngModel)]="organizationUnitOptionReport.chiefAccountant"
+                                               [disabled]="((!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl))&& isComType"/>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-6 col-form-label"
+                                           jhiTranslate="ebwebApp.organizationUnit.treasurer">Thủ quỹ</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control form-control-sm" name="treasurer"
+                                               id="field_treasurer"
+                                               [(ngModel)]="organizationUnitOptionReport.treasurer"
+                                               [disabled]="((!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl))&& isComType"/>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-6 col-form-label"
+                                           jhiTranslate="ebwebApp.organizationUnit.stocker">Thủ kho</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control form-control-sm" name="stocker"
+                                               id="field_stocker"
+                                               [(ngModel)]="organizationUnitOptionReport.stocker"
+                                               [disabled]="((!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl))&& isComType"/>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-6 col-form-label"
+                                           jhiTranslate="ebwebApp.organizationUnit.reporter">Người lập biểu</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control form-control-sm" name="reporter"
+                                               id="field_reporter"
+                                               [(ngModel)]="organizationUnitOptionReport.reporter"
+                                               [disabled]="((!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl))&& isComType"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-8">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label"
+                                           jhiTranslate="ebwebApp.organizationUnit.email">Địa chỉ email:</label>
+                                    <div class="col-sm-5">
+                                        <input type="text" class="form-control form-control-sm" name="fax"
+                                               id="field_fax"
+                                               [(ngModel)]="organizationUnitOptionReport.email"
+                                               [disabled]="((!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl))&& isComType"/>
+                                    </div>
+                                    <label class="col-sm-1 col-form-label"
+                                           jhiTranslate="ebwebApp.organizationUnit.fax">Fax</label>
+                                    <div class="col-sm-3">
+                                        <input type="text" class="form-control form-control-sm" name="website"
+                                               id="field_website"
+                                               [(ngModel)]="organizationUnitOptionReport.fax"
+                                               [disabled]="((!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl))&& isComType"/>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-12 col-form-label" style="padding: 7px 15px;">&nbsp;</label>
+                                    <!--                                    <div class="col-sm-9">-->
+                                    <!--                                        <input type="text" class="form-control form-control-sm" name="governingUnitName"-->
+                                    <!--                                               id="field_governingUnitName"-->
+                                    <!--                                               [(ngModel)]="organizationUnitOptionReport.governingUnitName"-->
+                                    <!--                                               [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"/>-->
+                                    <!--                                    </div>-->
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label"
+                                           jhiTranslate="ebwebApp.organizationUnit.governingUnitName">Tên đơn vị chủ
+                                        quản</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control form-control-sm" name="governingUnitName"
+                                               id="field_governingUnitName"
+                                               [(ngModel)]="organizationUnitOptionReport.governingUnitName"
+                                               [disabled]="((!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl))&& isComType"/>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label"
+                                           jhiTranslate="ebwebApp.organizationUnit.governingUnitTaxCode">Mã số thuế đơn
+                                        vị chủ quản</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control form-control-sm"
+                                               name="governingUnitTaxCode"
+                                               id="field_governingUnitTaxCode"
+                                               [(ngModel)]="organizationUnitOptionReport.governingUnitTaxCode"
+                                               [disabled]="((!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl))&& isComType"/>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label"
+                                           jhiTranslate="ebwebApp.organizationUnit.taxAgentName">Đại lý thuế</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control form-control-sm" name="taxAgentName"
+                                               id="field_taxAgentName"
+                                               [(ngModel)]="organizationUnitOptionReport.taxAgentName"
+                                               [disabled]="((!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl))&& isComType"/>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label"
+                                           jhiTranslate="ebwebApp.organizationUnit.taxAgentTaxCode">Mã số đại lý
+                                        thuế</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control form-control-sm" name="taxAgentTaxCode"
+                                               id="field_taxAgentTaxCode"
+                                               [(ngModel)]="organizationUnitOptionReport.taxAgentTaxCode"
+                                               [disabled]="((!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl))&& isComType"/>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label"
+                                           jhiTranslate="ebwebApp.organizationUnit.taxAgentTaxEmployee">Nhân
+                                        viên đại lý
+                                        thuế</label>
+                                    <div class="col-sm-3">
+                                        <input type="text" class="form-control form-control-sm"
+                                               name="taxAgentTaxEmployee" id="field_taxAgentTaxEmployee"
+                                               [(ngModel)]="organizationUnitOptionReport.taxAgentTaxEmployee"
+                                               [disabled]="((!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl))&& isComType"/>
+                                    </div>
+                                    <label class="col-sm-3 col-form-label"
+                                           jhiTranslate="ebwebApp.organizationUnit.certificateNumber">Số chứng
+                                        chỉ
+                                        hành
+                                        nghề</label>
+                                    <div class="col-sm-3">
+                                        <input type="text" class="form-control form-control-sm"
+                                               name="certificateNumber"
+                                               id="field_certificateNumber"
+                                               [(ngModel)]="organizationUnitOptionReport.certificateNumber"
+                                               [disabled]="((!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl))&& isComType"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-2">
+                                <div class="form-group row">
+                                    <h3 jhiTranslate="ebwebApp.organizationUnit.customTitle">Tuỳ chỉnh tiêu đề</h3>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="form-group row">
+                                    <div class="col-sm-12">
+                                        <div class="custom-control custom-radio">
+                                            <input type="radio" id="headerSetting0" name="headerSetting"
+                                                   class="custom-control-input" [value]="0"
+                                                   [(ngModel)]="organizationUnitOptionReport.headerSetting"
+                                                   [disabled]="((!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl))&& isComType">
+                                            <label class="custom-control-label col-form-label" for="headerSetting0"
+                                                   jhiTranslate="ebwebApp.organizationUnit.headerSetting0"></label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-12">
+                                        <div class="custom-control custom-radio">
+                                            <input type="radio" id="headerSetting1" name="headerSetting"
+                                                   class="custom-control-input" [value]="2"
+                                                   [(ngModel)]="organizationUnitOptionReport.headerSetting"
+                                                   [disabled]="((!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)&& isComType)">
+                                            <label class="custom-control-label col-form-label" for="headerSetting1"
+                                                   jhiTranslate="ebwebApp.organizationUnit.headerSetting1"></label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-12">
+                                        <div class="custom-control custom-radio">
+                                            <input type="radio" id="headerSetting2" name="headerSetting"
+                                                   class="custom-control-input" [value]="1"
+                                                   [(ngModel)]="organizationUnitOptionReport.headerSetting"
+                                                   [disabled]="((!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl))&& isComType">
+                                            <label class="custom-control-label col-form-label" for="headerSetting2"
+                                                   jhiTranslate="ebwebApp.organizationUnit.headerSetting2"></label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="form-group row">
+                                    <div class="col-sm-12">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input"
+                                                   id="field_isDisplayNameInReport" name="isDisplayNameInReport"
+                                                   [(ngModel)]="organizationUnitOptionReport.isDisplayNameInReport"
+                                                   [disabled]="((!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl))&& isComType">
+                                            <label class="custom-control-label col-form-label" for="field_isDisplayNameInReport"
+                                                   jhiTranslate="ebwebApp.organizationUnit.checkBox1">In tên người
+                                                ký
+                                                lên báo cáo</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-12">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input"
+                                                   id="field_isDisplayAccount" name="isDisplayAccount"
+                                                   [(ngModel)]="organizationUnitOptionReport.isDisplayAccount"
+                                                   [disabled]="((!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)) && isComType">
+                                            <label class="custom-control-label col-form-label" for="field_isDisplayAccount"
+                                                   jhiTranslate="ebwebApp.organizationUnit.checkBox2">Lấy thông tin
+                                                người lập biểu theo tài khoản đăng
+                                                nhập</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div *ngIf="organizationUnit.id" class="col-lg-12">
+                    <div class="form-group row">
+                        <div class="col-sm-3 pd-l-0 pd-r-10">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" [(ngModel)]="organizationUnit.isActive" name="isActive"
+                                       class="custom-control-input"
+                                       id="isActive"
+                                       [disabled]="((organizationUnit.unitType === 0 || ((!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)))&& isComType) || organizationUnit.unitType === 1 || organizationUnit.unitType === 0">
+                                <label class="custom-control-label" for="isActive"
+                                       jhiTranslate="ebwebApp.organizationUnit.isActive">Theo dõi</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer>
+    </footer>
+</div>
+<ng-template #content let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.saBill.saveMessage">Dữ liệu đã bị thay đổi, Bạn có muốn lưu lại?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="saveContent()" jhiTranslate="entity.action.save">
+            Save
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="close()"
+                jhiTranslate="ebwebApp.mBDeposit.dontSave">Don't save
+        </button>
+        <button type="button" class="btn btn-outline-danger" (click)="exit()" jhiTranslate="entity.action.close">close
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #pageRedirects let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.saBill.saveMessage">Dữ liệu đã bị thay đổi. Bạn có chắc chắn muốn chuyển
+                    hướng đến trang khác?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" jhiTranslate="ebwebApp.mBDeposit.agree">
+            Save
+        </button>
+        <button type="button" class="btn btn-outline-danger" (click)="exit()" jhiTranslate="entity.action.close">close
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #deleteForm let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" jhiTranslate="entity.delete.title">Confirm delete operation</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                (click)="clear()">&times;
+        </button>
+    </div>
+    <div class="modal-body">
+        <p id="eb-delete-accountList-heading" jhiTranslate="ebwebApp.organizationUnit.deleted.question">Are you sure you
+            want
+            to delete this Account List?</p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="clear()">
+            <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+        </button>
+        <button id="eb-confirm-delete-organizationUnit" type="submit" class="btn btn-danger"
+                (click)="confirmDelete(organizationUnit.id)">
+            <fa-icon [icon]="'times'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.delete">Delete</span>
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #popupMethod let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.organizationUnit.popupChangeMethod">Phương pháp tính thuế phải đồng nhất
+                    suốt niên độ kế toán, việc sửa đổi phương pháp tính thuế mới sẽ có thể ảnh hưởng đến dữ liệu hiện
+                    tại theo phương pháp tính thuế cũ. Bạn có chắc chắn muốn lưu?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="continueSave()"
+                jhiTranslate="ebwebApp.organizationUnit.confirm">
+            Save
+        </button>
+        <button type="button" class="btn btn-outline-danger" (click)="exit()" jhiTranslate="entity.action.close">close
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #popupChangeCurrency let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.organizationUnit.popupChangeCurrency"> "Đồng tiền hạch toán chính của đơn
+                    vị/tổ chức phải được áp dụng thống nhất suốt cả niên độ kế toán.
+                    Dữ liệu hạch toán chứng từ có thể bị sai lệch hoàn toàn do sửa đổi đơn vị tiền tệ này và bạn cần
+                    phải thiết lập lại các quy định về định dạng số nếu thay đổi đồng tiền hạch toán mới. Bạn có muốn
+                    lưu lại?"</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="continueSave()"
+                jhiTranslate="ebwebApp.organizationUnit.confirm">
+            Save
+        </button>
+        <button type="button" class="btn btn-outline-danger" (click)="exit()" jhiTranslate="entity.action.close">close
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #deleteUser let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.organizationUnit.existUserUseOrg">Đơn vị/ tổ chức đã tồn tại người sử dụng được cấp quyền truy cập. Nếu xóa đơn vị/ tổ chức đồng nghĩa với việc toàn bộ quyền sử dụng và vai trò của người dùng liên quan đến đơn vị/ tổ chức này cũng sẽ bị xóa bỏ. Bạn có chắc chắn muốn tiếp tục?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="continueDelete()"
+                jhiTranslate="ebwebApp.organizationUnit.confirm">
+            Save
+        </button>
+        <button type="button" class="btn btn-outline-danger" (click)="exit()" jhiTranslate="entity.action.close">close
+        </button>
+    </div>
+</ng-template>

@@ -1,0 +1,102 @@
+<div>
+    <h2 id="page-heading">
+        <span jhiTranslate="ebwebApp.tools.home.title">Tools</span>
+        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-tools" [routerLink]="['/tools/new']">
+            <fa-icon [icon]="'plus'"></fa-icon>
+            <span  jhiTranslate="ebwebApp.tools.home.createLabel">
+            Create new Tools
+            </span>
+        </button>
+    </h2>
+    <eb-alert></eb-alert>
+    <br/>
+    <div class="table-responsive" *ngIf="tools">
+        <table class="table table-striped">
+            <thead>
+            <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
+            <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="declareType"><span jhiTranslate="ebwebApp.tools.declareType">Declare Type</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="postedDate"><span jhiTranslate="ebwebApp.tools.postedDate">Posted Date</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="branchID"><span jhiTranslate="ebwebApp.tools.branchID">Branch ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="toolCode"><span jhiTranslate="ebwebApp.tools.toolCode">Tool Code</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="toolName"><span jhiTranslate="ebwebApp.tools.toolName">Tool Name</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="quantity"><span jhiTranslate="ebwebApp.tools.quantity">Quantity</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="unitPrice"><span jhiTranslate="ebwebApp.tools.unitPrice">Unit Price</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="amount"><span jhiTranslate="ebwebApp.tools.amount">Amount</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="allocationTimes"><span jhiTranslate="ebwebApp.tools.allocationTimes">Allocation Times</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="remainAllocationTimes"><span jhiTranslate="ebwebApp.tools.remainAllocationTimes">Remain Allocation Times</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="allocatedAmount"><span jhiTranslate="ebwebApp.tools.allocatedAmount">Allocated Amount</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="allocationAmount"><span jhiTranslate="ebwebApp.tools.allocationAmount">Allocation Amount</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="remainAmount"><span jhiTranslate="ebwebApp.tools.remainAmount">Remain Amount</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="allocationAwaitAccount"><span jhiTranslate="ebwebApp.tools.allocationAwaitAccount">Allocation Await Account</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="isActive"><span jhiTranslate="ebwebApp.tools.isActive">Is Active</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="organizationUnit.id"><span jhiTranslate="ebwebApp.tools.organizationUnit">Organization Unit</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="unit.id"><span jhiTranslate="ebwebApp.tools.unit">Unit</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let tools of tools ;trackBy: trackId">
+                <td><a [routerLink]="['/tools', tools.id, 'view' ]">{{tools.id}}</a></td>
+                <td>{{tools.declareType}}</td>
+                <td>{{tools.postedDate | date:'mediumDate'}}</td>
+                <td>{{tools.branchID}}</td>
+                <td>{{tools.toolCode}}</td>
+                <td>{{tools.toolName}}</td>
+                <td>{{tools.quantity}}</td>
+                <td>{{tools.unitPrice}}</td>
+                <td>{{tools.amount}}</td>
+                <td>{{tools.allocationTimes}}</td>
+                <td>{{tools.remainAllocationTimes}}</td>
+                <td>{{tools.allocatedAmount}}</td>
+                <td>{{tools.allocationAmount}}</td>
+                <td>{{tools.remainAmount}}</td>
+                <td>{{tools.allocationAwaitAccount}}</td>
+                <td>{{tools.isActive}}</td>
+                <td>
+                    <div *ngIf="tools.organizationUnit">
+                        <a [routerLink]="['../organization-unit', tools.organizationUnit?.id, 'view' ]" >{{tools.organizationUnit?.id}}</a>
+                    </div>
+                </td>
+                <td>
+                    <div *ngIf="tools.unit">
+                        <a [routerLink]="['../unit', tools.unit?.id, 'view' ]" >{{tools.unit?.id}}</a>
+                    </div>
+                </td>
+                <td class="text-right">
+                    <div class="btn-group flex-btn-group-container">
+                        <button type="submit"
+                                [routerLink]="['/tools', tools.id, 'view' ]"
+                                class="btn btn-info btn-sm">
+                            <fa-icon [icon]="'eye'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/tools', tools.id, 'edit']"
+                                class="btn btn-primary btn-sm">
+                            <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/', { outlets: { popup: 'tools/'+ tools.id + '/delete'} }]"
+                                replaceUrl="true"
+                                queryParamsHandling="merge"
+                                class="btn btn-danger btn-sm">
+                            <fa-icon [icon]="'times'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div *ngIf="tools && tools.length">
+        <div class="row justify-content-center">
+            <jhi-item-count [page]="page" [total]="queryCount" [maxSize]="5" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+        </div>
+        <div class="row justify-content-center">
+            <ngb-pagination [size]="'sm'" [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage" [maxSize]="5" [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage(page)"></ngb-pagination>
+        </div>
+    </div>
+</div>

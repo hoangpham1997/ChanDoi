@@ -1,0 +1,78 @@
+<div>
+    <h2 id="page-heading">
+        <span jhiTranslate="ebwebApp.genCode.home.title">Gen Codes</span>
+        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-gen-code" [routerLink]="['/gen-code/new']">
+            <fa-icon [icon]="'plus'"></fa-icon>
+            <span  jhiTranslate="ebwebApp.genCode.home.createLabel">
+            Create new Gen Code
+            </span>
+        </button>
+    </h2>
+    <eb-alert></eb-alert>
+    <br/>
+    <div class="table-responsive" *ngIf="genCodes">
+        <table class="table table-striped">
+            <thead>
+            <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
+            <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="companyID"><span jhiTranslate="ebwebApp.genCode.companyID">Company ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="branchID"><span jhiTranslate="ebwebApp.genCode.branchID">Branch ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="displayOnBook"><span jhiTranslate="ebwebApp.genCode.displayOnBook">Display On Book</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="typeGroupID"><span jhiTranslate="ebwebApp.genCode.typeGroupID">Type Group ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="typeGroupName"><span jhiTranslate="ebwebApp.genCode.typeGroupName">Type Group Name</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="prefix"><span jhiTranslate="ebwebApp.genCode.prefix">Prefix</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="currentValue"><span jhiTranslate="ebwebApp.genCode.currentValue">Current Value</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="suffix"><span jhiTranslate="ebwebApp.genCode.suffix">Suffix</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="length"><span jhiTranslate="ebwebApp.genCode.length">Length</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let genCode of genCodes ;trackBy: trackId">
+                <td><a [routerLink]="['/gen-code', genCode.id, 'view' ]">{{genCode.id}}</a></td>
+                <td>{{genCode.companyID}}</td>
+                <td>{{genCode.branchID}}</td>
+                <td>{{genCode.displayOnBook}}</td>
+                <td>{{genCode.typeGroupID}}</td>
+                <td>{{genCode.typeGroupName}}</td>
+                <td>{{genCode.prefix}}</td>
+                <td>{{genCode.currentValue}}</td>
+                <td>{{genCode.suffix}}</td>
+                <td>{{genCode.length}}</td>
+                <td class="text-right">
+                    <div class="btn-group flex-btn-group-container">
+                        <button type="submit"
+                                [routerLink]="['/gen-code', genCode.id, 'view' ]"
+                                class="btn btn-info btn-sm">
+                            <fa-icon [icon]="'eye'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/gen-code', genCode.id, 'edit']"
+                                class="btn btn-primary btn-sm">
+                            <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/', { outlets: { popup: 'gen-code/'+ genCode.id + '/delete'} }]"
+                                replaceUrl="true"
+                                queryParamsHandling="merge"
+                                class="btn btn-danger btn-sm">
+                            <fa-icon [icon]="'times'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div *ngIf="genCodes && genCodes.length">
+        <div class="row justify-content-center">
+            <jhi-item-count [page]="page" [total]="queryCount" [maxSize]="5" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+        </div>
+        <div class="row justify-content-center">
+            <ngb-pagination [size]="'sm'" [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage" [maxSize]="5" [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage(page)"></ngb-pagination>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,287 @@
+<div >
+    <div >
+        <div class="menu-tool-bar he">
+            <div class="ptitle">
+                <span style="text-transform: uppercase"
+                      jhiTranslate="permissionUser.home.title">PermissionUser</span>
+            </div>
+            <div class="gr-toolbar">
+                <a (click)="addNewEbGroup(selectedOrg)"
+                   *ngIf="selectedOrg && isAdminWithTotalPackage"
+                ><i class="mdi mdi-plus"></i><span jhiTranslate="ebwebApp.mBTellerPaper.addEbGroup">Add</span></a>
+                <a (click)="save()" title="{{'ebwebApp.mBTellerPaper.tooltipSave' | translate}}"
+                ><i class="mdi mdi-briefcase-download"></i><span jhiTranslate="ebwebApp.mBTellerPaper.save">Save</span></a>
+                <a (click)="previousState()" title="{{'ebwebApp.mBTellerPaper.tooltipClose' | translate}}"><i class="mdi mdi-window-close"></i><span
+                    jhiTranslate="ebwebApp.mBTellerPaper.close">Close</span></a>
+            </div>
+        </div>
+        <div class="tool-navbar">
+            <div class="row">
+                <div class="col-lg-12 div-title3-responsive">
+                    <div class="line-btn" style="margin-bottom: 4px">
+                        <div class="lbtn-action">
+                            <ul class="nav nav-tabs">
+                                <li class="active">
+                                    <a jhiTranslate="permissionUser.home.organizationUnit" class="active" data-toggle="tab" href="#home0" style="text-decoration: none;">
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="frm-main frm-mains nobg row maincustom" style="margin-left: 2px;margin-right: 2px;">
+            <div id="table-scroll-ref" class="table-scroll" style="margin: 10px">
+                <table id="main-table-ref" class="main-table">
+                    <thead>
+                    <tr>
+                        <th scope="col">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input"
+                                       id="check-all-org"
+                                       [checked]="isCheckAll()" (change)="checkAll()">
+                                <label class="custom-control-label" for="check-all-org"></label>
+                            </div>
+                        </th>
+                        <th class="wide250" scope="col"
+                            jhiTranslate="permissionUser.organizationUnit.org">
+                            OrganizationUnit
+                        </th>
+                        <th scope="col"
+                            jhiTranslate="permissionUser.organizationUnit.unitType">
+                            UnitType
+                        </th>
+                        <th scope="col"
+                            jhiTranslate="permissionUser.organizationUnit.currentBook">
+                            CurrentBook
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody *ngFor="let org of orgUnits; let i = index">
+                    <tr (click)="toggleChildren(org,i)"
+                        [class.selected]="selectedOrg === org"
+                    >
+                        <td (click)="check(org)" style="width: 80px" class="text-center">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input"
+                                       name="{{'checkbox_org_Pa' + i}}"
+                                       id="{{'checkbox_org_Pa' + i}}" [(ngModel)]="org.check"
+                                       (click)="check(org)">
+                                <label class="custom-control-label"
+                                       for="{{'checkbox_org_Pa' + i}}"></label>
+                            </div>
+                        </td>
+                        <td style="width: 180px"
+                            class="jsgrid-cell jsgrid-align-left">
+                            <i [hidden]="org.children.length === 0"
+                               class="mdi mdi-chevron-right"></i>
+                            {{org.text}}
+                        </td>
+                        <td class="jsgrid-cell jsgrid-align-left">{{getUnitType(org.unitType)}}</td>
+                        <td class="jsgrid-cell jsgrid-align-left">
+                            <select class="form-control form-control-sm"
+                                    name="workingOnBook_Pa{{i}}"
+                                    id="field_workingOnBook_Pa{{i}}"
+                                    [(ngModel)]="org.workingOnBook"
+                            >
+                                <option value="0" jhiTranslate="ebwebApp.mBDeposit.financialBook">Sổ tài
+                                    chính
+                                </option>
+                                <option value="1" [hidden]="org.data === SDSoQuanTri_NotUse" jhiTranslate="ebwebApp.mBDeposit.managementBook">Sổ
+                                    quản trị
+                                </option>
+                                <option value="2" [hidden]="org.data === SDSoQuanTri_NotUse" jhiTranslate="ebwebApp.mBDeposit.bothBooks">Sổ tài
+                                    chính & Sổ
+                                    quản
+                                    trị
+                                </option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr *ngFor="let child of org.children; let j = index"
+                        (click)="onSelectChild(child)"
+                        [class.selected]="selectedOrg === child"
+                    >
+                        <td (click)="check(child)" style="width: 80px" class="text-center">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input"
+                                       name="{{'checkbox_org' + j}}"
+                                       id="{{'checkbox_org' + j}}" [(ngModel)]="child.check"
+                                       (click)="check(child)">
+                                <label class="custom-control-label"
+                                       for="{{'checkbox_org' + j}}"></label>
+                            </div>
+                        </td>
+                        <td style="width: 180px" class="jsgrid-cell jsgrid-align-left">
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            {{child.text}}
+                        </td>
+                        <td class="jsgrid-cell jsgrid-align-left">{{getUnitType(child.unitType)}}</td>
+                        <td class="jsgrid-cell jsgrid-align-left">
+                            <select class="form-control form-control-sm"
+                                    name="workingOnBook{{j}}"
+                                    id="field_workingOnBook{{j}}"
+                                    [(ngModel)]="child.workingOnBook"
+                            >
+                                <option value="0" jhiTranslate="ebwebApp.mBDeposit.financialBook">Sổ tài
+                                    chính
+                                </option>
+                                <option value="1" [hidden]="child.data === SDSoQuanTri_NotUse" jhiTranslate="ebwebApp.mBDeposit.managementBook">Sổ
+                                    quản trị
+                                </option>
+                                <option value="2" [hidden]="child.data === SDSoQuanTri_NotUse" jhiTranslate="ebwebApp.mBDeposit.bothBooks">Sổ tài
+                                    chính & Sổ
+                                    quản
+                                    trị
+                                </option>
+                            </select>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div>
+            <ngb-tabset class="tool-navbar">
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span
+                        jhiTranslate="userManagement.role.title">Role</span></ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content">
+                            <span *ngIf="ebGroups?.length === 0" jhiTranslate="permissionUser.ebGroups.notEbGroupYet"></span>
+                            <div *ngIf="ebGroups?.length > 0 && !isAdminWithTotalPackage" class="frm-main frm-padding tab-pane fade in active show"
+                                 id="home-ref"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-ref1" class="table-scroll">
+                                    <table id="main-table-ebGroup" class="main-table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox"
+                                                           class="custom-control-input"
+                                                           id="check-all"
+                                                           name="check-all"
+                                                           [checked]="checkedAll"
+                                                           (change)="checkAllEbGroup()">
+                                                    <label class="custom-control-label"
+                                                           for="check-all"></label>
+                                                </div>
+                                            </th>
+                                            <th style="width: 500px" scope="col"
+                                                jhiTranslate="userManagement.userForm.ebGroupCode">
+                                                EbGroupCode
+                                            </th>
+                                            <th scope="col"
+                                                jhiTranslate="userManagement.userForm.ebGroupName">
+                                                EbGroupName
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let ebGroup of ebGroups; let i = index"
+                                        >
+                                            <td (click)="checkEbGroup(ebGroup, $event)" style="width: 80px"
+                                                class="text-center">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox"
+                                                           class="custom-control-input"
+                                                           name="{{'checkbox' + i}}"
+                                                           id="{{'checkbox' + i}}"
+                                                           [(ngModel)]="ebGroup.check"
+                                                           (click)="checkEbGroup(ebGroup, $event)">
+                                                    <label class="custom-control-label"></label>
+                                                </div>
+                                            </td>
+                                            <td style="width: 180px"
+                                                class="jsgrid-cell jsgrid-align-left">{{ebGroup.code}}</td>
+                                            <td class="jsgrid-cell jsgrid-align-left">{{ebGroup.name}}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div *ngIf="ebGroups?.length > 0 && isAdminWithTotalPackage" class="frm-main frm-padding tab-pane fade in active show"
+                                 id="home-ref-total"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-ref1-total" class="table-scroll">
+                                    <table id="main-table-ebGroup-total" class="main-table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox"
+                                                           class="custom-control-input"
+                                                           id="check-all-total"
+                                                           name="check-all"
+                                                           [checked]="checkedAll"
+                                                           (change)="checkAllEbGroup()">
+                                                    <label class="custom-control-label"
+                                                           for="check-all"></label>
+                                                </div>
+                                            </th>
+                                            <th style="width: 400px" scope="col"
+                                                jhiTranslate="userManagement.userForm.ebGroupCode">
+                                                EbGroupCode
+                                            </th>
+                                            <th scope="col" style="width: 500px"
+                                                jhiTranslate="userManagement.userForm.ebGroupName">
+                                                EbGroupName
+                                            </th>
+                                            <th scope="col" style="width: 500px"
+                                                jhiTranslate="ebGroup.roleNew.description">
+                                                Description
+                                            </th>
+                                            <th scope="col" style="width: 400px"
+                                                jhiTranslate="userManagement.userForm.ebGroupTool">
+                                                EbGroupTool
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let ebGroup of ebGroups; let i = index"
+                                        >
+                                            <td (click)="checkEbGroup(ebGroup, $event)" style="width: 80px"
+                                                class="text-center">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox"
+                                                           class="custom-control-input"
+                                                           name="{{'checkbox-all' + i}}"
+                                                           id="{{'checkbox-all' + i}}"
+                                                           [(ngModel)]="ebGroup.check"
+                                                           (click)="checkEbGroup(ebGroup, $event)">
+                                                    <label class="custom-control-label"></label>
+                                                </div>
+                                            </td>
+                                            <td style="width: 180px"
+                                                class="jsgrid-cell jsgrid-align-left">{{ebGroup.code}}</td>
+                                            <td class="jsgrid-cell jsgrid-align-left">{{ebGroup.name}}</td>
+                                            <td class="jsgrid-cell jsgrid-align-left">{{ebGroup.description}}</td>
+                                            <td class="jsgrid-cell jsgrid-align-center">
+                                                <button (click)="editEbGroup(ebGroup)" style="width: 60px" type="button"
+                                                        class="btn btn-primary"
+                                                        jhiTranslate="ebwebApp.mBTellerPaper.edit"
+                                                >Sửa</button>
+                                                <button style="width: 60px" type="button"
+                                                        (click)="deleteEbGroup(ebGroup)"
+                                                        class="btn btn-danger"
+                                                        jhiTranslate="ebwebApp.mBTellerPaper.deletes"
+                                                >Xóa</button>
+                                                <button type="button" class="btn btn-success"
+                                                        (click)="authorityEbGroup(ebGroup)"
+                                                        jhiTranslate="ebGroup.home.authority"
+                                                >Phân quyền</button>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+            </ngb-tabset>
+        </div>
+    </div>
+</div>

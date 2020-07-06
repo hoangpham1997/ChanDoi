@@ -1,0 +1,117 @@
+<div class="row">
+    <div class="col-md-12">
+        <div class="menu-tool-bar toolbarcustom">
+            <div class="ptitle1">
+                <img src="/content/images/icon-logo.png" style="width: 25px;">
+                <span jhiTranslate="permissionUser.organizationUnit.title">Phân quyền người dùng theo đơn vị</span>
+            </div>
+        </div>
+        <div class="frm-main frm-mains nobg row maincustom" style="margin-left: 2px;margin-right: 2px;">
+            <div id="table-scroll-ref" class="table-scroll" style="margin: 10px">
+                <table id="main-table-ref" class="main-table">
+                    <thead>
+                    <tr>
+                        <th scope="col">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input"
+                                       id="check-all-org"
+                                       [checked]="isCheckAll()" (change)="checkAll()">
+                                <label class="custom-control-label" for="check-all-org"></label>
+                            </div>
+                        </th>
+                        <th scope="col"
+                            jhiTranslate="permissionUser.organizationUnit.org">
+                            OrganizationUnit
+                        </th>
+                        <th scope="col"
+                            jhiTranslate="permissionUser.organizationUnit.unitType">
+                            UnitType
+                        </th>
+                        <th scope="col"
+                            jhiTranslate="permissionUser.organizationUnit.currentBook">
+                            CurrentBook
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody *ngFor="let org of orgUnits; let i = index">
+                    <tr>
+                        <td (click)="check(org)" style="width: 80px" class="text-center">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input"
+                                       name="{{'checkbox_org_Pa' + i}}"
+                                       id="{{'checkbox_org_Pa' + i}}" [(ngModel)]="org.check"
+                                       (click)="check(org)">
+                                <label class="custom-control-label"
+                                       for="{{'checkbox_org_Pa' + i}}"></label>
+                            </div>
+                        </td>
+                        <td (click)="toggleChildren(org,i)" style="width: 180px" class="jsgrid-cell jsgrid-align-left">
+                            <i [hidden]="org.children.length === 0"
+                               class="{{(org.collapse && org.children.length > 0)?'mdi mdi-chevron-down':'mdi mdi-chevron-right'}}"></i>
+                            {{org.text}}
+                        </td>
+                        <td class="jsgrid-cell jsgrid-align-left">{{getUnitType(org.unitType)}}</td>
+                        <td class="jsgrid-cell jsgrid-align-left">
+                            <select class="form-control form-control-sm"
+                                    name="workingOnBook_Pa{{i}}"
+                                    id="field_workingOnBook_Pa{{i}}"
+                                    [(ngModel)]="org.workingOnBook"
+                            >
+                                <option value="0" jhiTranslate="ebwebApp.mBDeposit.financialBook">Sổ tài chính</option>
+                                <option value="1" jhiTranslate="ebwebApp.mBDeposit.managementBook">Sổ quản trị</option>
+                                <option value="2" jhiTranslate="ebwebApp.mBDeposit.bothBooks">Sổ tài chính & Sổ quản
+                                    trị
+                                </option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr *ngFor="let child of org.children; let j = index" [hidden]="org.collapse">
+                        <td (click)="check(child)" style="width: 80px" class="text-center">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input"
+                                       name="{{'checkbox_org' + j}}"
+                                       id="{{'checkbox_org' + j}}" [(ngModel)]="child.check"
+                                       (click)="check(child)">
+                                <label class="custom-control-label"
+                                       for="{{'checkbox_org' + j}}"></label>
+                            </div>
+                        </td>
+                        <td style="width: 180px" class="jsgrid-cell jsgrid-align-left">
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            {{child.text}}
+                        </td>
+                        <td class="jsgrid-cell jsgrid-align-left">{{getUnitType(child.unitType)}}</td>
+                        <td class="jsgrid-cell jsgrid-align-left">
+                            <select class="form-control form-control-sm"
+                                    name="workingOnBook{{j}}"
+                                    id="field_workingOnBook{{j}}"
+                                    [(ngModel)]="child.workingOnBook"
+                            >
+                                <option value="0" jhiTranslate="ebwebApp.mBDeposit.financialBook">Sổ tài chính</option>
+                                <option value="1" jhiTranslate="ebwebApp.mBDeposit.managementBook">Sổ quản trị</option>
+                                <option value="2" jhiTranslate="ebwebApp.mBDeposit.bothBooks">Sổ tài chính & Sổ quản
+                                    trị
+                                </option>
+                            </select>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-12 justify-content-end" style="padding: 15px">
+                <div class="col-sm-12" style="text-align: right">
+                    <button type="button" class="btn btn-outline-success"
+                            style="margin-right: 15px"
+                            (click)="apply()"
+                            jhiTranslate="ebwebApp.mBTellerPaper.confirmLeave.yes">Có
+                    </button>
+                    <button type="button" class="btn btn-outline-danger"
+                            (click)="close()"
+                            jhiTranslate="ebwebApp.mBTellerPaper.confirmLeave.no">
+                        Không
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

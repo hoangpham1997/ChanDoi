@@ -1,0 +1,136 @@
+<div class="container-fluid">
+    <div class="margin-tp-5 margin-0">
+        <div class="">
+            <div class="itemw">
+                <div class="menu-tool-bar he">
+                    <div class="ptitle">
+                        <span jhiTranslate="ebwebApp.currency.home.title"></span>
+                    </div>
+                    <div class="gr-toolbar">
+                        <a (click)="addNew($event)" *ebHasAnyAuthority="['ROLE_ADMIN', ROLE_LoaiTien_Them]" title="{{'ebwebApp.autoPrinciple.tooltipAdd' | translate}}"><i class="mdi mdi-plus"></i><span jhiTranslate="ebwebApp.currency.created"></span></a>
+                        <a [class.disable]="!selectedRow" (click)="edit()" *ebHasAnyAuthority="['ROLE_ADMIN', ROLE_LoaiTien_Sua]" title="{{'ebwebApp.autoPrinciple.tooltipEdit' | translate}}"><i
+                            class="mdi mdi-pen"></i><span jhiTranslate="ebwebApp.currency.updated"></span></a>
+                        <a [class.disable]="!selectedRow" (click)="delete()" *ebHasAnyAuthority="['ROLE_ADMIN', ROLE_LoaiTien_Xoa]" title="{{'ebwebApp.autoPrinciple.tooltipDelete' | translate}}"
+                        ><i class="mdi mdi-delete"></i><span jhiTranslate="ebwebApp.currency.deleted"></span></a>
+                        <a (click)="toggleSearch($event)"
+                           title="{{'ebwebApp.outWard.tooltipSearch' | translate}}">
+                            <i class="{{isShowSearch?'mdi mdi-chevron-up':'mdi mdi-magnify'}}"></i>
+                            <span
+                                jhiTranslate="{{!isShowSearch ? 'ebwebApp.common.advancedSearch' : 'ebwebApp.common.hideSearch'}}"> Tìm kiếm </span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="frm-main frm-mains nobg">
+                <form id="search" style="background: #cbdcf0;" [hidden]="!isShowSearch">
+                    <div class="row no-gutters">
+                        <div class="col-lg-12">
+                            <div class="col-lg-12">
+                                <div class="form-group row">
+                                    <label class="col-sm-2 my-col-form-label "
+                                           jhiTranslate="ebwebApp.mBDeposit.detail.searchValue">Tìm kiếm</label>
+                                    <div class="col-sm-6">
+                                        <input [(ngModel)]="search.keySearch" name="searchValue"
+                                               id="field_searchValue"
+                                               [tabindex]="1"
+                                               type="text" class="form-control form-control-sm">
+                                    </div>
+                                    <div class="frm-button">
+                                        <button class="btn btn-success btn-sm" (click)="loadAllForSearch()" style="font-size: 16px"><i
+                                            class="mdi mdi-magnify"
+                                            aria-hidden="true"
+                                            style="margin-right: 5px"></i><span
+                                            jhiTranslate="ebwebApp.bank.searchValue"></span>
+                                        </button>
+                                        <button class="btn btn-danger btn-sm" (click)="resetSearch()" style="font-size: 16px"><i
+                                            class="mdi mdi-replay"
+                                            style="margin-right: 5px"></i><span
+                                            jhiTranslate="ebwebApp.mBDeposit.detail.reset"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <div class="frm-main frm-mains nobg" style="background: #cbdcf0; margin-top: 5px">
+                    <div id="table-scroll0" class="table-scroll voucher-table" style="max-height: 700px!important;">
+                        <table id="main-table0" class="main-table">
+                            <thead class="header-table">
+                            <tr>
+                                <th scope="col" jhiTranslate="ebwebApp.currency.currencyCode"></th>
+                                <th scope="col" jhiTranslate="ebwebApp.currency.currencyName"></th>
+                                <th scope="col" jhiTranslate="ebwebApp.currency.exchangeRate"></th>
+                                <th scope="col" jhiTranslate="ebwebApp.currency.isActive"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr *ngFor="let currency of currencies ;trackBy: trackId"
+                                [class.row-selected]="this.selectedRows.indexOf(currency) !== -1"
+                                (click)="selectMultiRow(currency, $event, currencies)"
+                                (dblclick)="edit()"
+                                [class.selected]="currency === selectedRow">
+                                <td class="jsgrid-cell jsgrid-align-left"
+                                    style="width: 150px">{{currency.currencyCode}}</td>
+                                <td class="jsgrid-cell jsgrid-align-left"
+                                    style="width: 150px">{{currency.currencyName}}</td>
+                                <td class="jsgrid-cell jsgrid-align-right"
+                                    style="width: 150px"><input type="number" class="input-Cell"
+                                                                [(ngModel)]="currency.exchangeRate"
+                                                                [systemOptions]="currentAccount?.systemOption"
+                                                                [type]="4"
+                                                                ebCurrencyMask readonly></td>
+                                <td class="jsgrid-cell jsgrid-align-center"
+                                    style="width: 150px">
+                                    <input type="checkbox"
+                                           class="jsgrid-cell jsgrid-align-center"
+                                           name="isactive" id="field_isactive"
+                                           [(ngModel)]="currency.isActive" disabled/>
+                                </td>
+                            </tr>
+                            <tr *ngFor="let row of newArr(20 - currencies?.length)">
+                                <td class="jsgrid-cell">&nbsp;</td>
+                                <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="currencies && currencies?.length"
+                 style="padding-right: 16px">
+                <div class="row justify-content-end" style="height:32px">
+                    <div class="col-lg-2">
+                        <div class="form-group row">
+                            <label class="col-sm-7 col-form-label" for="itemsPerPage"
+                                   style="padding-right: 0px;text-align: right;"><span
+                                jhiTranslate="ebwebApp.mBDeposit.totalPage"></span>: {{totalItems}}</label>
+                            <div class="col-sm-5 pd-l-0">
+                                <select class="form-control form-control-sm" name="itemsPerPage"
+                                        id="itemsPerPage"
+                                        style="background-color: #f5f7fa;"
+                                        [(ngModel)]="itemsPerPage"
+                                        (ngModelChange)="selectedItemPerPage()"
+                                >
+                                    <option [value]="20">20</option>
+                                    <option [value]="30">30</option>
+                                    <option [value]="40">40</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="justify-content-end">
+                        <ngb-pagination [size]="'sm'" [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage"
+                                        [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
+                                        (pageChange)="loadPage(page)"></ngb-pagination>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Footer -->
+<footer>
+</footer>

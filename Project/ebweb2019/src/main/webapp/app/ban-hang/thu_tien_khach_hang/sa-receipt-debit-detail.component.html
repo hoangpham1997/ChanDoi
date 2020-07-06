@@ -1,0 +1,1135 @@
+<div class="row" (click)="disableContextMenu()">
+    <div class="col-md-12">
+        <div class="menu-tool-bar he">
+            <div class="ptitle">
+                <span>THU TIỀN KHÁCH HÀNG</span>
+            </div>
+            <div class="gr-toolbar">
+                <a (click)="submit(question)"><i class="mdi mdi-briefcase-download"></i><span
+                    jhiTranslate="ebwebApp.pPPayVendor.home.submit"></span></a>
+                <a [routerLink]="['/sa-receipt-debit']"><i
+                    class="mdi mdi-window-close"></i><span
+                    jhiTranslate="ebwebApp.pPPayVendor.home.cancel"></span></a>
+            </div>
+        </div>
+        <div class="tool-navbar">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="row">
+                        <label class="form-check-label" style="padding: 5px 0px 0px 16px" jhiTranslate="ebwebApp.sAInvoice.typeSell">Phương thức thanh
+                            toán</label>
+                        <div style="padding: 0px 0px 8px 10px">
+                            <select style="height: 35px;width:140px" name="paymentMethod"
+                                    id="field_paymentMethod"
+                                    class="form-control form-control-sm"
+                                    [(ngModel)]="paymentMethod"
+                                    (ngModelChange)="changePaymentMethod()">
+                                <option value="0" selected>Tiền mặt</option>
+                                <option value="1">Chuyển khoản</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="row" style="justify-content: flex-end;">
+                        <label class="col-sm-4 form-check-label text-right" style="padding: 5px 0px 0px 0px" jhiTranslate="ebwebApp.sAReceiptDebit.totalAmount"></label>
+                        <div class="col-sm-4" style="padding: 0px 0px 8px 5px">
+                            <input type="text" class="form-control form-control-sm"
+                                   ebCurrencyMask
+                                   [systemOptions]="account?.systemOption"
+                                   [type]="currencyID !== accountCurrencyID ? 8 : 7"
+                                   [(ngModel)]="totalAmountOriginal" [disabled]="true"/>
+                        </div>
+                        <div class="col-sm-4" style="padding-left: 0px">
+                            <input type="text" class="form-control form-control-sm"
+                                   ebCurrencyMask
+                                   [systemOptions]="account?.systemOption"
+                                   [type]="7" [disabled]="true"
+                                   [(ngModel)]="totalAmount"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row no-gutters">
+            <div class="col-lg-9 pd-r-0 form-main-new">
+                <form>
+                    <h3 jhiTranslate="ebwebApp.common.generalInformation">Thông tin chung</h3>
+                    <div class="row" *ngIf="paymentMethod === '0'">
+                        <div class="col-lg-12">
+                            <div class="form-group row no-gutters">
+                                <label class="col-sm-2 col-form-label"
+                                       jhiTranslate="ebwebApp.mCReceipt.accountingObject">Accounting Object</label>
+                                <div class="col-sm-3 pd-l-0">
+                                    <combo-box name="comboboxaccountingObject"
+                                               [dataList]="accountingObjects"
+                                               [listColumns]="utilsService.listColumnsAccountingObjects"
+                                               displayMember="accountingObjectCode"
+                                               valueName="id"
+                                               [headerColumns]="utilsService.listHeaderColumnsAccountingObject"
+                                               [isObject]="true"
+                                               [isOutTable]="true"
+                                               [(ngModel)]="accountingObject"
+                                               (ngModelChange)="selectAccountingObject()"
+                                               [tabindex]="1">
+                                    </combo-box>
+                                </div>
+                                <div class="col-sm-7 pd-l-0 last-div-1-1">
+                                    <input type="text" class="form-control form-control-sm"
+                                           name="accountingObjectName"
+                                           [(ngModel)]="accountingObjectName" maxlength="512"
+                                           [tabindex]="2"/>
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters">
+                                <label class="col-sm-2 col-form-label"
+                                       jhiTranslate="ebwebApp.mCReceipt.accountingObjectAddress"
+                                       for="field_accountingObjectAddress4">Accounting Object Address</label>
+                                <div class="col-sm-10 pd-l-0 last-div-1-0">
+                                    <input type="text" class="form-control form-control-sm"
+                                           name="accountingObjectAddress4"
+                                           id="field_accountingObjectAddress4"
+                                           [(ngModel)]="accountingObjectAddress"
+                                           [tabindex]="3"
+                                           maxlength="512">
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters">
+                                <label class="col-sm-2 col-form-label"
+                                       jhiTranslate="ebwebApp.mCReceipt.taxCode">Mã số thuế</label>
+                                <div class="col-sm-3 pd-l-0">
+                                    <input type="text" class="form-control form-control-sm" name="taxCode4"
+                                           [(ngModel)]="taxCode"
+                                           [tabindex]="4">
+                                </div>
+                                <label class="col-sm-2 col-form-label"
+                                       jhiTranslate="ebwebApp.mCReceipt.payers"
+                                       for="field_payers4">Payers</label>
+                                <div class="col-sm-5 pd-l-0 last-div-2-1">
+                                    <input type="text" class="form-control form-control-sm" name="payers4"
+                                           id="field_payers4"
+                                           [(ngModel)]="payers"
+                                           [tabindex]="5"maxlength="512"/>
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters">
+                                <label class="col-sm-2 col-form-label"
+                                       jhiTranslate="ebwebApp.mCReceipt.reason">Diễn giải</label>
+                                <div class="col-sm-3 pd-l-0 pd-r-10">
+                                    <combo-box name="comboboxreason"
+                                               [dataList]="autoPrinciples"
+                                               [listColumns]="utilsService.listColumnsAutoPrinciple"
+                                               displayMember="''"
+                                               valueName="autoPrincipleName"
+                                               [headerColumns]="utilsService.listHeaderColumnsAutoPrinciple"
+                                               [isObject]="true"
+                                               [isOutTable]="true"
+                                               [(ngModel)]="autoPrinciple"
+                                               (ngModelChange)="selectAutoPrinciple()"
+                                               [tabindex]="6"
+                                    ></combo-box>
+                                </div>
+                                <div class="col-sm-7 pd-l-0 last-div-1-1">
+                                    <input type="text" class="form-control form-control-sm" name="reason"
+                                           [(ngModel)]="reason"
+                                           [tabindex]="7"
+                                           maxlength="512"/>
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters">
+                                <label class="col-sm-2 col-form-label"
+                                       jhiTranslate="ebwebApp.sAInvoice.employeeID">Nhân
+                                    viên thực hiện</label>
+                                <div class="col-sm-3 pd-l-0">
+                                    <combo-box name="comboboxEmployees"
+                                               [dataList]="employees"
+                                               [listColumns]="utilsService.listColumnsEmployees"
+                                               displayMember="accountingObjectCode"
+                                               valueName="id"
+                                               [headerColumns]="utilsService.listHeaderColumnsEmployees"
+                                               [isObject]="false"
+                                               [isOutTable]="true"
+                                               [(ngModel)]="employeeID"
+                                               [nameCategory]="utilsService.NHAN_VIEN"
+                                               [showIconPlus]="true"
+                                               (click)="saveParent()"
+                                               [tabindex]="8"
+                                    ></combo-box>
+                                </div>
+                                <label class="col-sm-2 col-form-label"
+                                       jhiTranslate="ebwebApp.mCReceipt.numberAttach" for="number_attach4">Kèm
+                                    theo</label>
+                                <div class="col-sm-5 pd-l-0 last-div-2-1">
+                                    <input type="text" class="form-control form-control-sm"
+                                           id="number_attach4"
+                                           [(ngModel)]="numberAttach"
+                                           [tabindex]="9"
+                                           name="numberAttach"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" *ngIf="paymentMethod === '1'">
+                        <div class="col-lg-12">
+                            <div class="form-group row no-gutters">
+                                <label class="col-sm-2 col-form-label"
+                                       jhiTranslate="ebwebApp.mBDeposit.accountingObjectID"></label>
+                                <div class="col-sm-3 pd-l-0">
+                                    <combo-box style="" id="field_accountingObject1"
+                                               name="comboboxaccountingObject1"
+                                               [dataList]="accountingObjects"
+                                               [isOutTable]="true"
+                                               [listColumns]="utilsService.listColumnsAccountingObjects"
+                                               displayMember="accountingObjectCode"
+                                               valueName="id"
+                                               [headerColumns]="utilsService.listHeaderColumnsAccountingObject"
+                                               [isObject]="true"
+                                               [(ngModel)]="accountingObject"
+                                               (ngModelChange)="selectAccountingObject()"
+                                               [tabindex]="1">
+                                    </combo-box>
+                                </div>
+                                <div class="col-sm-7 pd-l-0 last-div-1-1">
+                                    <input type="text" class="form-control form-control-sm"
+                                           name="accountingObjectName5"
+                                           [(ngModel)]="accountingObjectName"
+                                           [tabindex]="2"
+                                           maxlength="512"/>
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters">
+                                <label class="col-sm-2 col-form-label"
+                                       jhiTranslate="ebwebApp.mBDeposit.accountingObjectAddress"></label>
+                                <div class="col-sm-10 pd-l-0 last-div-1-0">
+                                    <input type="text" class="form-control form-control-sm"
+                                           name="accountingObjectAddress5"
+                                           [(ngModel)]="accountingObjectAddress"
+                                           [tabindex]="3"
+                                           maxlength="512"/>
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters">
+                                <label class="col-sm-2 col-form-label"
+                                       jhiTranslate="ebwebApp.mBDeposit.bankAccountDetailID"></label>
+                                <div class="col-sm-3 pd-l-0">
+                                    <combo-box name="comboboxBankAccountDetailID1"
+                                               [dataList]="bankAccountDetails"
+                                               [isOutTable]="true"
+                                               [listColumns]="utilsService.listColumnsBank"
+                                               displayMember="bankAccount"
+                                               valueName="id"
+                                               [headerColumns]="utilsService.listHeaderColumnsBank"
+                                               [isObject]="false"
+                                               [(ngModel)]="bankAccountDetailID"
+                                               (ngModelChange)="selectChangeBank(bankAccountDetailID)"
+                                               [nameCategory]="utilsService.TAI_KHOAN_NGAN_HANG"
+                                               [showIconPlus]="true"
+                                               (click)="saveParent()"
+                                               [tabindex]="4">
+                                    </combo-box>
+                                </div>
+                                <div class="col-sm-7 pd-l-0 last-div-1-1">
+                                    <input type="text" class="form-control form-control-sm"
+                                           name="bankName5"
+                                           [(ngModel)]="bankName"
+                                           [tabindex]="5"
+                                           maxlength="512"/>
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters">
+                                <label class="col-sm-2 col-form-label" for="field_reason1"
+                                       jhiTranslate="ebwebApp.mBDeposit.reason"></label>
+                                <div class="col-sm-3 pd-l-0">
+                                    <combo-box style="" id="field_reason1"
+                                               name="comboboxreason1"
+                                               [dataList]="autoPrinciples"
+                                               [isOutTable]="true"
+                                               [listColumns]="utilsService.listColumnsAutoPrinciple"
+                                               displayMember="autoPrincipleName"
+                                               valueName="autoPrincipleName"
+                                               [headerColumns]="utilsService.listHeaderColumnsAutoPrinciple"
+                                               [isObject]="true"
+                                               [(ngModel)]="autoPrinciple"
+                                               (ngModelChange)="selectAutoPrinciple()"
+                                               [tabindex]="6">
+                                    </combo-box>
+                                </div>
+                                <div class="col-sm-7 pd-l-0 last-div-1-1">
+                                    <input type="text" class="form-control form-control-sm"
+                                           name="reason5"
+                                           [(ngModel)]="reason"
+                                           [tabindex]="7"
+                                           maxlength="512"/>
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters">
+                                <label class="col-sm-2 col-form-label" style="padding-right: 0px"
+                                       for="field_employees1" jhiTranslate="ebwebApp.sAInvoice.employeeID"></label>
+                                <div class="col-sm-3 pd-l-0">
+                                    <combo-box style="" id="field_employees1"
+                                               name="comboboxemployeeID1"
+                                               [dataList]="employees"
+                                               [isOutTable]="true"
+                                               [listColumns]="utilsService.listColumnsEmployees"
+                                               displayMember="accountingObjectCode"
+                                               valueName="id"
+                                               [headerColumns]="utilsService.listHeaderColumnsEmployees"
+                                               [isObject]="false"
+                                               [(ngModel)]="employeeID"
+                                               [nameCategory]="utilsService.NHAN_VIEN"
+                                               [showIconPlus]="true"
+                                               (click)="saveParent()"
+                                               [tabindex]="8"
+                                    ></combo-box>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-lg-4 pd-only-l-10 form-main-new">
+                <form style="padding-bottom: 8px">
+                    <h3 jhiTranslate="ebwebApp.common.license">Chứng từ</h3>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group row no-gutters">
+                                <label class="col-sm-4 col-form-label" jhiTranslate="ebwebApp.sAInvoice.noFBook">Số
+                                    chứng từ</label>
+                                <div class="col-sm-8 pd-l-0 last-div-1-0">
+                                    <input type="text" class="form-control form-control-sm" name="noFBook1"
+                                           [(ngModel)]="no" required [tabindex]="10">
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters">
+                                <label class="col-sm-4 col-form-label"
+                                       jhiTranslate="ebwebApp.mBDeposit.date"></label>
+                                <div class="col-sm-8 last-div-1-0">
+                                    <eb-date-picker [(ngModel)]="date" name="field_date"
+                                                    [isRequired]="true" (ngModelChange)="checkPostedDateGreaterDate()"
+                                                    [tabindex]="11"></eb-date-picker>
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters">
+                                <label class="col-sm-4 col-form-label"
+                                       jhiTranslate="ebwebApp.mBDeposit.postedDate"></label>
+                                <div class="col-sm-8 last-div-1-0">
+                                    <eb-date-picker [(ngModel)]="postedDate" name="field_postedDate"
+                                                    [isRequired]="true"
+                                                    [tabindex]="12"></eb-date-picker>
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters">
+                                <label class="col-sm-4 col-form-label"
+                                       jhiTranslate="ebwebApp.sAInvoice.currencyID">Loại
+                                    tiền</label>
+                                <div class="col-sm-3 pd-l-0 form-group">
+                                    <combo-box name="comboboxcurrencyID"
+                                               [dataList]="currencys"
+                                               [listColumns]="utilsService.listColumnsCurrency"
+                                               displayMember="currencyCode"
+                                               valueName="currencyCode"
+                                               [headerColumns]="utilsService.listHeaderColumnsCurrency"
+                                               [isObject]="false"
+                                               [isOutTable]="true"
+                                               [(ngModel)]="currencyID"
+                                               (ngModelChange)="selectCurrentcy()"
+                                               [tabindex]="13"
+                                    ></combo-box>
+                                </div>
+                                <label class="col-sm-2 col-form-label"
+                                       jhiTranslate="ebwebApp.sAInvoice.exchangeRate"
+                                       style="width: 53px; max-width: 53px !important; min-width: 43px !important;">Tỷ giá</label>
+                                <div class="col-sm-3 pd-l-0 last-div-2-1" style="min-width: 43px !important;max-width: calc(75% - 153px) !important;">
+                                    <input name="exchangeRate" type="text"
+                                           class="form-control form-control-sm"
+                                           [(ngModel)]="exchangeRate"
+                                           ebCurrencyMask
+                                           [systemOptions]="account?.systemOption" [type]="4"
+                                           (ngModelChange)="changeExchangeRate()"
+                                           [disabled]="currencyID === accountCurrencyID"
+                                           [tabindex]="14">
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters" *ngIf="showVaoSo">
+                                <label class="col-sm-4 col-form-label"
+                                       jhiTranslate="ebwebApp.sAInvoice.typeLedger">Vào
+                                    sổ</label>
+                                <div class="col-sm-8 pd-l-0 last-div-1-0">
+                                    <select class="form-control" name="typeLedger" id="field_typeLedger"
+                                            [(ngModel)]="typeLedger" [tabindex]="15">
+                                        <option *ngIf="isSoTaiChinh" value="0"
+                                                jhiTranslate="ebwebApp.mBDeposit.financialBook">Sổ
+                                            tài chính
+                                        </option>
+                                        <option *ngIf="!isSoTaiChinh" value="1"
+                                                jhiTranslate="ebwebApp.mBDeposit.managementBook">
+                                            Sổ quản trị
+                                        </option>
+                                        <option value="2" jhiTranslate="ebwebApp.mBDeposit.bothBooks">Cả 2
+                                            sổ
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <ngb-tabset class="tool-navbar">
+            <ngb-tab>
+                <ng-template ngbTabTitle>Chứng từ</ng-template>
+                <ng-template ngbTabContent>
+                    <div class="tab-content">
+                        <div class="frm-main frm-padding tab-pane fade in active show" id="home-detail"
+                             style="background: #cbdcf0">
+                            <div id="table-scroll-detail" class="table-scroll">
+                                <table id="main-table-detail" class="main-table"
+                                       (keydown.arrowDown)="moveArrowDown($event,17)"
+                                       (keydown.arrowUp)="moveArrowUp($event,17)">
+                                    <thead>
+                                    <tr>
+                                        <th style="width: 50px" (click)="checkAllFunction()"><input type="checkbox"
+                                                                                                    [(ngModel)]="checkAll"/>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPPayVendorDetail.date"></th>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPPayVendorDetail.no"></th>
+<!--                                        <th scope="col" *ngIf="currencyID!=='VND'"-->
+<!--                                            jhiTranslate="ebwebApp.pPPayVendorDetail.refVoucherExchangeRate"></th>-->
+                                        <th scope="col" jhiTranslate="ebwebApp.pPPayVendorDetail.dueDate"></th>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPPayVendorDetail.paymentClause"></th>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPPayVendorDetail.employeeName"></th>
+                                        <th scope="col" jhiTranslate="ebwebApp.sAReceiptDebitDetail.account"></th>
+                                        <th scope="col"
+                                            jhiTranslate="ebwebApp.sAReceiptDebitDetail.totalCreditOriginal"></th>
+                                        <th scope="col" *ngIf="currencyID !== accountCurrencyID"
+                                            jhiTranslate="ebwebApp.sAReceiptDebitDetail.totalCredit"></th>
+<!--                                        <th scope="col" jhiTranslate="ebwebApp.pPPayVendorDetail.lastExchangeRate"></th>-->
+                                        <th scope="col"
+                                            jhiTranslate="ebwebApp.sAReceiptDebitDetail.creditAmountOriginal"></th>
+                                        <th scope="col" *ngIf="currencyID !== accountCurrencyID"
+                                            jhiTranslate="ebwebApp.sAReceiptDebitDetail.creditAmount"></th>
+                                        <th scope="col" jhiTranslate="ebwebApp.sAReceiptDebitDetail.amountOriginal"></th>
+                                        <th scope="col" *ngIf="currencyID !== accountCurrencyID"
+                                            jhiTranslate="ebwebApp.sAReceiptDebitDetail.amount"></th>
+<!--                                        <th scope="col" jhiTranslate="ebwebApp.pPPayVendorDetail.differAmount"></th>-->
+                                        <th scope="col" jhiTranslate="ebwebApp.pPPayVendorDetail.discountRate"></th>
+                                        <th scope="col"
+                                            jhiTranslate="ebwebApp.pPPayVendorDetail.discountAmountOriginal"></th>
+                                        <th scope="col" *ngIf="currencyID !== accountCurrencyID"
+                                            jhiTranslate="ebwebApp.pPPayVendorDetail.discountAmount"></th>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPPayVendorDetail.discountAccount"></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr *ngFor="let saReceiptDebitBill of saReceiptDebitBills; let i = index;">
+                                        <td class="cell-Table jsgrid-align-center"
+                                            style="width: 150px"><input type="checkbox"
+                                                                        [(ngModel)]="saReceiptDebitBill.check"
+                                                                        (ngModelChange)="genAccountings(saReceiptDebitBill)"
+                                                                        [tabindex]="15 + (17 * i) + 1">
+                                        </td>
+                                        <td class="jsgrid-cell jsgrid-align-center"
+                                            style="width: 150px">{{saReceiptDebitBill.date}}</td>
+                                        <td class="jsgrid-cell" style="width: 150px" *ngIf="saReceiptDebitBill.typeID === TYPE_OPN"><a
+                                            >{{typeLedger === '1' ? saReceiptDebitBill.noMBook : saReceiptDebitBill.noFBook}}</a></td>
+                                        <td class="jsgrid-cell" style="width: 150px" *ngIf="saReceiptDebitBill.typeID !== TYPE_OPN"><a
+                                            (click)="viewVoucher(saReceiptDebitBill)" style="color:blue; text-decoration: underline;">{{typeLedger === '1' ? saReceiptDebitBill.noMBook : saReceiptDebitBill.noFBook}}</a></td>
+<!--                                        <td class="jsgrid-cell jsgrid-align-right"-->
+<!--                                            style="width: 150px"-->
+<!--                                            *ngIf="currencyID !== accountCurrencyID">{{saReceiptDebitBill.refVoucherExchangeRate}}-->
+<!--                                        </td>-->
+                                        <td class="jsgrid-cell jsgrid-align-center"
+                                            style="width: 150px">{{saReceiptDebitBill.dueDate}}</td>
+                                        <td class="jsgrid-cell"
+                                            style="width: 150px">{{saReceiptDebitBill.paymentClause}}</td>
+                                        <td class="jsgrid-cell"
+                                            style="width: 150px">{{saReceiptDebitBill.employeeName}}</td>
+                                        <td class="jsgrid-cell jsgrid-align-center"
+                                            style="width: 150px">{{saReceiptDebitBill.account}}</td>
+                                        <td class="cell-Table"
+                                            style="width: 150px"><input type="number"
+                                                                        class="input-Cell jsgrid-align-right"
+                                                                        ebCurrencyMask
+                                                                        disabled
+                                                                        [systemOptions]="account?.systemOption"
+                                                                        [type]="currencyID !== accountCurrencyID ? 8 : 7"
+                                                                        [(ngModel)]="saReceiptDebitBill.totalCreditOriginal"
+                                                                        [tabindex]="15 + (17 * i) + 2"/>
+                                        </td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px"
+                                            *ngIf="currencyID !== accountCurrencyID"><input type="number"
+                                                                              class="input-Cell jsgrid-align-right"
+                                                                              ebCurrencyMask
+                                                                                            disabled
+                                                                              [systemOptions]="account?.systemOption"
+                                                                              [type]="7"
+                                                                              [(ngModel)]="saReceiptDebitBill.totalCredit"
+                                                                                            [tabindex]="15 + (17 * i) + 3"/>
+                                        </td>
+<!--                                        <td class="jsgrid-cell jsgrid-align-right"-->
+<!--                                            style="width: 150px"><input type="number"-->
+<!--                                                                        class="input-Cell jsgrid-align-right myreadonlytrue"-->
+<!--                                                                        ebCurrencyMask-->
+<!--                                                                        [systemOptions]="account?.systemOption"-->
+<!--                                                                        [type]="8"-->
+<!--                                                                        [(ngModel)]="saReceiptDebitBill.lastExchangeRate"/>-->
+<!--                                        </td>-->
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px"><input
+                                            type="number"
+                                            class="input-Cell jsgrid-align-right"
+                                            ebCurrencyMask
+                                            disabled
+                                            [systemOptions]="account?.systemOption"
+                                            [type]="currencyID !== accountCurrencyID ? 8 : 7"
+                                            [(ngModel)]="saReceiptDebitBill.creditAmountOriginal"
+                                            [tabindex]="15 + (17 * i) + 4"/></td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px"
+                                            *ngIf="currencyID !== accountCurrencyID"><input
+                                            type="number"
+                                            class="input-Cell jsgrid-align-right"
+                                            ebCurrencyMask
+                                            disabled
+                                            [systemOptions]="account?.systemOption"
+                                            [type]="7"
+                                            [(ngModel)]="saReceiptDebitBill.creditAmount"
+                                            [tabindex]="15 + (17 * i) + 5"/>
+                                        </td>
+                                        <td class="cell-Table"
+                                            style="width: 150px">
+                                            <input type="number"
+                                                   class="input-Cell jsgrid-align-right"
+                                                   ebCurrencyMask
+                                                   [systemOptions]="account?.systemOption"
+                                                   [type]="currencyID !== accountCurrencyID ? 8 : 7"
+                                                   [(ngModel)]="saReceiptDebitBill.amountOriginal"
+                                                   (ngModelChange)="calculateAmont(saReceiptDebitBill)"
+                                                   [tabindex]="15 + (17 * i) + 6"/>
+                                        </td>
+                                        <td class="cell-Table"
+                                            style="width: 150px" *ngIf="currencyID !== accountCurrencyID">
+                                            <input type="number"
+                                                   class="input-Cell jsgrid-align-right"
+                                                   disabled
+                                                   ebCurrencyMask
+                                                   [systemOptions]="account?.systemOption"
+                                                   [type]="7"
+                                                   [(ngModel)]="saReceiptDebitBill.amount"
+                                                   [tabindex]="15 + (17 * i) + 7"/>
+                                        </td>
+<!--                                        <td class="jsgrid-cell"-->
+<!--                                            style="width: 150px"><input type="number"-->
+<!--                                                        class="input-Cell jsgrid-align-right myreadonlytrue"-->
+<!--                                                        [readOnly]="true"-->
+<!--                                                        ebCurrencyMask-->
+<!--                                                        [systemOptions]="account?.systemOption"-->
+<!--                                                        [type]="8"-->
+<!--                                                        [(ngModel)]="saReceiptDebitBill.differAmount"/>-->
+<!--                                        </td>-->
+                                        <td class="cell-Table"
+                                            style="width: 150px">
+                                            <input type="number"
+                                                   class="input-Cell jsgrid-align-right"
+                                                   ebCurrencyMask
+                                                   [systemOptions]="account?.systemOption"
+                                                   [type]="5"
+                                                   [(ngModel)]="saReceiptDebitBill.discountRate"
+                                                   (ngModelChange)="calculateDiscount(saReceiptDebitBill)"
+                                                   max="100" [tabindex]="15 + (17 * i) + 8"/>
+                                        </td>
+                                        <td class="cell-Table"
+                                            style="width: 150px"><input type="number"
+                                                                        class="input-Cell jsgrid-align-right"
+                                                                        ebCurrencyMask
+                                                                        [systemOptions]="account?.systemOption"
+                                                                        [type]="currencyID !== accountCurrencyID ? 8 : 7"
+                                                                        [(ngModel)]="saReceiptDebitBill.discountAmountOriginal"
+                                                                        (ngModelChange)="changeDiscountAmount(saReceiptDebitBill)"
+                                                                        [tabindex]="15 + (17 * i) + 9"/>
+                                        </td>
+                                        <td class="cell-Table"
+                                            style="width: 150px" *ngIf="currencyID !== accountCurrencyID">
+                                            <input type="number"
+                                                   class="input-Cell jsgrid-align-right"
+                                                   disabled
+                                                   ebCurrencyMask
+                                                   [systemOptions]="account?.systemOption"
+                                                   [type]="7"
+                                                   [(ngModel)]="saReceiptDebitBill.discountAmount"
+                                                   [tabindex]="15 + (17 * i) + 10"/>
+                                        </td>
+                                        <td class="cell-Table jsgrid-align-center"
+                                            style="width: 150px">
+                                            <combo-box name="discountAcount"
+                                                       [dataList]="discountAccountList"
+                                                       [listColumns]="utilsService.listColumnsAccountList"
+                                                       displayMember="accountNumber"
+                                                       valueName="accountNumber"
+                                                       [headerColumns]="utilsService.listHeaderColumnsAccountList"
+                                                       [isObject]="false"
+                                                       [(ngModel)]="saReceiptDebitBill.discountAccount"
+                                                       (ngModelChange)="genAccountingByDiscounts()"
+                                                       [tabindex]="15 + (17 * i) + 11">
+                                            </combo-box>
+                                        </td>
+                                    </tr>
+                                    <tr *ngFor="let l of newArr(9 - saReceiptDebitBills?.length)">
+                                        <td class="cell-Table jsgrid-align-center"
+                                            style="width: 150px"><input type="text" class="input-Cell" disabled>
+                                        </td>
+                                        <td class="cell-Table jsgrid-align-center"
+                                            style="width: 150px"></td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px"></td>
+<!--                                        <td class="cell-Table jsgrid-align-right"-->
+<!--                                            style="width: 150px"-->
+<!--                                            *ngIf="currencyID !== accountCurrencyID">-->
+<!--                                        </td>-->
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px"></td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px"></td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px"
+                                            *ngIf="currencyID !== accountCurrencyID">
+                                        </td>
+<!--                                        <td class="cell-Table jsgrid-align-right"-->
+<!--                                            style="width: 150px"></td>-->
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px"></td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px"
+                                            *ngIf="currencyID !== accountCurrencyID">
+                                        </td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px"></td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px"></td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px">
+                                        </td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px" *ngIf="currencyID !== accountCurrencyID">
+                                        </td>
+<!--                                        <td class="cell-Table jsgrid-align-right"-->
+<!--                                            style="width: 150px"></td>-->
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px"></td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px">
+                                        </td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px">
+                                        </td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px" *ngIf="currencyID !== accountCurrencyID">
+                                        </td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px">
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                    <tfoot>
+                                    <tr>
+                                        <td class="cell-Table"
+                                            style="width: 150px"><input type="text" disabled
+                                                                        class="countRow input-Cell"
+                                                                        value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{saReceiptDebitBills?.length}}">
+                                        </td>
+                                        <td class="cell-Table"
+                                            style="width: 150px"><input type="text" class="countRow input-Cell"
+                                                                        disabled></td>
+                                        <td class="cell-Table"
+                                            style="width: 150px"><input type="text" class="countRow input-Cell"
+                                                                        disabled></td>
+                                        <td class="cell-Table"
+                                            style="width: 150px"><input type="text" class="countRow input-Cell"
+                                                                        disabled></td>
+                                        <td class="cell-Table"
+                                            style="width: 150px"><input type="text" class="countRow input-Cell"
+                                                                        disabled>
+                                        </td>
+                                        <td class="cell-Table"
+                                            style="width: 150px"><input type="text" class="countRow input-Cell"
+                                                                        disabled></td>
+                                        <td class="cell-Table"
+                                            style="width: 150px"><input type="text" class="countRow input-Cell"
+                                                                        disabled></td>
+<!--                                        <td class="cell-Table"-->
+<!--                                            style="width: 150px"-->
+<!--                                            *ngIf="currencyID !== accountCurrencyID"><input type="text" class="countRow input-Cell"-->
+<!--                                                                              disabled>-->
+<!--                                        </td>-->
+                                        <td class="cell-Table"
+                                            style="width: 150px"><input type="text" class="countRow input-Cell"
+                                                                        disabled></td>
+                                        <td class="cell-Table"
+                                            style="width: 150px"
+                                            *ngIf="currencyID !== accountCurrencyID"><input type="text" class="countRow input-Cell"
+                                                                                            disabled>
+                                        </td>
+<!--                                        <td class="cell-Table"-->
+<!--                                            style="width: 150px"><input type="text" class="countRow input-Cell"-->
+<!--                                                                        disabled></td>-->
+                                        <td class="cell-Table"
+                                            style="width: 150px">
+                                            <input type="text"
+                                                   class="countRow input-Cell jsgrid-align-right"
+                                                   disabled
+                                                   name="amountSum"
+                                                   ebCurrencyMask
+                                                   [systemOptions]="account?.systemOption"
+                                                   [type]="currencyID !== accountCurrencyID ? 8 : 7"
+                                                   [(ngModel)]="sumDebitAmountOriginal">
+                                        </td>
+                                        <td class="cell-Table"
+                                            style="width: 150px"
+                                            *ngIf="currencyID !== accountCurrencyID">
+                                            <input type="text"
+                                                   class="countRow input-Cell jsgrid-align-right"
+                                                   disabled
+                                                   name="amountSum"
+                                                   ebCurrencyMask
+                                                   [systemOptions]="account?.systemOption"
+                                                   [type]="7"
+                                                   [(ngModel)]="sumDebitAmount">
+                                        </td>
+                                        <td class="cell-Table"
+                                            style="width: 150px">
+                                            <input type="text"
+                                                   class="countRow input-Cell jsgrid-align-right"
+                                                   disabled
+                                                   name="amountSum"
+                                                   ebCurrencyMask
+                                                   [systemOptions]="account?.systemOption"
+                                                   [type]="currencyID !== accountCurrencyID ? 8 : 7"
+                                                   [(ngModel)]="sumAmountOriginalBills">
+                                        </td>
+                                        <td class="cell-Table"
+                                            style="width: 150px" *ngIf="currencyID !== accountCurrencyID">
+                                            <input type="text"
+                                                   class="countRow input-Cell jsgrid-align-right"
+                                                   disabled
+                                                   name="amountSum"
+                                                   ebCurrencyMask
+                                                   [systemOptions]="account?.systemOption"
+                                                   [type]="7"
+                                                   [(ngModel)]="sumAmountBills">
+                                        </td>
+                                        <td class="cell-Table"
+                                            style="width: 150px"><input type="text" class="countRow input-Cell"
+                                                                        disabled></td>
+<!--                                        <td class="cell-Table"-->
+<!--                                            style="width: 150px">-->
+<!--                                            <input type="text"-->
+<!--                                                   class="countRow input-Cell jsgrid-align-right"-->
+<!--                                                   disabled-->
+<!--                                                   name="amountSum"-->
+<!--                                                   ebCurrencyMask-->
+<!--                                                   [systemOptions]="account?.systemOption"-->
+<!--                                                   [type]="8"-->
+<!--                                                   [(ngModel)]="sumDiffAmount">-->
+<!--                                        </td>-->
+                                        <td class="cell-Table"
+                                            style="width: 150px">
+                                            <input type="text"
+                                                   class="countRow input-Cell jsgrid-align-right"
+                                                   disabled
+                                                   name="amountSum"
+                                                   ebCurrencyMask
+                                                   [systemOptions]="account?.systemOption"
+                                                   [type]="currencyID !== accountCurrencyID ? 8 : 7"
+                                                   [(ngModel)]="sumDiscountAmountOriginal">
+                                        </td>
+                                        <td class="cell-Table"
+                                            style="width: 150px" *ngIf="currencyID !== accountCurrencyID">
+                                            <input type="text"
+                                                   class="countRow input-Cell jsgrid-align-right"
+                                                   disabled
+                                                   name="amountSum"
+                                                   ebCurrencyMask
+                                                   [systemOptions]="account?.systemOption"
+                                                   [type]="7"
+                                                   [(ngModel)]="sumDiscountAmount">
+                                        </td>
+                                        <td class="cell-Table"
+                                            style="width: 150px"><input type="text" class="countRow input-Cell"
+                                                                        disabled>
+                                        </td>
+                                    </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </ngb-tab>
+            <ngb-tab>
+                <ng-template ngbTabTitle>Hạch toán</ng-template>
+                <ng-template ngbTabContent>
+                    <div class="tab-content">
+                        <div class="frm-main frm-padding tab-pane fade in active show" id="home-tax"
+                             style="background: #cbdcf0">
+                            <div id="table-scroll-tax" class="table-scroll">
+                                <table id="main-table-tax" class="main-table"
+                                       (keydown.arrowDown)="moveArrowDown($event,12)"
+                                       (keydown.arrowUp)="moveArrowUp($event,12)">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPPayVendorDetail.description"></th>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPPayVendorDetail.debitAccount"></th>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPPayVendorDetail.creditAccount"></th>
+                                        <th scope="col"
+                                            jhiTranslate="ebwebApp.pPPayVendorDetail.totalAmountOriginal"></th>
+                                        <th scope="col" *ngIf="currencyID !== accountCurrencyID"
+                                            jhiTranslate="ebwebApp.pPPayVendorDetail.totalAmount"></th>
+                                        <th scope="col"
+                                            jhiTranslate="ebwebApp.pPPayVendorDetail.accountingObjectCode"></th>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPPayVendorDetail.budgetItemID"></th>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPPayVendorDetail.expenseItemID"></th>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPPayVendorDetail.departmentID"></th>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPPayVendorDetail.costSetID"></th>
+<!--                                        <th scope="col" jhiTranslate="ebwebApp.pPPayVendorDetail.emContractID"></th>-->
+                                        <th scope="col" jhiTranslate="ebwebApp.pPPayVendorDetail.statisticsID"></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr oncontextmenu="return false;"
+                                        *ngFor="let saReceiptDebitAccounting of saReceiptDebitAccountings; let i = index"
+                                        (contextmenu)="onrightClick($event, saReceiptDebitAccountings, saReceiptDebitAccounting, true, true, true)"
+                                        (keydown.control.insert)="addNewRow(true)"
+                                        (keydown.control.delete)="keyPress(saReceiptDebitAccounting)"
+                                        (keydown.control.c)="copyRow(saReceiptDebitAccounting)"
+                                        (click)="currentRow = i">
+                                        <td class="cell-Table jsgrid-align-left"
+                                            style="width: 150px"><input type="text" class="input-Cell"
+                                                                        id="description{{i}}"
+                                                                        [(ngModel)]="saReceiptDebitAccounting.description"
+                                                                        (focus)="actionFocus(4, i, 'description')"
+                                                                        [tabindex]="15 + (12 * i * 2) + 1">
+                                        </td>
+                                        <td class="cell-Table jsgrid-align-center">
+                                            <combo-box idIp="debitAccount{{i}}"
+                                                       nameIp="debitAccount{{i}}"
+                                                       [dataList]="debitAccountList"
+                                                       [listColumns]="utilsService.listColumnsAccountList"
+                                                       displayMember="accountNumber"
+                                                       valueName="accountNumber"
+                                                       [headerColumns]="utilsService.listHeaderColumnsAccountList"
+                                                       [isObject]="false"
+                                                       [(ngModel)]="saReceiptDebitAccounting.debitAccount"
+                                                       (focusInput)="actionFocus(4, i, 'debitAccount')"
+                                                       [tabindex]="15 + (12 * i * 2) + 2">
+                                            </combo-box>
+                                        </td>
+                                        <td class="cell-Table jsgrid-align-center">
+                                            <combo-box idIp="creditAccount{{i}}"
+                                                       nameIp="creditAccount{{i}}"
+                                                       [dataList]="creditAccountList"
+                                                       [listColumns]="utilsService.listColumnsAccountList"
+                                                       displayMember="accountNumber"
+                                                       valueName="accountNumber"
+                                                       [headerColumns]="utilsService.listHeaderColumnsAccountList"
+                                                       [isObject]="false"
+                                                       [(ngModel)]="saReceiptDebitAccounting.creditAccount"
+                                                       (focusInput)="actionFocus(4, i, 'creditAccount')"
+                                                       [tabindex]="15 + (12 * i * 2) + 3">
+                                            </combo-box>
+                                        </td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px">
+                                            <input type="number"
+                                                   class="input-Cell jsgrid-align-right"
+                                                   id="totalAmountOriginal{{i}}"
+                                                   ebCurrencyMask
+                                                   [systemOptions]="account?.systemOption"
+                                                   [type]="currencyID !== accountCurrencyID ? 8 : 7"
+                                                   [(ngModel)]="saReceiptDebitAccounting.totalAmountOriginal"
+                                                   (focus)="actionFocus(4, i, 'totalAmountOriginal')"
+                                                   [tabindex]="15 + (12 * i * 2) + 4"/>
+                                        </td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px" *ngIf="currencyID !== accountCurrencyID">
+                                            <input type="number"
+                                                   class="input-Cell jsgrid-align-right"
+                                                   id="totalAmount{{i}}"
+                                                   ebCurrencyMask
+                                                   [systemOptions]="account?.systemOption"
+                                                   [type]="7"
+                                                   [(ngModel)]="saReceiptDebitAccounting.totalAmount"
+                                                   (focus)="actionFocus(4, i, 'totalAmount')"
+                                                   [tabindex]="15 + (12 * i * 2) + 5"/>
+                                        </td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px"><input type="text" class="input-Cell"
+                                                                        id="accountingObjectCode{{i}}"
+                                                                        [(ngModel)]="saReceiptDebitAccounting.accountingObjectCode"
+                                                                        (focus)="actionFocus(4, i, 'accountingObjectCode')"
+                                                                        [tabindex]="15 + (12 * i * 2) + 6">
+                                        </td>
+                                        <td class="cell-Table"
+                                            style="width: 150px">
+                                            <combo-box idIp="budgetItem{{i}}"
+                                                       nameIp="budgetItem{{i}}"
+                                                       [dataList]="budgetItems"
+                                                       [listColumns]="utilsService.listColumnsBudgetItem"
+                                                       displayMember="budgetItemCode"
+                                                       valueName="id"
+                                                       [headerColumns]="utilsService.listHeaderColumnsBudgetItem"
+                                                       [isObject]="true"
+                                                       [(ngModel)]="saReceiptDebitAccounting.budgetItem"
+                                                       [nameCategory]="utilsService.MUC_THU_CHI"
+                                                       [showIconPlus]="true"
+                                                       (click)="saveDetails(i)"
+                                                       (focusInput)="actionFocus(4, i, 'budgetItem')"
+                                                       [tabindex]="15 + (12 * i * 2) + 7"
+                                            ></combo-box>
+                                        </td>
+                                        <td class="cell-Table"
+                                            style="width: 150px">
+                                            <combo-box idIp="expenseItem{{i}}"
+                                                       nameIp="expenseItem{{i}}"
+                                                       [dataList]="expenseItems"
+                                                       [listColumns]="utilsService.listColumnsExpenseItem"
+                                                       displayMember="expenseItemCode"
+                                                       valueName="id"
+                                                       [headerColumns]="utilsService.listHeaderColumnsExpenseItem"
+                                                       [isObject]="true"
+                                                       [(ngModel)]="saReceiptDebitAccounting.expenseItem"
+                                                       [nameCategory]="utilsService.KHOAN_MUC_CHI_PHI"
+                                                       [showIconPlus]="true"
+                                                       (click)="saveDetails(i)"
+                                                       (focusInput)="actionFocus(4, i, 'expenseItem')"
+                                                       [tabindex]="15 + (12 * i * 2) + 8"
+                                            ></combo-box>
+                                        </td>
+                                        <td class="cell-Table"
+                                            style="width: 150px">
+                                            <combo-box idIp="department{{i}}"
+                                                       nameIp="department{{i}}"
+                                                       [dataList]="organizationUnits"
+                                                       [listColumns]="utilsService.listColumnsOrganizationUnit"
+                                                       displayMember="organizationUnitCode"
+                                                       valueName="id"
+                                                       [headerColumns]="utilsService.listHeaderColumnsOrganizationUnit"
+                                                       [isObject]="true"
+                                                       [(ngModel)]="saReceiptDebitAccounting.department"
+                                                       [nameCategory]="utilsService.PHONG_BAN"
+                                                       [showIconPlus]="true"
+                                                       (click)="saveDetails(i)"
+                                                       (focusInput)="actionFocus(4, i, 'department')"
+                                                       [tabindex]="15 + (12 * i * 2) + 9"
+                                            ></combo-box>
+                                        </td>
+                                        <td class="cell-Table"
+                                            style="width: 150px">
+                                            <combo-box idIp="costSet{{i}}"
+                                                       nameIp="costSet{{i}}"
+                                                       [dataList]="costSets"
+                                                       [listColumns]="utilsService.listColumnsCostSet"
+                                                       displayMember="costSetCode"
+                                                       valueName="id"
+                                                       [headerColumns]="utilsService.listHeaderColumnsCostSet"
+                                                       [isObject]="true"
+                                                       [(ngModel)]="saReceiptDebitAccounting.costSet"
+                                                       [nameCategory]="utilsService.DOI_TUONG_TAP_HOP_CHI_PHI"
+                                                       [showIconPlus]="true"
+                                                       (click)="saveDetails(i)"
+                                                       (focusInput)="actionFocus(4, i, 'costSet')"
+                                                       [tabindex]="15 + (12 * i * 2) + 10"
+                                            ></combo-box>
+                                        </td>
+<!--                                        <td class="cell-Table"-->
+<!--                                            style="width: 150px">-->
+<!--                                            <combo-box-->
+<!--                                                nameIp="contract"-->
+<!--                                                [dataList]="eMContracts"-->
+<!--                                                [listColumns]="isSoTaiChinh ? utilsService.listColumnsEMContractFBook: utilsService.listColumnsEMContractMBook"-->
+<!--                                                displayMember="{{isSoTaiChinh ? 'noFBook' : 'noMBook'}}"-->
+<!--                                                valueName="id"-->
+<!--                                                [headerColumns]="utilsService.listHeaderColumnsEMContract"-->
+<!--                                                [isObject]="false"-->
+<!--                                                [(ngModel)]="saReceiptDebitAccounting.emContractID"-->
+<!--                                                [tabindex]="15 + (12 * i * 2) + 11">-->
+<!--                                            </combo-box>-->
+<!--                                        </td>-->
+                                        <td class="cell-Table"
+                                            style="width: 150px">
+                                            <combo-box idIp="statisticsCode{{i}}"
+                                                       nameIp="statisticsCode{{i}}"
+                                                       [dataList]="statisticCodes"
+                                                       [listColumns]="['statisticsCode', 'statisticsCodeName']"
+                                                       displayMember="statisticsCode"
+                                                       valueName="id"
+                                                       [headerColumns]="['Mã thống kê', 'Tên mã thống kê']"
+                                                       [isObject]="true"
+                                                       [(ngModel)]="saReceiptDebitAccounting.statisticsCode"
+                                                       [nameCategory]="utilsService.MA_THONG_KE"
+                                                       [showIconPlus]="true"
+                                                       (click)="saveDetails(i)"
+                                                       (focusInput)="actionFocus(4, i, 'statisticsCode')"
+                                                       [tabindex]="15 + (12 * i * 2) + 12"
+                                                       (keydown.tab)="addIfLastInput(i)"
+                                            ></combo-box>
+                                        </td>
+                                    </tr>
+                                    <tr (click)="addNewRow()">
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px"><input type="text" id="description" class="input-Cell" value="Thêm dòng mới ...." disabled>
+                                        </td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px"><input type="text" id="debitAccount" class="input-Cell"  disabled>
+                                        </td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px"><input type="text" id="creditAccount" class="input-Cell"  disabled>
+                                        </td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px"><input type="text" id="totalAmountOriginal" class="input-Cell"  disabled>
+                                        </td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px" *ngIf="currencyID !== accountCurrencyID">
+                                            <input type="text" id="totalAmount" class="input-Cell"  disabled>
+                                        </td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px"><input type="text" id="accountingObjectCode" class="input-Cell"  disabled>
+                                        </td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px"><input type="text" id="budgetItem" class="input-Cell"  disabled>
+                                        </td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px"><input type="text" id="expenseItem" class="input-Cell"  disabled>
+                                        </td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px"><input type="text" id="department" class="input-Cell"  disabled>
+                                        </td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px"><input type="text" id="costSet" class="input-Cell"  disabled>
+                                        </td>
+<!--                                        <td class="cell-Table jsgrid-align-right"-->
+<!--                                            style="width: 150px">-->
+<!--                                        </td>-->
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px"><input type="text" id="statisticsCode" class="input-Cell"  disabled>
+                                        </td>
+                                    </tr>
+                                    <tr *ngFor="let l of newArr(9 - saReceiptDebitAccountings?.length)">
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px"><input type="text" class="input-Cell" disabled>
+                                        </td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px">
+                                        </td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px">
+                                        </td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px">
+                                        </td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px" *ngIf="currencyID !== accountCurrencyID">
+                                        </td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px">
+                                        </td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px">
+                                        </td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px">
+                                        </td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px">
+                                        </td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px">
+                                        </td>
+<!--                                        <td class="cell-Table jsgrid-align-right"-->
+<!--                                            style="width: 150px">-->
+<!--                                        </td>-->
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px">
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                    <tfoot>
+                                    <tr>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px"><input type="text" disabled
+                                                                        class="countRow input-Cell"
+                                                                        value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{saReceiptDebitAccountings?.length}}">
+                                        </td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px"><input type="text" class="countRow input-Cell"
+                                                                        disabled>
+                                        </td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px"><input type="text" class="countRow input-Cell"
+                                                                        disabled>
+                                        </td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px"><input type="text" class="countRow input-Cell"
+                                                                        disabled>
+                                        </td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px" *ngIf="currencyID !== accountCurrencyID"><input type="text"
+                                                                                                   class="countRow input-Cell"
+                                                                                                   disabled>
+                                        </td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px"><input type="text" class="countRow input-Cell"
+                                                                        disabled>
+                                        </td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px"><input type="text" class="countRow input-Cell"
+                                                                        disabled>
+                                        </td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px"><input type="text" class="countRow input-Cell"
+                                                                        disabled>
+                                        </td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px"><input type="text" class="countRow input-Cell"
+                                                                        disabled>
+                                        </td>
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px"><input type="text" class="countRow input-Cell"
+                                                                        disabled>
+                                        </td>
+<!--                                        <td class="cell-Table jsgrid-align-right"-->
+<!--                                            style="width: 150px"><input type="text" class="countRow input-Cell"-->
+<!--                                                                        disabled>-->
+<!--                                        </td>-->
+                                        <td class="cell-Table jsgrid-align-right"
+                                            style="width: 150px"><input type="text" class="countRow input-Cell"
+                                                                        disabled>
+                                        </td>
+                                    </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </ngb-tab>
+        </ngb-tabset>
+    </div>
+    <eb-context-menu [contextMenu]="contextMenu" [eventHandlingHere]="true" [useCopyRow]="true"></eb-context-menu>
+</div>
+<ng-template #question let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.pPPayVendor.questionView" translateValues="{no: '{{viewNo}}'}"></label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="closeQuestion()"
+                jhiTranslate="entity.action.no"></button>
+        <button type="button" class="btn btn-outline-success" (click)="viewRelateVoucher()"
+                jhiTranslate="entity.action.yes"></button>
+    </div>
+</ng-template>

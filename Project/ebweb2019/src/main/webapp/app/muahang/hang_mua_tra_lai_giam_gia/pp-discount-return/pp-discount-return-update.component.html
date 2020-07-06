@@ -1,0 +1,2530 @@
+<div (click)="closeContextMenu()">
+    <!--    <div class="row">-->
+    <!--        <div class="col-md-12">-->
+    <!--            <div class="itemw">-->
+    <div class="menu-tool-bar he" style="line-height: 16px;">
+        <div class="gr-tool-bar2">
+            <a *ngIf="!isFromOutWard" class="aprev" (click)="move(1)"
+               [class.disable]="rowNum >= totalItems || isEdit || isViewFromEInvoice"><i
+                class="mdi mdi-arrow-left"></i></a>
+            <a *ngIf="!isFromOutWard" class="anext disable" (click)="move(-1)"
+               [class.disable]="rowNum <= 1 || isEdit || isViewFromEInvoice">
+                <i class="mdi mdi-arrow-right"></i>
+            </a>
+
+            <!--Xuất kho by huypq-->
+            <a *ngIf="isFromOutWard" class="aprev" (click)="move(1)"
+               [class.disable]="rsRowNum >= rsTotalItems || isEdit">
+                <i class="mdi mdi-arrow-left"></i>
+            </a>
+            <a *ngIf="isFromOutWard" class="anext disable" (click)="move(-1)"
+               [class.disable]="rsRowNum <= 1 || isEdit">
+                <i class="mdi mdi-arrow-right"></i>
+            </a>
+            <!--Xuất kho by huypq-->
+
+            <a *ebHasSomeAuthority="['ROLE_ADMIN', !statusPurchase ? ROLE_Them1 : ROLE_Them2 ]"
+               title="{{'ebwebApp.outWard.tooltipAdd' | translate}}" [class.disable]="isEdit"
+               (click)="addNew($event)">
+                <i class="mdi mdi-plus"></i>
+                <span jhiTranslate="ebwebApp.common.add">thêm</span></a>
+            <!--                        sửa-->
+            <a *ebHasSomeAuthority="['ROLE_ADMIN', !statusPurchase ? ROLE_Sua1 : ROLE_Sua2]"
+               title="{{'ebwebApp.outWard.tooltipEdit' | translate}}"
+               [class.disable]="isEdit || this.ppDiscountReturn.recorded || checkCloseBook(account, ppDiscountReturn.postedDate)"
+               (click)="edit()">
+                <i class="mdi mdi-rename-box"></i>
+                <span jhiTranslate="ebwebApp.common.update"> sua</span></a>
+            <!--                        lưu-->
+            <a *ebHasSomeAuthority="['ROLE_ADMIN', !statusPurchase ? ROLE_Sua1 : ROLE_Sua2, !statusPurchase ? ROLE_Them1 : ROLE_Them2]"
+               (click)="save()" title="{{'ebwebApp.outWard.tooltipSave' | translate}}"
+               [class.disable]="!isEdit">
+                <i class="mdi mdi-briefcase-download"></i>
+                <span jhiTranslate="ebwebApp.common.save">Lưu</span></a>
+            <a *ebHasSomeAuthority="['ROLE_ADMIN', !statusPurchase ? ROLE_Them1 : ROLE_Them2]" [class.disable]="!isEdit"
+               title="{{'ebwebApp.outWard.tooltipSaveAndAdd' | translate}}"
+               (click)="saveAndNew()">
+                <i class="mdi mdi-plus"></i>
+                <span jhiTranslate="ebwebApp.purchaseOrder.saveAndAdd">Lưu & thêm</span>
+            </a>
+            <a *ebHasSomeAuthority="['ROLE_ADMIN', !statusPurchase ? ROLE_GhiSo1 : ROLE_GhiSo2]" (click)="unrecord()"
+               title="{{'ebwebApp.outWard.tooltipUnRecord' | translate}}"
+               [class.disable]="isEdit || checkCloseBook(account, ppDiscountReturn.postedDate)"
+               [hidden]="!(this.ppDiscountReturn.recorded)"><i
+                class="mdi mdi-border-color"></i>
+                <span jhiTranslate="ebwebApp.mBDeposit.home.unrecord">bỏ ghi sổ</span></a>
+            <a *ebHasSomeAuthority="['ROLE_ADMIN', !statusPurchase ? ROLE_GhiSo1 : ROLE_GhiSo2]" (click)="record()"
+               title="{{'ebwebApp.outWard.tooltipRecord' | translate}}"
+               [class.disable]="isEdit || !this.ppDiscountReturn || !this.ppDiscountReturn.id"
+               [hidden]="this.ppDiscountReturn.recorded"><i class="mdi mdi-pencil"></i>
+                <span jhiTranslate="ebwebApp.common.carrying">ghi sổ</span></a>
+            <a *ebHasSomeAuthority="['ROLE_ADMIN', !statusPurchase ? ROLE_Them1 : ROLE_Them2 ]"
+               [class.disable]="isEdit || (!ppDiscountReturn.id && this.ppDiscountReturn.recorded)"
+               title="{{'ebwebApp.outWard.tooltipCopy&Add' | translate}}"
+               (click)="copyAndNew()"><i
+                class="mdi mdi-plus"></i> <span jhiTranslate="ebwebApp.common.coppyAndAddNew">Sao chép
+                    &amp; Thêm mới</span></a>
+            <a *ebHasSomeAuthority="['ROLE_ADMIN', !statusPurchase ? ROLE_Xoa1 : ROLE_Xoa2 ]" (click)="delete()"
+               title="{{'ebwebApp.outWard.tooltipDrop' | translate}}"
+               [class.disable]="isEdit || (!(ppDiscountReturn && ppDiscountReturn.id) || ppDiscountReturn?.recorded)"><i
+                class="mdi mdi-delete-forever"></i>
+                <span jhiTranslate="ebwebApp.purchaseOrder.delete"
+                >Xóa</span>
+            </a>
+            <div *ebHasSomeAuthority="['ROLE_ADMIN', !statusPurchase ? ROLE_In1 : ROLE_In2 ]" ngbDropdown
+                 class="d-inline-block">
+                <button id="dropdownPrint" ngbDropdownToggle
+                        [ngStyle]="{'color': isEdit ? '#959ea9': '#fff', 'pointer-events':  isEdit ?  'none' : 'all'}"
+                        style="background: transparent; border: none; color: #f0f0f0"><i
+                    class="mdi mdi-printer"></i><span
+                    jhiTranslate="ebwebApp.mBTellerPaper.print"></span>
+                </button>
+                <div ngbDropdownMenu aria-labelledby="dropdownPrint"
+                     [ngStyle]="{'color': isEdit ? '#959ea9': '#fff', 'pointer-events':  isEdit ?  'none' : 'all', 'padding': '0 !important'}">
+                    <button class="btn-dr-i hover-dr"
+                            (click)="CTKTExportPDF(false, REPORT.ChungTuKeToan)"><span
+                        jhiTranslate="ebwebApp.mBDeposit.financialPaper"></span></button>
+                    <button class="btn-dr-i hover-dr" style="border: none"
+                            *ngIf="currency?.currencyCode && (currency?.currencyCode !== account.organizationUnit.currencyID)"
+                            (click)="CTKTExportPDF(false, REPORT.ChungTuKeToanQuyDoi)"><span
+                        jhiTranslate="ebwebApp.mBDeposit.financialPaperQD"></span></button>
+                    <button class="btn-dr-i hover-dr" (click)="CTKTExportPDF(false, REPORT.PhieuThu)"><span
+                        jhiTranslate="ebwebApp.mCReceipt.print.mCReceipt"></span></button>
+                    <button class="btn-dr-i hover-dr"
+                            (click)="CTKTExportPDF(false, REPORT.PhieuThuA5)"><span
+                        jhiTranslate="ebwebApp.mCReceipt.print.mCReceiptA5"></span></button>
+
+
+                    <button class="btn-dr-i hover-dr" (click)="CTKTExportPDF(false, REPORT.GiayBaoCo)"><span
+                        jhiTranslate="ebwebApp.mBDeposit.debitPaper">giaays bao co</span></button>
+                    <button class="btn-dr-i hover-dr"
+                            *ngIf="!statusPurchase && ppDiscountReturn.isDeliveryVoucher && ppDiscountReturn.id"
+                            (click)="CTKTExportPDF(false, REPORT.PhieuXuatKho)"><span
+                        jhiTranslate="ebwebApp.outWard.billOutWrad">Phiếu xuất kho</span></button>
+                    <button class="btn-dr-i hover-dr" *ngIf="ppDiscountReturn.isBill && !statusPurchase"
+                            (click)="CTKTExportPDF(false, 10)"><span
+                        jhiTranslate="ebwebApp.sAInvoice.vatInvoice"></span></button>
+                    <button class="btn-dr-i hover-dr" *ngIf="ppDiscountReturn.isBill && !statusPurchase"
+                            (click)="CTKTExportPDF(false, 11)"><span
+                        jhiTranslate="ebwebApp.sAInvoice.saleInvoice"></span></button>
+                    <button class="btn-dr-i hover-dr"
+                            *ngIf="ppDiscountReturn.isAttachList && ppDiscountReturn.isBill && !statusPurchase"
+                            (click)="CTKTExportPDF(false, 13)"><span
+                        jhiTranslate="ebwebApp.sAInvoice.GoodsAndService"></span></button>
+                </div>
+            </div>
+            <div ngbDropdown class="d-inline-block" *ngIf="!statusPurchase">
+                <button id="dropdownM" ngbDropdownToggle
+                        style="background: transparent;border: none; color: #f0f0f0"><i
+                    class="mdi mdi-plus-circle"></i><span
+                    jhiTranslate="ebwebApp.saReturn.form"></span>
+                </button>
+                <div ngbDropdownMenu aria-labelledby="dropdownM" style="padding: 0 !important;">
+                    <button class="btn-dr-i" [class.active]="templateDVT"
+                            (click)="changeTemplate(true)"><span
+                        jhiTranslate="ebwebApp.saReturn.basicForm"></span></button>
+                    <button class="btn-dr-i" [class.active]="!templateDVT"
+                            (click)="changeTemplate(false)"><span
+                        jhiTranslate="ebwebApp.saReturn.moreForm"></span></button>
+                </div>
+            </div>
+            <a (click)="closeForm()" title="{{'ebwebApp.outWard.tooltipBack' | translate}}"><i
+                class="mdi mdi-window-close"></i> <span
+                jhiTranslate="ebwebApp.common.close"> đóng </span></a>
+        </div>
+        <!--                </div>-->
+        <!--            </div>-->
+        <!--        </div>-->
+    </div>
+
+    <div class="tool-navbar">
+        <div class="row" style="height: 32px;">
+            <div class="col-lg-6">
+                <div class="line-btn" style="margin-bottom: 4px">
+                    <div class="lbtn-action">
+                        <ul class="nav nav-tabs">
+                            <li [ngClass]="val === 1 ? 'active' : ''" (click)="changeActive(1)">
+                                <a [ngClass]="val === 1 ? 'active' : ''" data-toggle="tab" href="#home0"
+                                   jhiTranslate="ebwebApp.pPDiscountReturn.voucher">
+                                    hóa đơn
+                                </a>
+                            </li>
+                            <li *ngIf="option1" [ngClass]="val === 2 ? 'active' : ''" (click)="changeActive(2)">
+                                <a data-toggle="tab" href="#home1" [ngClass]="val === 2 ? 'active' : ''"
+                                   jhiTranslate="ebwebApp.pPDiscountReturn.deliveryBill">
+                                    kiểm hóa đơn
+                                </a>
+                            </li>
+                            <li *ngIf="option2" [ngClass]="val === 3 ? 'active' : ''" (click)="changeActive(3)">
+                                <a data-toggle="tab" href="#home2" [ngClass]="val === 3 ? 'active' : ''"
+                                   jhiTranslate="ebwebApp.common.bill" name="bill">
+                                    hóa đơn
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6" *ngIf="!statusPurchase">
+                <div class="row no-gutters" style="justify-content: flex-end;">
+                    <div class="row no-gutters" style="justify-content: flex-end;">
+                        <div class="col-lg-auto">
+                            <div class="form-check form-check-inline form-control checkBox">
+                                <input class="form-check-input" type="checkbox" id="inlineCheckbox2" value="option1"
+                                       name="option1"
+                                       [(ngModel)]="option1" (ngModelChange)="changeTab(true)" [tabindex]="1">
+                                <label class="form-check-label" for="inlineCheckbox2" style="font-size: 14px;"
+                                       jhiTranslate="ebwebApp.pPDiscountReturn.checkDeliveryBill">Kiểm phiế xuất
+                                    kho</label>
+                            </div>
+                        </div>
+                        <div class="col-lg-auto" [class.eb-read-only]="ppDiscountReturn.isExportInvoice"
+                             (click)="checkOption2()" [tabindex]="2">
+                            <div class="form-check form-check-inline form-control checkBox">
+                                <input class="form-check-input" type="checkbox" name="isBill1" id="inlineCheckbox3"
+                                       value="option2"
+                                       [(ngModel)]="option2" (ngModelChange)="changeTab()" [tabindex]="3">
+                                <label class="form-check-label" for="inlineCheckbox3" style="font-size: 14px;"
+                                       jhiTranslate="ebwebApp.pPDiscountReturn.invoiced">Lập kèm hóa đơn</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade in active show" *ngIf="val === 1" id="home0">
+        <div class="row no-gutters">
+            <div class="col-lg-9 pd-r-0 form-main-new">
+                <form>
+                    <h3 jhiTranslate="ebwebApp.common.generalInformation">Thông tin chung</h3>
+                    <div class="row no-gutters">
+                        <div class="col-lg-12">
+                            <div class="form-group row no-gutters">
+                                <label class="col-lg-2 col-form-label" jhiTranslate="ebwebApp.common.object">Đối
+                                    tượng</label>
+                                <combo-box style="" class="col-lg-3 padding pd-l-0 pr-0" id="field_creditCard"
+                                           name="accountingObject"
+                                           [dataList]="accountingObjects"
+                                           [nameCategory]="utilsService.NHA_CUNG_CAP"
+                                           [showIconPlus]="true"
+                                           [listColumns]="utilService.listColumnsAccountingObjects"
+                                           displayMember="accountingObjectCode"
+                                           valueName="id"
+                                           [headerColumns]="utilService.listHeaderColumnsAccountingObject"
+                                           [isObject]="true"
+                                           [isRequired]="checkDetailType"
+                                           [(ngModel)]="ppDiscountReturn.accountingObject"
+                                           [isOutTable]="true"
+                                           (ngModelChange)="selectAccountingObject()" [tabindex]="4"
+                                           (click)="saveParent()">
+                                </combo-box>
+                                <div class="col-lg-8 pd-l-0 last-div-1-1">
+                                    <input type="text" class="form-control form-control-sm" name="accountingObjectName"
+                                           [(ngModel)]="ppDiscountReturn.accountingObjectName"
+                                           (ngModelChange)="changeobjectname()" maxlength="512" [tabindex]="6">
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters">
+                                <label class="col-lg-2 col-form-label" jhiTranslate="ebwebApp.common.address">Địa
+                                    chỉ</label>
+                                <div class="col-lg-5 last-div-1-0">
+                                    <input type="text" class="form-control form-control-sm"
+                                           name="accountingObjectAddress"
+                                           [(ngModel)]="ppDiscountReturn.accountingObjectAddress"
+                                           (ngModelChange)="changeAdress()" maxlength="512" [tabindex]="6 ">
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters">
+                                <label class="col-lg-2 col-form-label" jhiTranslate="ebwebApp.common.taxCode">Mã số
+                                    thuế</label>
+                                <div class="col-lg-3 pd-l-0 pr-0">
+                                    <input type="text" class="form-control form-control-sm" name="textCode"
+                                           [(ngModel)]="ppDiscountReturn.companyTaxCode" maxlength="50"
+                                           (ngModelChange)="changeTaxCode()" [tabindex]="7">
+                                </div>
+                                <label class="col-lg-2 col-form-label text-left" *ngIf="!statusPurchase"
+                                       jhiTranslate="ebwebApp.pPDiscountReturn.contactName">Người nhận hàng</label>
+                                <label class="col-lg-2 col-form-label text-left" *ngIf="statusPurchase"
+                                       style="width: 100px; max-width: 100px !important;"
+                                       jhiTranslate="ebwebApp.pPDiscountReturn.contactName">Người nhận hàng</label>
+                                <div class="col-lg-11 pd-l-0 last-div-2-1" *ngIf="!statusPurchase">
+                                    <input type="text" class="form-control form-control-sm" name="contactName"
+                                           [(ngModel)]="ppDiscountReturn.contactName" maxlength="512"
+                                           (ngModelChange)="changeContactName()" [tabindex]="8">
+                                </div>
+                                <div class="col-lg-11 pd-l-0 last-div-2-1" *ngIf="statusPurchase"
+                                     style="max-width: calc(75% - 200px) !important;">
+                                    <input type="text" class="form-control form-control-sm" name="contactName"
+                                           [(ngModel)]="ppDiscountReturn.contactName" maxlength="512"
+                                           (ngModelChange)="changeContactName()" [tabindex]="8">
+                                </div>
+                            </div>
+
+                            <div class="form-group row no-gutters" *ngIf="!statusPurchase">
+                                <label class="col-lg-2 col-form-label" jhiTranslate="ebwebApp.pPDiscountReturn.reason">Diễn
+                                    giải</label>
+                                <div class="col-lg-7 pd-l-0 last-div-2-1"
+                                     style="max-width: calc(75% - 158px) !important;">
+                                    <input type="text" class="form-control form-control-sm" name="reasonQ"
+                                           maxlength="512" [(ngModel)]="ppDiscountReturn.reason"
+                                           (ngModelChange)="changeReason()" [tabindex]="9">
+                                </div>
+                                <label class="col-lg-2 col-form-label"
+                                       jhiTranslate="ebwebApp.pPDiscountReturn.employee">
+                                    Nhân viên thực hiện</label>
+                                <div class="col-lg-3 padding pd-l-0 pr-0 ng-untouched ng-pristine ng-valid" *ngIf="statusPurchase">
+                                    <combo-box style="width: 100%" class="col-lg-12 pl-0" id="implementatio_staff_purchase"
+                                               name="employee"
+                                               [dataList]="employees"
+                                               [listColumns]="utilService.listColumnsEmployees"
+                                               [nameCategory]="utilsService.NHAN_VIEN"
+                                               [showIconPlus]="true"
+                                               displayMember="accountingObjectCode"
+                                               valueName="id"
+                                               [headerColumns]="utilService.listHeaderColumnsEmployees"
+                                               [isObject]="false"
+                                               [(ngModel)]="ppDiscountReturn.employeeID"
+                                               [isOutTable]="true"
+                                               [tabindex]="10"
+                                               (click)="saveParent()">
+                                    </combo-box>
+                                </div>
+                                <div style="max-width: calc(25% - 43px) !important; margin-left: 21px; width: 100%" *ngIf="!statusPurchase">
+                                    <combo-box style="width: 100%" class="col-lg-12 pl-0" id="implementatio_staff"
+                                               name="employee"
+                                               [dataList]="employees"
+                                               [listColumns]="utilService.listColumnsEmployees"
+                                               [nameCategory]="utilsService.NHAN_VIEN"
+                                               [showIconPlus]="true"
+                                               displayMember="accountingObjectCode"
+                                               valueName="id"
+                                               [headerColumns]="utilService.listHeaderColumnsEmployees"
+                                               [isOutTable]="true"
+                                               [isObject]="false"
+                                               [(ngModel)]="ppDiscountReturn.employeeID" [tabindex]="10"
+                                               (click)="saveParent()">
+                                    </combo-box>
+                                </div>
+                            </div>
+                            <!--                            <div class="form-group row no-gutters" *ngIf="!statusPurchase">-->
+                            <!--                                <div class="col-lg-2 col-form-label">-->
+                            <!--                                    <label class="form-check-label"-->
+                            <!--                                           style="font-size: 14px; font-weight: 100; margin-left: 0;-->
+                            <!--                                            white-space: nowrap;transform: translateY(-3px);"-->
+                            <!--                                           jhiTranslate="ebwebApp.pPDiscountReturn.isAttachList">bảng kê</label>-->
+                            <!--                                </div>-->
+                            <!--                                <div _ngcontent-c12="" class="col-lg-3 pd-l-0 form-inline">-->
+                            <!--                                    <div class="custom-control custom-checkbox">-->
+                            <!--                                        <input type="checkbox" class="custom-control-input" id="field_printWith"-->
+                            <!--                                               name="printWith1"-->
+                            <!--                                               [tabindex]="10" [(ngModel)]="ppDiscountReturn.isAttachList"-->
+                            <!--                                               (change)="changeIsAttachList()" [tabindex]="11">-->
+                            <!--                                        <label class="custom-control-label" for="field_printWith"></label>-->
+                            <!--                                    </div>-->
+                            <!--                                    <label class="col-form-label" style="padding-left: 8px; padding-right: 8px"-->
+                            <!--                                           jhiTranslate="ebwebApp.saBill.no"-->
+                            <!--                                           for="field_no">no</label>-->
+                            <!--                                    <input type="text" class="form-control form-control-sm" name="no"-->
+                            <!--                                           id="field_no"[readOnly]="!ppDiscountReturn.isAttachList"-->
+                            <!--                                           style="width: calc(100% - 55px);"-->
+                            <!--                                           (ngModelChange)="changeListNo()"-->
+                            <!--                                           [(ngModel)]="ppDiscountReturn.listNo" maxlength="512"-->
+                            <!--                                           [tabindex]="12"/>-->
+                            <!--                                </div>-->
+
+                            <!--                                <label class="col-form-label text-left" style="width: 80px"-->
+                            <!--                                       jhiTranslate="ebwebApp.pPDiscountReturn.listDate"></label>-->
+                            <!--                                <eb-date-picker [disabled]="!ppDiscountReturn.isAttachList"-->
+                            <!--                                                [(ngModel)]="ppDiscountReturn.listDate" [tabindex]="13"-->
+                            <!--                                                name="field_date" style="width: calc(50% - 240px); padding-top: 2px"></eb-date-picker>-->
+                            <!--                                <label style="max-width: 100px; width: 97px; padding-left: 8px; padding-top: 6px !important;"-->
+                            <!--                                       jhiTranslate="ebwebApp.pPDiscountReturn.listCommonNameInventory">Mặt hàng-->
+                            <!--                                    chung</label>-->
+                            <!--                                <div style="width: calc(25% - 43px); margin-left: 5px; padding-top: 2px">-->
+                            <!--                                    <input type="text" class="form-control form-control-sm"-->
+                            <!--                                           name="listCommonNameInventory" maxlength="512"-->
+                            <!--                                           [readOnly]="!ppDiscountReturn.isAttachList"-->
+                            <!--                                           [(ngModel)]="ppDiscountReturn.listCommonNameInventory"-->
+                            <!--                                           (ngModelChange)="changeListCommonNameInventory()" [tabindex]="14">-->
+                            <!--                                </div>-->
+                            <!--                            </div>-->
+
+                            <div class="form-group row no-gutters" *ngIf="statusPurchase">
+                                <label class="col-lg-2 col-form-label" jhiTranslate="ebwebApp.pPDiscountReturn.reason">Diễn
+                                    giải</label>
+                                <div class="col-lg-10 pd-l-0 last-div-1-0">
+                                    <input type="text" class="form-control form-control-sm" name="reasonQ"
+                                           maxlength="512" [(ngModel)]="ppDiscountReturn.reason"
+                                           (ngModelChange)="changeReason()" [tabindex]="15">
+                                </div>
+                            </div>
+
+                            <div class="form-group row no-gutters" *ngIf="statusPurchase">
+                                <label class="col-lg-2 col-form-label"
+                                       jhiTranslate="ebwebApp.pPDiscountReturn.employee">
+                                    Nhân viên thực hiện</label>
+                                <div class="col-lg-3 pd-l-0">
+                                    <combo-box style="" class="col-lg-12 pl-0" id="employee2"
+                                               name="employee"
+                                               [dataList]="employees"
+                                               [isOutTable]="true"
+                                               [listColumns]="utilService.listColumnsEmployees"
+                                               [nameCategory]="utilsService.NHAN_VIEN"
+                                               [showIconPlus]="true"
+                                               displayMember="accountingObjectCode"
+                                               valueName="id"
+                                               [headerColumns]="utilService.listHeaderColumnsEmployees"
+                                               [isObject]="false"
+                                               [(ngModel)]="ppDiscountReturn.employeeID" [tabindex]="16"
+                                               (click)="saveParent()">>
+                                    </combo-box>
+                                </div>
+                                <label class="col-lg-2 col-form-label text-left"
+                                       style="width: 100px; max-width: 100px !important;"
+                                       jhiTranslate="ebwebApp.pPDiscountReturn.dueDate">Hạn thanh toán</label>
+                                <div class="col-lg-8 pr-0 last-div-2-1" style="max-width: calc(75% - 200px)!important;">
+                                    <eb-date-picker [(ngModel)]="ppDiscountReturn.dueDate" [tabindex]="17"
+                                                    name="field_date"></eb-date-picker>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-lg-4 pd-only-l-10 form-main-new">
+                <form style="padding-bottom: 8px">
+                    <h3 jhiTranslate="ebwebApp.common.license">Chứng từ</h3>
+                    <div class="row no-gutters">
+                        <div class="col-lg-12">
+                            <div class="form-group row no-gutters">
+                                <label class="col-lg-4 col-form-label" jhiTranslate="ebwebApp.pPDiscountReturn.noFBook">Số
+                                    chứng từ</label>
+                                <div class="col-lg-8 pd-l-0 last-div-1-0">
+                                    <input type="text" class="form-control form-control-sm" name="noFBook"
+                                           [(ngModel)]="noBookVoucher" required (ngModelChange)="checknoFBook()"
+                                           [tabindex]="18">
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters">
+                                <label class="col-lg-4 col-form-label"
+                                       jhiTranslate="ebwebApp.pPDiscountReturn.date"></label>
+                                <div class="col-lg-8 pd-l-0 last-div-1-0">
+                                    <eb-date-picker [(ngModel)]="ppDiscountReturn.date" name="field_date"
+                                                    [tabindex]="19"
+                                                    (ngModelChange)="changeDate() "></eb-date-picker>
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters">
+                                <label class="col-lg-4 col-form-label"
+                                       jhiTranslate="ebwebApp.pPDiscountReturn.postedDate"></label>
+                                <div class="col-lg-8 pd-l-0 last-div-1-0">
+                                    <eb-date-picker [(ngModel)]="ppDiscountReturn.postedDate" name="postedDate"
+                                                    [tabindex]="20"></eb-date-picker>
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters">
+                                <label class="col-lg-4 col-form-label"
+                                       jhiTranslate="ebwebApp.pPDiscountReturn.currency">Loại
+                                    tiền</label>
+                                <div class="col-lg-3 pd-l-0 form-group">
+                                    <combo-box class="col-lg-4 pl-0" id="currency2"
+                                               name="currency2"
+                                               [dataList]="currencys"
+                                               [listColumns]="utilService.listColumnsCurrency"
+                                               displayMember="currencyCode"
+                                               valueName="currencyCode"
+                                               [headerColumns]="utilService.listHeaderColumnsCurrency"
+                                               [isObject]="true"
+                                               [(ngModel)]="currency"
+                                               [isRequired]="true"
+                                               [isOutTable]="true"
+                                               (ngModelChange)="selectCurrencyObjects()" [tabindex]="21">
+                                    </combo-box>
+                                </div>
+                                <label style="width: 45px" class="col-form-label"
+                                       jhiTranslate="ebwebApp.pPDiscountReturn.exchangeRate">Tỷ giá</label>
+                                <div style="max-width: calc(75% - 148px)!important; width: 100%; padding: 0" class="col-form-label"
+                                     [class.eb-read-only]="currency?.currencyCode && (currency?.currencyCode === account.organizationUnit.currencyID)">
+                                    <input type="text" class="form-control form-control-sm" name="exchangeRate"
+                                           [readOnly]="currency?.currencyCode && (currency?.currencyCode === account.organizationUnit.currencyID)"
+                                           [(ngModel)]="ppDiscountReturn.exchangeRate"
+                                           (ngModelChange)="sumAllList(true)"
+                                           ebCurrencyMask required
+                                           [systemOptions]="account?.systemOption" [type]="4" [tabindex]="22"
+                                           >
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters" *ngIf="authoritiesNoMBook">
+                                <label class="col-lg-4 col-form-label"
+                                       jhiTranslate="ebwebApp.pPDiscountReturn.typeLedger">Vào
+                                    sổ</label>
+                                <div class="col-lg-8 pd-l-0 last-div-1-0">
+                                    <select class="form-control" name="typeLedger" id="typeLedger"
+                                            [(ngModel)]="ppDiscountReturn.typeLedger" [tabindex]="23">
+                                        <option [value]="0" *ngIf="!sessionWork"
+                                                jhiTranslate="ebwebApp.pPDiscountReturn.nofBookName">Sổ tài chính
+                                        </option>
+                                        <option [value]="1" *ngIf="sessionWork"
+                                                jhiTranslate="ebwebApp.pPDiscountReturn.noMBookName">Sổ quản trị
+                                        </option>
+                                        <option [value]="2"
+                                                jhiTranslate="ebwebApp.pPDiscountReturn.noAllBookName">Cả 2 sổ
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane" *ngIf="val === 2 && option1" id="home1" style="padding-bottom: 10px">
+        <div class="row no-gutters">
+            <div class="col-lg-9 pd-r-0 form-main-new">
+                <form>
+                    <h3 jhiTranslate="ebwebApp.common.generalInformation">Thông tin chung</h3>
+                    <div class="row no-gutters">
+                        <div class="col-lg-12">
+                            <div class="form-group row no-gutters">
+                                <label class="col-lg-2 col-form-label" jhiTranslate="ebwebApp.common.object">Đối
+                                    tượng</label>
+                                <combo-box class="col-lg-3 padding pd-l-0 pr-0" id="accountingObject3"
+                                           name="accountingObject3"
+                                           [dataList]="accountingObjects"
+                                           [listColumns]="utilService.listColumnsAccountingObjects"
+                                           [nameCategory]="utilsService.NHA_CUNG_CAP"
+                                           [showIconPlus]="true"
+                                           displayMember="accountingObjectCode"
+                                           valueName="id"
+                                           [headerColumns]="utilService.listHeaderColumnsAccountingObject"
+                                           [isObject]="true"
+                                           [isOutTable]="true"
+                                           [isRequired]="checkDetailType"
+                                           [(ngModel)]="ppDiscountReturn.accountingObject"
+                                           (ngModelChange)="selectAccountingObject()" [tabindex]="24">
+                                </combo-box>
+                                <div class="col-lg-8 pd-l-0 last-div-1-1">
+                                    <input type="text" class="form-control form-control-sm" name="accountingObjectName"
+                                           [(ngModel)]="ppDiscountReturn.accountingObjectName" maxlength="512"
+                                           [tabindex]="25">
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters">
+                                <label class="col-lg-2 col-form-label" jhiTranslate="ebwebApp.common.address">Địa
+                                    chỉ</label>
+                                <div class="col-lg-5 last-div-1-0">
+                                    <input type="text" class="form-control form-control-sm"
+                                           name="accountingObjectAddress"
+                                           [(ngModel)]="ppDiscountReturn.accountingObjectAddress" maxlength="512"
+                                           [tabindex]="26">
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters">
+                                <label class="col-lg-2 col-form-label"
+                                       jhiTranslate="ebwebApp.pPDiscountReturn.contactName">người nhận hàng</label>
+                                <div class="col-lg-7 pd-l-0 last-div-2-1">
+                                    <input type="text" class="form-control form-control-sm" name="contactName"
+                                           maxlength="512" [(ngModel)]="ppDiscountReturn.contactName" [tabindex]="27">
+                                </div>
+                                <label class="col-lg-2 col-form-label"
+                                       jhiTranslate="ebwebApp.pPDiscountReturn.employee">
+                                    Nhân viên thực hiện</label>
+                                <div class="col-lg-3">
+                                    <combo-box style="" class="col-lg-12 pl-0" id="implementatio_sta"
+                                               name="employee"
+                                               [dataList]="employees"
+                                               [listColumns]="utilService.listColumnsEmployees"
+                                               [nameCategory]="utilsService.NHAN_VIEN"
+                                               [showIconPlus]="true"
+                                               displayMember="accountingObjectCode"
+                                               valueName="id"
+                                               [headerColumns]="utilService.listHeaderColumnsEmployees"
+                                               [isOutTable]="true"
+                                               [isObject]="false"
+                                               [(ngModel)]="ppDiscountReturn.employeeID"
+                                               (click)="saveParent()" [tabindex]="28">
+                                    </combo-box>
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters">
+                                <label class="col-lg-2 col-form-label"
+                                       jhiTranslate="ebwebApp.pPDiscountReturn.reasonForExport">Diễn
+                                    giải</label>
+                                <div class="col-lg-5 last-div-1-0">
+                                    <input type="text" class="form-control form-control-sm" name="reason"
+                                           maxlength="512" [(ngModel)]="rsInwardOutward.reason"
+                                           (ngModelChange)="changeStatusReason()" [tabindex]="29">
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters">
+                                <label class="col-lg-2 col-form-label"
+                                       jhiTranslate="ebwebApp.pPDiscountReturn.numberAttach">kèm theo</label>
+                                <div class="col-lg-5 last-div-1-0">
+                                    <input type="text" class="form-control form-control-sm" name="numberAttach"
+                                           [(ngModel)]="rsInwardOutward.numberAttach" [tabindex]="30">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-lg-4 pd-only-l-10 form-main-new">
+                <form style="padding-bottom: 8px">
+                    <h3 jhiTranslate="ebwebApp.common.license">Chứng từ</h3>
+                    <div class="row no-gutters">
+                        <div class="col-lg-12">
+                            <div class="form-group row no-gutters">
+                                <label class="col-lg-4 col-form-label" jhiTranslate="ebwebApp.pPDiscountReturn.noFBook">Số
+                                    chứng từ</label>
+                                <div class="col-lg-8 pd-l-0 last-div-1-0">
+                                    <input type="text" class="form-control form-control-sm" name="noFBook1"
+                                           [(ngModel)]="noBookRSI" required="" (click)="checknoFBook()" [tabindex]="31">
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters">
+                                <!--                                <label class="col-lg-4 col-form-label"-->
+                                <!--                                       jhiTranslate="ebwebApp.pPDiscountReturn.date"-->
+                                <!--                                       for="field_date2">Ngày chứng từ</label>-->
+
+                                <!--                                <div class="col-lg-6" style="padding-right: 1px;">-->
+                                <!--                                    <input id="field_date2" type="text" placeholder="dd/MM/yyyy"-->
+                                <!--                                           class="form-control form-control-sm"-->
+
+                                <!--                                           name="date" ngbDatepicker #dateDp2="ngbDatepicker"-->
+                                <!--                                           [(ngModel)]="ppDiscountReturn.date" (ngModelChange)="changeDate()"-->
+                                <!--                                           required/>-->
+                                <!--                                </div>-->
+                                <!--                                <div class="input-group-append">-->
+                                <!--                                    <button type="button" class="btn btn-secondary"-->
+                                <!--                                            style="height: 32px;line-height: 0px;"-->
+                                <!--                                            (click)="dateDp2.toggle()" name="btn-Date">-->
+                                <!--                                        <fa-icon-->
+                                <!--                                            [icon]="'calendar-alt'"></fa-icon>-->
+                                <!--                                    </button>-->
+                                <!--                                </div>-->
+                                <label class="col-lg-4 col-form-label"
+                                       jhiTranslate="ebwebApp.pPDiscountReturn.date"></label>
+                                <div class="col-lg-8 pd-l-0 last-div-1-0">
+                                    <eb-date-picker [(ngModel)]="ppDiscountReturn.date" name="dateRSI" [tabindex]="32"
+                                                    (ngModelChange)="changeDate()"></eb-date-picker>
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters">
+                                <label class="col-lg-4 col-form-label"
+                                       jhiTranslate="ebwebApp.pPDiscountReturn.postedDate"></label>
+                                <div class="col-lg-8 pd-l-0 last-div-1-0">
+                                    <eb-date-picker [(ngModel)]="ppDiscountReturn.postedDate"
+                                                    [tabindex]="33"
+                                                    name="postedDateRSI"></eb-date-picker>
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters">
+                                <label class="col-lg-4 col-form-label"
+                                       jhiTranslate="ebwebApp.pPDiscountReturn.currency">Loại
+                                    tiền</label>
+                                <div class="col-lg-3 pd-l-0 form-group">
+                                    <combo-box class="col-lg-4 pl-0" id="currency1"
+                                               name="currency1"
+                                               [dataList]="currencys"
+                                               [listColumns]="utilService.listColumnsCurrency"
+                                               displayMember="currencyCode"
+                                               valueName="currencyCode"
+                                               [headerColumns]="utilService.listHeaderColumnsCurrency"
+                                               [isObject]="true"
+                                               [isRequired]="true"
+                                               [isOutTable]="true"
+                                               [(ngModel)]="currency"
+                                               (ngModelChange)="selectCurrencyObjects()" [tabindex]="34">
+                                    </combo-box>
+                                </div>
+                                <label style="width: 45px" class="col-form-label"
+                                       jhiTranslate="ebwebApp.pPDiscountReturn.exchangeRate">Tỷ giá</label>
+                                <div style="max-width: calc(75% - 148px)!important; width: 100%; padding: 0" class="col-form-label"
+                                     [class.eb-read-only]="currency?.currencyCode && (currency?.currencyCode === account.organizationUnit.currencyID)">
+                                    <input type="text" class="form-control form-control-sm" name="exchangeRate"
+                                           [readOnly]="currency?.currencyCode && (currency?.currencyCode === account.organizationUnit.currencyID)"
+                                           [(ngModel)]="ppDiscountReturn.exchangeRate"
+                                           (ngModelChange)="changeExchangeRate()"
+                                           ebCurrencyMask
+                                           [systemOptions]="account?.systemOption" [type]="4"
+                                           [tabindex]="35" required>
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters" *ngIf="authoritiesNoMBook">
+                                <label class="col-lg-4 col-form-label"
+                                       jhiTranslate="ebwebApp.pPDiscountReturn.typeLedger">Vào
+                                    sổ</label>
+                                <div class="col-lg-8 pd-l-0 last-div-1-0">
+                                    <select class="form-control" name="typeLedger1" id="typeLedger1"
+                                            [(ngModel)]="ppDiscountReturn.typeLedger" [tabindex]="36">
+                                        <option value="0" *ngIf="!sessionWork"
+                                                jhiTranslate="ebwebApp.pPDiscountReturn.nofBookName">Sổ tài chính
+                                        </option>
+                                        <option value="1" *ngIf="sessionWork"
+                                                jhiTranslate="ebwebApp.pPDiscountReturn.noMBookName">Sổ quản trị
+                                        </option>
+                                        <option value="2" [selected]
+                                                jhiTranslate="ebwebApp.pPDiscountReturn.noAllBookName">Cả 2 sổ
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane pb-10" *ngIf="val === 3 && option2" id="home2">
+        <div class="row no-gutters">
+            <div class="col-lg-9 pd-r-0 form-main-new">
+                <form>
+                    <h3 jhiTranslate="ebwebApp.common.generalInformation">Thông tin chung</h3>
+                    <div class="row no-gutters">
+                        <div class="col-lg-12">
+                            <div class="form-group row no-gutters">
+                                <label class="col-lg-2 col-form-label" jhiTranslate="ebwebApp.common.object">Đối
+                                    tượng</label>
+                                <combo-box class="col-lg-3 padding padding pd-l-0 pr-0" id="field_creditCardx"
+                                           name="accountingObject"
+                                           [dataList]="accountingObjects"
+                                           [listColumns]="utilService.listColumnsAccountingObjects"
+                                           [nameCategory]="utilsService.NHA_CUNG_CAP"
+                                           [showIconPlus]="true"
+                                           displayMember="accountingObjectCode"
+                                           valueName="id"
+                                           [headerColumns]="utilService.listHeaderColumnsAccountingObject"
+                                           [isObject]="true"
+                                           [isOutTable]="true"
+                                           [isRequired]="checkDetailType"
+                                           [(ngModel)]="ppDiscountReturn.accountingObject"
+                                           (ngModelChange)="selectAccountingObject()" [tabindex]="37">
+                                </combo-box>
+                                <div class="col-lg-8 pd-l-0 last-div-1-1">
+                                    <input type="text" class="form-control form-control-sm" name="accountingObjectName"
+                                           [(ngModel)]="ppDiscountReturn.accountingObjectName" maxlength="512"
+                                           [tabindex]="38">
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters">
+                                <label class="col-lg-2 col-form-label" jhiTranslate="ebwebApp.common.address">Địa
+                                    chỉ</label>
+                                <div class="col-lg-5 last-div-1-0">
+                                    <input type="text" class="form-control form-control-sm"
+                                           name="accountingObjectAddress" maxlength="512"
+                                           [(ngModel)]="ppDiscountReturn.accountingObjectAddress" [tabindex]="39">
+                                </div>
+                            </div>
+
+                            <div class="form-group row no-gutters">
+                                <label class="col-lg-2 col-form-label" jhiTranslate="ebwebApp.common.taxCode">Mã số
+                                    thuế</label>
+                                <div class="col-lg-3 pd-l-0 pr-0">
+                                    <input type="text" class="form-control form-control-sm" name="textCode"
+                                           maxlength="50" [(ngModel)]="ppDiscountReturn.companyTaxCode" [tabindex]="40">
+                                </div>
+                                <label class="col-lg-2 col-form-label text-left" *ngIf="statusPurchase"
+                                       style="width: 100px !important; max-width: 100px !important;"
+                                       jhiTranslate="ebwebApp.pPDiscountReturn.contactName">Người nhận hàng</label>
+                                <label class="col-lg-2 col-form-label text-left" *ngIf="!statusPurchase"
+                                       style="width: 80px !important; max-width: 80px !important;"
+                                       jhiTranslate="ebwebApp.pPDiscountReturn.contactName">Người nhận hàng</label>
+                                <div class="col-lg-11 pd-l-0 last-div-2-1" *ngIf="statusPurchase"
+                                     style="max-width: calc(75% - 200px) !important">
+                                    <input type="text" class="form-control form-control-sm" name="contactName"
+                                           maxlength="512" [(ngModel)]="ppDiscountReturn.contactName" [tabindex]="41">
+                                </div>
+                                <div class="col-lg-11 pd-l-0 last-div-2-1" *ngIf="!statusPurchase"
+                                     style="max-width: calc(75% - 180px) !important">
+                                    <input type="text" class="form-control form-control-sm" name="contactName"
+                                           maxlength="512" [(ngModel)]="ppDiscountReturn.contactName" [tabindex]="41">
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters" *ngIf="!statusPurchase">
+                                <label class="col-lg-2 col-form-label">Số tài khoản</label>
+                                <div class="col-lg-3 pd-l-0 pr-0">
+                                    <combo-box style="" class="col-lg-4 pl-0" id="accountingObjectBankAccount1"
+                                               name="accountingObjectBankAccount"
+                                               [dataList]="accountingObjectBankAccountList"
+                                               [listColumns]="utilService.listColumnsAccountingObjectBankAccount"
+                                               displayMember="bankAccount"
+                                               valueName="id"
+                                               [headerColumns]="utilService.listHeaderColumnsAccountingObjectBankAccount"
+                                               [isObject]="true"
+                                               [isOutTable]="true"
+                                               [(ngModel)]="accountingObjectBankAccount"
+                                               (ngModelChange)="selectAccountingObjectBankAccount()" [tabindex]="42">
+                                    </combo-box>
+                                </div>
+                                <label class="col-lg-2 col-form-label text-left"
+                                       for="accountingObjectBankName"
+                                       jhiTranslate="ebwebApp.pPDiscountReturn.accountingObjectBankName">Tên ngân
+                                    hàng</label>
+                                <div class="col-lg-2">
+                                    <input type="text" class="form-control form-control-sm"
+                                           name="accountingObjectBankName"
+                                           id="accountingObjectBankName"
+                                           [(ngModel)]="ppDiscountReturn.accountingObjectBankName"
+                                           maxlength="512" [tabindex]="43"/>
+                                </div>
+                                <label class="col-lg-2 pl-0 col-form-label text-left"
+                                       jhiTranslate="ebwebApp.pPDiscountReturn.employee">
+                                    Nhân viên thực hiện</label>
+                                <div class="col-lg-4 pd-l-0 last-div-3-2">
+                                    <combo-box style="" class="col-lg-4 pl-0" id="employee1"
+                                               name="employee"
+                                               [dataList]="employees"
+                                               [listColumns]="utilService.listColumnsEmployees"
+                                               [nameCategory]="utilsService.NHAN_VIEN"
+                                               [showIconPlus]="true"
+                                               displayMember="accountingObjectCode"
+                                               valueName="id"
+                                               [headerColumns]="utilService.listHeaderColumnsEmployees"
+                                               [isOutTable]="true"
+                                               [isObject]="false"
+                                               [(ngModel)]="ppDiscountReturn.employeeID"
+                                               (click)="saveParent()" [tabindex]="44">
+                                    </combo-box>
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters mb-0">
+                                <label class="col-lg-2 col-form-label" jhiTranslate="ebwebApp.pPDiscountReturn.reason">Diễn
+                                    giải</label>
+                                <div class="col-lg-5 last-div-1-0">
+                                    <input type="text" class="form-control form-control-sm" name="reason"
+                                           maxlength="512"
+                                           [(ngModel)]="!statusPurchase ? saBill.reason : ppDiscountReturn.reason" (ngModelChange)="changeStatusReason()"
+                                           [tabindex]="45">
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters m-0" *ngIf="!statusPurchase">
+                                <div class="col-lg-2 col-form-label position-relative">
+                                    <label class="form-check-label"
+                                           style="font-size: 14px; font-weight: 100; margin-left: 0;
+                                            white-space: nowrap;transform: translateY(-3px); position: absolute; bottom: 5px"
+                                           jhiTranslate="ebwebApp.saBill.printWith">bảng kê</label>
+                                </div>
+                                <div class="col-lg-3 pd-l-0 form-inline">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="field_printWith1"
+                                               name="field_printWith1"
+                                               [tabindex]="46" [(ngModel)]="ppDiscountReturn.isAttachList"
+                                               (change)="changeIsAttachList()">
+                                        <label class="custom-control-label" for="field_printWith1"></label>
+                                    </div>
+                                    <label class="col-form-label"
+                                           style="padding-left: 8px; padding-right: 8px; margin-bottom: 0; padding-bottom: 0"
+                                           jhiTranslate="ebwebApp.saBill.no"
+                                           for="field_no111">no</label>
+                                    <input type="text" class="form-control form-control-sm" name="no"
+                                           id="field_no111" [readOnly]="!ppDiscountReturn.isAttachList"
+                                           style="width: calc(100% - 57px)"
+                                           (ngModelChange)="changeListNo()"
+                                           maxLength="25"
+                                           [(ngModel)]="ppDiscountReturn.listNo" maxlength="512"
+                                           [tabindex]="47"/>
+                                </div>
+
+                                <div class="col-lg-2 col-form-label">
+                                    <label class="col-lg-4 col-form-label text-left"
+                                           jhiTranslate="ebwebApp.pPDiscountReturn.listDate"></label>
+                                </div>
+                                <div class="col-lg-2 m-auto" [class.disable-input]="!ppDiscountReturn.isAttachList">
+                                    <eb-date-picker [disabled]="!ppDiscountReturn.isAttachList"
+                                                    [(ngModel)]="ppDiscountReturn.listDate" [tabindex]="48"
+                                                    name="field_date"></eb-date-picker>
+                                </div>
+                                <label class="col-lg-2 col-form-label m-auto"
+                                       jhiTranslate="ebwebApp.pPDiscountReturn.listCommonNameInventory">Mặt hàng
+                                    chung</label>
+                                <div class="col-lg-4 pd-l-0 last-div-3-2 m-auto">
+                                    <input type="text" class="form-control form-control-sm"
+                                           name="listCommonNameInventory" maxlength="512"
+                                           [readOnly]="!ppDiscountReturn.isAttachList"
+                                           [(ngModel)]="ppDiscountReturn.listCommonNameInventory"
+                                           (ngModelChange)="changeListCommonNameInventory()" [tabindex]="49">
+                                </div>
+                            </div>
+
+                            <div class="form-group row no-gutters" *ngIf="statusPurchase">
+                                <label class="col-lg-2 col-form-label"
+                                       jhiTranslate="ebwebApp.pPDiscountReturn.employee">
+                                    Nhân viên thực hiện</label>
+                                <div style="max-width: calc(25% - 43px) !important; margin-left: 21px; width: 100%" *ngIf="!statusPurchase">
+                                    <combo-box style="" class="col-lg-12 pl-0" id="employeeInvoice"
+                                               name="employee"
+                                               [dataList]="employees"
+                                               [listColumns]="utilService.listColumnsEmployees"
+                                               [nameCategory]="utilsService.NHAN_VIEN"
+                                               [showIconPlus]="true"
+                                               displayMember="accountingObjectCode"
+                                               valueName="id"
+                                               [headerColumns]="utilService.listHeaderColumnsEmployees"
+                                               [isOutTable]="true"
+                                               [isObject]="false"
+                                               [(ngModel)]="ppDiscountReturn.employeeID"
+                                               (click)="saveParent()"
+                                               [tabindex]="50">
+                                    </combo-box>
+                                </div>
+                                <div class="col-lg-3 padding pd-l-0 pr-0 ng-untouched ng-pristine ng-valid" *ngIf="statusPurchase">
+                                    <combo-box style="" class="col-lg-12 pl-0" id="employeeInvoice_pucharse"
+                                               name="employee"
+                                               [dataList]="employees"
+                                               [listColumns]="utilService.listColumnsEmployees"
+                                               [nameCategory]="utilsService.NHAN_VIEN"
+                                               [showIconPlus]="true"
+                                               displayMember="accountingObjectCode"
+                                               valueName="id"
+                                               [headerColumns]="utilService.listHeaderColumnsEmployees"
+                                               [isOutTable]="true"
+                                               [isObject]="false"
+                                               [(ngModel)]="ppDiscountReturn.employeeID"
+                                               (click)="saveParent()"
+                                               [tabindex]="50">
+                                    </combo-box>
+                                </div>
+                                <label class="col-lg-2 col-form-label text-left"
+                                       style="width: 100px; max-width: 100px !important;"
+                                       jhiTranslate="ebwebApp.pPDiscountReturn.dueDate"></label>
+                                <div class="col-lg-8 pr-0 last-div-2-1" style="max-width: calc(75% - 200px)!important;">
+                                    <eb-date-picker [(ngModel)]="ppDiscountReturn.dueDate" name="field_date"
+                                                    [tabindex]="51"></eb-date-picker>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-lg-4 pd-only-l-10 form-main-new">
+                <form>
+                    <h3 jhiTranslate="ebwebApp.saBill.invoice.title">Hóa đơn</h3>
+                    <div class="row no-gutters">
+                        <div class="col-lg-12">
+                            <div class="form-group row no-gutters">
+                                <label class="col-lg-4 col-form-label"
+                                       jhiTranslate="ebwebApp.saBill.invoice.template"></label>
+                                <div class="col-lg-8 pd-l-0 last-div-1-0" *ngIf="!statusPurchase">
+                                    <combo-box id="field_template"
+                                               name="template"
+                                               [dataList]="templates"
+                                               [isOutTable]="true"
+                                               [listColumns]="['invoiceFormName', 'invoiceTemplate', 'invoiceSeries']"
+                                               displayMember="invoiceTemplate"
+                                               valueName="id"
+                                               [headerColumns]="['Hình thức HĐ','Mẫu số HĐ', 'Ký hiệu HĐ']"
+                                               [(ngModel)]="template"
+                                               [isObject]="true"
+                                               (ngModelChange)="selectTemplate()" [tabindex]="52">
+                                    </combo-box>
+                                </div>
+                                <div class="col-lg-8 pd-l-0 last-div-1-0" *ngIf="statusPurchase">
+                                    <input type="text" [(ngModel)]="ppDiscountReturn.invoiceTemplate"
+                                           class="form-control form-control-sm" name="invoiceTemplateReturn"
+                                           [tabindex]="53">
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters" *ngIf="!statusPurchase">
+                                <label class="col-lg-4 col-form-label"
+                                       jhiTranslate="ebwebApp.saBill.invoice.series"></label>
+                                <div class="col-lg-8 pd-l-0 last-div-1-0">
+                                    <input type="text" [(ngModel)]="saBill.invoiceSeries" readonly
+                                           class="form-control form-control-sm" name="invoiceSeries" [tabindex]="54">
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters" *ngIf="statusPurchase">
+                                <label class="col-lg-4 col-form-label"
+                                       jhiTranslate="ebwebApp.saBill.invoice.series"></label>
+                                <div class="col-lg-8 pd-l-0 last-div-1-0">
+                                    <input type="text" [(ngModel)]="ppDiscountReturn.invoiceSeries"
+                                           class="form-control form-control-sm" name="invoiceSeriesReturn"
+                                           [tabindex]="55">
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters" *ngIf="!statusPurchase"
+                                 [class.eb-read-only]="isRequiredInvoiceNo && saBill.invoiceForm === 0">
+                                <label class="col-lg-4 col-form-label"
+                                       jhiTranslate="ebwebApp.saBill.invoice.no"></label>
+                                <div class="col-lg-8 pd-l-0 last-div-1-0">
+                                    <input type="number" [(ngModel)]="saBill.invoiceNo"
+                                           class="form-control form-control-sm" name="invoiceNo" maxlength="7"
+                                           (blur)="checkInvoiceNo()"
+                                           [readOnly]="isRequiredInvoiceNo && saBill.invoiceForm === 0" [tabindex]="56">
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters" *ngIf="statusPurchase">
+                                <label class="col-lg-4 col-form-label"
+                                       jhiTranslate="ebwebApp.saBill.invoice.no"></label>
+                                <div class="col-lg-8 pd-l-0 last-div-1-0">
+                                    <input type="text" [(ngModel)]="ppDiscountReturn.invoiceNo"
+                                           class="form-control form-control-sm" name="invoiceNoReturn" maxlength="25"
+                                           [tabindex]="57">
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters" *ngIf="!statusPurchase">
+                                <label class="col-lg-4 col-form-label"
+                                       jhiTranslate="ebwebApp.saBill.invoice.date"></label>
+                                <div class="col-lg-8 pd-l-0 last-div-1-0">
+                                    <eb-date-picker [(ngModel)]="saBill.invoiceDate"
+                                                    [minDate]="getFromToStr(this.startUsing, true)" [tabindex]="58"
+                                                    [isRequired]="true"
+                                                    [isTime]="true"
+                                                    [isSecond]="true"
+                                                    (ngModelChange)="changeInvoiceDateQ()"
+                                                    name="invoiceDate"></eb-date-picker>
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters" *ngIf="statusPurchase">
+                                <label class="col-lg-4 col-form-label"
+                                       jhiTranslate="ebwebApp.saBill.invoice.date"></label>
+                                <div class="col-lg-8 pd-l-0 last-div-1-0">
+                                    <eb-date-picker [(ngModel)]="ppDiscountReturn.invoiceDate"
+                                                    [minDate]="getFromToStr(this.startUsing, true)" [tabindex]="59"
+                                                    name="invoiceDateReturn"></eb-date-picker>
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters" *ngIf="!statusPurchase">
+                                <label class="col-lg-4 col-form-label"
+                                       jhiTranslate="ebwebApp.saBill.invoice.paymentMethod"></label>
+                                <div class="col-lg-8 pd-l-0 last-div-1-0">
+                                    <combo-box
+                                        [dataList]="paymentMethod"
+                                        [listColumns]="['data']"
+                                        displayMember="data"
+                                        valueName="data"
+                                        [headerColumns]="['Dữ liệu']"
+                                        [isObject]="false"
+                                        [(ngModel)]="saBill.paymentMethod"
+                                        id="field_paymentMethod"
+                                        name="unit"
+                                        [isOutTable]="true"
+                                        [getValueDisplay]="true"
+                                        [isOutTable]="true"
+                                        [tabindex]="60"
+                                    ></combo-box>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!--navbar-->
+
+    <div>
+        <ngb-tabset class="tool-navbar" (tabChange)="beforeChange($event)">
+            <ngb-tab>
+                <ng-template ngbTabTitle>
+                    <span jhiTranslate="ebwebApp.mBDepositDetails.detail.title">Hàng tiền</span>
+                </ng-template>
+                <ng-template ngbTabContent>
+                    <div class="tab-content">
+                        <div class="frm-main frm-padding tab-pane fade in active show" id="home-detail"
+                             style="background: #cbdcf0">
+                            <div id="table-scroll-detail" class="table-scroll" style="z-index: 0">
+                                <table id="main-table-detail" class="main-table"
+                                       (keydown.arrowDown)="moveArrowDown($event,21)"
+                                       (keydown.arrowUp)="moveArrowUp($event,21)">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPDiscountReturnDetails.materialGoodsID">
+                                            Mã
+                                            hàng
+                                        </th>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPDiscountReturnDetails.description">Tên
+                                            hàng
+                                        </th>
+                                        <th scope="col" *ngIf="(!statusPurchase && option1) || statusPurchase" jhiTranslate="ebwebApp.pPDiscountReturnDetails.repositoryID">kho
+                                        </th>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPDiscountReturnDetails.debitAccount">tk
+                                            nợ
+                                        </th>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPDiscountReturnDetails.creditAccount">tk
+                                            có
+                                        </th>
+                                        <th scope="col"
+                                            jhiTranslate="ebwebApp.pPDiscountReturnDetails.accountingObjectID">
+                                            dt hoạch định
+                                        </th>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPDiscountReturnDetails.unitID">dvt</th>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPDiscountReturnDetails.quantity">số
+                                            lượng
+                                        </th>
+                                        <th scope="col"
+                                            jhiTranslate="ebwebApp.pPDiscountReturnDetails.unitPriceOriginal">
+                                            đơn giá
+                                        </th>
+                                        <th scope="col"
+                                            *ngIf="currency?.currencyCode !== account.organizationUnit.currencyID"
+                                            jhiTranslate="ebwebApp.pPDiscountReturnDetails.unitPrice">đơn
+                                            giá
+                                            QĐ
+                                        </th>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPDiscountReturnDetails.mainUnitID"
+                                            *ngIf="!statusPurchase && !templateDVT">DVT
+                                            chính
+                                        </th>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPDiscountReturnDetails.mainConvertRate"
+                                            *ngIf="!statusPurchase && !templateDVT">
+                                            Tỷ
+                                            lệ chuyển đổi
+                                        </th>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPDiscountReturnDetails.formula"
+                                            *ngIf="!statusPurchase && !templateDVT">Phép
+                                            tính
+                                        </th>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPDiscountReturnDetails.mainQuantity"
+                                            *ngIf="!statusPurchase && !templateDVT">Số
+                                            lượng theo ĐVC
+                                        </th>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPDiscountReturnDetails.mainUnitPrice"
+                                            *ngIf="!statusPurchase && !templateDVT">
+                                            Đơn
+                                            giá theo ĐVC
+                                        </th>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPDiscountReturnDetails.amountOriginal">
+                                            Thành
+                                            tiền
+                                        </th>
+                                        <th scope="col"
+                                            *ngIf="currency?.currencyCode !== account.organizationUnit.currencyID"
+                                            jhiTranslate="ebwebApp.pPDiscountReturnDetails.amount">Thành
+                                            tiền
+                                            QĐ
+                                        </th>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPDiscountReturnDetails.lotNo">Số lô</th>
+                                        <th scope="col" jhiTranslate="ebwebApp.saBill.expiredDate">Hạn dùng</th>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPDiscountReturn.noFBook">Số chứng từ
+                                        </th>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPDiscountReturn.date">Ngày chứng từ</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr oncontextmenu="return false;"
+                                        *ngFor="let detail of ppDiscountReturnDetails; let i=index;"
+                                        (contextmenu)="onRightClick($event, ppDiscountReturnDetails, detail, true, true, true)"
+                                        (keydown.control.insert)="addNewRow(i,false, true)"
+                                        (keydown.control.c)="addNewRow(i,true, true)"
+                                        (keydown.control.q)="viewMaterialGoodsSpecification(detail)"
+                                        (keydown.control.delete)="keyPress(i, 0)">
+                                        <!-- mã hàng-->
+                                        <td class="cell-Table  jsgrid-cell">
+                                            <combo-box idIp="{{'materialGoodsID' + i}}"
+                                                       nameIp="{{'materialGoodsID' + i}}"
+                                                        class="input-Cell w-100 bg-transparent border-0"
+                                                       [dataList]="materialGoodss"
+                                                       [nameCategory]="utilsService.VAT_TU_HANG_HOA"
+                                                       [showIconPlus]="true"
+                                                       [listColumns]="utilService.listColumnsMaterialGoods"
+                                                       displayMember="materialGoodsCode"
+                                                       valueName="id"
+                                                       [headerColumns]="utilService.listHeaderColumnsMaterialGoods"
+                                                       [isObject]="true"
+                                                       [isRequired]="true"
+                                                       [(ngModel)]="detail.mgForPPOderItem"
+                                                       [account]="account"
+                                                       [isOutTable]="false"
+                                                       (focusInput)="actionFocus(0, i)"
+                                                       (ngModelChange)="selectChangeDiscountReturnObjects(detail)"
+                                                       (click)="saveDetails(i)"
+                                                       [tabindex]="61 + 1 + (21 *  i)">
+                                            </combo-box>
+                                        </td>
+                                        <!--Tên hàng-->
+                                        <td class=" cell-Table jsgrid-cell jsgr id-align-left" title="{{detail.description}}">
+                                            <input type="text"  class="input-Cell w-100 text-left bg-transparent border-0 one-long-line"
+                                                   name="{{'description' + i}}"
+                                                   id="{{'description' + i}}"
+                                                   (focus)="actionFocus(1, i)"
+                                                   [(ngModel)]="detail.description"
+                                                   [tabindex]="61 + 2 + (21 *  i)"
+
+                                            >
+                                        </td>
+                                        <!--                                    Kho-->
+                                        <td class=" cell-Table  jsgrid-cell jsgrid-align-left"
+                                            *ngIf="!statusPurchase && option1"
+                                            [class.eb-read-only]="detail.mgForPPOderItem?.materialGoodsType === 2 || detail.mgForPPOderItem?.materialGoodsType === 4">
+                                            <combo-box idIp="{{'repository' + i}}"
+                                                        class="input-Cell w-100 bg-transparent border-0"
+                                                       nameIp="{{'repository' + i}}"
+                                                       [dataList]="repositoryPopup"
+                                                       [listColumns]="utilService.listColumnsRepository"
+                                                       [nameCategory]="utilsService.KHO"
+                                                       [showIconPlus]="true"
+                                                       [isOutTable]="false"
+                                                       displayMember="repositoryCode"
+                                                       valueName="id"
+                                                       [headerColumns]="utilService.listHeaderColumnsRepository"
+                                                       [isObject]="true"
+                                                       (focusInput)="actionFocus(2, i)"
+                                                       [(ngModel)]="detail.repository"
+                                                       [isRequired]="!(!this.option1 || detail.mgForPPOderItem?.materialGoodsType === 2 || detail.mgForPPOderItem?.materialGoodsType === 4)"
+                                                       (ngModelChange)="selectRepository(detail)"
+                                                       (click)="saveDetails(i)"
+                                                       [tabindex]="61 + 3 + (21 *  i)">
+                                            </combo-box>
+                                        </td>
+                                        <td class=" cell-Table  jsgrid-cell jsgrid-align-left" *ngIf="statusPurchase"
+                                            [class.eb-read-only]="detail.mgForPPOderItem?.materialGoodsType === 2 || detail.mgForPPOderItem?.materialGoodsType === 4">
+                                            <combo-box idIp="{{'repository' + i}}"
+                                                        class="input-Cell w-100 bg-transparent border-0"
+                                                       nameIp="{{'repository' + i}}"
+                                                       [dataList]="repositoryPopup"
+                                                       [listColumns]="utilService.listColumnsRepository"
+                                                       displayMember="repositoryCode"
+                                                       valueName="id"
+                                                       [nameCategory]="utilsService.KHO"
+                                                       [showIconPlus]="true"
+                                                       [headerColumns]="utilService.listHeaderColumnsRepository"
+                                                       [isObject]="true"
+                                                       [(ngModel)]="detail.repository"
+                                                       [isOutTable]="false"
+                                                       (focusInput)="actionFocus(2, i)"
+                                                       (ngModelChange)="selectRepository(detail)"
+                                                       (click)="saveDetails(i)"
+                                                       [tabindex]="61 + 4 + (21 *  i)">
+                                            </combo-box>
+                                        </td>
+                                        <!--                                    tk nợ-->
+                                        <td class=" cell-Table  jsgrid-cell jsgrid-align-center">
+                                            <combo-box idIp="{{'debitAccountList' + i}}"  class="input-Cell w-100 bg-transparent border-0"
+                                                       nameIp="{{'debitAccountList' + i}}"
+                                                       [dataList]="debitAccountList"
+                                                       [listColumns]="utilService.listColumnsAccountDefaults"
+                                                       displayMember="accountNumber"
+                                                       valueName="id"
+                                                       [headerColumns]="utilService.listHeaderColumnsAccountDefaults"
+                                                       [isObject]="true"
+                                                       [isRequired]="true"
+                                                       [isOutTable]="false"
+                                                       [(ngModel)]="detail.debitAccountItem"
+                                                       (focusInput)="actionFocus(3, i)"
+                                                       (ngModelChange)="selectDebitAccountItem(detail)"
+                                                       (click)="saveDetails(i)"
+                                                       [tabindex]="61 + 5 + (21 *  i)">
+                                            </combo-box>
+                                        </td>
+                                        <!--                                    tk có-->
+                                        <td class=" cell-Table  jsgrid-cell jsgrid-align-center">
+                                            <combo-box idIp="{{'creditAccount' + i}}"  class="input-Cell w-100 bg-transparent border-0"
+                                                       nameIp="{{'creditAccount' + i}}"
+                                                       [dataList]="creditAccountList"
+                                                       [listColumns]="utilService.listColumnsAccountDefaults"
+                                                       displayMember="accountNumber"
+                                                       valueName="id"
+                                                       [headerColumns]="utilService.listHeaderColumnsAccountDefaults"
+                                                       [isObject]="true"
+                                                       [isRequired]="true"
+                                                       [isOutTable]="false"
+                                                       (focusInput)="actionFocus(4, i)"
+                                                       [(ngModel)]="detail.creditAccountItem"
+                                                       (ngModelChange)="selectCreditAccountItem(detail)"
+                                                       (click)="saveDetails(i)"
+                                                       [tabindex]="61 + 6 + (21 *  i)">
+                                            </combo-box>
+                                        </td>
+
+                                        <!--dt hoạch định-->
+                                        <td class=" cell-Table  jsgrid-cell jsgrid-align-left">
+                                            <combo-box  class="input-Cell w-100 bg-transparent border-0"
+                                                       idIp="{{'accountingObjectHT' + i}}"
+                                                       nameIp="{{'accountingObjectHT' + i}}"
+                                                       [dataList]="accountingObjects"
+                                                       [listColumns]="utilService.listColumnsAccountingObjects"
+                                                       displayMember="accountingObjectCode"
+                                                       valueName="id"
+                                                       (focusInput)="actionFocus(5, i)"
+                                                       [nameCategory]="utilsService.NHA_CUNG_CAP"
+                                                       [showIconPlus]="true"
+                                                       [headerColumns]="utilService.listHeaderColumnsAccountingObject"
+                                                       [isObject]="true"
+                                                       [isOutTable]="false"
+                                                       [(ngModel)]="detail.accountingObject"
+                                                       (ngModelChange)="selectChangeAccountingObjectsHD(detail)"
+                                                       (click)="saveDetails(i)"
+                                                       [tabindex]="61 + 7 + (21 *  i)">
+                                            </combo-box>
+                                        </td>
+                                        <!--  dvt-->
+                                        <td class=" cell-Table  jsgrid-cell jsgrid-align-left">
+                                            <combo-box idIp="{{'unit' + i}}"
+                                                       class="input-Cell w-100 bg-transparent border-0"
+                                                       nameIp="{{'unit' + i}}"
+                                                       [dataList]="detail.units"
+                                                       [listColumns]="['unitName']"
+                                                       displayMember="unitName"
+                                                       valueName="id"
+                                                       (focusInput)="actionFocus(6, i)"
+                                                       [nameCategory]="utilsService.DON_VI_TINH"
+                                                       [showIconPlus]="false"
+                                                       [headerColumns]="['Đơn vị tính']"
+                                                       [isObject]="true"
+                                                       [(ngModel)]="detail.unit"
+                                                       [isOutTable]="false"
+                                                       (ngModelChange)="selectUnit(detail)"
+                                                       [tabindex]="61 + 8 + (21 *  i)">
+                                            </combo-box>
+                                        </td>
+                                        <!--  số lượng-->
+                                        <td class=" cell-Table  jsgrid-cell jsgrid-align-right">
+                                            <input type="number"  class="input-Cell w-100 bg-transparent border-0"
+                                                   name="{{'quantity' + i}}"
+                                                   id="{{'quantity' + i}}"
+                                                   (focus)="actionFocus(7, i)"
+                                                   [(ngModel)]="detail.quantity"
+                                                   (ngModelChange)="changeQuantity(detail)"
+                                                   ebCurrencyMask [systemOptions]="account?.systemOption" [type]="3"
+                                                   [tabindex]="61 + 9 + (21 *  i)">
+                                        </td>
+                                        <!-- đơn giá-->
+                                        <td class=" cell-Table  jsgrid-cell jsgrid-align-right">
+                                            <input type="number"  class="input-Cell w-100 bg-transparent border-0"
+                                                   name="{{'unitPriceOriginal' + i}}"
+                                                   id="{{'unitPriceOriginal' + i}}"
+                                                   (focus)="actionFocus(8, i)"
+                                                   [(ngModel)]="detail.unitPriceOriginal"
+                                                   (ngModelChange)="changeUnitPriceOriginal(detail)"
+                                                   ebCurrencyMask [systemOptions]="account?.systemOption"
+                                                   [type]="typeAmountOriginal ? 1 : 2"
+                                                   [tabindex]="61 + 10 + (21 *  i)">
+                                        </td>
+                                        <!-- đơn giá QĐ-->
+                                        <td class=" cell-Table  jsgrid-cell jsgrid-align-right"
+                                            *ngIf="currency?.currencyCode !== account.organizationUnit.currencyID">
+                                            <input type="number"  class="input-Cell w-100 bg-transparent border-0"
+                                                   name="{{'unitPrice' + i}}"
+                                                   id="{{'unitPrice' + i}}"
+                                                   (focus)="actionFocus(9, i)"
+                                                   [(ngModel)]="detail.unitPrice"
+                                                   ebCurrencyMask [systemOptions]="account?.systemOption"
+                                                   [type]="typeAmount ? 1 : 2" (ngModelChange)="sumAllList()"
+                                                   [tabindex]="61 + 11 + (21 *  i)">
+                                        </td>
+                                        <!--  DVT chính -->
+                                        <td class=" cell-Table  jsgrid-cell jsgrid-align-left"
+                                            *ngIf="!statusPurchase && !templateDVT">
+                                            <input type="text"  class="input-Cell w-100 bg-transparent border-0"
+                                                   name="{{'mainUnitID' + i}}"
+                                                   id="{{'mainUnitID' + i}}"
+                                                   (focus)="actionFocus(10, i)"
+                                                   [(ngModel)]="detail.mainUnitName" readonly
+                                                   [tabindex]="61 + 12 + (21 *  i)">
+                                        </td>
+                                        <!--  tỷ lệ chuyển đổi -->
+                                        <td class=" cell-Table  jsgrid-cell jsgrid-align-right"
+                                            *ngIf="!statusPurchase && !templateDVT">
+                                            <input type="text"  class="input-Cell w-100 bg-transparent border-0"
+                                                   name="{{'mainConvertRate' + i}}"
+                                                   id="{{'mainConvertRate' + i}}"
+                                                   (focus)="actionFocus(11, i)"
+                                                   [(ngModel)]="detail.mainConvertRate"
+                                                   ebCurrencyMask [systemOptions]="account?.systemOption" [type]="5"
+                                                   (ngModelChange)="changeMainConvertRate(detail)"
+                                                   [tabindex]="61 + 13 + (21 *  i)">
+                                        </td>
+                                        <!-- phép tính-->
+                                        <td class=" cell-Table  jsgrid-cell jsgrid-align-left"
+                                            [class.eb-read-only]="true" *ngIf="!statusPurchase && !templateDVT">
+                                            <input type="text"  class="input-Cell w-100 bg-transparent border-0"
+                                                   name="{{'formula' + i}}"
+                                                   id="{{'formula' + i}}"
+                                                   (focus)="actionFocus(12, i)"
+                                                   [(ngModel)]="detail.formula" readonly
+                                                   [tabindex]="61 + 14 + (21 *  i)">
+                                        </td>
+                                        <!--  số lượng theo dvc-->
+                                        <td class=" cell-Table  jsgrid-cell jsgrid-align-right"
+                                            *ngIf="!statusPurchase && !templateDVT">
+                                            <input type="number"  class="input-Cell w-100 bg-transparent border-0"
+                                                   name="{{'mainQuantity' + i}}"
+                                                   id="{{'mainQuantity' + i}}"
+                                                   (focus)="actionFocus(13, i)"
+                                                   [(ngModel)]="detail.mainQuantity"
+                                                   ebCurrencyMask [systemOptions]="account?.systemOption" [type]="3"
+                                                   (ngModelChange)="changeMainQuantity(detail)"
+                                                   [tabindex]="61 + 15 + (21 *  i)">
+                                        </td>
+                                        <!-- đơn gia theo dvc-->
+                                        <td class=" cell-Table  jsgrid-cell jsgrid-align-right"
+                                            *ngIf="!statusPurchase && !templateDVT">
+                                            <input type="number"  class="input-Cell w-100 bg-transparent border-0"
+                                                   name="{{'mainUnitPrice' + i}}"
+                                                   id="{{'mainUnitPrice' + i}}"
+                                                   (focus)="actionFocus(14, i)"
+                                                   [(ngModel)]="detail.mainUnitPrice"
+                                                   ebCurrencyMask [systemOptions]="account?.systemOption"
+                                                   [type]="typeAmountOriginal ? 1 : 2"
+                                                   (ngModelChange)="changeMainUnitPrice(detail)"
+                                                   [tabindex]="61 + 16 + (21 *  i)">
+                                        </td>
+                                        <!--  Thanh tien-->
+                                        <td class=" cell-Table  jsgrid-cell jsgrid-align-right">
+                                            <input type="number"  class="input-Cell w-100 bg-transparent border-0"
+                                                   name="{{'amountOriginal' + i}}"
+                                                   id="{{'amountOriginal' + i}}"
+                                                   (focus)="actionFocus(15, i)"
+                                                   [(ngModel)]="detail.amountOriginal"
+                                                   ebCurrencyMask [systemOptions]="account?.systemOption"
+                                                   [type]="currency?.currencyCode && currency.currencyCode !== 'VND' ? 8 : 7"
+                                                   (ngModelChange)="changeAmountOriginal(detail)"
+                                                   [tabindex]="61 + 17 + (21 *  i)">
+                                        </td>
+                                        <!-- Thành tiền QĐ-->
+                                        <td class=" cell-Table  jsgrid-cell jsgrid-align-right"
+                                            *ngIf="currency?.currencyCode !== account.organizationUnit.currencyID">
+                                            <input type="number"  class="input-Cell w-100 bg-transparent border-0"
+                                                   name="{{'amount' + i}}"
+                                                   id="{{'amount' + i}}"
+                                                   (focus)="actionFocus(16, i)"
+                                                   [(ngModel)]="detail.amount"
+                                                   required
+                                                   ebCurrencyMask [systemOptions]="account?.systemOption"
+                                                   [type]="account.organizationUnit.currencyID && account.organizationUnit.currencyID !== 'VND' ? 8 : 7"
+                                                   (ngModelChange)="sumAllList()"
+                                                   [tabindex]="61 + 18 + (21 *  i)">
+                                        </td>
+                                        <!--  Số lô-->
+                                        <td class=" cell-Table  jsgrid-cell jsgrid-align-left">
+                                            <input type="text"  class="input-Cell w-100 bg-transparent border-0"
+                                                   name="{{'lotNo' + i}}"
+                                                   id="{{'lotNo' + i}}"
+                                                   (focus)="actionFocus(17, i)"
+                                                   [(ngModel)]="detail.lotNo"
+                                                   [tabindex]="61 + 19 + (21 *  i)">
+                                        </td>
+                                        <td class=" cell-Table  jsgrid-cell jsgrid-align-left"
+                                            style="min-width: 170px">
+                                            <eb-date-picker
+                                                (focus)="actionFocus(18, i)"
+                                                [(ngModel)]="detail.expiryDate"
+                                                name="{{'expiryDateDetail' + i }}"
+                                                id="{{'expiryDateDetail' + i }}"
+                                                [isInTable]="true"></eb-date-picker>
+                                        </td>
+                                        <!-- số chứng từ-->
+                                        <td class=" cell-Table p-0">
+                                            <input type="text"  class="input-Cell w-100 text-left bg-transparent border-0"
+                                                   name="{{'ppInvoiceID' + i}}"
+                                                   id="{{'ppInvoiceID' + i}}"
+                                                   (focus)="actionFocus(19, i)"
+                                                   [(ngModel)]="detail.ppInVoiceNoBook" readonly
+                                                   [tabindex]="61 + 20 + (21 *  i)">
+                                        </td>
+                                        <!--ngày chứng từ-->
+                                        <td class=" cell-Table p-0jsgrid-cell jsgrid-align-center"
+                                            [tabindex]="61 + 21 + (21 *  i)"
+                                            (keydown.tab)="addIfLastInput(i)">
+                                            {{ detail.ppInVoiceDate | date:'dd/MM/yyyy'}}
+
+                                        </td>
+                                        <!--                                    hạn dùng-->
+                                        <!--                                    <td class=" cell-Table p-0">-->
+                                        <!--                                        <input type="date"  class="input-Cell w-100"-->
+                                        <!--                                               name="invoiceDate_Tax"-->
+                                        <!--                                                class="input-Cell w-100 bg-transparent border-0"-->
+                                        <!--                                               [(ngModel)]="detail.expiryDate">-->
+                                        <!--                                    </td>-->
+                                    </tr>
+                                    <tr *ngIf="isEdit" (click)="addNewRow(0,false, false)">
+                                        <td class="cell-Table description" *ngIf="isEdit" ><input type="text" class="input-Cell w-100 text-left bg-transparent border-0"
+                                                                                  id="materialGoodsID"
+                                                                                  value="{{'ebwebApp.purchaseOrder.addNewLine' | translate}}"
+                                                                                  readonly></td>
+<!--                                        <td *ngIf="isEdit" jhiTranslate="ebwebApp.common.addNew"></td>-->
+                                        <td *ngIf="!isEdit">&nbsp;</td>
+                                        <td *ngIf="(!statusPurchase && option1) || statusPurchase"></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td *ngIf="currency?.currencyCode !== account.organizationUnit.currencyID"></td>
+
+                                        <td *ngIf="!statusPurchase && !templateDVT"></td>
+                                        <td *ngIf="!statusPurchase && !templateDVT"></td>
+                                        <td *ngIf="!statusPurchase && !templateDVT"></td>
+                                        <td *ngIf="!statusPurchase && !templateDVT"></td>
+                                        <td *ngIf="!statusPurchase && !templateDVT"></td>
+                                        <td></td>
+                                        <td></td>
+
+                                        <td *ngIf="currency?.currencyCode !== account.organizationUnit.currencyID"></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr *ngFor="let item of newArr(10-(ppDiscountReturnDetails.length ? ppDiscountReturnDetails.length : 0))">
+                                        <td>&nbsp;</td>
+                                        <td *ngIf="(!statusPurchase && option1) || statusPurchase"></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td *ngIf="currency?.currencyCode !== account.organizationUnit.currencyID"></td>
+                                        <td *ngIf="currency?.currencyCode !== account.organizationUnit.currencyID"></td>
+                                        <td *ngIf="!statusPurchase && !templateDVT"></td>
+                                        <td *ngIf="!statusPurchase && !templateDVT"></td>
+                                        <td *ngIf="!statusPurchase && !templateDVT"></td>
+                                        <td *ngIf="!statusPurchase && !templateDVT"></td>
+                                        <td *ngIf="!statusPurchase && !templateDVT"></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    </tbody>
+                                    <tfoot [class.eb-read-only]="true">
+                                    <td colspan="6" jhiTranslate="ebwebApp.common.sumNumber"
+                                        translateValues="{total: '{{ppDiscountReturnDetails.length}}'}">&nbsp;
+                                    </td>
+                                    <td *ngIf="(!statusPurchase && option1) || statusPurchase"></td>
+                                    <td class="text-right">
+                                        <input type="number"
+                                                class="input-Cell w-100 text-right bg-transparent border-0"
+                                               [(ngModel)]="sumQuantity"
+                                               name="sumQuantity" ebCurrencyMask
+                                               [systemOptions]="account?.systemOption"
+                                               [type]="3">
+                                    </td>
+                                    <td class="text-right">
+<!--                                        <input type="number"-->
+<!--                                                class="input-Cell w-100 text-right bg-transparent border-0"-->
+<!--                                               [(ngModel)]="sumUnitPriceOriginal"-->
+<!--                                               name="sumUnitPriceOriginal" ebCurrencyMask-->
+<!--                                               [systemOptions]="account?.systemOption"-->
+<!--                                               [type]="typeAmountOriginal ? 1 : 2">-->
+                                    </td>
+
+                                    <td class="text-right"
+                                        *ngIf="currency?.currencyCode !== account.organizationUnit.currencyID">
+                                        <input type="number"
+                                                class="input-Cell w-100 text-right bg-transparent border-0"
+                                               [(ngModel)]="sumUnitPrice"
+                                               name="sumUnitPrice"
+                                               *ngIf="currency?.currencyCode !== account.organizationUnit.currencyID"
+                                               ebCurrencyMask [systemOptions]="account?.systemOption"
+                                               [type]="typeAmount ? 1 : 2"
+                                        ></td>
+                                    <td colspan="3"
+                                        *ngIf="!statusPurchase && !templateDVT && (currency?.currencyCode === account.organizationUnit.currencyID)"></td>
+                                    <td colspan="3"
+                                        *ngIf="!statusPurchase && !templateDVT && (currency?.currencyCode !== account.organizationUnit.currencyID)"></td>
+                                    <td class="text-right" *ngIf="!statusPurchase && !templateDVT">
+                                        <input type="number"
+                                                class="input-Cell w-100 text-right bg-transparent border-0"
+                                               [(ngModel)]="sumMainQuantity"
+                                               name="sumMainQuantity" ebCurrencyMask
+                                               [systemOptions]="account?.systemOption"
+                                               [type]="3">
+                                    </td>
+                                    <td class="text-right" *ngIf="!statusPurchase && !templateDVT">
+                                        <input type="number"
+                                                class="input-Cell w-100 text-right bg-transparent border-0"
+                                               [(ngModel)]="sumMainUnitPrice"
+                                               name="sumMainUnitPrice" ebCurrencyMask
+                                               [systemOptions]="account?.systemOption"
+                                               [type]="currency?.currencyCode && currency.currencyCode !== 'VND' ? 8 : 7">
+                                    </td>
+                                    <td class="text-right">
+                                        <input type="number"
+                                                class="input-Cell w-100 text-right bg-transparent border-0"
+                                               [(ngModel)]="sumAmountOriginal"
+                                               name="sumAmountOriginal" ebCurrencyMask
+                                               [systemOptions]="account?.systemOption"
+                                               [type]="currency?.currencyCode && currency.currencyCode !== 'VND' ? 8 : 7">
+                                    </td>
+                                    <td class="text-right">
+                                        <input type="number"
+                                                class="input-Cell w-100 text-right bg-transparent border-0"
+                                               [(ngModel)]="sumAmount"
+                                               name="sumAmount"
+                                               *ngIf="currency?.currencyCode !== account.organizationUnit.currencyID"
+                                               ebCurrencyMask [systemOptions]="account?.systemOption"
+                                               [type]="account.organizationUnit.currencyID && account.organizationUnit.currencyID !== 'VND' ? 8 : 7">
+                                    </td>
+                                    <td colspan="4"></td>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </ngb-tab>
+            <ngb-tab>
+                <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.common.tax">Thuế</span></ng-template>
+                <ng-template ngbTabContent>
+                    <div class="tab-content">
+                        <div class="frm-main frm-padding tab-pane fade in active show" id="home-tax">
+                            <div id="table-scroll-tax" class="table-scroll" style="z-index: 0">
+                                <table id="main-table-tax" class="main-table"
+                                       (keydown.arrowDown)="moveArrowDown($event,11)"
+                                       (keydown.arrowUp)="moveArrowUp($event,11)">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPDiscountReturnDetails.materialGoodsID">
+                                            Mã
+                                            hàng
+                                        </th>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPDiscountReturnDetails.explainTax">Diễn
+                                            giải
+                                            thuế
+                                        </th>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPDiscountReturnDetails.debitAccount">tk
+                                            nợ
+                                        </th>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPDiscountReturnDetails.creditAccount">tk
+                                            có
+                                        </th>
+                                        <th scope="col"
+                                            jhiTranslate="ebwebApp.pPDiscountReturnDetails.accountingObjectID">
+                                            dt hoạch định
+                                        </th>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPDiscountReturnDetails.vatRate">Thuế
+                                            suất
+                                            thuế GTGT
+                                        </th>
+                                        <th scope="col"
+                                            jhiTranslate="ebwebApp.pPDiscountReturnDetails.vatAmountOriginal">
+                                            Tiền thuế GTGT
+                                        </th>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPDiscountReturnDetails.vatAmount"
+                                            *ngIf="currency?.currencyCode !== account.organizationUnit.currencyID">Tiền
+                                            thuế
+                                            GTGT QĐ
+                                        </th>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPDiscountReturnDetails.vatAccount">tk
+                                            GTGT
+                                        </th>
+                                        <th scope="col"
+                                            jhiTranslate="ebwebApp.pPDiscountReturnDetails.deductionDebitAccount">tkdu
+                                            thuế
+                                            GTGT
+                                        </th>
+                                        <th scope="col"
+                                            jhiTranslate="ebwebApp.pPDiscountReturnDetails.goodsServicePurchaseID" *ngIf="!isShowHHDV">Nhóm
+                                            HHDV
+                                            mua vào
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr oncontextmenu="return false;"
+                                        *ngFor="let detail of ppDiscountReturnDetails; let i = index;"
+                                        (contextmenu)="onRightClick($event, ppDiscountReturnDetails, detail, true, true, true)"
+                                        (keydown.control.insert)="addNewRow(i,false, true)"
+                                        (keydown.control.c)="addNewRow(i,true, true)"
+                                        (keydown.control.q)="viewMaterialGoodsSpecification(detail)"
+                                        (keydown.control.delete)="keyPress(i,0)">
+
+                                    <!--  mã hàng-->
+                                        <td class=" cell-Table  jsgrid-cell jsgrid-align-left">
+                                            <combo-box idIp="{{'materialGoodsID1' + i}}"
+                                                       nameIp="{{'materialGoodsID1' + i}}"
+                                                        class="input-Cell w-100 bg-transparent border-0"
+                                                       [dataList]="materialGoodss"
+                                                       [listColumns]="utilService.listColumnsMaterialGoods"
+                                                       [nameCategory]="utilsService.VAT_TU_HANG_HOA"
+                                                       [showIconPlus]="true"
+                                                       displayMember="materialGoodsCode"
+                                                       valueName="id"
+                                                       (focusInput)="actionFocus(20, i)"
+                                                       [isRequired]="true"
+                                                       [headerColumns]="utilService.listHeaderColumnsMaterialGoods"
+                                                       [isObject]="true"
+                                                       [isOutTable]="true"
+                                                       [(ngModel)]="detail.mgForPPOderItem"
+                                                       [account]="account"
+                                                       (ngModelChange)="selectChangeDiscountReturnObjects(detail)"
+                                                       (click)="saveDetails(i)"
+                                                       [tabindex]="61 + (11 * i) + 1">
+                                            </combo-box>
+                                        </td>
+                                        <!-- Diễn giải thuế-->
+                                        <td class=" cell-Table jsgrid-cell jsgrid-align-left" title="{{ detail.vatDescription }}">
+                                            <input type="text"  class="input-Cell w-100 text-left bg-transparent border-0 one-long-line"
+                                                   name="{{'description01' + i}}"
+                                                   id="{{'description01' + i}}"
+                                                   (focus)="actionFocus(21, i)"
+                                                   [(ngModel)]="detail.vatDescription"
+                                                   [tabindex]="61 + (11 * i) + 2"
+                                            >
+                                        </td>
+                                        <!-- tk nợ -->
+                                        <td class=" cell-Table  jsgrid-cell jsgrid-align-center">
+                                            <combo-box idIp="{{'debitAccount2' + i}}"  class="input-Cell w-100 bg-transparent border-0"
+                                                       nameIp="{{'debitAccount2' + i}}"
+                                                       [dataList]="debitAccountList"
+                                                       [listColumns]="utilService.listColumnsAccountDefaults"
+                                                       displayMember="accountNumber"
+                                                       valueName="id"
+                                                       [isRequired]="true"
+                                                       [isOutTable]="true"
+                                                       [headerColumns]="utilService.listHeaderColumnsAccountDefaults"
+                                                       [isObject]="true"
+                                                       (focusInput)="actionFocus(22, i)"
+                                                       [(ngModel)]="detail.debitAccountItem"
+                                                       (ngModelChange)="selectDebitAccountItem(detail)"
+                                                       (click)="saveDetails(i)"
+                                                       [tabindex]="61 + (11 * i) + 3">
+                                            </combo-box>
+                                        </td>
+                                        <!--  tk có -->
+                                        <td class=" cell-Table  jsgrid-cell jsgrid-align-center">
+                                            <combo-box idIp="{{'creditAccount2' + i}}"  class="input-Cell w-100 bg-transparent border-0"
+                                                       nameIp="{{'creditAccount2' + i}}"
+                                                       [dataList]="creditAccountList"
+                                                       [listColumns]="utilService.listColumnsAccountDefaults"
+                                                       displayMember="accountNumber"
+                                                       valueName="id"
+                                                       [isRequired]="true"
+                                                       [isOutTable]="true"
+                                                       [headerColumns]="utilService.listHeaderColumnsAccountDefaults"
+                                                       [isObject]="true"
+                                                       (focusInput)="actionFocus(23, i)"
+                                                       [(ngModel)]="detail.creditAccountItem"
+                                                       (ngModelChange)="selectCreditAccountItem(detail)"
+                                                       (click)="saveDetails(i)"
+                                                       [tabindex]="61 + (11 * i) + 4">
+                                            </combo-box>
+                                        </td>
+
+                                        <td class=" cell-Table  jsgrid-cell jsgrid-align-left">
+                                            <combo-box  class="input-Cell w-100 bg-transparent border-0"
+                                                       idIp="{{'accountingObjectHT1' + i}}"
+                                                       nameIp="{{'accountingObjectHT1' + i}}"
+                                                       [dataList]="accountingObjects"
+                                                       [listColumns]="utilService.listColumnsAccountingObjects"
+                                                       displayMember="accountingObjectCode"
+                                                       valueName="id"
+                                                       (focusInput)="actionFocus(24, i)"
+                                                       [nameCategory]="utilsService.NHA_CUNG_CAP"
+                                                       [showIconPlus]="true"
+                                                       [headerColumns]="utilService.listHeaderColumnsAccountingObject"
+                                                       [isObject]="true"
+                                                       [isOutTable]="true"
+                                                       [(ngModel)]="detail.accountingObject"
+                                                       (ngModelChange)="selectChangeAccountingObjectsHD(detail)"
+                                                       (click)="saveDetails(i)"
+                                                       [tabindex]="61 + (11 * i) + 5">
+                                            </combo-box>
+                                        </td>
+                                        <td class=" cell-Table  jsgrid-cell jsgrid-align-left">
+                                            <combo-box  class="input-Cell w-100 text-right"
+                                                       nameIp="{{'vatRate1' + i}}"
+                                                       idIp="{{'vatRate1' + i}}"
+                                                       [dataList]="listVAT"
+                                                       [listColumns]="['name']"
+                                                       displayMember="name"
+                                                       valueName="data"
+                                                       [headerColumns]="['Dữ liệu']"
+                                                       [isObject]="false"
+                                                        (focusInput)="actionFocus(25, i)"
+                                                       [(ngModel)]="detail.vatRate"
+                                                       [isOutTable]="true"
+                                                       (ngModelChange)="changeVatRate(detail)"
+                                                       [tabindex]="61 + (11 * i) + 6">
+
+                                            </combo-box>
+                                            <!--                                            <select [(ngModel)]="detail.vatRate" name="{{'vatRate1' + i}}"-->
+                                            <!--                                                    class="form-control form-control-sm bg-transparent border-0"-->
+                                            <!--                                                    (ngModelChange)="changeVatRate(detail)">-->
+                                            <!--                                                <option [selected] [ngValue]="0">0%</option>-->
+                                            <!--                                                <option [ngValue]="1">5%</option>-->
+                                            <!--                                                <option [ngValue]="2">10%</option>-->
+                                            <!--                                            </select>-->
+                                        </td>
+                                        <!--                                    tiền thuế gtgt-->
+                                        <td class=" cell-Table  jsgrid-cell jsgrid-align-right">
+                                            <input type="number"  class="input-Cell w-100 text-right bg-transparent border-0"
+                                                   name="{{'vatAmountOriginal' + i}}"
+                                                   id="{{'vatAmountOriginal' + i}}"
+                                                   (focus)="actionFocus(26, i)"
+                                                   ebCurrencyMask [systemOptions]="account?.systemOption"
+                                                   [type]="currency?.currencyCode && currency.currencyCode !== 'VND' ? 8 : 7"
+                                                   [(ngModel)]="detail.vatAmountOriginal" (ngModelChange)="changeVATAmountOriginal(detail)"
+                                                   [tabindex]="61 + (11 * i) + 7">
+                                        </td>
+                                        <!-- tiền thuế gtgt -->
+                                        <td class=" cell-Table  jsgrid-cell jsgrid-align-right"
+                                            *ngIf="currency?.currencyCode !== account.organizationUnit.currencyID">
+                                            <input type="number"  class="input-Cell w-100 text-right bg-transparent border-0"
+                                                   name="{{'vatAmount' + i}}"
+                                                   id="{{'vatAmount' + i}}"
+                                                   (focus)="actionFocus(27, i)"
+                                                   ebCurrencyMask [systemOptions]="account?.systemOption"
+                                                   [(ngModel)]="detail.vatAmount"
+                                                   [type]="account.organizationUnit.currencyID && account.organizationUnit.currencyID !== 'VND' ? 8 : 7"
+                                                   [tabindex]="61 + (11 * i) + 8"
+                                                   (ngModelChange)="sumAllList()">
+                                        </td>
+                                        <!-- tk thuế gtgt -->
+                                        <td class=" cell-Table  jsgrid-cell jsgrid-align-center">
+                                            <combo-box idIp="{{'vatAccountList' + i}}"  class="input-Cell w-100 bg-transparent border-0"
+                                                       nameIp="{{'vatAccountList' + i}}"
+                                                       [dataList]="vatAccountList"
+                                                       [listColumns]="utilService.listColumnsAccountDefaults"
+                                                       displayMember="accountNumber"
+                                                       valueName="id"
+                                                       [headerColumns]="utilService.listHeaderColumnsAccountDefaults"
+                                                       [isObject]="true"
+                                                       (focusInput)="actionFocus(28, i)"
+                                                       [(ngModel)]="detail.vatAccountItem"
+                                                       (ngModelChange)="selectvatAccount(detail)"
+                                                       (click)="saveDetails(i)"
+                                                       [isOutTable]="true"
+                                                       [isRequired]="detail.vatRate != null && detail.vatRate != undefined ? true : false"
+                                                       [tabindex]="61 + (11 * i) + 9">
+                                            </combo-box>
+                                        </td>
+                                        <!--                                        tk đối ứng thuế gtgt-->
+                                        <td class=" cell-Table  jsgrid-cell jsgrid-align-center">
+                                            <combo-box id="deductionDebitAccount"
+                                                        class="input-Cell w-100 bg-transparent border-0"
+                                                       nameIp="{{'deductionDebitAccount' + i}}"
+                                                       idIp="{{'deductionDebitAccount' + i}}"
+                                                       [dataList]="deductionDebitAccountList"
+                                                       [listColumns]="utilService.listColumnsAccountDefaults"
+                                                       displayMember="accountNumber"
+                                                       valueName="id"
+                                                       [headerColumns]="utilService.listHeaderColumnsAccountDefaults"
+                                                       [isObject]="true"
+                                                       [isOutTable]="true"
+                                                       (focusInput)="actionFocus(29, i)"
+                                                       [(ngModel)]="detail.deductionDebitAccountItem"
+                                                       (ngModelChange)="selectdeductionDebitAccount(detail)"
+                                                       (click)="saveDetails(i)"
+                                                       [isRequired]="detail.vatRate != null && detail.vatRate != undefined ? true : false"
+                                                       [tabindex]="61 + (11 * i) + 10">
+                                            </combo-box>
+                                        </td>
+                                        <!-- Nhóm HHDV mua vào -->
+                                        <td class=" cell-Table  jsgrid-cell jsgrid-align-left" *ngIf="!isShowHHDV">
+                                            <combo-box  class="input-Cell w-100 bg-transparent border-0"
+                                                       idIp="{{'goodsServicePurchase' + i}}"
+                                                       nameIp="{{'goodsServicePurchase' + i}}"
+                                                       [dataList]="goodsServicePurchase"
+                                                       [listColumns]="utilService.listColumnsGoodsServicePurchase"
+                                                       displayMember="goodsServicePurchaseCode"
+                                                       valueName="id"
+                                                       (focusInput)="actionFocus(30, i)"
+                                                       [headerColumns]="utilService.listHeaderColumnsGoodsServicePurchase"
+                                                       [isObject]="true"
+                                                       [isOutTable]="true"
+                                                       [(ngModel)]="detail.goodsServicePurchase"
+                                                       (ngModelChange)="selectGoodsServiceObjects(detail)"
+                                                       [tabindex]="61 + (11 * i) + 11"
+                                                       (click)="saveDetails(i)"
+                                                       (keydown.tab)="addIfLastInput(i)">
+                                            </combo-box>
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="isEdit" (click)="addNewRow(0,false, false)">
+                                        <td class="cell-Table description" *ngIf="isEdit" ><input type="text" class="input-Cell w-100 text-left bg-transparent border-0"
+                                                                                                  id="materialGoodsID1"
+                                                                                                  value="{{'ebwebApp.purchaseOrder.addNewLine' | translate}}"
+                                                                                                  readonly></td>
+<!--                                        <td *ngIf="isEdit" jhiTranslate="ebwebApp.common.addNew"></td>-->
+                                        <td *ngIf="!isEdit">&nbsp;</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td *ngIf="currency?.currencyCode !== account.organizationUnit.currencyID"></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td *ngIf="!isShowHHDV"></td>
+                                    </tr>
+                                    <tr *ngFor="let item of newArr(10-(ppDiscountReturnDetails.length ? ppDiscountReturnDetails.length : 0))">
+                                        <td>&nbsp;</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td *ngIf="currency?.currencyCode !== account.organizationUnit.currencyID"></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td *ngIf="!isShowHHDV"></td>
+                                    </tr>
+                                    </tbody>
+                                    <tfoot [class.eb-read-only]="true">
+                                    <td colspan="6" jhiTranslate="ebwebApp.common.sumNumber"
+                                        translateValues="{total: '{{ppDiscountReturnDetails.length}}'}">&nbsp;
+                                    </td>
+                                    <td class="text-right">
+                                        <input type="number"  class="input-Cell w-100 text-right bg-transparent border-0"
+                                               name="totalVATAmountOriginal"
+                                               [(ngModel)]="this.ppDiscountReturn.totalVATAmountOriginal" ebCurrencyMask
+                                               [systemOptions]="account?.systemOption"
+                                               [type]="currency?.currencyCode && currency.currencyCode !== 'VND' ? 8 : 7"
+                                        >
+                                    </td>
+                                    <td class="text-right">
+                                        <input type="number"
+                                                class="input-Cell w-100 text-right bg-transparent border-0"
+                                               name="totalVATAmount"
+                                               [(ngModel)]="this.ppDiscountReturn.totalVATAmount"
+                                               *ngIf="currency?.currencyCode !== account.organizationUnit.currencyID"
+                                               ebCurrencyMask [systemOptions]="account?.systemOption"
+                                               [type]="account.organizationUnit.currencyID && account.organizationUnit.currencyID !== 'VND' ? 8 : 7">
+                                    </td>
+                                    <td colspan="3"></td>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </ngb-tab>
+            <ngb-tab>
+                <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.common.statistical">Thống kê</span></ng-template>
+                <ng-template ngbTabContent>
+                    <div class="tab-content">
+                        <div class="frm-main frm-padding tab-pane fade in active show" id="home-report"
+                             style="background: #cbdcf0">
+                            <div id="table-scroll-report" class="table-scroll" style="z-index: 0">
+                                <table id="main-table-report" class="main-table"
+                                       (keydown.arrowDown)="moveArrowDown($event,9)"
+                                       (keydown.arrowUp)="moveArrowUp($event,9)">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPDiscountReturnDetails.materialGoodsID">
+                                            Mã
+                                            hàng
+                                        </th>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPDiscountReturnDetails.description">Tên
+                                            hàng
+                                        </th>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPDiscountReturnDetails.expenseItemID">
+                                            Khoản
+                                            mục CP
+                                        </th>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPDiscountReturnDetails.costSetID">Đối
+                                            tượng
+                                            THCP
+                                        </th>
+                                        <!--                                        <th scope="col" jhiTranslate="ebwebApp.pPDiscountReturnDetails.contractID">Hợp-->
+                                        <!--                                            đồng-->
+                                        <!--                                        </th>-->
+                                        <th scope="col" jhiTranslate="ebwebApp.pPDiscountReturnDetails.budgetItemID">mục
+                                            thu
+                                            chi
+                                        </th>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPDiscountReturnDetails.departmentID">
+                                            Phòng
+                                            ban
+                                        </th>
+                                        <th scope="col"
+                                            jhiTranslate="ebwebApp.pPDiscountReturnDetails.statisticsCodeID">Hợp
+                                            đồng
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                    <tr oncontextmenu="return false;"
+                                        *ngFor="let detail of ppDiscountReturnDetails; let i=index;"
+                                        (contextmenu)="onRightClick($event, ppDiscountReturnDetails, detail, true, true, true)"
+                                        (keydown.control.insert)="addNewRow(i,false, true)"
+                                        (keydown.control.c)="addNewRow(i,true, true)"
+                                        (keydown.control.q)="viewMaterialGoodsSpecification(detail)"
+                                        (keydown.control.delete)="keyPress(i,0)">
+                                        <!--  mã  hang-->
+                                        <td class=" cell-Table  jsgrid-cell jsgrid-align-left">
+                                            <combo-box idIp="{{'materialGoodsID2' + i}}"
+                                                       nameIp="{{'materialGoodsID2' + i}}"
+                                                       class="input-Cell w-100 bg-transparent border-0"
+                                                       [dataList]="materialGoodss"
+                                                       [listColumns]="utilService.listColumnsMaterialGoods"
+                                                       displayMember="materialGoodsCode"
+                                                       valueName="id"
+                                                       (focusInput)="actionFocus(31, i)"
+                                                       [nameCategory]="utilsService.VAT_TU_HANG_HOA"
+                                                       [showIconPlus]="true"
+                                                       [headerColumns]="utilService.listHeaderColumnsMaterialGoods"
+                                                       [isObject]="true"
+                                                       [isOutTable]="true"
+                                                       [(ngModel)]="detail.mgForPPOderItem"
+                                                       [account]="account"
+                                                       (ngModelChange)="selectChangeDiscountReturnObjects(detail)"
+                                                       (click)="saveDetails(i)"
+                                                       [tabindex]="61 + (9 * i) + 1">
+                                            </combo-box>
+                                        </td>
+                                        <!--                                    tên hàng-->
+                                        <td class=" cell-Table jsgrid-cell jsgrid-align-left"
+                                            title="{{detail.description}}">
+                                            <input type="text"  class="input-Cell w-100 text-left bg-transparent border-0 one-long-line"
+                                                   name="{{'description2' + i}}"
+                                                   id="{{'description2' + i}}"
+                                                   (focus)="actionFocus(32, i)"
+                                                   [(ngModel)]="detail.description"
+                                                   [tabindex]="61 + (9 * i) + 2">
+                                        </td>
+                                        <!-- khoản mục-->
+                                        <td class=" cell-Table  jsgrid-cell jsgrid-align-left">
+                                            <combo-box id="expenseItem"
+                                                       name="{{'expenseItem' + i}}"
+                                                        class="input-Cell w-100 bg-transparent border-0"
+                                                       [dataList]="expenseItems"
+                                                       [listColumns]="utilService.listColumnsExpenseItem"
+                                                       displayMember="expenseItemCode"
+                                                       valueName="id"
+                                                       (focusInput)="actionFocus(33, i)"
+                                                       [nameCategory]="utilsService.KHOAN_MUC_CHI_PHI"
+                                                       [showIconPlus]="true"
+                                                       [headerColumns]="utilService.listHeaderColumnsExpenseItem"
+                                                       [isObject]="true"
+                                                       [isOutTable]="true"
+                                                       [(ngModel)]="detail.expenseItem"
+                                                       (ngModelChange)="selectChangeExpenseItem(detail)"
+                                                       (click)="saveDetails(i)"
+                                                       [tabindex]="61 + (9 * i) + 3">
+                                            </combo-box>
+                                        </td>
+                                        <!--  Đối tượng THCP-->
+                                        <td class=" cell-Table  jsgrid-cell jsgrid-align-left pr-0 pl-0">
+                                            <combo-box idIp="{{'costSet1' + i}}"
+                                                       nameIp="{{'costSet1' + i}}"
+                                                        class="input-Cell w-100 bg-transparent border-0"
+                                                       [dataList]="costSets"
+                                                       [listColumns]="utilService.listColumnsCostSet"
+                                                       displayMember="costSetCode"
+                                                       valueName="id"
+                                                       (focusInput)="actionFocus(34, i)"
+                                                       [headerColumns]="utilService.listHeaderColumnsCostSet"
+                                                       [isObject]="true"
+                                                       [nameCategory]="utilsService.DOI_TUONG_TAP_HOP_CHI_PHI"
+                                                       [showIconPlus]="true"
+                                                       [isOutTable]="true"
+                                                       [(ngModel)]="detail.costSet"
+                                                       (ngModelChange)="selectChangeCostSet(detail)"
+                                                       (click)="saveDetails(i)"
+                                                       [tabindex]="61 + (9 * i) + 4">
+                                            </combo-box>
+                                        </td>
+                                        <!-- Hợp đồng-->
+                                        <!--                                        <td class=" cell-Table  jsgrid-cell jsgrid-align-left pr-0 pl-0" *ngIf="checkBook === 1">-->
+                                        <!--                                            <combo-box id="emContract"-->
+                                        <!--                                                       name="{{'emContract' + i}}"  class="input-Cell w-100 bg-transparent border-0"-->
+                                        <!--                                                       [dataList]="emContractList"-->
+                                        <!--                                                       [listColumns]="utilService.listColumnsEMContract"-->
+                                        <!--                                                       [nameCategory]="utilsService.HOP_DONG"-->
+                                        <!--                                                       [showIconPlus]="true"-->
+                                        <!--                                                       displayMember="noMBook"-->
+                                        <!--                                                       valueName="id"-->
+                                        <!--                                                       [headerColumns]="utilService.listHeaderColumnsEMContract"-->
+                                        <!--                                                       [isObject]="true"-->
+                                        <!--                                                       [isOutTable]="true"-->
+                                        <!--                                                       [(ngModel)]="detail.emContract"-->
+                                        <!--                                                       (ngModelChange)="selectChangeEmContract(detail)"-->
+                                        <!--                                                       [tabindex]="61 + (9 * i) + 5">-->
+                                        <!--                                            </combo-box>-->
+                                        <!--                                        </td>-->
+                                        <!--                                        <td class=" cell-Table  jsgrid-cell jsgrid-align-left pr-0 pl-0" *ngIf="checkBook === 0">-->
+                                        <!--                                            <combo-box id="emContract1"-->
+                                        <!--                                                       name="{{'emContract1' + i}}"  class="input-Cell w-100 bg-transparent border-0"-->
+                                        <!--                                                       [dataList]="emContractList"-->
+                                        <!--                                                       [listColumns]="utilService.listColumnsEMContract1"-->
+                                        <!--                                                       displayMember="noFBook"-->
+                                        <!--                                                       valueName="id"-->
+                                        <!--                                                       [nameCategory]="utilsService.HOP_DONG"-->
+                                        <!--                                                       [showIconPlus]="true"-->
+                                        <!--                                                       [headerColumns]="utilService.listHeaderColumnsEMContract"-->
+                                        <!--                                                       [isObject]="true"-->
+                                        <!--                                                       [isOutTable]="true"-->
+                                        <!--                                                       [(ngModel)]="detail.emContract"-->
+                                        <!--                                                       (ngModelChange)="selectChangeEmContract(detail)"-->
+                                        <!--                                                       [tabindex]="61 + (9 * i) + 6">-->
+                                        <!--                                            </combo-box>-->
+                                        <!--                                        </td>-->
+                                        <!-- Mục thu/chi -->
+                                        <td class=" cell-Table  jsgrid-cell jsgrid-align-left pr-0 pl-0">
+                                            <combo-box idIp="{{'budgetItem' + i}}"
+                                                       nameIp="{{'budgetItem' + i}}"
+                                                        class="input-Cell w-100 bg-transparent border-0"
+                                                       [dataList]="budgetItems"
+                                                       [listColumns]="utilService.listColumnsBudgetItem"
+                                                       displayMember="budgetItemCode"
+                                                       valueName="id"
+                                                       (focusInput)="actionFocus(35, i)"
+                                                       [nameCategory]="utilsService.MUC_THU_CHI"
+                                                       [showIconPlus]="true"
+                                                       [headerColumns]="utilService.listHeaderColumnsBudgetItem"
+                                                       [isObject]="true"
+                                                       [isOutTable]="true"
+                                                       [(ngModel)]="detail.budgetItem"
+                                                       (ngModelChange)="selectChangeBudgetItem(detail)"
+                                                       (click)="saveDetails(i)"
+                                                       [tabindex]="61 + (9 * i) + 7">
+                                            </combo-box>
+                                        </td>
+                                        <!-- Phòng ban -->
+                                        <td class=" cell-Table  jsgrid-cell jsgrid-align-left pr-0 pl-0">
+                                            <combo-box idIp="{{'organizationUnit' + i}}"
+                                                       nameIp="{{'organizationUnit' + i}}"
+                                                        class="input-Cell w-100 bg-transparent border-0"
+                                                       [dataList]="organizationUnits"
+                                                       [nameCategory]="utilsService.PHONG_BAN"
+                                                       [showIconPlus]="true"
+                                                       (focusInput)="actionFocus(36, i)"
+                                                       [listColumns]="utilService.listColumnsOrganizationUnit"
+                                                       displayMember="organizationUnitCode"
+                                                       valueName="id"
+                                                       [headerColumns]="utilService.listHeaderColumnsOrganizationUnit"
+                                                       [isObject]="true"
+                                                       [isOutTable]="true"
+                                                       [(ngModel)]="detail.organizationUnit"
+                                                       (ngModelChange)="selectChangeOrganizationUnit(detail)"
+                                                       (click)="saveDetails(i)"
+                                                       [tabindex]="61 + (9 * i) + 8">
+                                            </combo-box>
+                                        </td>
+                                        <!--  Mã thống kê -->
+                                        <td class=" cell-Table  jsgrid-cell jsgrid-align-left pr-0 pl-0">
+                                            <combo-box idIp="{{'StatisticsCode' + i}}"
+                                                       nameIp="{{'StatisticsCode' + i}}"
+                                                        class="input-Cell w-100 bg-transparent border-0"
+                                                       [dataList]="statisticCodes"
+                                                       [listColumns]="utilService.listColumnsStatisticCode"
+                                                       [nameCategory]="utilsService.MA_THONG_KE"
+                                                       [showIconPlus]="true"
+                                                       (focusInput)="actionFocus(37, i)"
+                                                       displayMember="statisticsCode"
+                                                       valueName="id"
+                                                       [headerColumns]="utilService.listHeaderColumnsStatisticCode"
+                                                       [isObject]="true"
+                                                       [isOutTable]="true"
+                                                       [(ngModel)]="detail.statisticsCode"
+                                                       (ngModelChange)="selectChangeStatisticsCode(detail)"
+                                                       (click)="saveDetails(i)"
+                                                       [tabindex]="61 + (9 * i) + 9"
+                                                       (keydown.tab)="addIfLastInput(i)">
+                                            </combo-box>
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="isEdit" (click)="addNewRow(0,false, false)">
+                                        <td class="cell-Table description" *ngIf="isEdit" ><input type="text" class="input-Cell w-100 text-left bg-transparent border-0"
+                                                                                                  id="materialGoodsID2"
+                                                                                                  value="{{'ebwebApp.purchaseOrder.addNewLine' | translate}}"
+                                                                                                  readonly></td>
+<!--                                        <td *ngIf="isEdit" jhiTranslate="ebwebApp.common.addNew"></td>-->
+                                        <td *ngIf="!isEdit">&nbsp;</td>
+                                        <td></td>
+                                        <td></td>
+<!--                                        <td></td>-->
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+
+                                    </tr>
+                                    <tr *ngFor="let item of  newArr(10-(ppDiscountReturnDetails.length ? ppDiscountReturnDetails.length : 0))">
+                                        <td>&nbsp;</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+<!--                                        <td></td>-->
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    </tbody>
+                                    <tfoot [class.eb-read-only]="true">
+                                    <td jhiTranslate="ebwebApp.common.sumNumber"
+                                        translateValues="{total: '{{ppDiscountReturnDetails.length}}'}">&nbsp;
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+<!--                                    <td></td>-->
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </ngb-tab>
+            <ngb-tab id="refdoc">
+                <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.saBill.refDoc"></span></ng-template>
+                <ng-template ngbTabContent>
+                    <div class="tab-content">
+                        <div class="frm-main frm-padding tab-pane fade in active show" id="home-ref2"
+                             style="background: #cbdcf0">
+                            <div id="table-scroll-ref2" class="table-scroll" style="z-index: 0">
+                                <table id="main-table-ref2" class="main-table">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col" jhiTranslate="ebwebApp.saBill.vDate">Ngày chứng từ</th>
+                                        <th scope="col" jhiTranslate="ebwebApp.saBill.postedDate">Ngày hạch toán</th>
+                                        <th scope="col" jhiTranslate="ebwebApp.saBill.noFBook">Số chứng từ</th>
+                                        <th scope="col" jhiTranslate="ebwebApp.saBill.reason">Diễn giải</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr *ngFor="let viewVoucher of viewVouchersSelected; let i = index"
+                                        oncontextmenu="return false;"
+                                        (contextmenu)="onRightClick($event, viewVouchersSelected, viewVoucher, false, true, false)"
+                                        (keydown.control.delete)="keyPress(i ,0)">
+                                        <td class=" cell-Table jsgrid-cell jsgrid-align-center">{{viewVoucher.date}}</td>
+                                        <td class=" cell-Table jsgrid-cell jsgrid-align-center">{{viewVoucher.postedDate}}</td>
+                                        <td class=" cell-Table pl-2 jsgrid-cell jsgrid-align-left"
+                                            (click)="utilsService.viewRefVoucher(viewVoucher)"
+                                            style="color:blue; text-decoration: underline;">{{viewVoucher.no}}</td>
+                                        <td class=" cell-Table pl-2 jsgrid-cell jsgrid-align-left">{{viewVoucher.reason}}</td>
+                                    </tr>
+                                    <tr *ngFor="let item of newArr(12-(ppDiscountReturnDetails && ppDiscountReturnDetails.length ? ppDiscountReturnDetails.length : 0))">
+                                        <td  *ngFor="let item of newArr(4)">&nbsp;</td>
+                                    </tr>
+                                    </tbody>
+                                    <tfoot>
+                                    <td colspan="4">&nbsp;
+                                        <span class="color-tfoot"
+                                              jhiTranslate="ebwebApp.pPInvoice.totalRow" translateValues="{total: '{{viewVouchersSelected ? viewVouchersSelected.length : 0}}'}"></span>
+                                    </td>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </ngb-tab>
+            <ngb-tab x-placement="right" id="PPInvoice" [disabled]="!isEdit">
+                <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.pPDiscountReturn.proofPurchase"></span>
+                </ng-template>
+            </ngb-tab>
+            <ngb-tab x-placement="right" id="reference" [disabled]="!isEdit">
+                <ng-template ngbTabTitle>
+                    <span jhiTranslate="ebwebApp.mBDeposit.reference"></span>
+                </ng-template>
+            </ngb-tab>
+        </ngb-tabset>
+    </div>
+    <!--table content-->
+    <div class="bt-frm" *ngIf="!this.statusPurchase" style="width: 100%;">
+        <form>
+            <div class="row">
+                <div class="col-lg-4" [class.eb-read-only]="option2">
+                    <div class="row no-gutters mb-1">
+                        <div>
+                            <div class="form-check form-check-inline form-control"
+                                 style="background: none; border: 0;    transform: translateY(-2px);">
+                                <input class="form-check-input mr-1" type="checkbox" id="inlineCheckbox5" value="isBill"
+                                       name="billed" [(ngModel)]="ppDiscountReturn.isExportInvoice">
+                                <label class="form-check-label" for="inlineCheckbox5"
+                                       style="font-size: 14px; white-space: nowrap"
+                                       jhiTranslate="ebwebApp.common.billed">Đã
+                                    lập HĐ</label>
+                            </div>
+                        </div>
+                        <div class="pl-2 pd-l-0" [class.eb-read-only]="!ppDiscountReturn.isExportInvoice">
+                            <div>
+                                <button class="btn mb-2 mr-2 selectVoucher"
+                                        (click)="openModel()">
+                                    <span jhiTranslate="ebwebApp.common.selectBill">Chọn hóa đơn</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <!--                    <div class="form-group row">-->
+                    <!--                        <label class="col-lg-2 col-form-label">Mẫu số</label>-->
+                    <!--                        <div class="col-lg-4 pd-l-0">-->
+                    <!--                            <input type="text" class="form-control form-control-sm">-->
+                    <!--                        </div>-->
+                    <!--                        <label class="col-lg-2 col-form-label text-center">Ký hiệu</label>-->
+                    <!--                        <div class="col-lg-4 pd-l-0">-->
+                    <!--                            <input type="text" class="form-control form-control-sm">-->
+                    <!--                        </div>-->
+                    <!--                    </div>-->
+
+                    <!--                    <div class="form-group row">-->
+                    <!--                        <label class="col-lg-2 col-form-label">Số HĐ</label>-->
+                    <!--                        <div class="col-lg-4 pd-l-0">-->
+                    <!--                            <input type="text" class="form-control form-control-sm">-->
+                    <!--                        </div>-->
+                    <!--                        <label class="col-lg-2 col-form-label text-center">Ngày HĐ</label>-->
+                    <!--                        <div class="col-lg-4 pd-l-0">-->
+                    <!--                            <input type="text" class="form-control form-control-sm">-->
+                    <!--                        </div>-->
+                    <!--                    </div>-->
+                </div>
+                <div class="col-lg-8" [class.eb-read-only]="true">
+                    <div class="row no-gutters">
+                        <div class="col-lg-6">
+                            <div class="form-group row no-gutters">
+                                <label class="col-lg-3 col-form-label pd-l-0 text-right"
+                                       jhiTranslate="ebwebApp.pPDiscountReturn.totalMoneyMerchandise">Tiền hàng</label>
+                                <div class="col-lg-5 pd-l-0">
+                                    <input type="text" class="form-control form-control-sm" name="totalAmountOriginal"
+                                           [(ngModel)]="ppDiscountReturn.totalAmountOriginal"
+                                           ebCurrencyMask [systemOptions]="account?.systemOption"
+                                           [type]="currency?.currencyCode && currency.currencyCode !== 'VND' ? 8 : 7"
+                                           readonly
+                                    >
+                                </div>
+                                <div class="col-lg-4 pd-l-0 pd-r-5">
+                                    <input type="text" class="form-control form-control-sm" name="totalAmount"
+                                           [(ngModel)]="ppDiscountReturn.totalAmount"
+                                           ebCurrencyMask [systemOptions]="account?.systemOption"
+                                           [type]="account.organizationUnit.currencyID && account.organizationUnit.currencyID !== 'VND' ? 8 : 7"
+                                           readonly
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 pd-l-0">
+                            <div class="form-group row no-gutters d-flex justify-content-end">
+                                <label class="col-lg-3 col-form-label pd-r-0"
+                                       jhiTranslate="ebwebApp.pPDiscountReturn.totalTax">Thuế GTGT</label>
+                                <div class="col-lg-5 pd-l-0">
+                                    <input type="text" class="form-control form-control-sm"
+                                           name="totalVATAmountOriginal"
+                                           [(ngModel)]="ppDiscountReturn.totalVATAmountOriginal"
+                                           ebCurrencyMask [systemOptions]="account?.systemOption"
+                                           [type]="currency?.currencyCode && currency.currencyCode !== 'VND' ? 8 : 7"
+                                           readonly
+                                    >
+                                </div>
+                                <div class="col-lg-4 pd-l-0 pd-r-5">
+                                    <input type="text" class="form-control form-control-sm" name="totalVATAmount"
+                                           [(ngModel)]="ppDiscountReturn.totalVATAmount"
+                                           ebCurrencyMask [systemOptions]="account?.systemOption"
+                                           [type]="account.organizationUnit.currencyID && account.organizationUnit.currencyID !== 'VND' ? 8 : 7"
+                                           readonly
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row no-gutters justify-content-end">
+                        <div class="col-lg-6 pd-l-0">
+                            <div class="form-group row no-gutters d-flex justify-content-end">
+                                <label class="col-lg-3 col-form-label pd-r-0"
+                                       jhiTranslate="ebwebApp.saBill.totalAmountTt">Tổng tiền TT</label>
+                                <div class="col-lg-5 pd-l-0">
+                                    <input type="text" class="form-control form-control-sm"
+                                           name="totalDiscountAmounOriginal"
+                                           [(ngModel)]="ppDiscountReturn.totalDiscountAmountOriginalReturn"
+                                           ebCurrencyMask [systemOptions]="account?.systemOption"
+                                           [type]="currency?.currencyCode && currency.currencyCode !== 'VND' ? 8 : 7"
+                                           readonly
+                                    >
+                                </div>
+                                <div class="col-lg-4 pd-l-0 pd-r-5">
+                                    <input type="text" class="form-control form-control-sm" name="totalDiscountAmount"
+                                           [(ngModel)]="ppDiscountReturn.totalDiscountAmountReturn"
+                                           ebCurrencyMask [systemOptions]="account?.systemOption"
+                                           [type]="account.organizationUnit.currencyID && account.organizationUnit.currencyID !== 'VND' ? 8 : 7"
+                                           readonly
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <!--    mua hang giam gia-->
+    <div class="row no-gutters justify-content-end" *ngIf="statusPurchase" style="padding-top: 10px;">
+        <div class="col-lg-3 pd-l-0">
+            <div class="form-group row no-gutters justify-content-end">
+                <label class="col-lg-3 col-form-label pr-0 pl-0 pt-1 text-left"
+                       jhiTranslate="ebwebApp.purchaseOrder.moneyGoods">Tiền hàng</label>
+                <div class="col-lg-4 pd-l-0 pd-r-5" style="padding-right: 0px;margin-right: 5px;">
+                    <input type="number" class="form-control form-control-sm text-right pr-0 pl-0" [class.eb-read-only]="true"
+                           name="totalAmountOriginal"
+                           [(ngModel)]="ppDiscountReturn.totalAmountOriginal"
+                           ebCurrencyMask [systemOptions]="account?.systemOption"
+                           [type]="currency?.currencyCode && currency.currencyCode !== 'VND' ? 8 : 7"
+                           readonly
+                    />
+                </div>
+                <div class="col-lg-4 pd-l-0 pl-0" [class.eb-read-only]="true">
+
+                    <input type="number" class="form-control form-control-sm text-right pr-0 pl-0"
+                           name="totalAmount" [(ngModel)]="ppDiscountReturn.totalAmount" ebCurrencyMask
+                           [systemOptions]="account?.systemOption"
+                           [type]="account.organizationUnit.currencyID && account.organizationUnit.currencyID !== 'VND' ? 8 : 7"
+                           readonly
+                    />
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 pd-l-0 pl-0">
+            <div class="form-group row no-gutters justify-content-end">
+                <label class="col-lg-3 col-form-label pr-0 pl-0 text-left" jhiTranslate="ebwebApp.purchaseOrder.vatTax">Thuế
+                    GTGT</label>
+                <div class="col-lg-4 pd-l-0 pd-r-5" style="padding-right: 0px;margin-right: 5px;" [class.eb-read-only]="true">
+                    <input type="number" class="form-control form-control-sm text-right pr-0 pl-0"
+                           name="totalVATAmountOriginal"
+                           [(ngModel)]="ppDiscountReturn.totalVATAmountOriginal" ebCurrencyMask
+                           [systemOptions]="account?.systemOption"
+                           [type]="currency?.currencyCode && currency.currencyCode !== 'VND' ? 8 : 7"
+                           readonly
+                    />
+                </div>
+                <div class="col-lg-4 pl-0" [class.eb-read-only]="true">
+                    <input type="number" class="form-control form-control-sm text-right pr-0 pl-0"
+                           name="totalVATAmount" [(ngModel)]="ppDiscountReturn.totalVATAmount" ebCurrencyMask
+                           [systemOptions]="account?.systemOption"
+                           [type]="account.organizationUnit.currencyID && account.organizationUnit.currencyID !== 'VND' ? 8 : 7"
+                           readonly
+                    />
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 pl-0" style="padding-right: 25px;">
+            <div class="form-group row no-gutters justify-content-end">
+                <label class="col-lg-3 col-form-label pl-0 pr-0 text-left"
+                       jhiTranslate="ebwebApp.purchaseOrder.totalPayment">Tổng tiền TT</label>
+                <div class="col-lg-4 pl-2" style="padding-right: 5px;margin-right: 0px;" [class.eb-read-only]="true">
+                    <input type="number" class="form-control form-control-sm text-right pr-0 pl-0"
+                           name="totalOriginal"
+                           [(ngModel)]="ppDiscountReturn.totalDiscountAmountOriginalReturn" ebCurrencyMask
+                           [systemOptions]="account?.systemOption"
+                           [type]="currency?.currencyCode && currency.currencyCode !== 'VND' ? 8 : 7"
+                           readonly
+                    />
+                </div>
+                <div class="col-lg-4 pl-0" style="padding-right: 5px;" [class.eb-read-only]="true">
+                    <input type="number" class="form-control form-control-sm text-right pr-0 pl-0"
+                           name="total" [(ngModel)]="ppDiscountReturn.totalDiscountAmountReturn" ebCurrencyMask
+                           [systemOptions]="account?.systemOption"
+                           [type]="account.organizationUnit.currencyID && account.organizationUnit.currencyID !== 'VND' ? 8 : 7"
+                           readonly
+                    />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--    end modal chứng từ tham chiếu -->
+    <eb-context-menu [contextMenu]="contextMenu" [useCopyRow]="true" [isMaterialGoodsSpecificationSelect]="!statusPurchase"></eb-context-menu>
+</div>
+
+<!--xóa-->
+<ng-template #deleteItem let-d="dismiss">
+    <form name="deleteForm">
+        <div class="modal-header">
+            <h4 class="modal-title" jhiTranslate="entity.delete.title">Confirm delete operation</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                    (click)="d('Close')">&times;
+            </button>
+        </div>
+        <div class="modal-body">
+            <p id="eb-delete-sAInvoice-heading0" jhiTranslate="ebwebApp.sAInvoice.delete.question0"
+               *ngIf="typeDelete === 0 || typeDelete === 2"></p>
+            <p id="eb-delete-sAInvoice-heading1" jhiTranslate="ebwebApp.sAInvoice.delete.question1"
+               *ngIf="typeDelete === 1"></p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="d('Close')">
+                <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+            </button>
+            <button id="eb-confirm-delete-pPDiscountReturn" type="submit" class="btn btn-danger"
+                    (click)="deleteAfter()">
+                <fa-icon [icon]="'times'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.delete">Delete</span>
+            </button>
+        </div>
+    </form>
+</ng-template>
+
+<ng-template #contentClose let-q="dismiss">
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.saBill.saveMessage">Dữ liệu đã bị thay đổi, Bạn có muốn lưu lại?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="saveAfter(checkSave);q('Close')"
+                jhiTranslate="entity.action.save">Save
+        </button>
+        <button type="button" class="btn btn-outline-danger" (click)="close();q('Close')"
+                jhiTranslate="entity.action.noSave">Save
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="closes();q('Close')"
+                jhiTranslate="entity.action.close">close
+        </button>
+    </div>
+</ng-template>
+<ng-template #contentMinus let-dismissq="dismiss">
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.pPDiscountReturnDetails.error.minusErrorSave">minusErrorSave</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="saveAfter(checkSave); dismissq('Close')"
+                jhiTranslate="entity.action.save">Save
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="changeStatusCheckSave();dismissq('Close')"
+                jhiTranslate="entity.action.close">close
+        </button>
+    </div>
+</ng-template>
+<ng-template #contentSave let-quantityExists="dismiss">
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label *ngIf="checkOpenSave"
+                       jhiTranslate="ebwebApp.pPDiscountReturnDetails.error.quantityExistsErrorSave"
+                       translateValues="{textCode: '{{this.mgForPPOderTextCode.quantityExists}}'}">Vật tư hàng hóa + Mã
+                    VTHH</label>
+                <label *ngIf="!checkOpenSave"
+                       jhiTranslate="ebwebApp.pPDiscountReturnDetails.error.minimumStockExistsErrorSave"
+                       translateValues="{textCode: '{{this.mgForPPOderTextCode.minimumStock}}'}">Vật tư hàng hóa + Mã
+                    VTHH</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="openModelSave();quantityExists('Close')"
+                jhiTranslate="entity.action.save">Save
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="changeStatusCheckSave();quantityExists('Close')"
+                jhiTranslate="entity.action.close">close
+        </button>
+    </div>
+</ng-template>
+<ng-template #contentVAT let-quantityExists="dismiss">
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label *ngIf="checkVATError" jhiTranslate="ebwebApp.pPDiscountReturnDetails.error.vatRateNull">% thuế
+                    null</label>
+                <label *ngIf="!checkVATError" jhiTranslate="ebwebApp.pPDiscountReturnDetails.error.vatRateZero">% thuế =
+                    0</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="openModelSave();quantityExists('Close')"
+                jhiTranslate="entity.action.save">Save
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="changeStatusCheckSave();quantityExists('Close')"
+                jhiTranslate="entity.action.close">close
+        </button>
+    </div>
+</ng-template>

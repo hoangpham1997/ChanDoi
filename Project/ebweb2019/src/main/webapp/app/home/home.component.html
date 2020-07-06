@@ -1,0 +1,440 @@
+<div
+    style="padding-left: 1.1rem;
+    padding-top: 1.1rem;
+    padding-right: 15px;
+    margin-left: -1.1rem;
+    margin-top: -1.1rem;
+    margin-right: -15px;"
+     [ngClass]="{'background-tab-1' : (idTab === 1),'background-tab-2': (idTab === 2)}"> <!--style="margin: -1.1rem -2.5rem -2.5rem; padding:1.1rem 2.5rem 2.5rem"-->
+    <div class="row" [style.height]="idTab === 1 ? '30px': '35px'">
+        <div class="col-md-12 grid-margin">
+            <div class="d-flex justify-content-between flex-wrap" id="pills-tab">
+                <ul class="nav nav-tabs nav-pills">
+                    <li class="active nav-item" (click)="idTab = 1">
+                        <a class="nav-link active" style="padding: 0px; padding-left: 15px; padding-right: 15px"
+                           id="pills-home-tab" data-toggle="tab"
+                           href="#home">Thống kê</a>
+                    </li>
+                    <li class="nav-item" (click)="idTab = 2">
+                        <a data-toggle="tab" style="padding: 0px; padding-left: 15px; padding-right: 15px"
+                           id="pills-profile-tab" class="nav-link" href="#menu1">Quy
+                            trình nghiệp vụ</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="row-dk tab-pane fade in active show" id="home" style="padding: 0px">
+        <div class="row row-dk" style="padding-left: 0px;">
+            <div class="col-md-4 grid-margin stretch-card css-padding-top-5" style="padding-bottom: 0px; margin-bottom: 0px;">
+                <div class="card">
+                    <div class="card-body card-body-padding">
+                        <div class="d-flex align-items-start justify-content-between">
+                            <p class="card-title flex-grow padding-text"><span
+                                jhiTranslate="home.bieuDo.BieuDoTongHop">Biểu đồ tổng hợp</span></p>
+                            <div class="dropdown dropright card-menu-dropdown">
+                                <div class="form-group css-combo">
+                                    <combo-box style=""
+                                               [hasBoder]="true"
+                                               [stypeForHome]="true"
+                                               name="timeLineBDTH"
+                                               [dataList]="listTimeLine"
+                                               [listColumns]="utilsService.listColumnsTimeLine"
+                                               [isOutTable]="true"
+                                               displayMember="display"
+                                               valueName="value"
+                                               [headerColumns]="utilsService.listHeaderColumnsTimeLine"
+                                               [isObject]="false"
+                                               [(ngModel)]="timeLineVoucherBDTH"
+                                               (ngModelChange)="selectChangeBeginDateAndEndDateBDTH(timeLineVoucherBDTH)"
+                                    ></combo-box>
+                                </div>
+                            </div>
+                        </div>
+                        <canvas baseChart
+                                style="position: relative;"
+                                [chartType]="chartTypeBDTH"
+                                [datasets]="chartDatasetsBDTH"
+                                [labels]="chartLabelsBDTH"
+                                [colors]="chartColorsBDTH"
+                                [options]="chartOptions"
+                                [plugins]="barChartPlugins"
+                                [legend]="false"
+                                (chartHover)="chartHovered($event)"
+                                (chartClick)="chartClicked($event)"
+                                height="150px">
+                        </canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 grid-margin stretch-card css-padding-top-5" style="padding-bottom: 0px; margin-bottom: 0px;">
+                <div class="card">
+                    <div class="card-body card-body-padding">
+                        <div class="d-flex align-items-start justify-content-between">
+                            <p class="card-title flex-grow padding-text"><span jhiTranslate="home.bieuDo.NoPhaiThuNoPhaiTra">Nợ phải thu - Nợ phải trả</span>
+                            </p>
+                            <div class="dropdown dropright card-menu-dropdown">
+                                <div class="form-group css-combo">
+                                    <combo-box style=""
+                                               name="timeLineBDNPTPT"
+                                               [stypeForHome]="true"
+                                               [hasBoder]="true"
+                                               [dataList]="listTimeLine"
+                                               [listColumns]="utilsService.listColumnsTimeLine"
+                                               [isOutTable]="true"
+                                               displayMember="display"
+                                               valueName="value"
+                                               [headerColumns]="utilsService.listHeaderColumnsTimeLine"
+                                               [isObject]="false"
+                                               [(ngModel)]="timeLineVoucherBDNPTPT"
+                                               (ngModelChange)="selectChangeBeginDateAndEndDateBDPTPT(timeLineVoucherBDNPTPT)"
+                                    ></combo-box>
+                                </div>
+                            </div>
+                        </div>
+                        <canvas baseChart
+                                [chartType]="chartTypeBDNPTPT"
+                                [datasets]="chartDatasetsBDNPTPT"
+                                [labels]="chartLabelsBDNPTPT"
+                                [colors]="chartColorsBDNPTPT"
+                                [options]="chartOptions2"
+                                [plugins]="barChartPlugins"
+                                [legend]="true"
+                                (chartHover)="chartHovered($event)"
+                                (chartClick)="chartClicked($event)"
+                                height="150px">
+                        </canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 grid-margin stretch-card css-padding-top-5" style="padding-bottom: 0px; margin-bottom: 0px;">
+                <div class="card">
+                    <div class="card-body card-body-padding">
+                        <div class="d-flex align-items-start justify-content-between">
+                            <p class="card-title flex-grow padding-text"><span
+                                jhiTranslate="home.bieuDo.DoanhThuChiPhi">Doanh thu - Chi phí</span></p>
+                            <div class="d-flex align-items-center">
+                                <div class="dropdown dropright card-menu-dropdown">
+                                    <div class="form-group css-combo">
+                                        <combo-box style=""
+                                                   name="timeLineBDDTCP"
+                                                   [stypeForHome]="true"
+                                                   [hasBoder]="true"
+                                                   [dataList]="listTimeLine"
+                                                   [listColumns]="utilsService.listColumnsTimeLine"
+                                                   [isOutTable]="true"
+                                                   displayMember="display"
+                                                   valueName="value"
+                                                   [headerColumns]="utilsService.listHeaderColumnsTimeLine"
+                                                   [isObject]="false"
+                                                   [(ngModel)]="timeLineVoucherBDDTCP"
+                                                   (ngModelChange)="selectChangeBeginDateAndEndDateBDDTCP(timeLineVoucherBDDTCP)"
+                                        ></combo-box>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-start flex-wrap ">
+                            <div class="online-revenue-chart-legend mt-2 mt-sm-0 mt-md-2 mt-xl-0 mr-1"
+                                 id="online-revenue-legend"></div>
+                        </div>
+                        <canvas baseChart
+                                [chartType]="chartTypeBDDTCP"
+                                [datasets]="chartDatasetsBDDTCP"
+                                [labels]="chartLabelsBDDTCP"
+                                [colors]="chartColorsBDDTCP"
+                                [options]="chartOptionsDTCP"
+                                [plugins]="barChartPlugins"
+                                [legend]="true"
+                                (chartHover)="chartHovered($event)"
+                                (chartClick)="chartClicked($event)"
+                                height="150px">
+                        </canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row row-dk" style="padding-left: 0px;">
+            <div class="col-md-8" style="padding-right: 5px !important;padding-left: 5px !important; padding-top: 10px !important;">
+                <div class="card-table">
+                    <div class="pt-3 jsgrid js-grid-static">
+                        <p data-brackets-id="34334" class="card-title flex-grow"><span
+                            jhiTranslate="home.bieuDo.SoDuTaiKhoan">Số dư tài khoản</span></p>
+                        <div class="frm-main mains">
+                            <eb-tree-grid [height]="320" [isHome]="true" [account]="account" [tree]="listParentAccount"
+                                          [navigateForm]="navigateForm" [listTHead]="listTHead"
+                                          [listKey]="listKey"></eb-tree-grid>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" style="padding-top: 10px !important;">
+                <div class="card-table">
+                    <div class="pt-3 jsgrid js-grid-static">
+                        <div class="d-flex align-items-start justify-content-between"
+                             style="z-index: 4; position: inherit">
+                            <p class="card-title flex-grow"><span jhiTranslate="home.bieuDo.SucKhoeTaiChinhDN">Sức khỏe tài chính DN</span>
+                            </p>
+                            <div class="dropdown dropright card-menu-dropdown">
+                                <div class="form-group css-combo">
+                                    <combo-box style=""
+                                               name="timeLineSKTC"
+                                               [stypeForHome]="true"
+                                               [hasBoder]="true"
+                                               [dataList]="listTimeLine"
+                                               [listColumns]="utilsService.listColumnsTimeLine"
+                                               [isOutTable]="true"
+                                               displayMember="display"
+                                               valueName="value"
+                                               [headerColumns]="utilsService.listHeaderColumnsTimeLine"
+                                               [isObject]="false"
+                                               [(ngModel)]="timeLineVoucherSKTC"
+                                               (ngModelChange)="selectChangeBeginDateAndEndDateSKTC(timeLineVoucherSKTC)"
+                                    ></combo-box>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="frm-main frm-tables frm-padding" style="background: #cbdcf0; height: 365px">
+                            <div id="table-scroll0" class="table-scroll voucher-table" style="height: 356px">
+                                <table id="main-table0" class="main-table" style="min-width: auto;">
+                                    <thead class="header-table">
+                                    <tr>
+                                        <th scope="col" style="width: 150px" jhiTranslate="home.sucKhoeTaiChinh.name">Chỉ số</th>
+                                        <th scope="col" style="width: 150px" jhiTranslate="home.sucKhoeTaiChinh.value">Giá trị</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr *ngFor="let sktc of sucKhoeTaiChinhs; let i = index;" class="jsgrid-row">
+                                        <td class="jsgrid-cell" style="width: 170px;"
+                                            [title]="sktc.chiSo">{{sktc.chiSo}}</td>
+                                        <td class="jsgrid-cell jsgrid-align-right"
+                                            style="width: 150px;padding: 5px 0px !important">
+                                            <input type="number"
+                                                   [disabled]="true"
+                                                   class="input-Cell"
+                                                   name="{{'totalAmount'+i}}"
+                                                   ebCurrencyMask
+                                                   [systemOptions]="account?.systemOption"
+                                                   [type]="i === 2? 7: 5"
+                                                   [(ngModel)]="sktc.giaTri"
+                                            >
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+<!--                        <div class="frm-main frm-tables frm-padding" style="height: 365px">-->
+<!--                            <div id="table-scroll" class="table-scroll" style="height: 340px">-->
+<!--                                <table id="main-table" class="main-table">-->
+<!--                                    <thead>-->
+<!--                                    <tr class="jsgrid-header-row">-->
+<!--                                        <th class="jsgrid-header-cell jsgrid-header-sortable" style="width: 200px;">Chỉ-->
+<!--                                            số-->
+<!--                                        </th>-->
+<!--                                        <th class="jsgrid-header-cell jsgrid-header-sortable jsgrid-align-right"-->
+<!--                                            style="width: 150px;">Giá trị-->
+<!--                                        </th>-->
+<!--                                    </tr>-->
+<!--                                    </thead>-->
+<!--                                    <tbody>-->
+
+<!--                                    <tr *ngFor="let sktc of sucKhoeTaiChinhs; let i = index;" class="jsgrid-row">-->
+<!--                                        <td class="jsgrid-cell" style="width: 170px;"-->
+<!--                                            [title]="sktc.chiSo">{{sktc.chiSo}}</td>-->
+<!--                                        <td class="jsgrid-cell jsgrid-align-right"-->
+<!--                                            style="width: 150px;padding: 5px 0px !important">-->
+<!--                                            <input type="number"-->
+<!--                                                   [disabled]="true"-->
+<!--                                                   class="input-Cell"-->
+<!--                                                   name="{{'totalAmount'+i}}"-->
+<!--                                                   ebCurrencyMask-->
+<!--                                                   [systemOptions]="account?.systemOption"-->
+<!--                                                   [type]="i === 2? 7: 5"-->
+<!--                                                   [(ngModel)]="sktc.giaTri"-->
+<!--                                            >-->
+<!--                                        </td>-->
+<!--                                    </tr>-->
+<!--                                    </tbody>-->
+<!--                                </table>-->
+<!--                            </div>-->
+<!--                        </div>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row-dk tab-pane tab-pane fade" id="menu1" style="padding-left: 0px">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="frm-main frm-mains nobg">
+                    <div class="row row-dk tab-pane fade in active show" style="padding: 5% 0;">
+                        <div class="col-lg-1" style="height: 100%">
+                        </div>
+                        <div class="col-lg-1">
+                            <div class="form-group row">
+                                <img class="img"
+                                     src="../../content/images/icon/hoa-don-dien-tu/white-space.png">
+                            </div>
+                            <div class="form-group row" style="height: 15%">
+                                <img class="img"
+                                     src="../../content/images/icon/hoa-don-dien-tu/white-space.png">
+                            </div>
+                            <div class="form-group row">
+                                <img class="box"
+                                     src="../../content/images/icon/trang-chu/icon-du-lieu.png">
+                            </div>
+                        </div>
+                        <div class="col-lg-1">
+                            <div class="form-group row">
+                                <img class="img"
+                                     src="../../content/images/icon/hoa-don-dien-tu/white-space.png">
+                            </div>
+                            <div class="form-group row" style="height: 14%">
+                                <img class="img"
+                                     src="../../content/images/icon/hoa-don-dien-tu/white-space.png">
+                            </div>
+                            <div class="form-group row" style="padding-left: 6.5%; padding-right: 6.5%"><img src="../../content/images/icon/TongHop/move-right.png">
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="form-group row">
+                                <div class="col-sm-4 padding-div">
+                                    <img class="box img-resize" (click)="navigateTienMatNganHang()"
+                                         src="../../content/images/icon/trang-chu/icon-tien-mat-ngan-hang.png">
+                                </div>
+                                <div class="col-sm-4 padding-div">
+                                    <img class="box img-resize" (click)="navigateMuaHang()"
+                                         src="../../content/images/icon/trang-chu/icon-mua-hang.png">
+                                </div>
+                                <div class="col-sm-4 padding-div">
+                                    <img class="box img-resize" (click)="navigateBanHang()"
+                                         src="../../content/images/icon/trang-chu/icon-ban-hang.png">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-4 padding-div">
+                                    <img class="box img-resize" (click)="navigateQuanLyHoaDon()"
+                                         src="../../content/images/icon/trang-chu/icon-quan-ly-hoa-don.png">
+                                </div>
+                                <div class="col-sm-4 padding-div">
+                                    <img class="box img-resize" (click)="navigateHoaDonDienTu()"
+                                         src="../../content/images/icon/trang-chu/icon-hoa-don-dien-tu.png">
+                                </div>
+                                <div class="col-sm-4 padding-div">
+                                    <img class="box img-resize" (click)="navigateKho()"
+                                         src="../../content/images/icon/trang-chu/icon-kho.png">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-4 padding-div">
+                                    <img class="box img-resize"
+                                         src="../../content/images/icon/trang-chu/icon-gia-thanh.png">
+                                </div>
+                                <div class="col-sm-4 padding-div">
+                                    <img class="box img-resize"
+                                         src="../../content/images/icon/trang-chu/icon-luong.png">
+                                </div>
+                                <div class="col-sm-4 padding-div">
+                                    <img class="box img-resize"
+                                         src="../../content/images/icon/trang-chu/icon-thue.png">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-4 padding-div">
+                                    <img class="box img-resize"
+                                         src="../../content/images/icon/trang-chu/icon-cong-cu-dung-cu.png">
+                                </div>
+                                <div class="col-sm-4 padding-div">
+                                    <img class="box img-resize"
+                                         src="../../content/images/icon/trang-chu/icon-tai-san-co-dinh.png">
+                                </div>
+                                <div class="col-sm-4 padding-div">
+                                    <img class="box img-resize"
+                                         src="../../content/images/icon/trang-chu/icon-hop-dong.png">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-1" style="padding-left: 0">
+                            <div class="form-group row">
+                                <img class="img"
+                                     src="../../content/images/icon/hoa-don-dien-tu/white-space.png">
+                            </div>
+                            <div class="form-group row" style="height: 14%; padding-left: 0">
+                                <img class="img"
+                                     src="../../content/images/icon/hoa-don-dien-tu/white-space.png">
+                            </div>
+                            <div class="form-group row"><img style="width: 88.29%"
+                                                             src="../../content/images/icon/TongHop/move-right.png">
+                            </div>
+                        </div>
+                        <div class="col-lg-1">
+                            <div class="form-group row">
+                                <img class="img"
+                                     src="../../content/images/icon/hoa-don-dien-tu/white-space.png">
+                            </div>
+                            <div class="form-group row" style="height: 15%">
+                                <img class="img"
+                                     src="../../content/images/icon/hoa-don-dien-tu/white-space.png">
+                            </div>
+                            <div class="form-group row">
+                                <img class="box" (click)="navigateTongHop()"
+                                     src="../../content/images/icon/trang-chu/icon-tong-hop.png">
+                            </div>
+                        </div>
+                        <div class="col-lg-1" style="padding-right: 0;">
+                            <div class="form-group row">
+                                <img class="img"
+                                     src="../../content/images/icon/hoa-don-dien-tu/white-space.png">
+                            </div>
+                            <div class="form-group row" style="height: 14%; padding-left: 0">
+                                <img class="img"
+                                     src="../../content/images/icon/hoa-don-dien-tu/white-space.png">
+                            </div>
+                            <div class="form-group row"><img style="width: 88.29%"
+                                                             src="../../content/images/icon/TongHop/move-right.png">
+                            </div>
+                        </div>
+                        <div class="col-lg-1">
+                            <div class="form-group row">
+                                <img class="img"
+                                     src="../../content/images/icon/hoa-don-dien-tu/white-space.png">
+                            </div>
+                            <div class="form-group row" style="height: 15%">
+                                <img class="img"
+                                     src="../../content/images/icon/hoa-don-dien-tu/white-space.png">
+                            </div>
+                            <div class="form-group row">
+                                <img class="box" (click)="navigateBaoCao()"
+                                     src="../../content/images/icon/trang-chu/icon-bao-cao.png">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-8">
+                    </div>
+                    <div class="col-lg-4">
+                        <img
+                            src="../../content/images/icon/TongHop/logo-chim.png">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #activeAlert let-modal>
+    <div class="modal-body" style="background: #6fc080">
+        <form>
+            <div class="form-group" style="text-align: center">
+                <label style="color: white; font-size: medium; font-weight: normal" jhiTranslate="home.activeAlert"></label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer" style="justify-content: center">
+        <button type="button" class="activeButton" (click)="activeAccount()"
+                jhiTranslate="home.activeButton">
+        </button>
+    </div>
+</ng-template>
+

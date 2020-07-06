@@ -1,0 +1,80 @@
+<div>
+    <h2 id="page-heading">
+        <span jhiTranslate="ebwebApp.materialGoodsConvertUnit.home.title">Material Goods Convert Units</span>
+        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-material-goods-convert-unit" [routerLink]="['/material-goods-convert-unit/new']">
+            <fa-icon [icon]="'plus'"></fa-icon>
+            <span  jhiTranslate="ebwebApp.materialGoodsConvertUnit.home.createLabel">
+            Create new Material Goods Convert Unit
+            </span>
+        </button>
+    </h2>
+    <eb-alert></eb-alert>
+    <br/>
+    <div class="table-responsive" *ngIf="materialGoodsConvertUnits">
+        <table class="table table-striped">
+            <thead>
+            <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
+            <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="orderNumber"><span jhiTranslate="ebwebApp.materialGoodsConvertUnit.orderNumber">Order Number</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="convertRate"><span jhiTranslate="ebwebApp.materialGoodsConvertUnit.convertRate">Convert Rate</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="formula"><span jhiTranslate="ebwebApp.materialGoodsConvertUnit.formula">Formula</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="description"><span jhiTranslate="ebwebApp.materialGoodsConvertUnit.description">Description</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="materialGoods.id"><span jhiTranslate="ebwebApp.materialGoodsConvertUnit.materialGoods">Material Goods</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="unit.id"><span jhiTranslate="ebwebApp.materialGoodsConvertUnit.unit">Unit</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let materialGoodsConvertUnit of materialGoodsConvertUnits ;trackBy: trackId">
+                <td><a [routerLink]="['/material-goods-convert-unit', materialGoodsConvertUnit.id, 'view' ]">{{materialGoodsConvertUnit.id}}</a></td>
+                <td>{{materialGoodsConvertUnit.orderNumber}}</td>
+                <td>{{materialGoodsConvertUnit.convertRate}}</td>
+                <td>{{materialGoodsConvertUnit.formula}}</td>
+                <td>{{materialGoodsConvertUnit.description}}</td>
+                <td>
+                    <div *ngIf="materialGoodsConvertUnit.materialGoods">
+                        <a [routerLink]="['../material-goods', materialGoodsConvertUnit.materialGoods?.id, 'view' ]" >{{materialGoodsConvertUnit.materialGoods?.id}}</a>
+                    </div>
+                </td>
+                <td>
+                    <div *ngIf="materialGoodsConvertUnit.unit">
+                        <a [routerLink]="['../unit', materialGoodsConvertUnit.unit?.id, 'view' ]" >{{materialGoodsConvertUnit.unit?.id}}</a>
+                    </div>
+                </td>
+                <td class="text-right">
+                    <div class="btn-group flex-btn-group-container">
+                        <button type="submit"
+                                [routerLink]="['/material-goods-convert-unit', materialGoodsConvertUnit.id, 'view' ]"
+                                class="btn btn-info btn-sm">
+                            <fa-icon [icon]="'eye'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/material-goods-convert-unit', materialGoodsConvertUnit.id, 'edit']"
+                                class="btn btn-primary btn-sm">
+                            <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/', { outlets: { popup: 'material-goods-convert-unit/'+ materialGoodsConvertUnit.id + '/delete'} }]"
+                                replaceUrl="true"
+                                queryParamsHandling="merge"
+                                class="btn btn-danger btn-sm">
+                            <fa-icon [icon]="'times'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div *ngIf="materialGoodsConvertUnits && materialGoodsConvertUnits.length">
+        <div class="row justify-content-center">
+            <jhi-item-count [page]="page" [total]="queryCount" [maxSize]="5" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+        </div>
+        <div class="row justify-content-center">
+            <ngb-pagination [size]="'sm'" [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage" [maxSize]="5" [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage(page)"></ngb-pagination>
+        </div>
+    </div>
+</div>

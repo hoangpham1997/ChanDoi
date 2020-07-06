@@ -1,0 +1,224 @@
+<div class = "body" >
+    <div class = "modal-header" style = "padding: 2px 10px; padding-top: 10px">
+        <div class="d-flex flex-wrap col-md-11">
+            <h6 *ngIf="!status" class="modal-title-detail"><img src="../../../../content/images/icon-logo.png" height="25px"
+                                                                width="25px"> <span
+                class="text-uppercase" jhiTranslate="ebwebApp.baoCao.tongHopCongNoPhaiThu"></span></h6>
+            <h6 *ngIf="status" class="modal-title-detail"><img src="../../../../content/images/icon-logo.png" height="25px"
+                                                               width="25px"> <span
+                class="text-uppercase" jhiTranslate="ebwebApp.baoCao.chiTietCongNoPhaiThuKH"></span></h6>
+        </div>
+    </div>
+    <div style="padding: 5px 25px">
+        <div id="groupForm">
+            <div class="form-group row" *ngIf="treeOrganizationUnits && treeOrganizationUnits.length > 0 && treeOrganizationUnits[0].children && treeOrganizationUnits[0].children.length > 0">
+                <label class="col-sm-2 col-form-label" jhiTranslate="ebwebApp.baoCao.canDoiKeToan.organization">Đơn vị/
+                    Tổ chức</label>
+                <div class="col-sm-10 pl-0">
+                    <eb-tree-combo-box [tree]="treeOrganizationUnits" [(ngModel)]="organizationUnit"
+                    (ngModelChange)="changeOrganizationUnit()"></eb-tree-combo-box>
+                </div>
+            </div>
+            <div class="form-group row" *ngIf="isShowDependent && treeOrganizationUnits && treeOrganizationUnits?.length > 0 && treeOrganizationUnits[0].children && treeOrganizationUnits[0].children.length>0">
+            <label class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-10 pl-0">
+                    <label for="checkboxx">
+                        <input id="checkboxx" type="checkbox" name="checkboxx"
+                               [(ngModel)]="dependent"
+                        (ngModelChange)="changeDependent()"></label>
+                    <label for="checkboxx" jhiTranslate="ebwebApp.baoCao.dependentBranch"></label>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label" jhiTranslate="ebwebApp.baoCao.canDoiKeToan.period"> Kỳ báo cáo</label>
+                <div class="col-sm-4 pl-0">
+                    <combo-box
+                               name="timeLine"
+                               [dataList]="listTimeLine"
+                               [listColumns]="utilsService.listColumnsTimeLine"
+                               displayMember="display"
+                               valueName="value"
+                               [headerColumns]="utilsService.listHeaderColumnsTimeLine"
+                               [isObject]="false"
+                               [isOutTable]="true"
+                               [(ngModel)]="timeLineVoucher"
+                               (ngModelChange)="selectChangeBeginDateAndEndDate(timeLineVoucher)"
+                    ></combo-box>
+                </div>
+<!--                <div class="col-sm-3">-->
+<!--                    <div class="row">-->
+                        <label class="col-sm-2 col-form-label" jhiTranslate="ebwebApp.comboBox.accountDebit.accountNumber"> Tài khoản</label>
+                        <div class="col-sm-4 pl-0">
+                            <combo-box
+                                name="creditaccount"
+                                id="creditaccount"
+                                [dataList]="accountLists"
+                                [isRequired]="true"
+                                [listColumns]="['accountNumber','accountName']"
+                                displayMember="accountNumber"
+                                valueName="accountNumber"
+                                [headerColumns]="['Tài khoản','Tên tài khoản']"
+                                [isObject]="false"
+                                [isOutTable]="true"
+                                [(ngModel)]="accountItem"
+                            ></combo-box>
+                        </div>
+<!--                    </div>-->
+<!--                </div>-->
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label" jhiTranslate="ebwebApp.saBill.invoice.fromDate"> Từ ngày </label>
+                <div class="col-sm-4 pl-0">
+                    <!--                    <div class="row">-->
+                    <!--                        <div class="col-sm-5">-->
+                    <eb-date-picker [(ngModel)]="fromDate" name="fromdate" format="YYYYMMDD"></eb-date-picker>
+                </div>
+                <label class="col-sm-2 col-form-label" id="lb_toDate" jhiTranslate="ebwebApp.saBill.invoice.toDate"> Đến
+                    ngày</label>
+                <div class="col-sm-4 pl-0">
+                    <eb-date-picker [(ngModel)]="toDate" name="todate" format="YYYYMMDD"></eb-date-picker>
+                </div>
+                <!--            </div>-->
+                <!--        </div>-->
+                <!--        <div class="col-sm-3">-->
+                <!--            <div class="row">-->
+                <!--            </div>-->
+                <!--        </div>-->
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label" jhiTranslate="ebwebApp.accountingObjectGroup.customerGroupCode"> Nhóm KH </label>
+                <div class="col-sm-4 pl-0">
+                    <combo-box id="accountingObjectGroupID"
+                               name="accountingObjectGroupID"
+                               [dataList]="accountingObjectGroups"
+                               [listColumns]="['accountingObjectGroupCode','accountingObjectGroupName']"
+                               [headerColumns]="['Mã nhóm KH', 'Tên nhóm KH']"
+                               displayMember="accountingObjectGroupCode"
+                               valueName = "id"
+                               [isObject]="false"
+                               [isOutTable]="true"
+                               [(ngModel)]="accountingObjectGroupID"
+                               (ngModelChange)="selectChangeInAccountingObjectGroup()"
+                    ></combo-box>
+                </div>
+                <label class="col-sm-2 col-form-label" jhiTranslate="ebwebApp.mCAudit.currencyID"> Loại tiền</label>
+                <div class="col-sm-4 pl-0">
+                    <combo-box id="currencyCode"
+                               [dataList]="currencies"
+                               [listColumns]="['currencyCode', 'currencyName']"
+                               [headerColumns]="['Mã loại tiền', 'Tên loại tiền']"
+                               displayMember="currencyCode"
+                               valueName="currencyCode"
+                               [isObject]="false"
+                               [isOutTable]="true"
+                               [(ngModel)]="currencyCode"
+                    ></combo-box>
+                </div>
+            </div>
+        </div>
+        <div id="table-scroll0" class="table-scroll" style="z-index: 0;height: 300px">
+            <table class="main-table" style="min-width: 100%">
+                <thead>
+                <tr>
+                    <th scope="col" style="width: 50px !important;">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="check-all" [checked]="isCheckAll()" (change)="checkAll()">
+                            <label class="custom-control-label" for="check-all"></label>
+                        </div>
+                    </th>
+                    <th scope="col" jhiTranslate="ebwebApp.accountingObject.accountingObjectCode" style="width: 50px !important;">Mã KH </th>
+                    <th scope="col" jhiTranslate="ebwebApp.accountingObject.accountingObjectName">Tên KH</th>
+                    <th scope="col" jhiTranslate="ebwebApp.accountingObject.accountingObjectAddress">Địa chỉ</th>
+                </tr>
+                <tr>
+                    <th class="col" class="jsgrid-align-center sticky-35"
+                        style="background: #fff !important; padding: 0px 10px !important;">
+                    </th>
+                    <th class="col" class="jsgrid-align-left sticky-35"
+                        style="background: #fff !important; padding: 0px 10px !important;"><input
+                        type="text" placeholder="{{'ebwebApp.accountDefault.searchHere' | translate}}"
+                        class="input-Cell"
+                        name="searchAccountNumber"
+                        [(ngModel)]="acCodeFilter"
+                        (ngModelChange)="changeMGFilter()">
+                    </th>
+                    <th class="col" class="jsgrid-align-left sticky-35"
+                        style="background: #fff !important; padding: 0px 10px !important;"><input
+                        type="text"
+                        placeholder="{{'ebwebApp.accountDefault.searchHere' | translate}}"
+                        class="input-Cell"
+                        name="searchAccountName"
+                        [(ngModel)]="acNameFilter"
+                        (ngModelChange)="changeMGFilter()"
+                    ><th class="col" class="jsgrid-align-left sticky-35"
+                        style="background: #fff !important; padding: 0px 10px !important;"><input
+                        type="text"
+                        placeholder="{{'ebwebApp.accountDefault.searchHere' | translate}}"
+                        class="input-Cell"
+                        name="searchAccountName"
+                        [(ngModel)]="acAddressFilter"
+                        (ngModelChange)="changeMGFilter()"
+                    >
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let item of accountingObjects, let i = index" (click)="check(item)">
+                    <td class="text-center" style="width: 50px;">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" name="{{'checkbox' + i}}"
+                                   id="{{'checkbox' + i}}" [(ngModel)]="item.checked" (click)="check(item)">
+                            <label class="custom-control-label" for="{{'checkbox' + i}}"></label>
+                        </div>
+                    </td>
+                    <td class="jsgrid-cell jsgrid-align-left one-long-line" title="{{item.accountingObjectCode}}">
+                        {{item.accountingObjectCode}}
+                    </td>
+                    <td class="jsgrid-cell jsgrid-align-left one-long-line" title="{{item.accountingObjectName}}">
+                        {{item.accountingObjectName}}
+                    </td>
+                    <td class="jsgrid-cell jsgrid-align-left one-long-line" title="{{item.accountingObjectAddress}}">
+                        {{item.accountingObjectAddress}}
+                    </td>
+                </tr>
+                <tr
+                    *ngFor="let l of newArr(9 - ((accountingObjects && accountingObjects.length) > 0 ? accountingObjects.length : 0))">
+                    <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                    </td>
+                    <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                    </td>
+                    <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                    </td>
+                    <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div *ngIf="status" class="form-group row" style="padding-top:5px">
+            <div class="col-sm-8">
+                <label for="groupCheckbox"><input id="groupCheckbox" type="checkbox" name="groupCheckbox" [(ngModel)]="isSimilarSum"></label>
+                <label for="groupCheckbox" jhiTranslate="ebwebApp.baoCao.nhatKyChungPopup.option1"></label>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer" style="padding: 5px 31px">
+<!--        <div *ngIf="currencyCodeDefault !== currencyCode" style="width: 100%; font-weight: 300;font-size: 14px;">-->
+<!--            <label jhiTranslate="ebwebApp.common.getNumberData">Lấy số liệu: </label>-->
+<!--            <label for="radio1"><input id="radio1" type="radio" [value]="false" name="radio" [(ngModel)]="getAmountOriginal"-->
+<!--                                       class="noSetDisable"></label>-->
+<!--            <label jhiTranslate="ebwebApp.common.exchange" for="radio1">Quy đổi</label>-->
+<!--            <label for="radio2"><input id="radio2" type="radio" [value]="true" name="radio" [(ngModel)]="getAmountOriginal"-->
+<!--                                       class="noSetDisable"></label>-->
+<!--            <label jhiTranslate="ebwebApp.common.original" for="radio2">Nguyên tệ</label>-->
+<!--        </div>-->
+        <button id="save" (click)="accept()" class="btn btn-success">
+            <span jhiTranslate="entity.action.preview"></span>
+        </button>
+        <button *ebHasSomeAuthorityAndCondition="[['ROLE_ADMIN', status ? ROLE_KetXuatChiTiet : ROLE_KetXuat], isKetXuat]" class="btn btn-danger" jhiTranslate="entity.action.render" (click)="exportExcel()">Kết xuất</button>
+        <button type="button" class="btn btn-dark" (click)="activeModal.dismiss('closed')" data-dismiss="modal">
+            <span jhiTranslate="entity.action.close"></span>
+        </button>
+    </div>
+</div>
+

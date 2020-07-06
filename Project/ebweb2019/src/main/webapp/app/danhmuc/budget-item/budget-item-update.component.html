@@ -1,0 +1,158 @@
+<div class="modal-body windowClass-DanhMuc-Combobox" style="padding-top: 0px;padding-left: 0px;padding-right: 0px;padding-bottom: 0px" >
+    <div class="margin-tp-5 margin-0">
+        <div class="">
+            <div class="itemw">
+                <div class="menu-tool-bar header-custom">
+                    <div class="ptitle">
+                        <span jhiTranslate="ebwebApp.budgetItem.home.title">Mục thu chi</span>
+                    </div>
+
+                    <div class="gr-toolbar">
+                        <a (click)="save()" *ebHasAnyAuthority="['ROLE_ADMIN',budgetItem.id? ROLE_BudgetItem_Sua : ROLE_BudgetItem_Them]" title="{{'ebwebApp.autoPrinciple.tooltipSave' | translate}}"><i class="mdi mdi-briefcase-download"></i>
+                            <span jhiTranslate="ebwebApp.budgetItem.save"></span>
+                        </a>
+                        <a (click)="saveAndNew()" *ebHasAnyAuthority="['ROLE_ADMIN', ROLE_BudgetItem_Them]" title="{{'ebwebApp.autoPrinciple.tooltipSaveAndAdd' | translate}}"><i *ebHasAnyAuthority="['ROLE_ADMIN', ROLE_BudgetItem_Sua]" class="mdi mdi-plus fa-plus color-green"></i>
+                            <span *ebHasAnyAuthority="['ROLE_ADMIN', ROLE_BudgetItem_Sua]" jhiTranslate="ebwebApp.budgetItem.saveandadd"></span>
+                        </a>
+                        <a [class.disable]="false" [class.disable]="!budgetItem.id" (click)="delete()" *ebHasAnyAuthority="['ROLE_ADMIN', ROLE_BudgetItem_Xoa]" title="{{'ebwebApp.autoPrinciple.tooltipDelete' | translate}}" ><i class="mdi mdi-plus fa-plus color-green"></i>
+                            <span jhiTranslate="ebwebApp.budgetItem.deleted"></span>
+                        </a>
+                        <a (click)="closeForm()" title="{{'ebwebApp.autoPrinciple.tooltipBack' | translate}}"><i class="mdi mdi-window-close"></i>
+                            <span jhiTranslate="ebwebApp.budgetItem.close"></span>
+                        </a>
+                    </div>
+                </div>
+                <div class="frm-main">
+                    <div class="row ">
+                        <div class="col-lg-12">
+                            <fieldset>
+                                <legend jhiTranslate="ebwebApp.autoPrinciple.information"
+                                        style="font-size: 19px; color: #f26f21;font-weight: bold;">
+                                    Thông tin chung
+                                </legend>
+                                <fieldset>
+                                    <form style="border: none; padding-top: 0px;padding-left: 0px;padding-right: 10px;padding-bottom: 0px">
+                                        <div class="row no-gutters">
+                                            <div class="col-lg-12">
+                                                <div class="form-group row no-gutters ">
+                                                    <label class="col-sm-2 my-col-form-label"
+                                                           jhiTranslate="ebwebApp.budgetItem.budgetItemType">Loại
+                                                        (*)</label>
+                                                    <div class="col-sm-3 pd-l-0 pd-r-10 my-last-div-budget-item-2">
+                                                        <select name="objecttype" id="field_objecttype"
+                                                                class="form-control input-Cell"
+                                                                [(ngModel)]="budgetItem.budgetItemType" required
+                                                                [tabindex]="1"
+                                                                [disabled]="!roleSua && budgetItem.id"
+                                                        >
+                                                            <option value="0"
+                                                                    jhiTranslate="ebwebApp.budgetItem.revenue">Thu
+                                                            </option>
+                                                            <option value="1"
+                                                                    jhiTranslate="ebwebApp.budgetItem.expenditure">Chi
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                    <label class="col-sm-2 my-col-form-label"
+                                                           jhiTranslate="ebwebApp.budgetItem.budgetItemCode">Mã
+                                                        (*)</label>
+                                                    <div class="col-sm-3 pd-l-0 pd-r-10 my-last-div-budget-item-2">
+                                                        <input required
+                                                               [(ngModel)]="budgetItem.budgetItemCode"
+                                                               class="form-control input-Cell" id="field_budgetItemCode"
+                                                               maxlength="25"
+                                                               [tabindex]="2"
+                                                               [disabled]="!roleSua && budgetItem.id"
+                                                               name="budgetItemCode" type="text"/>
+                                                    </div>
+                                                    <label class="col-sm-2 my-col-form-label"
+                                                           jhiTranslate="ebwebApp.budgetItem.budgetItemName"
+                                                           style="text-align: center">Tên (*)</label>
+                                                    <div class="col-sm-3 pd-l-0 pd-r-10  my-last-div-budget-item-2">
+                                                        <input required
+                                                               [(ngModel)]="budgetItem.budgetItemName"
+                                                               class="form-control input-Cell" id="field_budgetItemName"
+                                                               maxlength="512"
+                                                               [tabindex]="3"
+                                                               [disabled]="!roleSua && budgetItem.id"
+                                                               name="budgetItemName" type="text"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <form style="border: none; padding-top: 10px;padding-left: 0px;padding-right: 10px;padding-bottom: 10px">
+                                        <div class="row no-gutters">
+                                            <div class="col-lg-12">
+                                                <div class="form-group row no-gutters">
+                                                    <label class="col-sm-2 my-col-form-label"
+                                                           jhiTranslate="ebwebApp.budgetItem.budgetItemGroup">Thuôc
+                                                        nhóm</label>
+                                                    <div class="col-sm-2 col-form-label-sm my-last-div-budget-item-2" style="padding-top: 0px">
+                                                        <combo-box [dataList]="budgetItems"
+                                                                   [isObject]="true"
+                                                                   [isOutTable]="true"
+                                                                   [headerColumns]="headerColumnsBudgetItem"
+                                                                   [listColumns]="listColumnsBudgetItem"
+                                                                   displayMember="budgetItemCode"
+                                                                   name="parent"
+                                                                   [(ngModel)]="budgetItem.parent"
+                                                                   (ngModelChange)="changeBudgetItemParent()"
+                                                                   [tabindex]="4"
+                                                                   [isReadOnly]="!roleSua && budgetItem.id"
+                                                        >
+                                                        </combo-box>
+                                                    </div>
+                                                    <label class="col-sm-2 my-col-form-label"
+                                                           jhiTranslate="ebwebApp.budgetItem.description"></label>
+                                                    <div class="col-sm-6 my-last-div-budget-item-1">
+                                                        <input [(ngModel)]="budgetItem.description"
+                                                               class="form-control input-Cell"
+                                                               id="field_deScription"
+                                                               maxlength="512"
+                                                               [tabindex]="5"
+                                                               [disabled]="!roleSua && budgetItem.id"
+                                                               name="deScription" type="text"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </fieldset>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-12" [hidden]="!budgetItem.id">
+                    <div class="row" style="padding-left: 15px">
+                        <div *ngIf="budgetItem.id" class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="customCheck1" name="isActive"
+                                   [(ngModel)]="budgetItem.isActive"
+                                   [disabled]="!roleSua && budgetItem.id">
+                            <label class="custom-control-label" for="customCheck1"
+                                   jhiTranslate="ebwebApp.budgetItem.isActive"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #content let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.saBill.saveMessage">Dữ liệu đã bị thay đổi, Bạn có muốn lưu lại?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="saveContent()" *ebHasAnyAuthority="['ROLE_ADMIN',budgetItem.id? ROLE_BudgetItem_Sua : ROLE_BudgetItem_Them]" jhiTranslate="entity.action.save">Save
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="closeContent()" jhiTranslate="entity.action.noSave">close
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="close()" jhiTranslate="entity.action.close">
+            close
+        </button>
+    </div>
+</ng-template>

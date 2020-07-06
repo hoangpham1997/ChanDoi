@@ -1,0 +1,202 @@
+<div >
+    <div >
+        <div class="menu-tool-bar he">
+            <div class="ptitle">
+                <span jhiTranslate="ebwebApp.tienIch.timKiemChungTu.name">TÌM KIẾM CHỨNG TỪ</span>
+            </div>
+            <div class="gr-toolbar">
+                <a href="#"><i class="mdi mdi-window-close"></i><span jhiTranslate="ebwebApp.receiveBill.exit"></span>
+                </a>
+            </div>
+        </div>
+        <div>
+            <form id="seach" style="background: #cbdcf0; padding-bottom: 5px;">
+                <div class="row no-gutters">
+                    <div class="col-lg-12">
+                            <div class="row no-gutters">
+                                <div class="form-group col-lg-12">
+                                    <div class="form-group row no-gutters">
+                                        <label class="col-sm-2 col-form-label"
+                                               > Loại tìm kiếm</label>
+                                        <div class="col-sm-4 col-form-label-sm">
+                                            <combo-box style=""
+                                                       name="accountingObjectID"
+                                                       [dataList]="typeSearchs"
+                                                       [listColumns]="['name']"
+                                                       [isOutTable]="true"
+                                                       displayMember="name"
+                                                       valueName="value"
+                                                       [headerColumns]="['Loại tìm kiếm']"
+                                                       [isObject]="false"
+                                                       [(ngModel)]="typeSearch"
+                                                       [tabindex]="1"
+                                            ></combo-box>
+                                        </div>
+                                        <label [hidden]="typeSearch ===4 || typeSearch === 5" class="col-sm-2 col-form-label"
+                                               style="padding-left: 25px !important;"
+                                               > Giá trị</label>
+                                        <div class="col-sm-4 col-form-label-sm">
+                                            <combo-box *ngIf="typeSearch === 1" style=""
+                                                       name="comboboxListType"
+                                                       [dataList]="typeGroups"
+                                                       [isOutTable]="true"
+                                                       [valueIsNumber]="true"
+                                                       [listColumns]="utilsService.listColumnsTypeGroup"
+                                                       displayMember="typeGroupName"
+                                                       valueName="id"
+                                                       [headerColumns]="utilsService.listHeaderColumnsTypeGroup"
+                                                       [isObject]="false"
+                                                       [(ngModel)]="typeGroupID"
+                                                       (ngModelChange)="changeTypeGroupID()"
+                                                       [tabindex]="2">
+                                            </combo-box>
+                                                <input *ngIf="typeSearch === 2 ||typeSearch === 3 || !typeSearch" [(ngModel)]="textSearch"
+                                                       id="txtSearchValue" name="txtSearchValue" type="text"
+                                                       [tabIndex]="2"
+                                                       class="form-control form-control-sm">
+                                                <!--<eb-date-picker *ngIf="typeSearch === 3" [(ngModel)]="invoiceDate" name="dtBeginDate"
+                                                                [tabindex]="2"></eb-date-picker>-->
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-lg-12">
+                                    <div class="form-group row no-gutters">
+                                        <label class="col-sm-2 col-form-label set-pd-top" jhiTranslate="ebwebApp.mBCreditCard.detail.status"> Trạng thái</label>
+                                        <div class="col-sm-4 pd-l-0">
+                                            <combo-box style="" id="field_listRecord"
+                                                       name="comboboxListRecord"
+                                                       [isReadOnly]="onlyOneBook"
+                                                       [dataList]="listRecord"
+                                                       [isOutTable]="true"
+                                                       [valueIsNumber]="true"
+                                                       [listColumns]="listColumnsRecord"
+                                                       displayMember="name"
+                                                       valueName="value"
+                                                       [headerColumns]="listHeaderColumnsRecord"
+                                                       [isObject]="false"
+                                                       [(ngModel)]="statusRecord">
+                                            </combo-box>
+                                        </div>
+                                        <label class="col-sm-1 col-form-label"
+                                               style="padding-left: 25px !important;"
+                                               jhiTranslate="ebwebApp.receiveBill.fromDate">Từ ngày</label>
+                                        <div class="col-sm-2 col-form-label-sm">
+                                            <eb-date-picker [(ngModel)]="fromDate" name="dtBeginDate"
+                                                            [tabindex]="5"></eb-date-picker>
+                                        </div>
+                                        <label class="col-sm-1 col-form-label"
+                                               style="padding-left: 25px !important;"
+                                               jhiTranslate="ebwebApp.receiveBill.toDate">Đến ngày</label>
+                                        <div class="col-sm-2 col-form-label-sm ">
+                                            <eb-date-picker [(ngModel)]="toDate" name="dtEndDate"
+                                                            [tabindex]="6"></eb-date-picker>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-lg-12 text-center" style="margin-top: 5px">
+                                    <div class="frm-button">
+                                        <button (click)="search(true)" class="btn btn-success btn-sm" style="font-size: 16px">
+                                            <i class="mdi mdi-magnify" aria-hidden="true" style="margin-right: 5px"></i><span jhiTranslate="ebwebApp.purchaseOrder.search">Tìm kiếm</span>
+                                        </button>
+                                        <button (click)="resetSearch()" class="btn btn-danger btn-sm" style="font-size: 16px">
+                                            <i class="mdi mdi-replay" style="margin-right: 5px"></i><span jhiTranslate="ebwebApp.purchaseOrder.setAgain">Đặt lại</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+            </form>
+            <div class="row pd-l-r-5">
+                <div class="frm-main frm-tables frm-padding pd-l-r-5" style="width: 100%" >
+                    <div id="table-scroll-detail" class="table-scroll padding-5-table height-460 ">
+                        <table id="main-table-detail" class="main-table" style="min-width: auto">
+                            <thead>
+                            <tr>
+                                <th scope="col" rowspan="2" jhiTranslate="ebwebApp.mCPayment.noFBook"> Số chứng từ</th>
+                                <th scope="col" rowspan="2" >Loại chứng từ</th>
+                                <th scope="col" rowspan="2" jhiTranslate="ebwebApp.saBill.postedDate">Ngày hạch toán</th>
+                                <th scope="col" rowspan="2" > Diễn giải</th>
+                                <th scope="col" rowspan="2" > Đã ghi sổ</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr [class.selected]="selectedRow?.id === detial.id"
+                                (click)="selectRow(detial)"
+                                [ngStyle]="getStyle(detial.recorded)"
+                                (dblclick)="doubleClickRow(detial)"
+                                *ngFor="let detial of viewVouchers ;let i = index;">
+                                <td class="jsgrid-cell jsgrid-align-left "
+                                    style="width: 150px; color:blue; text-decoration: underline;"(click)="utilsService.viewVoucherByIDAndTypeGroupID(detial)">{{isSoTaiChinh ? detial.noFBook : detial.noMBook}}</td>
+                                <td [title]="detial.typeName" class="jsgrid-cell jsgrid-align-left"
+                                    style="width: 150px">{{detial.typeName}}</td>
+                                <td class="jsgrid-cell jsgrid-align-center"
+                                    style="width: 150px">{{detial.postedDate|date:'dd/MM/yyyy'}}</td>
+                                <td [title]="detial.reason?detial.reason:''" class="jsgrid-cell jsgrid-align-left"
+                                    style="width: 150px">{{detial.reason}}</td>
+                                <td class="jsgrid-cell jsgrid-align-center"
+                                    style="width: 20px">
+                                    <div class="custom-control custom-checkbox">
+                                        <input [disabled]="true" type="checkbox" class="custom-control-input"
+                                               name="{{'recorded' + i}}"
+                                               id="{{'recorded' + i}}" [(ngModel)]="detial.recorded">
+                                        <label class="custom-control-label" for="{{'recorded' + i}}"></label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr *ngFor="let l of newArr(10 - viewVouchers?.length)">
+                                <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                            </tr>
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <td class="cell-Table color-tfoot jsgrid-align-left" colspan="5"><input type="text" readonly
+                                                                                                        class="input-Cell"
+                                                                                                        value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{viewVouchers?viewVouchers.length: 0}}"></td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    <!--        phân trang-->
+                    <div *ngIf="viewVouchers && viewVouchers?.length"
+                         style="padding-right: 16px; padding-top: 15px">
+                        <div class="row justify-content-end" style="height: 32px; ">
+                            <div class="col-lg-2">
+                                <div class="form-group row">
+                                    <label class="col-sm-7 col-form-label" for="itemsPerPage"
+                                           style="padding-right: 0px;text-align: right;"><span
+                                        jhiTranslate="ebwebApp.mBDeposit.totalPage"></span>: {{totalItems}}</label>
+                                    <div class="col-sm-5 pd-l-0">
+                                        <select class="form-control form-control-sm" name="itemsPerPage"
+                                                id="itemsPerPage"
+                                                style="background-color: #f5f7fa;"
+                                                [(ngModel)]="itemsPerPage"
+                                                (ngModelChange)="selectedItemPerPage()"
+                                        >
+                                            <option [value]="10">10</option>
+                                            <option [value]="20">20</option>
+                                            <option [value]="30">30</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="justify-content-end">
+                                <ngb-pagination [size]="'sm'" [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage"
+                                                [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
+                                                (pageChange)="loadPage(page)"></ngb-pagination>
+                            </div>
+                        </div>
+                    </div>
+                    <!--        end of phan trang-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

@@ -1,0 +1,383 @@
+<div >
+    <div >
+        <div class="menu-tool-bar he">
+            <div class="ptitle">
+                <span style="text-transform: uppercase"
+                      jhiTranslate="permissionUser.home.title">PermissionUser</span>
+            </div>
+            <div class="gr-toolbar">
+                <a (click)="save()" title="{{'ebwebApp.mBTellerPaper.tooltipSave' | translate}}"
+                ><i class="mdi mdi-briefcase-download"></i><span jhiTranslate="ebwebApp.mBTellerPaper.save">Save</span></a>
+                <a (click)="closeForm()" title="{{'ebwebApp.mBTellerPaper.tooltipClose' | translate}}"><i class="mdi mdi-window-close"></i><span
+                    jhiTranslate="ebwebApp.mBTellerPaper.close">Close</span></a>
+            </div>
+        </div>
+        <div class="frm-main frm-tables frm-padding" style="background: #cbdcf0; margin-top: 5px">
+            <div id="table-scroll-ref" class="table-scroll" style="height: 700px">
+                <table id="main-table-ref" class="main-table">
+                    <thead>
+                    <tr>
+                        <th class="noOrder" scope="col" jhiTranslate="rolePermission.home.STT">
+                            STT
+                        </th>
+                        <th scope="col"
+                            jhiTranslate="rolePermission.home.moduleName">
+                            ModuleName
+                        </th>
+                        <th class="noOrder" scope="col" jhiTranslate="rolePermission.home.selectedAll">
+                            Selected All
+                        </th>
+                        <th scope="col" class="checkboxStyle"
+                            jhiTranslate="rolePermission.home.view">
+                            View
+                        </th>
+                        <th scope="col" class="checkboxStyle"
+                            jhiTranslate="rolePermission.home.add">
+                            Add
+                        </th>
+                        <th scope="col" class="checkboxStyle"
+                            jhiTranslate="rolePermission.home.edit">
+                            Edit
+                        </th>
+                        <th scope="col" class="checkboxStyle"
+                            jhiTranslate="rolePermission.home.delete">
+                            Delete
+                        </th>
+                        <th scope="col" class="checkboxStyle"
+                            jhiTranslate="rolePermission.home.record">
+                            Record/Unrecord
+                        </th>
+                        <th scope="col" class="checkboxStyle"
+                            jhiTranslate="rolePermission.home.print">
+                            Print
+                        </th>
+                        <th scope="col" class="checkboxStyle"
+                            jhiTranslate="rolePermission.home.export">
+                            Export
+                        </th>
+                        <th scope="col" class="checkboxStyle"
+                            jhiTranslate="userManagement.home.upload">
+                            Upload
+                        <th [hidden]="true" scope="col" class="checkboxStyle"
+                            jhiTranslate="ebGroup.home.authority">
+                            Phân quyền
+                        </th>
+                        <th scope="col" class="checkboxStyle"
+                            jhiTranslate="rolePermission.home.issue">
+                            Phát hành
+                        </th>
+                        <th scope="col" class="checkboxStyle"
+                            jhiTranslate="rolePermission.home.replace">
+                            Thay thế
+                        </th>
+                        <th scope="col" class="checkboxStyle"
+                            jhiTranslate="rolePermission.home.adjust">
+                            Điều chỉnh (tăng, giảm, thông tin)
+                        </th>
+                        <th scope="col" class="checkboxStyle"
+                            jhiTranslate="rolePermission.home.cancel">
+                            Hủy bỏ
+                        </th>
+                        <th scope="col" class="checkboxStyle"
+                            jhiTranslate="rolePermission.home.sendEmail">
+                            Gửi email
+                        </th>
+                        <th scope="col" class="checkboxStyle"
+                            jhiTranslate="rolePermission.home.wait">
+                            Tạo chờ
+                        </th>
+                        <th scope="col" class="checkboxStyle"
+                            jhiTranslate="rolePermission.home.forwardBasic">
+                            Chuyền đổi chứng minh nguồn gốc
+                        </th>
+                        <th scope="col" class="checkboxStyle"
+                            jhiTranslate="rolePermission.home.forwardStore">
+                            Chuyển đổi lưu trữ
+                        </th>
+                        <th scope="col" class="checkboxStyle"
+                            jhiTranslate="rolePermission.home.connect">
+                            Kết nối hóa đơn điện tử
+                        </th>
+                        <th scope="col" class="checkboxStyle"
+                            jhiTranslate="rolePermission.home.copyData">
+                            Sao lưu dữ liệu
+                        </th>
+                        <th scope="col" class="checkboxStyle"
+                            jhiTranslate="rolePermission.home.backUpData">
+                            Khôi phục dữ liệu
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody *ngFor="let authority of ebAuthorities; let j = index" [hidden]="authority.code === '20'">
+                    <tr (click)="toggleChildren(authority)" style="font-weight: bold">
+                        <td colspan="22" class="jsgrid-cell jsgrid-align-left">{{'- ' + authority.name}}</td>
+                    </tr>
+                    <tr *ngFor="let auth of authority.children; let i = index"
+                        [hidden]="authority.collapse || auth.code === '1514' || auth.code === '1515' || auth.code === '1516' || auth.code === '1518'
+                        || auth.code === '1523' || auth.code === '1524' || auth.code === '1525' || auth.code === '1533' || auth.code === '1534' || auth.code === '0510'"
+                    >
+                        <td style="width: 180px" class="noOrder jsgrid-cell jsgrid-align-left">{{getIndex(i, auth.code)}}</td>
+                        <td class="description jsgrid-cell jsgrid-align-left">{{auth.name}}</td>
+                        <td (click)="checkRow(auth.children)" style="width: 80px" class="checkboxStyle text-center">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input"
+                                       name="{{'checkbox_view_all'+ j + '' + i }}"
+                                       id="{{'checkbox_view_all'+ j + '' + i }}"
+                                       (click)="checkRow(auth.children)"
+                                       [checked]="isCheckedRow(auth.children)"
+                                >
+                                <label class="custom-control-label"
+                                       for="{{'checkbox_view_all'+ j + '' + i }}"></label>
+                            </div>
+                        </td>
+                        <td style="width: 80px" class="checkboxStyle text-center">
+                            <div *ngIf="auth.children[0] && auth.children[0].code && auth.children[0].code.substring(4) === '01'" class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input"
+                                       name="{{'checkbox_view'+ j + '' + i + '' + 0}}"
+                                       id="{{'checkbox_view'+ j + '' + i + '' + 0}}"
+                                       [(ngModel)]="auth.children[0].check"
+                                       (click)="checkViewAuthority(auth.children, auth.children[0])"
+                                       [checked]="isCheckedFirst(auth.children)"
+                                >
+                                <label class="custom-control-label"
+                                       for="{{'checkbox_view'+ j + '' + i + '' + 0}}"></label>
+                            </div>
+                        </td>
+                        <td style="width: 80px" class="checkboxStyle text-center">
+                            <div class="custom-control custom-checkbox"
+                                 *ngIf="auth.children[1] && auth.children[1].code && auth.children[1].code.substring(4) === '02'"
+                            >
+                                <input type="checkbox" class="custom-control-input"
+                                       name="{{'checkbox_add'+ j + '' + i + '' + 1}}"
+                                       id="{{'checkbox_add'+ j + '' + i + '' + 1}}" [(ngModel)]="auth.children[1].check"
+                                       (click)="checkFirst(auth.children, auth.children[1])"
+                                >
+                                <label class="custom-control-label"
+                                       for="{{'checkbox_add'+ j + '' + i + '' + 1}}"></label>
+                            </div>
+                        </td>
+                        <td style="width: 80px" class="checkboxStyle text-center">
+                            <div *ngIf="auth.children[2] && auth.children[2].code && auth.children[2].code.substring(4) === '03'" class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input"
+                                       name="{{'checkbox_edit'+ j + '' + i + '' + 2}}"
+                                       id="{{'checkbox_edit'+ j + '' + i + '' + 2}}" [(ngModel)]="auth.children[2].check"
+                                       (click)="checkFirst(auth.children, auth.children[2])"
+                                >
+                                <label class="custom-control-label"
+                                       for="{{'checkbox_edit'+ j + '' + i + '' + 2}}"></label>
+                            </div>
+                        </td>
+                        <td style="width: 80px" class="checkboxStyle text-center">
+                            <div *ngIf="auth.children[3] && auth.children[3].code && auth.children[3].code.substring(4) === '04'" class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input"
+                                       name="{{'checkbox_delete'+ j + '' + i + '' + 3}}"
+                                       id="{{'checkbox_delete'+ j + '' + i + '' + 3}}" [(ngModel)]="auth.children[3].check"
+                                       (click)="checkFirst(auth.children, auth.children[3])"
+                                >
+                                <label class="custom-control-label"
+                                       for="{{'checkbox_delete'+ j + '' + i + '' + 3}}"></label>
+                            </div>
+                        </td>
+                        <td style="width: 80px" class="checkboxStyle text-center">
+                            <div *ngIf="auth.children[4] && auth.children[4].code && auth.children[4].code.substring(4) === '05'" class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input"
+                                       name="{{'checkbox_record'+ j + '' + i + '' + 4}}"
+                                       id="{{'checkbox_record'+ j + '' + i + '' + 4}}" [(ngModel)]="auth.children[4].check"
+                                       (click)="checkFirst(auth.children, auth.children[4])"
+                                >
+                                <label class="custom-control-label"
+                                       for="{{'checkbox_record'+ j + '' + i + '' + 4}}"></label>
+                            </div>
+                        </td>
+                        <td style="width: 80px" class="checkboxStyle text-center">
+                            <div *ngIf="auth.children[5] && auth.children[5].code && auth.children[5].code.substring(4) === '06'" class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input"
+                                       name="{{'checkbox_print'+ j + '' + i + '' + 5}}"
+                                       id="{{'checkbox_print'+ j + '' + i + '' + 5}}" [(ngModel)]="auth.children[5].check"
+                                       (click)="checkFirst(auth.children, auth.children[5])"
+                                >
+                                <label class="custom-control-label"
+                                       for="{{'checkbox_print'+ j + '' + i + '' + 5}}"></label>
+                            </div>
+                        </td>
+                        <td style="width: 80px" class="checkboxStyle text-center">
+                            <div *ngIf="auth.children[6] && auth.children[6].code && auth.children[6].code.substring(4) === '07'" class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input"
+                                       name="{{'checkbox_export'+ j + '' + i + '' + 6}}"
+                                       id="{{'checkbox_export'+ j + '' + i + '' + 6}}" [(ngModel)]="auth.children[6].check"
+                                       (click)="checkFirst(auth.children, auth.children[6])"
+                                >
+                                <label class="custom-control-label"
+                                       for="{{'checkbox_export'+ j + '' + i + '' + 6}}"></label>
+                            </div>
+                        </td>
+                        <td style="width: 80px" class="checkboxStyle text-center">
+                            <div *ngIf="auth.children[7] && auth.children[7].code && auth.children[7].code.substring(4) === '08'" class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input"
+                                       name="{{'checkbox_authorityUser'+ j + '' + i + '' + 7}}"
+                                       id="{{'checkbox_authorityUser'+ j + '' + i + '' + 7}}" [(ngModel)]="auth.children[7].check"
+                                       (click)="checkFirst(auth.children, auth.children[7])"
+                                >
+                                <label class="custom-control-label"
+                                       for="{{'checkbox_authorityUser'+ j + '' + i + '' + 7}}"></label>
+                            </div>
+                        </td>
+                        <td [hidden]="true" style="width: 80px" class="checkboxStyle text-center">
+                            <div *ngIf="auth.children[8] && auth.children[8].code && auth.children[8].code.substring(4) === '09'" class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input"
+                                       name="{{'checkbox_authorityGroup'+ j + '' + i + '' + 8}}"
+                                       id="{{'checkbox_authorityGroup'+ j + '' + i + '' + 8}}" [(ngModel)]="auth.children[8].check"
+                                       (click)="checkFirst(auth.children, auth.children[8])"
+                                >
+                                <label class="custom-control-label"
+                                       for="{{'checkbox_authorityGroup'+ j + '' + i + '' + 8}}"></label>
+                            </div>
+                        </td>
+                        <td style="width: 80px" class="checkboxStyle text-center">
+                            <div *ngIf="auth.children[9] && auth.children[9].code && auth.children[9].code.substring(4) === '10'" class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input"
+                                       name="{{'checkbox_issue'+ j + '' + i + '' + 9}}"
+                                       id="{{'checkbox_issue'+ j + '' + i + '' + 9}}" [(ngModel)]="auth.children[9].check"
+                                       (click)="checkFirst(auth.children, auth.children[9])"
+                                >
+                                <label class="custom-control-label"
+                                       for="{{'checkbox_issue'+ j + '' + i + '' + 9}}"></label>
+                            </div>
+                        </td>
+                        <td style="width: 80px" class="checkboxStyle text-center">
+                            <div *ngIf="auth.children[10] && auth.children[10].code && auth.children[10].code.substring(4) === '11'" class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input"
+                                       name="{{'checkbox_replace'+ j + '' + i + '' + 10}}"
+                                       id="{{'checkbox_replace'+ j + '' + i + '' + 10}}" [(ngModel)]="auth.children[10].check"
+                                       (click)="checkFirst(auth.children, auth.children[10])"
+                                >
+                                <label class="custom-control-label"
+                                       for="{{'checkbox_replace'+ j + '' + i + '' + 10}}"></label>
+                            </div>
+                        </td>
+                        <td style="width: 80px" class="checkboxStyle text-center">
+                            <div *ngIf="auth.children[11] && auth.children[11].code && auth.children[11].code.substring(4) === '12'" class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input"
+                                       name="{{'checkbox_adjust'+ j + '' + i + '' + 11}}"
+                                       id="{{'checkbox_adjust'+ j + '' + i + '' + 11}}" [(ngModel)]="auth.children[11].check"
+                                       (click)="checkFirst(auth.children, auth.children[11])"
+                                >
+                                <label class="custom-control-label"
+                                       for="{{'checkbox_adjust'+ j + '' + i + '' + 11}}"></label>
+                            </div>
+                        </td>
+                        <td style="width: 80px" class="checkboxStyle text-center">
+                            <div *ngIf="auth.children[12] && auth.children[12].code && auth.children[12].code.substring(4) === '13'" class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input"
+                                       name="{{'checkbox_cancel'+ j + '' + i + '' + 12}}"
+                                       id="{{'checkbox_cancel'+ j + '' + i + '' + 12}}" [(ngModel)]="auth.children[12].check"
+                                       (click)="checkFirst(auth.children, auth.children[12])"
+                                >
+                                <label class="custom-control-label"
+                                       for="{{'checkbox_cancel'+ j + '' + i + '' + 12}}"></label>
+                            </div>
+                        </td>
+                        <td style="width: 80px" class="checkboxStyle text-center">
+                            <div *ngIf="auth.children[13] && auth.children[13].code && auth.children[13].code.substring(4) === '14'" class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input"
+                                       name="{{'checkbox_sendEmail'+ j + '' + i + '' + 13}}"
+                                       id="{{'checkbox_sendEmail'+ j + '' + i + '' + 13}}" [(ngModel)]="auth.children[13].check"
+                                       (click)="checkFirst(auth.children, auth.children[13])"
+                                >
+                                <label class="custom-control-label"
+                                       for="{{'checkbox_sendEmail'+ j + '' + i + '' + 13}}"></label>
+                            </div>
+                        </td>
+                        <td style="width: 80px" class="checkboxStyle text-center">
+                            <div *ngIf="auth.children[14] && auth.children[14].code && auth.children[14].code.substring(4) === '15'" class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input"
+                                       name="{{'checkbox_wait'+ j + '' + i + '' + 14}}"
+                                       id="{{'checkbox_wait'+ j + '' + i + '' + 14}}" [(ngModel)]="auth.children[14].check"
+                                       (click)="checkFirst(auth.children, auth.children[14])"
+                                >
+                                <label class="custom-control-label"
+                                       for="{{'checkbox_wait'+ j + '' + i + '' + 14}}"></label>
+                            </div>
+                        </td>
+                        <td style="width: 80px" class="checkboxStyle text-center">
+                            <div *ngIf="auth.children[15] && auth.children[15].code && auth.children[15].code.substring(4) === '16'" class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input"
+                                       name="{{'checkbox_forwardBasic'+ j + '' + i + '' + 15}}"
+                                       id="{{'checkbox_forwardBasic'+ j + '' + i + '' + 15}}" [(ngModel)]="auth.children[15].check"
+                                       (click)="checkFirst(auth.children, auth.children[15])"
+                                >
+                                <label class="custom-control-label"
+                                       for="{{'checkbox_forwardBasic'+ j + '' + i + '' + 15}}"></label>
+                            </div>
+                        </td>
+                        <td style="width: 80px" class="checkboxStyle text-center">
+                            <div *ngIf="auth.children[16] && auth.children[16].code && auth.children[16].code.substring(4) === '17'" class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input"
+                                       name="{{'checkbox_forwardStore'++ j + '' + i + '' + 16}}"
+                                       id="{{'checkbox_forwardStore'+ j + '' + i + '' + 16}}" [(ngModel)]="auth.children[16].check"
+                                       (click)="checkFirst(auth.children, auth.children[16])"
+                                >
+                                <label class="custom-control-label"
+                                       for="{{'checkbox_forwardStore'+ j + '' + i + '' + 16}}"></label>
+                            </div>
+                        </td>
+                        <td style="width: 80px" class="checkboxStyle text-center">
+                            <div *ngIf="auth.children[17] && auth.children[17].code && auth.children[17].code.substring(4) === '18'" class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input"
+                                       name="{{'checkbox_connect'+ j + '' + i + '' + 17}}"
+                                       id="{{'checkbox_connect'+ j + '' + i + '' + 17}}" [(ngModel)]="auth.children[17].check"
+                                       (click)="checkFirst(auth.children, auth.children[17])"
+                                >
+                                <label class="custom-control-label"
+                                       for="{{'checkbox_connect'+ j + '' + i + '' + 17}}"></label>
+                            </div>
+                        </td>
+                        <td style="width: 80px" class="checkboxStyle text-center">
+                            <div *ngIf="auth.children[18] && auth.children[18].code && auth.children[18].code.substring(4) === '19'" class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input"
+                                       name="{{'checkbox_connect'+ j + '' + i + '' + 18}}"
+                                       id="{{'checkbox_connect'+ j + '' + i + '' + 18}}" [(ngModel)]="auth.children[18].check"
+                                       (click)="checkFirst(auth.children, auth.children[18])"
+                                >
+                                <label class="custom-control-label"
+                                       for="{{'checkbox_connect'+ j + '' + i + '' + 18}}"></label>
+                            </div>
+                        </td>
+                        <td style="width: 80px" class="checkboxStyle text-center">
+                            <div *ngIf="auth.children[19] && auth.children[19].code && auth.children[19].code.substring(4) === '20'" class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input"
+                                       name="{{'checkbox_connect'+ j + '' + i + '' + 19}}"
+                                       id="{{'checkbox_connect'+ j + '' + i + '' + 19}}" [(ngModel)]="auth.children[19].check"
+                                       (click)="checkFirst(auth.children, auth.children[19])"
+                                >
+                                <label class="custom-control-label"
+                                       for="{{'checkbox_connect'+ j + '' + i + '' + 19}}"></label>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #content let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.saBill.saveMessage">Dữ liệu đã bị thay đổi, Bạn có muốn lưu lại?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="save()"
+                jhiTranslate="entity.action.save">Save
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="noSaveCloseAndBackList()"
+                jhiTranslate="entity.action.noSave">close
+        </button>
+        <button type="button" class="btn btn-outline-danger" (click)="closeModal()" jhiTranslate="entity.action.close">
+            close
+        </button>
+    </div>
+</ng-template>

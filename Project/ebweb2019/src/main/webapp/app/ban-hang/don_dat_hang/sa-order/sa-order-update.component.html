@@ -1,0 +1,924 @@
+<!--Hautv edit-->
+<div class="container-fluid" (click)="closeContextMenu()">
+    <div class="margin-tp-5 margin-0">
+        <div class="">
+            <div class="itemw">
+                <div class="menu-tool-bar he" style="line-height: 16px;">
+                    <div class="gr-tool-bar2">
+                        <button class="aprev button-navigation" (click)="previousEdit()"
+                           [disabled]="rowNum===count || statusVoucher === 0 || count == 1 || isViewFromRef"
+                        ><i class="mdi mdi-arrow-left"></i></button>
+                        <button class="anext disable button-navigation" (click)="nextEdit()"
+                           [disabled]="rowNum===1 || statusVoucher === 0 || count == 1 || isViewFromRef"><i
+                            class="mdi mdi-arrow-right"></i></button>
+                        <button class="button-navigation" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_Them]" [hidden]="statusVoucher === 0" (click)="addNew()"
+                           title="{{'ebwebApp.outWard.tooltipAdd' | translate}}"><i
+                            class="mdi mdi-plus"></i> <span jhiTranslate="ebwebApp.mCReceipt.home.add"></span></button>
+                        <button *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_Sua]"
+                                class="button-navigation"
+                                title="{{'ebwebApp.outWard.tooltipEdit' | translate}}"
+                                [disabled]="statusVoucher === 0"
+                                (click)="edit()"
+                        ><i class="mdi mdi-rename-box"></i> <span
+                            jhiTranslate="ebwebApp.mCReceipt.home.edit"></span></button>
+                        <button class="button-navigation" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_Them, ROLE_Sua]" [disabled]="statusVoucher === 1" (click)="save()"
+                           title="{{'ebwebApp.outWard.tooltipSave' | translate}}"><i
+                            class="mdi mdi-briefcase-download"></i> <span
+                            jhiTranslate="ebwebApp.mCReceipt.home.save"></span></button>
+                        <button class="button-navigation" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_Them]" [hidden]="statusVoucher === 1" (click)="saveAndNew()"
+                           title="{{'ebwebApp.outWard.tooltipSaveAndAdd' | translate}}"><i class="mdi mdi-plus"></i> <span
+                            jhiTranslate="ebwebApp.mCReceipt.home.saveAndAddNew"></span></button>
+                        <button class="button-navigation" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_Them]" [disabled]="statusVoucher === 0" (click)="copyAndNew()"
+                           title="{{'ebwebApp.outWard.tooltipCopy&Add' | translate}}"><i class="mdi mdi-plus"></i>
+                            <span jhiTranslate="ebwebApp.mCReceipt.home.CopyAndAddNew"></span></button>
+                        <button class="button-navigation" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_Xoa]" [disabled]="statusVoucher === 0"
+                           title="{{'ebwebApp.outWard.tooltipDrop' | translate}}"
+                           (click)="delete()"
+                           replaceUrl="true"
+                           queryParamsHandling="merge"><i class="mdi mdi-delete-forever"></i> <span
+                            jhiTranslate="ebwebApp.mCReceipt.home.delete"></span></button>
+                        <div ngbDropdown class="d-inline-block"
+                             *ebHasSomeAuthority="['ROLE_ADMIN', ROLE.DonDatHang_In]">
+                            <button id="dropdownBasic1" ngbDropdownToggle [class.disableDiv]="statusVoucher === 0" class="button-navigation"
+                                    style="background: transparent;border: none; color: #f0f0f0"><i class="mdi mdi-printer"></i><span
+                                jhiTranslate="ebwebApp.mBTellerPaper.print"></span>
+                            </button>
+                            <div ngbDropdownMenu aria-labelledby="dropdownBasic1" style="padding: 0px">
+                                <button ngbDropdownItem class="btn-dr-i hover-dr" (click)="exportPdf(false,  REPORT.BieuMau)"><span
+                                    jhiTranslate="global.reportName.DonDatHang"></span></button>
+                            </div>
+                        </div>
+                        <div ngbDropdown class="d-inline-block" >
+                            <button id="dropdownBasic2" ngbDropdownToggle class="button-navigation"
+                                    style="background: transparent;border: none; color: #f0f0f0"><i
+                                class="mdi mdi-plus-circle"></i><span
+                                jhiTranslate="ebwebApp.saReturn.form"></span>
+                            </button>
+                            <div ngbDropdownMenu aria-labelledby="dropdownBasic2" style="padding: 0px">
+                                <button ngbDropdownItem class="btn-dr-i hover-dr" [class.selected]="!isMoreForm" (click)="isMoreForm = false"><span
+                                    jhiTranslate="ebwebApp.saReturn.basicForm"></span></button>
+                                <button ngbDropdownItem class="btn-dr-i hover-dr" [class.selected]="isMoreForm" (click)="isMoreForm = true"><span
+                                    jhiTranslate="ebwebApp.saReturn.moreForm"></span></button>
+                            </div>
+                        </div>
+                        <button class="button-navigation" (click)="closeForm()" title="{{'ebwebApp.outWard.tooltipBack' | translate}}"><i class="mdi mdi-window-close"></i> <span
+                            jhiTranslate="ebwebApp.mCReceipt.home.close"></span></button>
+                    </div>
+                </div>
+
+                <div class="tool-navbar">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="line-btn" style="margin-bottom: 4px">
+                                <div class="lbtn-action">
+                                    <ul class="nav nav-tabs">
+                                        <li class="active"><a class="active" style="text-decoration: none" data-toggle="tab"
+                                                              href="#home0"
+                                                              jhiTranslate="ebwebApp.sAOrder.home.title"></a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row no-gutters">
+                    <div class="col-lg-9 pd-r-0 form-main-new">
+                        <form>
+                            <h3 jhiTranslate="ebwebApp.common.generalInformation">Thông tin chung</h3>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group row no-gutters">
+                                        <label class="col-sm-2 col-form-label"
+                                               jhiTranslate="ebwebApp.sAOrder.accountingObjectID"
+                                               for="field_accountingObjectID">Accounting Object</label>
+                                        <div class="col-sm-3 pd-l-0 pd-r-10">
+                                            <combo-box style="" id="field_accountingObjectID"
+                                                       name="comboboxaccountingObjectID"
+                                                       [dataList]="accountingObjects"
+                                                       [isOutTable]="true"
+                                                       [nameCategory]="CategoryName.DOI_TUONG"
+                                                       [showIconPlus]="true"
+                                                       [listColumns]="utilsService.listColumnsAccountingObjects"
+                                                       displayMember="accountingObjectCode"
+                                                       valueName="id"
+                                                       [headerColumns]="utilsService.listHeaderColumnsAccountingObject"
+                                                       [isObject]="false"
+                                                       [(ngModel)]="sAOrder.accountingObjectID"
+                                                       (ngModelChange)="selectAccountingObject()"
+                                                       (click)="saveParent()"
+                                            ></combo-box>
+                                        </div>
+                                        <div class="col-sm-7 pd-l-0 last-div-1-1">
+                                            <input type="text" class="form-control form-control-sm"
+                                                   name="accountingObjectName"
+                                                   [(ngModel)]="sAOrder.accountingObjectName" maxlength="512"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row no-gutters">
+                                        <label class="col-sm-2 col-form-label"
+                                               jhiTranslate="ebwebApp.sAOrder.accountingObjectAddress"
+                                               for="field_accountingObjectAddress">Accounting Object Address</label>
+                                        <div class="col-sm-10 pd-l-0 last-div-1-0">
+                                            <input type="text" class="form-control form-control-sm"
+                                                   name="accountingObjectAddress"
+                                                   id="field_accountingObjectAddress"
+                                                   [(ngModel)]="sAOrder.accountingObjectAddress"
+                                                   maxlength="512">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row no-gutters">
+                                        <label class="col-sm-2 col-form-label"
+                                               jhiTranslate="ebwebApp.sAOrder.companyTaxCode">Mã số thuế</label>
+                                        <div class="col-sm-3 pd-l-0 pd-r-10">
+                                            <input type="text" class="form-control form-control-sm" name="taxCode"
+                                                   [(ngModel)]="sAOrder.companyTaxCode">
+                                        </div>
+                                        <div class="input-group col-sm-7 last-div-2-1" style="max-width: calc(75% - 100px) !important;">
+                                            <label class="text-left pd-r-10"
+                                                   jhiTranslate="ebwebApp.sAOrder.contactName"
+                                                   for="field_contactName">Payers</label>
+                                            <input type="text" class="form-control form-control-sm"
+                                                   name="contactName"
+                                                   id="field_contactName"
+                                                   [(ngModel)]="sAOrder.contactName" maxlength="512"/>
+                                        </div>
+
+                                    </div>
+                                    <div class="form-group row no-gutters">
+                                        <label class="col-sm-2 col-form-label"
+                                               jhiTranslate="ebwebApp.sAOrder.reason"
+                                               for="field_reason">Diễn giải</label>
+                                        <div class="col-sm-6 pd-l-0 pd-r-10">
+                                            <input type="text" class="form-control form-control-sm" name="reason"
+                                                   id="field_reason"
+                                                   [(ngModel)]="sAOrder.reason" maxlength="512"/>
+                                        </div>
+                                        <label class="col-sm-2 col-form-label"
+                                               jhiTranslate="ebwebApp.sAOrder.deliverDate" style="max-width: 100px !important;" for="field_deliverDate">Ngày giao hàng</label>
+                                        <div class="col-sm-2 last-div-2-1" style="max-width: calc(49.9993944458574% - 200px) !important;">
+                                            <div class="input-group">
+                                                <eb-date-picker class="date" name="field_deliverDate" id="field_deliverDate" [(ngModel)]="sAOrder.deliverDate">
+                                                </eb-date-picker>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row no-gutters">
+                                        <label class="col-sm-2 col-form-label"
+                                               jhiTranslate="ebwebApp.sAOrder.deliveryPlace"
+                                               for="field_deliveryPlace">Điểm giao</label>
+                                        <div class="col-sm-6 pd-l-0 pd-r-10">
+                                            <input type="text" class="form-control form-control-sm"
+                                                   name="deliveryPlace"
+                                                   id="field_deliveryPlace"
+                                                   [(ngModel)]="sAOrder.deliveryPlace" maxlength="512"/>
+                                        </div>
+                                        <label class="col-sm-2 col-form-label"
+                                               jhiTranslate="ebwebApp.sAOrder.employeeID" style="max-width: 110px !important;"
+                                               for="field_deliverDate">Nhân viên thực hiện</label>
+                                        <div class="col-sm-2 pd-l-0 pd-r-10 last-div-2-1" style="max-width: calc(49.9993944458574% - 210px) !important;">
+                                            <combo-box style="" id="field_employeeID"
+                                                       name="comboboxEmployees"
+                                                       [isOutTable]="true"
+                                                       [dataList]="employees"
+                                                       [nameCategory]="utilsService.NHAN_VIEN"
+                                                       [showIconPlus]="true"
+                                                       [listColumns]="utilsService.listColumnsEmployees"
+                                                       displayMember="accountingObjectCode"
+                                                       valueName="id"
+                                                       [headerColumns]="utilsService.listHeaderColumnsEmployees"
+                                                       [isObject]="false"
+                                                       [(ngModel)]="sAOrder.employeeID"
+                                                       (click)="saveParent()"
+                                            ></combo-box>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-lg-4 pd-only-l-10 form-main-new">
+                        <form style="padding-bottom: 8px;">
+                            <h3 jhiTranslate="ebwebApp.common.license">Chứng từ</h3>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group row no-gutters">
+                                        <label class="col-sm-4 col-form-label"
+                                               jhiTranslate="ebwebApp.sAOrder.no">Số đơn hàng</label>
+                                        <div class="col-sm-8 pd-l-0 last-div-1-0">
+                                            <input type="text" [(ngModel)]="sAOrder.no"
+                                                   [class.required]="!sAOrder.no"
+                                                   class="form-control form-control-sm" name="No">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row no-gutters">
+                                        <label class="col-sm-4 col-form-label"
+                                               jhiTranslate="ebwebApp.sAOrder.date"
+                                               for="field_date">Ngày đơn hàng</label>
+                                        <div class="col-sm-8 last-div-1-0">
+                                            <div class="input-group">
+                                                <input type="text" name="date" ngbDatepicker
+                                                       [(ngModel)]="sAOrder.date"
+                                                       #date="ngbDatepicker" class="date-input"
+                                                       (ngModelChange)="changeDate()"/>
+                                                <input class="form-control" id="field_date" name="field_date"
+                                                       [(ngModel)]="dateStr"
+                                                       (change)="changeDateStr()"
+                                                       mask="00/00/0000"
+                                                       [class.required]="validateDate || !sAOrder.date"
+                                                       [class.requiredTrue]="sAOrder.date"
+                                                />
+                                                <div class="input-group-append">
+                                                    <button type="button" class="btn btn-secondary"
+                                                            (click)="date.toggle()">
+                                                        <fa-icon
+                                                            [icon]="'calendar-alt'"></fa-icon>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row no-gutters">
+                                        <label class="col-sm-4 col-form-label"
+                                               jhiTranslate="ebwebApp.sAOrder.currencyID">Loại tiền</label>
+                                        <div class="col-sm-3 pd-l-0">
+                                            <combo-box style="" id="field_currencyID"
+                                                       name="comboboxcurrencyID"
+                                                       [dataList]="currencies"
+                                                       [isOutTable]="true"
+                                                       [isRequired]="true"
+                                                       [listColumns]="utilsService.listColumnsCurrency"
+                                                       displayMember="currencyCode"
+                                                       valueName="currencyCode"
+                                                       [headerColumns]="utilsService.listHeaderColumnsCurrency"
+                                                       [isObject]="false"
+                                                       [(ngModel)]="sAOrder.currencyID"
+                                                       (ngModelChange)="selectCurrency()"
+                                            ></combo-box>
+                                        </div>
+                                        <label class="col-sm-2 col-form-label right" style="width: 53px; max-width: 53px !important; min-width: 43px !important;">Tỷ giá</label>
+                                        <div class="col-sm-3 pd-l-0 last-div-2-1" style="min-width: 43px !important;max-width: calc(75% - 153px) !important;">
+                                            <input name="exchangeRate" type="text"
+                                                   class="form-control form-control-sm"
+                                                   [class.myreadonlytrue]="sAOrder.currencyID === currencyCode"
+                                                   ebCurrencyMask
+                                                   [systemOptions]="currentAccount?.systemOption"
+                                                   [type]="4"
+                                                   [(ngModel)]="sAOrder.exchangeRate"
+                                                   (ngModelChange)="changeExchangeRate()">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row no-gutters">
+                                        <label class="col-sm-4 col-form-label"
+                                               jhiTranslate="ebwebApp.sAOrder.status">Trạng thái</label>
+                                        <div class="col-sm-8 pd-l-0 last-div-1-0">
+                                            <select class="form-control status" name="typeLedger" id="field_typeLedger"
+                                                    [(ngModel)]="sAOrder.status">
+                                                <option value="0">Chưa thực hiện</option>
+                                                <option value="1">Đang thực hiện</option>
+                                                <option value="2">Đã hoàn thành</option>
+                                                <option value="3">Đã hủy bỏ</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <ngb-tabset class="tool-navbar" (tabChange)="beforeChange($event)">
+                    <ngb-tab>
+                        <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.sAOrder.home.detail">Chi tiết</span>
+                        </ng-template>
+                        <ng-template ngbTabContent>
+                            <div class="tab-content">
+                                <div class="frm-main frm-padding tab-pane fade in active show" id="home-detail"
+                                     style="background: #cbdcf0">
+                                    <div id="table-scroll-detail" class="table-scroll">
+                                        <table id="main-table-detail" class="main-table">
+                                            <thead>
+                                            <tr>
+                                                <th scope="col" jhiTranslate="ebwebApp.saBill.materialGoodsID">Mã hàng</th>
+                                                <th scope="col" jhiTranslate="ebwebApp.saBill.materialGoodsName">Tên hàng</th>
+                                                <th scope="col" jhiTranslate="ebwebApp.saBill.unit">Đơn vị tính</th>
+                                                <th scope="col" jhiTranslate="ebwebApp.saBill.quantity">Số lượng</th>
+                                                <th scope="col" jhiTranslate="ebwebApp.sAOrderDetails.quantityDelivery">Số lượng giao</th>
+                                                <th scope="col" jhiTranslate="ebwebApp.saBill.unitPriceOriginal">Đơn giá</th>
+                                                <th scope="col" jhiTranslate="ebwebApp.saBill.unitPrice" [hidden]="sAOrder.currencyID === currencyCode">Đơn giá QĐ</th>
+                                                <th *ngIf="isMoreForm" scope="col" jhiTranslate="ebwebApp.saBill.mainUnit">ĐVT chính</th>
+                                                <th *ngIf="isMoreForm" scope="col" jhiTranslate="ebwebApp.saBill.mainConvertRate">Tỷ lệ chuyển đổi</th>
+                                                <th *ngIf="isMoreForm" scope="col" jhiTranslate="ebwebApp.saBill.formula">Phép tính</th>
+                                                <th *ngIf="isMoreForm" scope="col" jhiTranslate="ebwebApp.saBill.mainQuantity">Số lượng theo ĐVC</th>
+                                                <th *ngIf="isMoreForm" scope="col" jhiTranslate="ebwebApp.saBill.mainUnitPrice">Đơn giá theo ĐVC</th>
+                                                <th scope="col" jhiTranslate="ebwebApp.saBill.amountOriginal">Thành tiền</th>
+                                                <th scope="col" jhiTranslate="ebwebApp.saBill.amount" [hidden]="sAOrder.currencyID === currencyCode">Thành tiền QĐ</th>
+                                                <th scope="col" jhiTranslate="ebwebApp.saBill.discountRate">Tỷ lệ CK</th>
+                                                <th scope="col" jhiTranslate="ebwebApp.saBill.discountAmountOriginal">Tiền CK</th>
+                                                <th scope="col" jhiTranslate="ebwebApp.saBill.discountAmount" [hidden]="sAOrder.currencyID === currencyCode">Tiền CK QĐ</th>
+                                                <th *ngIf="taxCalculationMethod !== 1" scope="col" jhiTranslate="ebwebApp.saBill.vatRate">% thuế GTGT</th>
+                                                <th *ngIf="taxCalculationMethod !== 1" scope="col" jhiTranslate="ebwebApp.saBill.vatAmountOriginal">Tiền thuế GTGT</th>
+                                                <th *ngIf="taxCalculationMethod !== 1" scope="col" jhiTranslate="ebwebApp.saBill.vatAmount" [hidden]="sAOrder.currencyID === currencyCode">Tiền thuế GTGT QĐ</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody >
+                                            <tr
+                                                oncontextmenu="return false;"
+                                                (contextmenu)="onRightClick($event, saOrderDetails, detail, true, true, 0)"
+                                                (keydown.control.insert)="AddnewRow(0, true)"
+                                                (keydown.control.delete)="removeRow(detail)"
+                                                (keydown.control.c)="copyRow(detail, true)"
+                                                *ngFor="let detail of saOrderDetails; let i = index"
+                                            >
+                                                <td class="cell-Table">
+                                                    <combo-box idIp="materialGoods{{i}}"
+                                                               nameIp="materialGoods{{i}}"
+                                                               [dataList]="materialGoodss"
+                                                               [listColumns]="utilsService.listColumnsMaterialGoods"
+                                                               displayMember="materialGoodsCode"
+                                                               valueName="materialGoodsName"
+                                                               [headerColumns]="utilsService.listHeaderColumnsMaterialGoods"
+                                                               [isObject]="true"
+                                                               [isRequired]="true"
+                                                               [(ngModel)]="detail.materialGoods"
+                                                               [account]="currentAccount"
+                                                               [showIconPlus]="true"
+                                                               (ngModelChange)="selectedMaterialGoods(i)"
+                                                               [nameCategory]="CategoryName.VAT_TU_HANG_HOA"
+                                                               (click)="saveDetails(i)"
+                                                               (focusInput)="actionFocus(0, i)"
+                                                    ></combo-box>
+                                                </td>
+                                                <td class="cell-Table cell-div">
+                                                    <input type="text" class="input-Cell"
+                                                           name="description{{i}}"
+                                                           id="description{{i}}"
+                                                           [(ngModel)]="detail.description"
+                                                           (focus)="actionFocus(1, i)">
+                                                </td>
+                                                <td class="cell-Table">
+                                                    <combo-box idIp="unit{{i}}"
+                                                               nameIp="unit{{i}}"
+                                                               [dataList]="detail.units"
+                                                               [listColumns]="['unitName']"
+                                                               displayMember="unitName"
+                                                               valueName="id"
+                                                               [headerColumns]="['Đơn vị tính']"
+                                                               [isObject]="true"
+                                                               [(ngModel)]="detail.unit"
+                                                               (ngModelChange)="selectUnit(i)"
+                                                               (focusInput)="actionFocus(2, i)"
+                                                    ></combo-box>
+                                                </td>
+                                                <td class="cell-Table jsgrid-align-right">
+                                                    <input type="number" class="input-Cell"
+                                                           ebCurrencyMask
+                                                           id="quantity{{i}}"
+                                                           name="quantity{{i}}"
+                                                           [type]="3"
+                                                           [systemOptions]="currentAccount?.systemOption"
+                                                           [(ngModel)]="detail.quantity"
+                                                           (ngModelChange)="changeQuantity(i)"
+                                                           (focus)="actionFocus(3, i)"
+                                                    >
+                                                </td>
+                                                <td class="cell-Table jsgrid-align-right">
+                                                    <input [disabled]="true" type="number" class="input-Cell noEdit"
+                                                           id="quantityDelivery{{i}}"
+                                                           name="quantityDelivery{{i}}"
+                                                           [(ngModel)]="detail.quantityDelivery"
+                                                           ebCurrencyMask
+                                                           [type]="3"
+                                                           [systemOptions]="currentAccount?.systemOption"
+                                                           (focus)="actionFocus(4, i)"
+                                                    >
+                                                </td>
+                                                <td class="cell-Table jsgrid-align-right">
+                                                    <combo-box
+                                                        idIp="unitPriceOriginal{{i}}"
+                                                        nameIp="unitPriceOriginal{{i}}"
+                                                        [dataList]="detail.unitPriceOriginals"
+                                                        [listColumns]="['unitPriceOriginal']"
+                                                        displayMember="unitPriceOriginal"
+                                                        valueName="unitPriceOriginal"
+                                                        [headerColumns]="['Dữ liệu']"
+                                                        [isObject]="false"
+                                                        [(ngModel)]="detail.unitPriceOriginal"
+                                                        [getValueDisplay]="true"
+                                                        [valueIsNumber]="true"
+                                                        [account]="currentAccount"
+                                                        [systemOptions]="currentAccount?.systemOption"
+                                                        [type]="getUnitPriceOriginalType()"
+                                                        (ngModelChange)="selectUnitPriceOriginal(i)"
+                                                        (focusInput)="actionFocus(5, i)"
+                                                    ></combo-box>
+                                                </td>
+                                                <td class="cell-Table jsgrid-align-right"
+                                                    [hidden]="sAOrder.currencyID === currencyCode">
+                                                    <input type="number" class="input-Cell"
+                                                           id="unitPrice{{i}}"
+                                                           name="unitPrice{{i}}"
+                                                           [(ngModel)]="detail.unitPrice" ebCurrencyMask
+                                                           [systemOptions]="currentAccount?.systemOption"
+                                                           [type] = "1"
+                                                           (focus)="actionFocus(6, i)"
+                                                    >
+                                                </td>
+                                                <td *ngIf="isMoreForm" class="cell-div padding">
+                                                    {{detail.mainUnit?.unitName}}
+                                                </td>
+                                                <td *ngIf="isMoreForm" class="cell-Table jsgrid-align-right cell-div">
+                                                    <input type="number" class="input-Cell"
+                                                           id="mainConvertRate{{i}}"
+                                                           name="mainConvertRate{{i}}"
+                                                           [(ngModel)]="detail.mainConvertRate"
+                                                           ebCurrencyMask
+                                                           [type]="5"
+                                                           [systemOptions]="currentAccount?.systemOption"
+                                                           (ngModelChange)="changeMainConvertRate(i)"
+                                                           (focus)="actionFocus(7, i)">
+                                                </td>
+                                                <td *ngIf="isMoreForm" class="cell-Table jsgrid-align-left cell-div"
+                                                    style="padding-left: 5px">
+                                                    {{detail.formula}}
+                                                </td>
+                                                <td *ngIf="isMoreForm" class="cell-Table cell-div jsgrid-align-right">
+                                                    <input type="number" class="input-Cell"
+                                                           id="mainQuantity{{i}}"
+                                                           name="mainQuantity{{i}}"
+                                                           [(ngModel)]="detail.mainQuantity"
+                                                           ebCurrencyMask
+                                                           [type]="3"
+                                                           [systemOptions]="currentAccount?.systemOption"
+                                                           (ngModelChange)="changeMainQuantity(i)"
+                                                           (focus)="actionFocus(8, i)">
+                                                </td>
+                                                <td *ngIf="isMoreForm" class="cell-Table cell-div jsgrid-align-right">
+                                                    <input type="number" class="input-Cell"
+                                                           id="mainUnitPrice{{i}}"
+                                                           name="mainUnitPrice{{i}}"
+                                                           [(ngModel)]="detail.mainUnitPrice"
+                                                           ebCurrencyMask
+                                                           [type]="1"
+                                                           [systemOptions]="currentAccount?.systemOption"
+                                                           (focus)="actionFocus(9, i)"
+                                                           >
+                                                </td>
+                                                <td class="cell-Table cell-div jsgrid-align-right">
+                                                    <input type="number" class="input-Cell"
+                                                           id="amountOriginal{{i}}"
+                                                           name="amountOriginal{{i}}"
+                                                           ebCurrencyMask
+                                                           [type]="getAmountOriginalType()"
+                                                           [systemOptions]="currentAccount?.systemOption"
+                                                           [(ngModel)]="detail.amountOriginal"
+                                                           (ngModelChange)="changeAmountOriginal(i, true)"
+                                                           (focus)="actionFocus(10, i)"
+                                                    >
+                                                </td>
+                                                <td class="cell-Table cell-div jsgrid-align-right"
+                                                    [hidden]="sAOrder.currencyID === currencyCode">
+                                                    <input type="number" class="input-Cell"
+                                                           id="amount{{i}}"
+                                                           name="amount{{i}}"
+                                                           ebCurrencyMask
+                                                           [type]="7"
+                                                           [systemOptions]="currentAccount?.systemOption"
+                                                           [(ngModel)]="detail.amount"
+                                                           (focus)="actionFocus(11, i)"
+                                                    >
+                                                </td>
+                                                <td class="cell-Table jsgrid-align-right">
+                                                    <input type="number" class="input-Cell"
+                                                           id="discountRate{{i}}"
+                                                           name="discountRate{{i}}"
+                                                           [(ngModel)]="detail.discountRate"
+                                                           ebCurrencyMask
+                                                           [systemOptions]="currentAccount?.systemOption"
+                                                           [type]="5"
+                                                           (ngModelChange)="changeDiscountRate(i, true)"
+                                                           (focus)="actionFocus(12, i)">
+                                                </td>
+                                                <td class="cell-Table cell-div jsgrid-align-right">
+                                                    <input type="number" class="input-Cell"
+                                                           id="discountAmountOriginal{{i}}"
+                                                           name="discountAmountOriginal{{i}}"
+                                                           [(ngModel)]="detail.discountAmountOriginal"
+                                                           ebCurrencyMask
+                                                           [type]="getAmountOriginalType()"
+                                                           [systemOptions]="currentAccount?.systemOption"
+                                                           (ngModelChange)="changeDiscountAmount(i)"
+                                                           (focus)="actionFocus(13, i)"
+                                                    >
+                                                </td>
+                                                <td class="cell-Table cell-div jsgrid-align-right"
+                                                    [hidden]="sAOrder.currencyID === currencyCode">
+                                                    <input type="number" class="input-Cell"
+                                                           id="discountAmount{{i}}"
+                                                           name="discountAmount{{i}}"
+                                                           [(ngModel)]="detail.discountAmount"
+                                                           ebCurrencyMask
+                                                           [type]="7"
+                                                           [systemOptions]="currentAccount?.systemOption"
+                                                           (focus)="actionFocus(14, i)">
+                                                </td>
+                                                <td *ngIf="taxCalculationMethod !== 1" class="cell-Table">
+                                                    <combo-box class="text-right"
+                                                               idIp="vATRate{{i}}"
+                                                               nameIp="vATRate{{i}}"
+                                                               [dataList]="listVAT"
+                                                               [listColumns]="['name']"
+                                                               displayMember="name"
+                                                               valueName="data"
+                                                               [headerColumns]="['Dữ liệu']"
+                                                               [isObject]="false"
+                                                               [(ngModel)]="detail.vATRate"
+                                                               (ngModelChange)="changeVATRate(i)"
+                                                               (focusInput)="actionFocus(15, i)"
+                                                    ></combo-box>
+                                                </td>
+                                                <td *ngIf="taxCalculationMethod !== 1" class="cell-Table cell-div jsgrid-align-right">
+                                                    <input type="number" class="input-Cell"
+                                                           id="vATAmountOriginal{{i}}"
+                                                           name="vATAmountOriginal{{i}}"
+                                                           [(ngModel)]="detail.vATAmountOriginal"
+                                                           ebCurrencyMask
+                                                           [type]="getAmountOriginalType()"
+                                                           [systemOptions]="currentAccount?.systemOption"
+                                                           (ngModelChange)="changeVatAmountOriginal(i)"
+                                                           (focus)="actionFocus(16, i)">
+                                                </td>
+                                                <td *ngIf="taxCalculationMethod !== 1" class="cell-Table cell-div jsgrid-align-right"
+                                                    [hidden]="sAOrder.currencyID === currencyCode">
+                                                    <input type="number" class="input-Cell"
+                                                           id="vATAmount{{i}}"
+                                                           name="vATAmount{{i}}"
+                                                           [(ngModel)]="detail.vATAmount"
+                                                           ebCurrencyMask
+                                                           [type]="7"
+                                                           [systemOptions]="currentAccount?.systemOption"
+                                                           (focus)="actionFocus(17, i)">
+                                                </td>
+                                            </tr>
+                                            <tr *ngIf="statusVoucher === 0" (click)="AddnewRow(0)">
+                                                <td class="cell-Table"><input id="materialGoods" type="text" class="input-Cell"
+                                                                              value="Thêm dòng mới ...." readonly></td>
+                                                <td class="cell-Table"><input id="description" type="text" class="input-Cell" readonly></td>
+                                                <td class="cell-Table"><input id="unit" type="text" class="input-Cell" readonly></td>
+                                                <td class="cell-Table"><input id="quantity" type="text" class="input-Cell" readonly></td>
+                                                <td class="cell-Table"><input id="quantityDelivery" type="text" class="input-Cell" readonly></td>
+                                                <td class="cell-Table"><input id="unitPriceOriginal" type="text" class="input-Cell" readonly></td>
+                                                <td [hidden]="sAOrder.currencyID === currencyCode" class="cell-Table"><input id="unitPrice" type="text" class="input-Cell" readonly></td>
+                                                <td *ngIf="isMoreForm" class="cell-Table"><input type="text" class="input-Cell" readonly></td>
+                                                <td *ngIf="isMoreForm" class="cell-Table"><input id="mainConvertRate" type="text" class="input-Cell" readonly></td>
+                                                <td *ngIf="isMoreForm" class="cell-Table"><input type="text" class="input-Cell" readonly></td>
+                                                <td *ngIf="isMoreForm" class="cell-Table"><input id="mainQuantity" type="text" class="input-Cell" readonly></td>
+                                                <td *ngIf="isMoreForm" class="cell-Table"><input id="mainUnitPrice" type="text" class="input-Cell" readonly></td>
+                                                <td class="cell-Table"><input id="amountOriginal" type="text" class="input-Cell" readonly></td>
+                                                <td [hidden]="sAOrder.currencyID === currencyCode" class="cell-Table"><input id="amount" type="text" class="input-Cell" readonly></td>
+                                                <td class="cell-Table" ><input id="discountRate" type="text" class="input-Cell" readonly></td>
+                                                <td class="cell-Table" ><input id="discountAmountOriginal" type="text" class="input-Cell" readonly></td>
+                                                <td class="cell-Table" [hidden]="sAOrder.currencyID === currencyCode"><input id="discountAmount" type="text" class="input-Cell" readonly></td>
+                                                <td *ngIf="taxCalculationMethod !== 1" class="cell-Table"><input id="vATRate" type="text" class="input-Cell" readonly></td>
+                                                <td *ngIf="taxCalculationMethod !== 1" class="cell-Table"><input id="vATAmountOriginal" type="text" class="input-Cell" readonly></td>
+                                                <td *ngIf="taxCalculationMethod !== 1"  class="cell-Table" [hidden]="sAOrder.currencyID === currencyCode">
+                                                    <input id="vATAmount" type="text" class="input-Cell" readonly></td>
+                                            </tr>
+                                            <tr *ngFor="let l of newArr(9 - saOrderDetails?.length)">
+                                                <td class="cell-Table"><input type="text" class="input-Cell" readonly></td>
+                                                <td class="cell-Table"><input type="text" class="input-Cell" readonly></td>
+                                                <td class="cell-Table"><input type="text" class="input-Cell" readonly></td>
+                                                <td class="cell-Table"><input type="text" class="input-Cell" readonly></td>
+                                                <td class="cell-Table"><input type="text" class="input-Cell" readonly></td>
+                                                <td class="cell-Table"><input type="text" class="input-Cell" readonly></td>
+                                                <td class="cell-Table"><input type="text" class="input-Cell" readonly></td>
+                                                <td *ngIf="isMoreForm" class="cell-Table"><input type="text" class="input-Cell" readonly></td>
+                                                <td *ngIf="isMoreForm" class="cell-Table"><input type="text" class="input-Cell" readonly></td>
+                                                <td *ngIf="isMoreForm" class="cell-Table"><input type="text" class="input-Cell" readonly></td>
+                                                <td *ngIf="isMoreForm" class="cell-Table"><input type="text" class="input-Cell" readonly></td>
+                                                <td *ngIf="isMoreForm" class="cell-Table"><input type="text" class="input-Cell" readonly></td>
+                                                <td class="cell-Table"><input type="text" class="input-Cell" readonly></td>
+                                                <td class="cell-Table"><input type="text" class="input-Cell" readonly></td>
+                                                <td *ngIf="taxCalculationMethod !== 1" class="cell-Table"><input type="text" class="input-Cell" readonly></td>
+                                                <td *ngIf="taxCalculationMethod !== 1" class="cell-Table"><input type="text" class="input-Cell" readonly></td>
+                                                <td class="cell-Table" [hidden]="sAOrder.currencyID === currencyCode">
+                                                    <input type="text" class="input-Cell" readonly></td>
+                                                <td class="cell-Table" [hidden]="sAOrder.currencyID === currencyCode">
+                                                    <input type="text" class="input-Cell" readonly></td>
+                                                <td class="cell-Table" [hidden]="sAOrder.currencyID === currencyCode">
+                                                    <input type="text" class="input-Cell" readonly></td>
+                                                <td *ngIf="taxCalculationMethod !== 1" class="cell-Table" [hidden]="sAOrder.currencyID === currencyCode">
+                                                    <input type="text" class="input-Cell" readonly></td>
+                                            </tr>
+                                            </tbody>
+                                            <tfoot [class.disable]="true">
+                                            <tr>
+                                                <td class="cell-Table color-tfoot jsgrid-align-left" colspan="3"><input
+                                                    type="text" readonly
+                                                    class="color-tfoot input-Cell"
+                                                    value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{saOrderDetails?.length}}">
+                                                </td>
+                                                <td class="cell-Table color-tfoot jsgrid-align-right">
+                                                    <input type="number" class="input-Cell" [ngModel]="sum('quantity')"
+                                                           ebCurrencyMask
+                                                           readonly
+                                                           [type]="3"
+                                                           [systemOptions]="currentAccount?.systemOption">
+                                                </td>
+                                                <td class="cell-Table color-tfoot jsgrid-align-right">
+                                                    <input type="number" class="input-Cell"
+                                                           [ngModel]="sum('quantityDelivery')"
+                                                           ebCurrencyMask
+                                                           readonly
+                                                           [type]="3"
+                                                           [systemOptions]="currentAccount?.systemOption">
+                                                </td>
+                                                <td class="cell-Table color-tfoot jsgrid-align-right">
+
+                                                </td>
+                                                <td class="cell-Table color-tfoot jsgrid-align-right"
+                                                    [hidden]="sAOrder.currencyID === currencyCode">
+
+                                                </td>
+                                                <td *ngIf="isMoreForm" class="cell-Table color-tfoot jsgrid-align-right"></td>
+                                                <td *ngIf="isMoreForm" class="cell-Table color-tfoot jsgrid-align-right"></td>
+                                                <td *ngIf="isMoreForm" class="cell-Table color-tfoot jsgrid-align-right"></td>
+                                                <td *ngIf="isMoreForm" class="cell-Table color-tfoot jsgrid-align-right">
+                                                    <input type="number" class="input-Cell"
+                                                           [ngModel]="sum('mainQuantity')"
+                                                           readonly
+                                                           ebCurrencyMask
+                                                           [type]="3"
+                                                           [systemOptions]="currentAccount?.systemOption">
+                                                </td>
+                                                <td *ngIf="isMoreForm" class="cell-Table color-tfoot jsgrid-align-right"></td>
+                                                <td class="cell-Table color-tfoot jsgrid-align-right">
+                                                    <input type="number" class="input-Cell"
+                                                           [ngModel]="sum('amountOriginal')"
+                                                           readonly
+                                                           ebCurrencyMask
+                                                           [type]="getAmountOriginalType()"
+                                                           [systemOptions]="currentAccount?.systemOption">
+                                                </td>
+                                                <td class="cell-Table color-tfoot jsgrid-align-right"
+                                                    [hidden]="sAOrder.currencyID === currencyCode">
+                                                    <input type="number" class="input-Cell" [ngModel]="sum('amount')"
+                                                           readonly
+                                                           ebCurrencyMask
+                                                           [type]="7"
+                                                           [systemOptions]="currentAccount?.systemOption">
+                                                </td>
+                                                <td class="cell-Table color-tfoot jsgrid-align-right"></td>
+                                                <td class="cell-Table color-tfoot jsgrid-align-right">
+                                                    <input type="number" class="input-Cell"
+                                                           readonly
+                                                           [ngModel]="sum('discountAmountOriginal')"
+                                                           ebCurrencyMask
+                                                           [type]="getAmountOriginalType()"
+                                                           [systemOptions]="currentAccount?.systemOption">
+                                                </td>
+                                                <td class="cell-Table color-tfoot jsgrid-align-right"
+                                                    [hidden]="sAOrder.currencyID === currencyCode">
+                                                    <input type="number" class="input-Cell"
+                                                           readonly
+                                                           [ngModel]="sum('discountAmount')"
+                                                           ebCurrencyMask
+                                                           [type]="7"
+                                                           [systemOptions]="currentAccount?.systemOption">
+                                                </td>
+                                                <td *ngIf="taxCalculationMethod !== 1" class="cell-Table color-tfoot jsgrid-align-right"></td>
+                                                <td *ngIf="taxCalculationMethod !== 1" class="cell-Table color-tfoot jsgrid-align-right">
+                                                    <input type="number" class="input-Cell"
+                                                           readonly
+                                                           [ngModel]="sum('vATAmountOriginal')"
+                                                           ebCurrencyMask
+                                                           [type]="getAmountOriginalType()"
+                                                           [systemOptions]="currentAccount?.systemOption">
+                                                </td>
+                                                <td *ngIf="taxCalculationMethod !== 1" class="cell-Table color-tfoot jsgrid-align-right"
+                                                    [hidden]="sAOrder.currencyID === currencyCode">
+                                                    <input type="number" class="input-Cell" [ngModel]="sum('vATAmount')"
+                                                           readonly
+                                                           ebCurrencyMask
+                                                           [type]="7"
+                                                           [systemOptions]="currentAccount?.systemOption">
+                                                </td>
+                                            </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </ngb-tab>
+                    <ngb-tab id="refdoc">
+                        <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.saBill.refDoc"></span></ng-template>
+                        <ng-template ngbTabContent>
+                            <div class="tab-content" >
+                                <div class="frm-main frm-padding tab-pane fade in active show" id="home-ref2"
+                                     style="background: #cbdcf0">
+                                    <div id="table-scroll-ref2" class="table-scroll">
+                                        <table id="main-table-ref2" class="main-table">
+                                            <thead>
+                                            <tr>
+                                                <th scope="col" jhiTranslate="global.commonInfo.vDate">Ngày chứng từ</th>
+                                                <th scope="col" jhiTranslate="global.commonInfo.postedDate">Ngày hạch toán</th>
+                                                <th scope="col" jhiTranslate="global.commonInfo.noFBook">Số chứng từ</th>
+                                                <th scope="col" jhiTranslate="global.commonInfo.reason">Diễn giải</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr *ngFor="let viewVoucher of viewVouchersSelected; let i = index"
+                                                oncontextmenu="return false;"
+                                                (contextmenu)="onRightClick($event, viewVouchersSelected, viewVoucher, false, true, 2)">
+                                                <td class="jsgrid-cell jsgrid-align-center">{{viewVoucher.date}}</td>
+                                                <td class="jsgrid-cell jsgrid-align-center">{{viewVoucher.postedDate}}</td>
+                                                <td class="jsgrid-cell jsgrid-align-left line-h pd-l-r-5"
+                                                    (click)="utilsService.viewRefVoucher(viewVoucher)"
+                                                    style="color:blue; text-decoration: underline;">{{viewVoucher.no}}
+                                                </td>
+                                                <td class="jsgrid-cell">{{viewVoucher.reason}}</td>
+                                            </tr>
+                                            <tr *ngFor="let l of newArr(9 - viewVouchersSelected?.length)">
+                                                <td class="cell-Table"><input type="text" class="input-Cell" readonly></td>
+                                                <td class="cell-Table"><input type="text" class="input-Cell" readonly></td>
+                                                <td class="cell-Table"><input type="text" class="input-Cell" readonly></td>
+                                                <td class="cell-Table"><input type="text" class="input-Cell" readonly></td>
+                                            </tr>
+                                            </tbody>
+                                            <tfoot [class.disable]="true">
+                                            <tr>
+                                                <td class="cell-Table color-tfoot jsgrid-align-left" colspan="4"><input type="text" readonly
+                                                                                                                        class="input-Cell"
+                                                                                                                        value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{viewVouchersSelected?.length}}"></td>
+                                            </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </ngb-tab>
+                    <ngb-tab x-placement="right" id="sa-quote"
+                             [disabled]="statusVoucher === 1">
+                        <ng-template ngbTabTitle>
+                            <span>Báo giá</span>
+                        </ng-template>
+                    </ngb-tab>
+                    <ngb-tab x-placement="right" id="reference"
+                             [disabled]="statusVoucher === 1">
+                        <ng-template ngbTabTitle>
+                            <span jhiTranslate="ebwebApp.mBDeposit.reference"></span>
+                        </ng-template>
+                    </ngb-tab>
+                </ngb-tabset>
+                <div class="row justify-content-end" style="height:32px">
+                    <div class="col-lg-4">
+                        <div class="form-group row justify-content-end">
+                            <label class="col-sm-3 col-form-label pd-r-0"
+                                   jhiTranslate="ebwebApp.saBill.totalAmount"
+                                   style="padding-left:0;padding-right:15px !important;text-align: right;"
+                                   for="field_totalAmount">Total Amount</label>
+                            <div class="col-sm-4 pd-l-0 jsgrid-align-right" style="padding-left:0;">
+                                <input type="number" class="noEdit form-control form-control-sm"
+                                       name="totalAmountOriginal" id="field_totalAmountOriginal2"
+                                       ebCurrencyMask
+                                       [type]="getAmountOriginalType()"
+                                       [systemOptions]="currentAccount?.systemOption"
+                                       [(ngModel)]="sAOrder.totalAmountOriginal" readonly/>
+                            </div>
+                            <div
+                                 class="col-sm-4 pd-l-0 pd-r-5 jsgrid-align-right"
+                                 style="padding-right:0;margin-right: 5px;">
+                                <input type="number" class="noEdit form-control form-control-sm"
+                                       name="totalAmount" id="field_totalAmount"
+                                       ebCurrencyMask
+                                       [type]="7"
+                                       [systemOptions]="currentAccount?.systemOption"
+                                       [(ngModel)]="sAOrder.totalAmount" readonly/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 pd-l-0">
+                        <div class="form-group row justify-content-end">
+                            <label class="col-sm-3 col-form-label pd-r-0"
+                                   jhiTranslate="ebwebApp.saBill.totalVATAmount"
+                                   style="padding-left:0;padding-right:15px !important;text-align: right;"
+                                   for="field_totalAmount">Total Amount</label>
+                            <div class="col-sm-4 pd-l-0 jsgrid-align-right" style="padding-left:0;">
+                                <input type="number" class="noEdit form-control form-control-sm"
+                                       name="totalAmountOriginal" id="field_totalVATAmountOriginal"
+                                       ebCurrencyMask
+                                       [type]="getAmountOriginalType()"
+                                       [systemOptions]="currentAccount?.systemOption"
+                                       [(ngModel)]="sAOrder.totalVATAmountOriginal" readonly/>
+                            </div>
+                            <div
+                                 class="col-sm-4 pd-l-0 pd-r-5 jsgrid-align-right"
+                                 style="padding-right:0;margin-right: 5px;">
+                                <input type="number" class="noEdit form-control form-control-sm"
+                                       name="totalAmount" id="field_totalVATAmount"
+                                       ebCurrencyMask
+                                       [type]="7"
+                                       [systemOptions]="currentAccount?.systemOption"
+                                       [(ngModel)]="sAOrder.totalVATAmount" readonly/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-end" style="height:32px">
+                    <div class="col-lg-4 pd-l-0">
+                        <div class="form-group row justify-content-end">
+                            <label class="col-sm-3 col-form-label pd-r-0"
+                                   jhiTranslate="ebwebApp.saBill.totalDiscountAmount"
+                                   style="padding-left:0;padding-right:15px !important;text-align: right;"
+                                   for="field_totalAmount">Total Amount</label>
+                            <div class="col-sm-4 pd-l-0 jsgrid-align-right"
+                                 style="padding-left:0;">
+                                <input type="number" class="noEdit form-control form-control-sm"
+                                       name="totalAmountOriginal" id="field_totalDiscountAmountOriginal"
+                                       ebCurrencyMask
+                                       [type]="getAmountOriginalType()"
+                                       [systemOptions]="currentAccount?.systemOption"
+                                       [(ngModel)]="sAOrder.totalDiscountAmountOriginal" readonly/>
+                            </div>
+                            <div
+                                 class="col-sm-4 pd-l-0 pd-r-5 jsgrid-align-right"
+                                 style="padding-right:0;margin-right: 5px;">
+                                <input type="number" class="noEdit form-control form-control-sm"
+                                       name="totalAmount" id="field_totalDiscountAmount"
+                                       ebCurrencyMask
+                                       [type]="7"
+                                       [systemOptions]="currentAccount?.systemOption"
+                                       [(ngModel)]="sAOrder.totalDiscountAmount" readonly/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 pd-l-0">
+                        <div class="form-group row justify-content-end">
+                            <label class="col-sm-3 col-form-label pd-r-0"
+                                   jhiTranslate="ebwebApp.saBill.total"
+                                   style="padding-left:0;padding-right:15px !important;text-align: right;"
+                                   for="field_totalAmount">Total Amount</label>
+                            <div class="col-sm-4 pd-l-0 jsgrid-align-right"
+                                 style="padding-left:0;">
+                                <input type="number" class="noEdit form-control form-control-sm"
+                                       name="totalAmountOriginal" id="field_totalOriginal"
+                                       ebCurrencyMask
+                                       [type]="getAmountOriginalType()"
+                                       [systemOptions]="currentAccount?.systemOption"
+                                       [(ngModel)]="sAOrder.totalOriginal" readonly/>
+                            </div>
+                            <div
+                                 class="col-sm-4 pd-l-0 pd-r-5 jsgrid-align-right"
+                                 style="padding-right:0;margin-right: 5px;">
+                                <input type="number" class="noEdit form-control form-control-sm"
+                                       name="totalAmount" id="field_total"
+                                       ebCurrencyMask
+                                       [type]="7"
+                                       [systemOptions]="currentAccount?.systemOption"
+                                       [(ngModel)]="sAOrder.total" readonly/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer -->
+    <footer>
+    </footer>
+</div>
+<eb-context-menu [contextMenu]="contextMenu" [eventHandlingHere]="true" [useCopyRow]="true" ></eb-context-menu>
+<ng-template #content let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.saBill.saveMessage">Dữ liệu đã bị thay đổi, Bạn có muốn lưu lại?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="saveContent()" jhiTranslate="entity.action.save">
+            Save
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="close()" jhiTranslate="entity.action.noSave">close
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="closeContent()" jhiTranslate="entity.action.close">
+            close
+        </button>
+    </div>
+</ng-template>
+<!------------------->
+<ng-template #contentUnRecord let-q="dismiss">
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.sAInvoice.unRecord.questionUnRecord1"></label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="deleteRef()" jhiTranslate="entity.action.ok">Đồng ý</button>
+        <button type="button" class="btn btn-outline-dark" (click)="modalRef.close()" jhiTranslate="entity.action.close">Đóng</button>
+    </div>
+</ng-template>

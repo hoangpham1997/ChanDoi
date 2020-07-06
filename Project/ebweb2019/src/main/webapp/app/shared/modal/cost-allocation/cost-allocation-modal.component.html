@@ -1,0 +1,127 @@
+<div class="modal-header" style="padding: 10px 5px 5px 20px; background-color: #cbdcf0!important">
+    <h3 *ngIf="!isHaiQuan" class="modal-title" jhiTranslate="ebwebApp.pPInvoice.costAllocation">Phân bổ chi phí mua hàng</h3>
+    <h3 *ngIf="isHaiQuan" class="modal-title" jhiTranslate="ebwebApp.pPInvoice.costAllocationHQ">Phân bổ chi phí trước hải quan</h3>
+</div>
+<div class="pd-10 bg-modal">
+    <div class="modal-body pd-t-search">
+        <form class="my-form-inline">
+            <button class="btn btn-success" jhiTranslate="ebwebApp.pPInvoice.selectCost" (click)="selectCost()"></button>
+            <label>
+                <span *ngIf="!isHaiQuan" class="col-form-label" jhiTranslate="ebwebApp.pPInvoice.tongChiPhiMuaHang">Tổng chi phí mua hàng</span>
+                <span *ngIf="isHaiQuan" class="col-form-label" jhiTranslate="ebwebApp.pPInvoice.tongChiPhiMuaHangHQ">Tổng chi phí trước hải quan</span>
+            </label>
+            <input type="number" [(ngModel)]="totalDiscount" name="totalDiscount" class="form-control col-sm-2 noSetDisable"
+                   [type]="7"
+                   ebCurrencyMask readonly disabled>
+            <label class="radio-inline">
+                <input type="radio" name="radio-allocation-type"
+                       [(ngModel)]="allocationType" [value]="0">
+                <span jhiTranslate="global.commonInfo.allocationByQuantity"></span>
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="radio-allocation-type"
+                       [(ngModel)]="allocationType" [value]="1">
+                <span jhiTranslate="global.commonInfo.allocationByPrice"></span>
+            </label>
+            <button (click)="onAllocating()" class="btn btn-success" jhiTranslate="global.commonInfo.allocating"></button>
+        </form>
+    </div>
+    <div class="frm-main frm-padding tab-pane fade in active show" id="home-ref"
+         style="background: #cbdcf0">
+        <div id="table-scroll-ref" class="table-scroll">
+            <table id="main-table-ref" class="main-table">
+                <thead>
+                <tr>
+                    <th scope="col" jhiTranslate="global.commonInfo.productCode"></th>
+                    <th scope="col" jhiTranslate="global.commonInfo.reason"></th>
+                    <th scope="col" jhiTranslate="global.commonInfo.quantity"></th>
+                    <th scope="col" jhiTranslate="global.commonInfo.amountOriginal"></th>
+                    <th scope="col" jhiTranslate="global.commonInfo.allocationRate"></th>
+                    <th *ngIf="!isHaiQuan" scope="col" jhiTranslate="global.commonInfo.freightAmountOriginal"></th>
+                    <th *ngIf="isHaiQuan" scope="col" jhiTranslate="global.commonInfo.importTaxExpenseAmount"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let costAllocation of costAllocations; let i = index">
+                    <td class="text-left one-long-line" title="{{costAllocation.productCode}}">{{costAllocation.productCode}}</td>
+                    <td class="text-left one-long-line" title="{{costAllocation.reason}}">{{costAllocation.reason}}</td>
+                    <td class="text-right">
+                        <input type="number"
+                               class="input-Cell bg-transparent border-0 w-100 noSetDisable"
+                               [(ngModel)]="costAllocation.quantity"
+                               name="sumMainQuantity" ebCurrencyMask
+                               [systemOptions]="account?.systemOption"
+                               [type]="3" disabled>
+                    </td>
+                    <td class="text-right">
+                        <input type="number" class="input-Cell bg-transparent border-0 w-100 noSetDisable"
+                               name="totalAmount" [(ngModel)]="costAllocation.amount"
+                               [systemOptions]="account?.systemOption"
+                               [type]="7"
+                               ebCurrencyMask readonly disabled>
+                    </td>
+                    <td class="text-right">
+                        <input type="text" class="input-Cell disable noSetDisable" [(ngModel)]="costAllocation.allocationRate"
+                               ebCurrencyMask [systemOptions]="account?.systemOption" [type]="6"
+                               [allowNegative]="false"
+                               (ngModelChange)="changeRate(costAllocation)">
+                    <td class="text-right">
+                        <input type="text" class="input-Cell disable noSetDisable" [(ngModel)]="costAllocation.freightAmount"
+                               ebCurrencyMask [systemOptions]="account?.systemOption"
+                               [type]="7"
+                               [allowNegative]="false"
+                               (ngModelChange)="changeFreightAmount(costAllocation)">
+                </td>
+                </tr>
+                <tr *ngFor="let item of newArr(10-(costAllocations.length ? costAllocations.length : 0))">
+                    <td class="jsgrid-cell">&nbsp;</td>
+                    <td class="jsgrid-cell">&nbsp;</td>
+                    <td class="jsgrid-cell">&nbsp;</td>
+                    <td class="jsgrid-cell">&nbsp;</td>
+                    <td class="jsgrid-cell">&nbsp;</td>
+                    <td class="jsgrid-cell">&nbsp;</td>
+                </tr>
+                </tbody>
+                <tfoot>
+                <td colspan="2">
+                    <input type="text" readonly
+                           class="color-tfoot input-Cell"
+                           value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{costAllocations.length}}">
+                </td>
+                <td class="text-right">
+                    <input type="number"
+                           class="input-Cell text-right bg-transparent border-0 noSetDisable"
+                           [(ngModel)]="sumQuantity"
+                           name="sumQuantity" ebCurrencyMask
+                           [systemOptions]="account?.systemOption" disabled
+                           [type]="3">
+                </td>
+                <td class="text-right">
+                    <input type="number"
+                           class="input-Cell text-right bg-transparent border-0 noSetDisable"
+                           [(ngModel)]="sumAmount"
+                           name="totalAmount"
+                           [systemOptions]="account?.systemOption"
+                           [type]="7"
+                           ebCurrencyMask readonly disabled>
+                </td>
+                <td colspan="1"></td>
+                <td class="text-right">
+                    <input type="number"
+                           class="input-Cell text-right bg-transparent border-0 noSetDisable"
+                           [(ngModel)]="sumFreightAmount"
+                           name="sumFreightAmount"
+                           ebCurrencyMask [systemOptions]="account?.systemOption"
+                           [type]="7" readonly disabled>
+                </td>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+    <div class="row pd-t-b-0 text-right d-block">
+        <button type="button" class="btn btn-light" (click)="apply()"><span jhiTranslate="entity.action.ok"></span>
+        </button>
+        <button type="button" class="btn btn-light" (click)="close()"><span jhiTranslate="entity.action.huyBo"></span>
+        </button>
+    </div>
+</div>

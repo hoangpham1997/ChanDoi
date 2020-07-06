@@ -1,0 +1,132 @@
+<div class="modal-header">
+    <h4 class="modal-title" jhiTranslate="ebwebApp.prepaidExpense.home.selectPrepaidExpense">chọn chi phí trả trước</h4>
+</div>
+<div class="modal-body" style="padding: 20px!important;">
+    <div class="row pl-2">
+        <!-- chọn đối tượng-->
+        <div class="col-3 pr-1">
+            <div>
+                <label jhiTranslate="ebwebApp.receiveBill.detail.time">Chọn thời gian</label>
+                <combo-box style=""
+                           name="timeLine"
+                           [dataList]="listTimeLine"
+                           [listColumns]="utilsService.listColumnsTimeLine"
+                           [isOutTable]="true"
+                           displayMember="display"
+                           valueName="value"
+                           [headerColumns]="utilsService.listHeaderColumnsTimeLine"
+                           [isObject]="false"
+                           [(ngModel)]="timeLineVoucher"
+                           (ngModelChange)="selectChangeBeginDateAndEndDate(timeLineVoucher)"
+                ></combo-box>
+            </div>
+        </div>
+        <div class="col-3">
+            <label jhiTranslate="ebwebApp.saBill.invoice.fromDate" class="d-block">date</label>
+            <eb-date-picker [(ngModel)]="fromDate" name="fromdate" format="YYYYMMDD" class="position-absolute" style="width: 95%" required></eb-date-picker>
+        </div>
+        <div class="col-3">
+            <label jhiTranslate="ebwebApp.saBill.invoice.toDate" class="d-block">date</label>
+            <eb-date-picker [(ngModel)]="toDate" name="todate" format="YYYYMMDD" class="position-absolute" style="width: 95%" required></eb-date-picker>
+        </div>
+        <div class="col-3">
+            <label>&nbsp;</label>
+            <div>
+                <button class="btn btn-success btn-sm ebwebApp.receiveBill.getData" (click)="search()"><i
+                    class="mdi mdi-magnify mr-2"
+                    aria-hidden="true"></i><span jhiTranslate="ebwebApp.receiveBill.getData"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="frm-main frm-padding tab-pane fade in active show" id="home-ref"
+             style="background: #cbdcf0">
+            <div id="table-scroll-ref" class="table-scroll">
+                <table id="main-table-ref" class="main-table">
+                    <thead>
+                    <tr>
+<!--                        <th scope="col">-->
+<!--                            <div class="custom-control custom-checkbox">-->
+<!--                                <input type="checkbox" class="custom-control-input" id="check-all"-->
+<!--                                       [checked]="isCheckAll()">-->
+<!--                                <label class="custom-control-label" for="check-all"></label>-->
+<!--                            </div>-->
+<!--                        </th>-->
+                        <th scope="col" jhiTranslate="ebwebApp.prepaidExpense.selectPrepaidExpenseCode">chọn chi phí</th>
+                        <th scope="col" jhiTranslate="ebwebApp.prepaidExpense.titleCodeModal">mã chi phí</th>
+                        <th scope="col" jhiTranslate="ebwebApp.prepaidExpense.titleNameModal">tên chi phí</th>
+                        <th scope="col" jhiTranslate="ebwebApp.prepaidExpense.date">ngày ghi nhận</th>
+                        <th scope="col" jhiTranslate="ebwebApp.prepaidExpense.amount">số tiền</th>
+                        <th scope="col" jhiTranslate="ebwebApp.prepaidExpense.allocationTime">số kỳ phân bổ</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let item of viewVouchers; let i = index">
+                        <td class="text-center" (click)="check(item)">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" name="{{'checkbox' + i}}"
+                                       id="{{'checkbox' + i}}" [(ngModel)]="item.checked"
+                                       (click)="check(item)">
+                                <label class="custom-control-label" for="{{'checkbox' + i}}"></label>
+                            </div>
+                        </td>
+                        <td (click)="check(item)" title="{{item.prepaidExpenseCode}}" class="one-long-line text-center">{{item.prepaidExpenseCode}}</td>
+                        <td (click)="check(item)" title="{{item.prepaidExpenseName}}" class="one-long-line text-left">{{item.prepaidExpenseName}}</td>
+                        <td (click)="check(item)" class="text-left">{{item.date | date:'dd/MM/yyyy'}}</td>
+                        <td (click)="check(item)" class="text-right"><input type="number"
+                                                                            class="input-Cell text-right bg-transparent border-0"
+                                                                            [(ngModel)]="item.amount"
+                                                                            name="sumAmount" readonly
+                                                                            ebCurrencyMask [systemOptions]="account?.systemOption"
+                                                                            [type]="account.organizationUnit.currencyID &&
+                                                                             account.organizationUnit.currencyID !== 'VND' ? 8 : 7"></td>
+                        <td (click)="check(item)" class="text-right">{{item.allocationTime}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div *ngIf="viewVouchers && viewVouchers.length"
+                 style="padding-right: 16px;">
+                <div class="row justify-content-end" style="height:32px">
+                    <div class="col-lg-2">
+                        <div class="form-group row">
+                            <label class="col-sm-7 col-form-label" for="itemsPerPagePPinvoice"
+                                   style="padding-right: 0px;text-align: right;">Tổng số : {{totalItems}}</label>
+                            <div class="col-sm-5 pd-l-0">
+                                <select class="form-control form-control-sm" name="itemsPerPage"
+                                        id="itemsPerPagePPinvoice"
+                                        style="background-color: #f5f7fa;"
+                                        [(ngModel)]="itemsPerPage"
+                                        (ngModelChange)="selectedItemPerPage(itemsPerPage)"
+                                >
+                                    <option [selected] value="10">10</option>
+                                    <option value="20">20</option>
+                                    <option value="30">30</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="justify-content-end">
+                        <ngb-pagination [size]="'sm'" [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage"
+                                        [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
+                                        (pageChange)="loadPage(page)"></ngb-pagination>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-body" style="padding: 0!important; padding-bottom: 20px!important;">
+        <div class="row">
+            <div class="col-md-12 text-right">
+                <label>&nbsp;</label>
+                <div>
+                    <button class="btn btn-primary" (click)="apply()"><span jhiTranslate="entity.action.choose"></span>
+                    </button>
+                    <button class="btn btn-default" (click)="close()"><span jhiTranslate="entity.action.close"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>

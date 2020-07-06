@@ -1,0 +1,88 @@
+<div>
+    <h2 id="page-heading">
+        <span jhiTranslate="ebwebApp.materialQuantumDetails.home.title">Material Quantum Details</span>
+        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-material-quantum-details" [routerLink]="['/material-quantum-details/new']">
+            <fa-icon [icon]="'plus'"></fa-icon>
+            <span  jhiTranslate="ebwebApp.materialQuantumDetails.home.createLabel">
+            Create new Material Quantum Details
+            </span>
+        </button>
+    </h2>
+    <eb-alert></eb-alert>
+    <br/>
+    <div class="table-responsive" *ngIf="materialQuantumDetails">
+        <table class="table table-striped">
+            <thead>
+            <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
+            <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="description"><span jhiTranslate="ebwebApp.materialQuantumDetails.description">Description</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="quantity"><span jhiTranslate="ebwebApp.materialQuantumDetails.quantity">Quantity</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="unitPrice"><span jhiTranslate="ebwebApp.materialQuantumDetails.unitPrice">Unit Price</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="amount"><span jhiTranslate="ebwebApp.materialQuantumDetails.amount">Amount</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="orderPriority"><span jhiTranslate="ebwebApp.materialQuantumDetails.orderPriority">Order Priority</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="materialQuantum.id"><span jhiTranslate="ebwebApp.materialQuantumDetails.materialQuantum">Material Quantum</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="materialGoods.id"><span jhiTranslate="ebwebApp.materialQuantumDetails.materialGoods">Material Goods</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="unit.id"><span jhiTranslate="ebwebApp.materialQuantumDetails.unit">Unit</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let materialQuantumDetails of materialQuantumDetails ;trackBy: trackId">
+                <td><a [routerLink]="['/material-quantum-details', materialQuantumDetails.id, 'view' ]">{{materialQuantumDetails.id}}</a></td>
+                <td>{{materialQuantumDetails.description}}</td>
+                <td>{{materialQuantumDetails.quantity}}</td>
+                <td>{{materialQuantumDetails.unitPrice}}</td>
+                <td>{{materialQuantumDetails.amount}}</td>
+                <td>{{materialQuantumDetails.orderPriority}}</td>
+<!--                <td>-->
+<!--                    <div *ngIf="materialQuantumDetails.materialQuantum">-->
+<!--                        <a [routerLink]="['../material-quantum', materialQuantumDetails.materialQuantum?.id, 'view' ]" >{{materialQuantumDetails.materialQuantum?.id}}</a>-->
+<!--                    </div>-->
+<!--                </td>-->
+<!--                <td>-->
+<!--                    <div *ngIf="materialQuantumDetails.materialGoods">-->
+<!--                        <a [routerLink]="['../material-goods', materialQuantumDetails.materialGoods?.id, 'view' ]" >{{materialQuantumDetails.materialGoods?.materialGoodsCode}}</a>-->
+<!--                    </div>-->
+<!--                </td>-->
+<!--                <td>-->
+<!--                    <div *ngIf="materialQuantumDetails.unit">-->
+<!--                        <a [routerLink]="['../unit', materialQuantumDetails.unit?.id, 'view' ]" >{{materialQuantumDetails.unit?.unitName}}</a>-->
+<!--                    </div>-->
+<!--                </td>-->
+                <td class="text-right">
+                    <div class="btn-group flex-btn-group-container">
+                        <button type="submit"
+                                [routerLink]="['/material-quantum-details', materialQuantumDetails.id, 'view' ]"
+                                class="btn btn-info btn-sm">
+                            <fa-icon [icon]="'eye'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/material-quantum-details', materialQuantumDetails.id, 'edit']"
+                                class="btn btn-primary btn-sm">
+                            <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/', { outlets: { popup: 'material-quantum-details/'+ materialQuantumDetails.id + '/delete'} }]"
+                                replaceUrl="true"
+                                queryParamsHandling="merge"
+                                class="btn btn-danger btn-sm">
+                            <fa-icon [icon]="'times'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div *ngIf="materialQuantumDetails && materialQuantumDetails.length">
+        <div class="row justify-content-center">
+            <jhi-item-count [page]="page" [total]="queryCount" [maxSize]="5" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+        </div>
+        <div class="row justify-content-center">
+            <ngb-pagination [size]="'sm'" [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage" [maxSize]="5" [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage(page)"></ngb-pagination>
+        </div>
+    </div>
+</div>

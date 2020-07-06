@@ -1,0 +1,127 @@
+<!--edit by anmt-->
+<nav class="navbar p-0 fixed-top flex-row" style="z-index: 8888"
+     [hidden]="this.router.url === '/login' || this.router.url === '/admin/login'"
+     [ngClass]="{'d-flex': (this.router.url !== '/login' && this.router.url !== '/admin/login')}">
+    <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
+        <a class="navbar-brand brand-logo" href="/#/admin/home"><img src="/content/images/logo.png"/></a>
+        <a class="navbar-brand brand-logo-mini" href="/#/admin/home"><img src="/content/images/icon-logo.png"/></a>
+    </div>
+    <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+        <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+            <span class="mdi mdi-menu"></span>
+        </button>
+
+        <ul class="nav page-navigation" hidden>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <span class="menu-title">HỆ THỐNG</span>
+                    <i class="menu-arrow"></i></a>
+                <div class="submenu">
+                    <ul class="submenu-item">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Ngày hạch
+                                toán</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Nhật ký truy cập</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Tùy chọn</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+
+        <ul class="navbar-nav navbar-nav-right">
+            <li class="nav-item nav-profile dropdown">
+                <a class="nav-link" href="#" data-toggle="dropdown" id="profileDropdown">{{currentAccount?.fullName}}
+                    <span class="mdi mdi-chevron-down"></span></a>
+                <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
+                    <a class="dropdown-item" (click)="navigateUser()">
+                        <i class="mdi mdi-settings text-primary"></i>
+                        Thông tin tài khoản
+                    </a>
+                    <a *ngIf="true" routerLink="admin/user-management" class="dropdown-item">
+                        <i class="mdi mdi-settings text-primary"></i>
+                        Quản trị người dùng
+                    </a>
+                    <a *ngIf="true" routerLink="admin/eb-group" class="dropdown-item">
+                        <i class="mdi mdi-settings text-primary"></i>
+                        Vai trò quyền hạn
+                    </a>
+                    <a *ngIf="true" class="dropdown-item" (click)="showPopupChangePassword(changePass)">
+                        <i class="mdi mdi-settings text-primary"></i>
+                        <span jhiTranslate="navbar.password.title"></span>
+                    </a>
+                    <a class="dropdown-item" (click)="logout()">
+                        <i class="mdi mdi-logout text-primary"></i>
+                        Đăng xuất
+                    </a>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<ng-template #changePass let-d="dismiss">
+    <div id="ModalCustom">
+        <div class="modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" style="padding: 15px 10px 10px 10px;">
+                    <div class="d-flex flex-wrap col-md-11">
+                        <h3 class="modal-title-detail"><span
+                            class="text-uppercase" jhiTranslate="navbar.password.title">Đổi mật khẩu</span></h3>
+                    </div>
+                    <a class="close-modal" data-dismiss="modal" (click)="d('Close')"
+                       aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </a>
+                </div>
+                <div class="modal-body">
+                    <div class="form">
+                        <div class="form-group row">
+                            <label class="offset-sm-1 col-sm-3 col-form-label"
+                                   jhiTranslate="navbar.password.currentPassword"></label>
+                            <div class="col-sm-6 pd-l-0 pd-r-10">
+                                <input type="password" class="form-control" name="password1" id="password1"
+                                       [(ngModel)]="currentPassword" (keydown.enter)="changePassword()"
+                                        required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="offset-sm-1 col-sm-3 col-form-label"
+                                   jhiTranslate="navbar.password.newPassword">Mật khẩu</label>
+                            <div class="col-sm-6 pd-l-0 pd-r-10">
+                                <input type="password" class="form-control" name="password2" id="password2"
+                                       [(ngModel)]="newPassword" (keydown.enter)="changePassword()"
+                                       required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="offset-sm-1 col-sm-3 col-form-label"
+                                   jhiTranslate="navbar.password.confirmPassword">Mật khẩu</label>
+                            <div class="col-sm-6 pd-l-0 pd-r-10">
+                                <input type="password" class="form-control" name="password3" id="password3"
+                                       [(ngModel)]="confirmPassword" (keydown.enter)="changePassword()"
+                                       required>
+                            </div>
+                        </div>
+                        <div class="button row">
+                            <label class="col-sm-1 col-form-label"></label>
+                            <div class="col-sm-3 pd-l-0 pd-r-10"></div>
+                            <div class="col-sm-6 pd-l-0 pd-r-10 btn_login">
+                                <button (click)="changePassword()" jhiTranslate="entity.action.ok"
+                                        class="btn btn-eb">Đồng ý
+                                </button>
+                                <button (click)="d('Close')" jhiTranslate="entity.action.close"
+                                        class="btn btn-default">đóng
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>

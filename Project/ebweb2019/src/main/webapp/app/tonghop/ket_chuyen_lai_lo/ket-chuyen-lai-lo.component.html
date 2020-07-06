@@ -1,0 +1,297 @@
+<div >
+    <div >
+        <div class="menu-tool-bar he">
+            <div class="ptitle">
+                <span class="text-uppercase" jhiTranslate="ebwebApp.gOtherVoucher.home.titleKc">Kết chuyển lãi lỗ</span>
+            </div>
+            <div class="gr-toolbar">
+                <button class="button-navigation" *ebHasAnyAuthority="['ROLE_ADMIN', ROLE.KetChuyenLaiLo_Them]" (click)="addNew()" title="{{'ebwebApp.outWard.tooltipAdd' | translate}}"><i class="mdi mdi-plus"></i> <span
+                    jhiTranslate="ebwebApp.common.add"> Thêm </span></button>
+                <button class="button-navigation" *ebHasAnyAuthority="['ROLE_ADMIN', ROLE.KetChuyenLaiLo_Xoa]" [disabled]="selectedRow.recorded || isLoading || gOtherVouchers.length === 0 || checkCloseBook(account, selectedRow.postedDate)" title="{{'ebwebApp.outWard.tooltipDrop' | translate}}"
+                   (click)="openModel1(deleteItem)"><i
+                    class="mdi mdi-delete"></i> <span jhiTranslate="ebwebApp.mCReceipt.home.delete"></span></button>
+                <button class="button-navigation" *ebHasAnyAuthority="['ROLE_ADMIN', ROLE.KetChuyenLaiLo_GhiSo, !selectedRow.recorded]" [disabled]="isLoading || gOtherVouchers.length === 0" (click)="recordGO()" title="{{'ebwebApp.outWard.tooltipRecord' | translate}}">
+                    <i class="mdi mdi-grease-pencil"></i> <span
+                    jhiTranslate="ebwebApp.mCReceipt.home.record"></span></button>
+                <button class="button-navigation" *ebHasAnyAuthority="['ROLE_ADMIN', ROLE.KetChuyenLaiLo_GhiSo, selectedRow.recorded]" [disabled]="isLoading || gOtherVouchers.length === 0 || checkCloseBook(account, selectedRow.postedDate)" (click)="unRecordGO()"
+                   title="{{'ebwebApp.outWard.tooltipUnRecord' | translate}}">
+                    <i class="mdi mdi-grease-pencil"></i> <span jhiTranslate="ebwebApp.mCReceipt.home.unrecord"></span></button>
+                <button class="button-navigation" *ebHasAnyAuthority="['ROLE_ADMIN', ROLE.KetChuyenLaiLo_KetXuat]" [disabled]="gOtherVouchers.length === 0" (click)="exportPdf()" title="{{'ebwebApp.outWard.tooltipExport' | translate}}">
+                    <i class="mdi mdi-file-export"></i> <span
+                    jhiTranslate="ebwebApp.mCReceipt.home.export"></span></button>
+                <button class="button-navigation"  (click)="toggleSearch($event)" title="{{'ebwebApp.outWard.tooltipSearch' | translate}}">
+                    <i class="{{isShowSearch?'mdi mdi-chevron-up':'mdi mdi-magnify'}}"></i>
+                    <span
+                        jhiTranslate="{{!isShowSearch ? 'ebwebApp.common.advancedSearch' : 'ebwebApp.common.hideSearch'}}"> Tìm kiếm </span>
+                </button>
+            </div>
+        </div>
+        <div class="frm-main frm-mains nobg">
+            <form id="seach" style="background: #cbdcf0;" [hidden]="!isShowSearch">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="form-group row">
+                            <label class="col-sm-1 col-form-label" jhiTranslate="ebwebApp.purchaseOrder.status">Trạng thái</label>
+                            <div class="col-sm-3 pd-l-0">
+                                <select class="form-control" style="padding-bottom: 5px;padding-top: 5px;" name="typeLedger" id="field_typeLedger" [(ngModel)]="status" (ngModelChange)="loadAllForSearch()">
+                                    <option [ngValue]="null"></option>
+                                    <option [ngValue]="1" jhiTranslate="ebwebApp.common.carrying">Ghi sổ</option>
+                                    <option [ngValue]="0" jhiTranslate="ebwebApp.common.notCarrying">Chưa ghi sổ
+                                </select>
+                            </div>
+                            <label class="col-sm-1 col-form-label pr-0" jhiTranslate="ebwebApp.purchaseOrder.fromDate">Từ ngày</label>
+                            <div class="col-sm-3">
+                                <eb-date-picker [(ngModel)]="fromDate" format="YYYYMMDD" name="fromDate"></eb-date-picker>
+                            </div>
+                            <label class="col-sm-1 col-form-label pr-0" jhiTranslate="ebwebApp.purchaseOrder.toDate">Đến ngày</label>
+                            <div class="col-sm-3">
+                                <eb-date-picker [(ngModel)]="toDate" format="YYYYMMDD" name="toDate"></eb-date-picker>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-12">
+                        <div class="form-group row">
+                            <label class="col-sm-1 col-form-label pr-0" for="txtSearchValue"
+                                   jhiTranslate="ebwebApp.purchaseOrder.keywordSearch">Từ khóa tìm kiếm</label>
+                            <div class="col-sm-7">
+                                <input [(ngModel)]="searchValue" (change)="loadAllForSearch()"
+                                       id="txtSearchValue" name="txtSearchValue" type="text"
+                                       class="form-control form-control-sm">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="frm-button">
+                            <button (click)="loadAllForSearch()" class="btn btn-success btn-sm" style="font-size: 16px">
+                                <i class="mdi mdi-magnify" aria-hidden="true" style="margin-right: 5px"></i><span jhiTranslate="ebwebApp.purchaseOrder.search">Tìm kiếm</span>
+                            </button>
+                            <button (click)="resetSeach()" class="btn btn-danger btn-sm" style="font-size: 16px">
+                                <i class="mdi mdi-replay" style="margin-right: 5px"></i><span jhiTranslate="ebwebApp.purchaseOrder.setAgain">Đặt lại</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div class="frm-main frm-tables frm-padding no-highlight" style="background: #cbdcf0; margin-top: 5px">
+                <div id="table-scroll0" class="table-scroll voucher-table">
+                    <table id="main-table0" class="main-table">
+                        <thead class="header-table">
+                        <tr>
+                            <th scope="col" jhiTranslate="ebwebApp.pPInvoice.date">
+                                Ngày chứng từ
+                            </th>
+                            <th scope="col" jhiTranslate="ebwebApp.pPInvoice.postedDate">Ngày hạch toán
+                            </th>
+                            <th scope="col" jhiTranslate="ebwebApp.pPInvoice.noFBook">
+                                Số chứng từ
+                            </th>
+                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.reason">
+                                Diễn giải
+                            </th>
+                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.amountOriginal">
+                                Số tiền
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let item of gOtherVouchers; let i = index;"
+                            [class.selected]="selectedRow && item.id === selectedRow.id"
+                            [class.row-selected]="selectedRows.indexOf(item) !== -1"
+                            (click)="selectMultiRow(item, $event, gOtherVouchers); index = i"
+                            [ngStyle]="getStyle(item.recorded)"
+                            (dblclick)="doubleClickRowGO(item, i, false)">
+                            <td class="jsgrid-cell jsgrid-align-center">{{item.date | date:'dd/MM/yyyy'}}</td>
+                            <td class="jsgrid-cell jsgrid-align-center">{{item.postedDate| date:'dd/MM/yyyy'}}</td>
+                            <td class="jsgrid-cell">
+                               {{item.no}}
+                            </td>
+                            <td title="{{item.reason}}">{{item.reason}}</td>
+                            <td class="jsgrid-align-right" title="{{item.totalAmount | ebcurrency: 7:account}}">{{item.totalAmount | ebcurrency: 7:account}}</td>
+                        </tr>
+                        <tr *ngFor="let item of newArr(10 - (gOtherVouchers && gOtherVouchers.length ? gOtherVouchers.length : 0))">
+                            <td>&nbsp;</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+        <div *ngIf="gOtherVouchers && gOtherVouchers.length"
+             style="padding-right: 16px;">
+            <div class="row" style="height: 32px">
+                <div class="col-md-4">
+                    <p style="padding-right: 5px;">
+                        <span jhiTranslate="ebwebApp.saBill.totalAmountTt"></span>:
+                        <input type="text" class="input-Cell-total" disabled
+                               [ngModel]="gOtherVouchers[0]?.total"
+                               ebCurrencyMask [systemOptions]="currentAccount?.systemOption" [type]="7"
+                               [textAlign]="'left'">
+                    </p>
+                </div>
+                <div class="col-md-8">
+                    <div class="row justify-content-end" style="height:32px">
+                        <div class="col-lg-4">
+                            <div class="form-group row">
+                                <label class="col-sm-9 col-form-label" for="itemsPerPage"
+                                        style="padding-right: 0px;text-align: right;"><span
+                                        jhiTranslate="ebwebApp.mBDeposit.totalItems"></span>: {{totalItems}}</label>
+                                <div class="col-sm-3 pd-l-0" style="padding-right: 5px;padding-left: 5px;">
+                                    <select class="form-control form-control-sm" name="itemsPerPage"
+                                            id="itemsPerPage"
+                                            style="background-color: #f5f7fa;"
+                                            [(ngModel)]="itemsPerPage"
+                                            (ngModelChange)="selectedItemPerPage()">
+                                        <option [value]="10">10</option>
+                                        <option [value]="20">20</option>
+                                        <option [value]="30">30</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="justify-content-end">
+                            <ngb-pagination [size]="'sm'" [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage"
+                                            [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
+                                            (pageChange)="loadPage(page)"></ngb-pagination>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <ngb-tabset class="tool-navbar">
+                <ngb-tab id="gother-voucher-detail">
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.mBDepositDetails.detail.title"></span>
+                    </ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content">
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="home-detail"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-detail" class="table-scroll">
+                                    <table id="main-table-detail" class="main-table">
+                                        <thead>
+                                        <tr>
+                                            <th width="25%" scope="col" jhiTranslate="ebwebApp.gOtherVoucher.reason">Diễn giải</th>
+                                            <th width="25%" scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.debitAccount">TK nợ</th>
+                                            <th width="25%" scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.creditAccount">TK có</th>
+                                            <th width="25%" scope="col" jhiTranslate="ebwebApp.gOtherVoucher.amountOriginal">Số tiền</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let detail of gOtherVoucherDetails;let i=index;">
+                                            <td class="jsgrid-cell one-long-line" title="{{detail.description}}">{{detail.description}}</td>
+                                            <td class="jsgrid-cell one-long-line jsgrid-align-center" title="{{detail.debitAccount}}">{{detail.debitAccount}}</td>
+                                            <td class="jsgrid-cell one-long-line jsgrid-align-center" title="{{detail.creditAccount}}">{{detail.creditAccount}}</td>
+                                            <td class="jsgrid-cell one-long-line jsgrid-align-right">{{detail.amount | ebcurrency:7: account}}</td>
+
+                                        </tr>
+                                        <tr *ngFor="let item of newArr(10-(gOtherVoucherDetails.length ? gOtherVoucherDetails.length : 0))">
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+
+                                        </tr>
+                                        </tbody>
+                                        <tfoot>
+                                        <td colspan="3" class="color-tfoot">
+                                            <span class="color-tfoot"
+                                                  jhiTranslate="ebwebApp.pPInvoice.totalRow"
+                                                  translateValues="{total: '{{gOtherVoucherDetails.length}}'}"></span>
+                                        </td>
+                                        <td colspan="1">&nbsp;</td>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+
+
+
+                <ngb-tab id ="reference-voucher">
+                    <ng-template ngbTabTitle>
+                        <span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.tabs.referenceVoucher">Chi tiết</span>
+                    </ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content" >
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="referenceVoucher-tabs"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-detail-referenceVoucher" class="table-scroll">
+                                    <table id="main-table-detail-referenceVoucher" class="main-table">
+                                        <thead>
+                                        <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.receiptDate"></th>
+                                        <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.postedDate"></th>
+                                        <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.noBook"></th>
+                                        <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.explain"></th>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let viewVoucher of refVouchers; let i = index">
+                                            <td class="jsgrid-cell jsgrid-align-center">
+                                            <span>
+                                                {{viewVoucher.date}}
+                                            </span>
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-center">
+                                            <span>
+                                                {{viewVoucher.postedDate}}
+                                            </span>
+                                            </td>
+                                            <td title="{{viewVoucher.no}}" class="jsgrid-cell jsgrid-align-left one-long-line">
+                                                {{viewVoucher.no}}
+                                            </td>
+                                            <td title="{{viewVoucher.reason}}" class="jsgrid-cell jsgrid-align-left one-long-line">
+                                                {{viewVoucher.reason}}
+                                            </td>
+                                        </tr>
+                                        <tr *ngFor="let item of newArr(10)">
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot>
+                                        <td colspan="4" class="color-tfoot">
+                                            <span class="color-tfoot"
+                                                  jhiTranslate="ebwebApp.pPInvoice.totalRow"
+                                                  translateValues="{total: '{{0}}'}"></span>
+                                        </td>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+            </ngb-tabset>
+        </div>
+    </div>
+</div>
+<!--xóa-->
+<ng-template #deleteItem let-d="dismiss">
+    <form name="deleteForm">
+        <div class="modal-header">
+            <h4 class="modal-title" jhiTranslate="ebwebApp.pPInvoice.deleteTitle">Confirm delete operation</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                    (click)="d('Close')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p id="eb-delete-pporder-heading" jhiTranslate="ebwebApp.pPInvoice.deletePPInvoice"
+            >Are you sure you want to delete this Pporder?</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="d('Close')">
+                <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+            </button>
+            <button id="eb-confirm-delete-pPDiscountReturn" [class.disable]="isLoading" type="submit" class="btn btn-danger" (click)="deleteGO()">
+                <fa-icon [icon]="'times'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.delete">Delete</span>
+            </button>
+        </div>
+    </form>
+</ng-template>

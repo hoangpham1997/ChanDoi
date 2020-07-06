@@ -1,0 +1,173 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
+            <h2 id="eb-prepaid-expense-heading" jhiTranslate="ebwebApp.prepaidExpense.home.createOrEditLabel">Create or edit a Prepaid Expense</h2>
+            <div>
+                <eb-alert-error></eb-alert-error>
+                <div class="form-group" [hidden]="!prepaidExpense.id">
+                    <label for="id" jhiTranslate="global.field.id">ID</label>
+                    <input type="text" class="form-control" id="id" name="id"
+                        [(ngModel)]="prepaidExpense.id" readonly />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.prepaidExpense.companyID" for="field_companyID">Company ID</label>
+                    <input type="text" class="form-control" name="companyID" id="field_companyID"
+                        [(ngModel)]="prepaidExpense.companyID" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.prepaidExpense.branchID" for="field_branchID">Branch ID</label>
+                    <input type="text" class="form-control" name="branchID" id="field_branchID"
+                        [(ngModel)]="prepaidExpense.branchID" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.prepaidExpense.typeLedger" for="field_typeLedger">Type Ledger</label>
+                    <input type="number" class="form-control" name="typeLedger" id="field_typeLedger"
+                        [(ngModel)]="prepaidExpense.typeLedger" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.prepaidExpense.typeExpense" for="field_typeExpense">Type Expense</label>
+                    <input type="text" class="form-control" name="typeExpense" id="field_typeExpense"
+                        [(ngModel)]="prepaidExpense.typeExpense" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.prepaidExpense.prepaidExpenseCode" for="field_prepaidExpenseCode">Prepaid Expense Code</label>
+                    <input type="text" class="form-control" name="prepaidExpenseCode" id="field_prepaidExpenseCode"
+                        [(ngModel)]="prepaidExpense.prepaidExpenseCode" maxlength="25"/>
+                    <div [hidden]="!(editForm.controls.prepaidExpenseCode?.dirty && editForm.controls.prepaidExpenseCode?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.prepaidExpenseCode?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 25 }">
+                        This field cannot be longer than 25 characters.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.prepaidExpense.prepaidExpenseName" for="field_prepaidExpenseName">Prepaid Expense Name</label>
+                    <input type="text" class="form-control" name="prepaidExpenseName" id="field_prepaidExpenseName"
+                        [(ngModel)]="prepaidExpense.prepaidExpenseName" maxlength="512"/>
+                    <div [hidden]="!(editForm.controls.prepaidExpenseName?.dirty && editForm.controls.prepaidExpenseName?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.prepaidExpenseName?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 512 }">
+                        This field cannot be longer than 512 characters.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.prepaidExpense.date" for="field_date">Date</label>
+                    <div class="input-group">
+                        <input id="field_date" type="text" class="form-control" name="date" ngbDatepicker  #dateDp="ngbDatepicker" [(ngModel)]="prepaidExpense.date"
+                        required/>
+                        <span class="input-group-append">
+                            <button type="button" class="btn btn-secondary" (click)="dateDp.toggle()"><fa-icon [icon]="'calendar-alt'"></fa-icon></button>
+                        </span>
+                    </div>
+                    <div [hidden]="!(editForm.controls.date?.dirty && editForm.controls.date?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.date?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.prepaidExpense.amount" for="field_amount">Amount</label>
+                    <input type="number" class="form-control" name="amount" id="field_amount"
+                        [(ngModel)]="prepaidExpense.amount" required/>
+                    <div [hidden]="!(editForm.controls.amount?.dirty && editForm.controls.amount?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.amount?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.controls.amount?.errors?.number" jhiTranslate="entity.validation.number">
+                            This field should be a number.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.prepaidExpense.allocationAmount" for="field_allocationAmount">Allocation Amount</label>
+                    <input type="number" class="form-control" name="allocationAmount" id="field_allocationAmount"
+                        [(ngModel)]="prepaidExpense.allocationAmount" required/>
+                    <div [hidden]="!(editForm.controls.allocationAmount?.dirty && editForm.controls.allocationAmount?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.allocationAmount?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.controls.allocationAmount?.errors?.number" jhiTranslate="entity.validation.number">
+                            This field should be a number.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.prepaidExpense.allocationTime" for="field_allocationTime">Allocation Time</label>
+                    <input type="number" class="form-control" name="allocationTime" id="field_allocationTime"
+                        [(ngModel)]="prepaidExpense.allocationTime" required/>
+                    <div [hidden]="!(editForm.controls.allocationTime?.dirty && editForm.controls.allocationTime?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.allocationTime?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.controls.allocationTime?.errors?.number" jhiTranslate="entity.validation.number">
+                            This field should be a number.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.prepaidExpense.allocatedPeriod" for="field_allocatedPeriod">Allocated Period</label>
+                    <input type="number" class="form-control" name="allocatedPeriod" id="field_allocatedPeriod"
+                        [(ngModel)]="prepaidExpense.allocatedPeriod" required/>
+                    <div [hidden]="!(editForm.controls.allocatedPeriod?.dirty && editForm.controls.allocatedPeriod?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.allocatedPeriod?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.controls.allocatedPeriod?.errors?.number" jhiTranslate="entity.validation.number">
+                            This field should be a number.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.prepaidExpense.allocatedAmount" for="field_allocatedAmount">Allocated Amount</label>
+                    <input type="number" class="form-control" name="allocatedAmount" id="field_allocatedAmount"
+                        [(ngModel)]="prepaidExpense.allocatedAmount" required/>
+                    <div [hidden]="!(editForm.controls.allocatedAmount?.dirty && editForm.controls.allocatedAmount?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.allocatedAmount?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.controls.allocatedAmount?.errors?.number" jhiTranslate="entity.validation.number">
+                            This field should be a number.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.prepaidExpense.allocationAccount" for="field_allocationAccount">Allocation Account</label>
+                    <input type="text" class="form-control" name="allocationAccount" id="field_allocationAccount"
+                        [(ngModel)]="prepaidExpense.allocationAccount" maxlength="25"/>
+                    <div [hidden]="!(editForm.controls.allocationAccount?.dirty && editForm.controls.allocationAccount?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.allocationAccount?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 25 }">
+                        This field cannot be longer than 25 characters.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.prepaidExpense.isActive" for="field_isActive">Is Active</label>
+                    <input type="checkbox" class="form-control" name="isActive" id="field_isActive"
+                        [(ngModel)]="prepaidExpense.isActive" />
+                </div>
+
+            </div>
+            <div>
+                <button type="button" id="cancel-save" class="btn btn-secondary"  (click)="previousState()">
+                    <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+                </button>
+                <button type="submit" id="save-entity" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">
+                    <fa-icon [icon]="'save'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

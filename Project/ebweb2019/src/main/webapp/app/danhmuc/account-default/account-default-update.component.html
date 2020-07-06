@@ -1,0 +1,277 @@
+<div style="padding: 0px!important;">
+    <div class="margin-tp-5 margin-0">
+        <div class="">
+            <div class="itemw">
+                <div class="menu-tool-bar header-custom">
+                    <div class="ptitle">
+                        <span jhiTranslate="ebwebApp.accountDefault.detail.title"></span>
+                    </div>
+
+                    <div class="gr-toolbar">
+                        <button class="button-navigation" title="{{buttonSaveTranslate | translate}}"
+                           *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_TaiKhoanNgamDinh_Sua]" (click)="save(false)"><i
+                            class="mdi mdi-briefcase-download"></i>
+                            <span jhiTranslate="ebwebApp.mCReceipt.home.save"></span>
+                        </button>
+                        <!--                        <a><i class="mdi mdi-plus fa-plus color-green"></i>-->
+                        <!--                            <span jhiTranslate="ebwebApp.mCReceipt.home.saveAndAddNew"></span>-->
+                        <!--                        </a>-->
+                        <!--                        <a><i class="mdi mdi-plus fa-plus color-green"></i>-->
+                        <!--                            <span jhiTranslate="ebwebApp.mCReceipt.home.delete"></span>-->
+                        <!--                        </a>-->
+                        <a *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_TaiKhoanNgamDinh_Xem]"
+                           title="{{buttonCloseFormTranslate | translate}}" (click)="closeForm()"><i
+                            class="mdi mdi-window-close"></i>
+                            <span jhiTranslate="ebwebApp.mCReceipt.home.close"></span>
+                        </a>
+                    </div>
+                </div>
+                <div class="frm-main">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <fieldset>
+                                <form style="border: none;">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="form-group row">
+                                                <label class="col-sm-2 my-col-form-label-140"
+                                                       jhiTranslate="ebwebApp.accountDefault.typeID"
+                                                       style="padding-right: 5px"></label>
+                                                <div class="col-sm-5 pd-l-0 pd-r-10" style="padding-left: 5px">
+                                                    <input type="text" class="form-control"
+                                                           name="typeID"
+                                                           id="typeID"
+                                                           [(ngModel)]="typeName"
+                                                           [disabled]="(!isRoleSua && isEditUrl)">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div id="table-scroll-detail" class="table-scroll">
+                                            <table id="main-table-detail" class="main-table">
+                                                <thead>
+                                                <tr>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.accountDefault.columnName"></th>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.accountDefault.filterAccount"></th>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.accountDefault.defaultAccount"></th>
+                                                    <th *ngIf="isHidePurchase" scope="col"
+                                                        jhiTranslate="ebwebApp.accountDefault.pPType"></th>
+                                                </tr>
+                                                <!--                                                <tr>-->
+                                                <!--                                                    <td class="cell-Table">-->
+                                                <!--                                                    </td>-->
+                                                <!--                                                    <td class="cell-Table"><input type="text" class="input-Cell">-->
+                                                <!--                                                    </td>-->
+                                                <!--                                                    <td class="cell-Table"><input type="text" class="input-Cell">-->
+                                                <!--                                                    </td>-->
+                                                <!--                                                    <td class="cell-Table"><input type="text" class="input-Cell">-->
+                                                <!--                                                    </td>-->
+                                                <!--                                                </tr>-->
+                                                </thead>
+                                                <tbody>
+                                                <tr oncontextmenu="return false;"
+                                                    *ngFor="let detail of accountDefaults ; let i=index;">
+                                                    <td class="cell-Table">
+                                                        <input type="text" class="input-Cell"
+                                                               name="columnName{{i}}"
+                                                               id="columnName{{i}}"
+                                                               [(ngModel)]="detail.columnCaption"
+                                                               [class.myreadonlytrue]="true"
+                                                               [disabled]="(!isRoleSua && isEditUrl)">
+                                                    </td>
+                                                    <td class="cell-Table jsgrid-align-left">
+                                                        <div class="custom-control-inline form-control form-control-sm"
+                                                             style="border: none">
+                                                            <input type="text" class="input-Cell"
+                                                                   name="filterAccount{{i}}"
+                                                                   id="filterAccount{{i}}"
+                                                                   [(ngModel)]="detail.filterAccount"
+                                                                   [class.myreadonlytrue]="true"
+                                                                   [disabled]="(!isRoleSua && isEditUrl)"/>
+                                                            <a *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_TaiKhoanNgamDinh_Xem]"
+                                                               [class.myreadonlytrue]="(!isRoleSua && isEditUrl)"
+                                                               (click)="showAccountTable(accountTable,i)"><i
+                                                                class="mdi mdi-pen"></i></a>
+                                                        </div>
+                                                    </td>
+                                                    <td class="cell-Table">
+                                                        <combo-box style="" id="field_childAccount{{i}}"
+                                                                   name="comboboxChildAccount{{i}}"
+                                                                   [dataList]="detail.childAccount"
+                                                                   [isOutTable]="true"
+                                                                   [listColumns]="listColumnsAccount"
+                                                                   displayMember="accountNumber"
+                                                                   valueName="accountNumber"
+                                                                   [headerColumns]="listHeaderColumnsAccount"
+                                                                   [isObject]="false"
+                                                                   [(ngModel)]="detail.defaultAccount"
+                                                                   [isReadOnly]="(!isRoleSua && isEditUrl)">
+                                                        </combo-box>
+                                                    </td>
+                                                    <td *ngIf="isHidePurchase"
+                                                        class="cell-Table jsgrid-align-center">{{getPPType(i)}}
+                                                    </td>
+                                                </tr>
+                                                <tr *ngFor="let l of newArr(9 - accountDefaults.length)">
+                                                    <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                                  readonly>
+                                                    </td>
+                                                    <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                                  readonly>
+                                                    </td>
+                                                    <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                                  readonly>
+                                                    </td>
+                                                    <td *ngIf="isHidePurchase" class="cell-Table"><input type="text"
+                                                                                                         class="input-Cell"
+                                                                                                         readonly>
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </form>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #accountTable let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <div class="row">
+                    <div id="table-scroll-detail2" class="table-scroll">
+                        <table id="main-table-detail2" class="main-table">
+                            <thead>
+                            <tr>
+                                <th scope="col" class="jsgrid-align-center">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" name="isActive"
+                                               class="custom-control-input"
+                                               id="isActive" [(ngModel)]="isCheck" (ngModelChange)="checkAll()">
+                                        <label class="custom-control-label" for="isActive"></label>
+                                    </div>
+                                </th>
+                                <th scope="col" class="jsgrid-align-center"
+                                    jhiTranslate="ebwebApp.accountList.accountNumber"></th>
+                                <th scope="col" class="jsgrid-align-center"
+                                    jhiTranslate="ebwebApp.accountList.accountName"></th>
+                                <th scope="col" class="jsgrid-align-center"
+                                    jhiTranslate="ebwebApp.accountList.grade"></th>
+                            </tr>
+                            <tr>
+                                <th class="col" class="jsgrid-align-center sticky-35"
+                                    style="background: #fff !important; padding: 0px 10px !important;">
+                                </th>
+                                <th class="col" class="jsgrid-align-left sticky-35"
+                                    style="background: #fff !important; padding: 0px 10px !important;"><input
+                                    type="text" placeholder="{{'ebwebApp.accountDefault.searchHere' | translate}}"
+                                    class="input-Cell"
+                                    name="searchAccountNumber"
+                                    [(ngModel)]="searchAccountNumber"
+                                    (ngModelChange)="changeSearchValue()">
+                                </th>
+                                <th class="col" class="jsgrid-align-left sticky-35"
+                                    style="background: #fff !important; padding: 0px 10px !important;"><input
+                                    type="text"
+                                    placeholder="{{'ebwebApp.accountDefault.searchHere' | translate}}"
+                                    class="input-Cell"
+                                    name="searchAccountName"
+                                    [(ngModel)]="searchAccountName"
+                                    (ngModelChange)="changeSearchValue()"
+                                >
+                                </th>
+                                <th class="col" class="jsgrid-align-center sticky-35"
+                                    style="background: #fff !important; padding: 0px 10px !important;">
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            <tr oncontextmenu="return false;" *ngFor="let account of listAccountTable; let i = index">
+                                <td class="jsgrid-cell jsgrid-align-center">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" [(ngModel)]="account.isCheck" [checked]="account.isCheck"
+                                               name="isActive{{i}}"
+                                               class="custom-control-input"
+                                               id="isActive{{i}}">
+                                        <label class="custom-control-label" for="isActive{{i}}"></label>
+                                    </div>
+                                </td>
+                                <td class="jsgrid-cell jsgrid-align-left">{{account.accountNumber}}</td>
+                                <td class="jsgrid-cell jsgrid-align-left">{{account.accountName}}</td>
+                                <td class="jsgrid-cell jsgrid-align-left">{{account.grade}}</td>
+                            </tr>
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <td class="cell-Table" colspan="4"><input type="text" readonly
+                                                                          class="countRow input-Cell"
+                                                                          value="{{'ebwebApp.mBDeposit.countLine'| translate}} : {{listAccountTable?.length}}">
+                                </td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_TaiKhoanNgamDinh_Sua]" type="button"
+                class="btn btn-outline-success" jhiTranslate="entity.action.save"
+                (click)="saveFilterAccount()">
+            Save
+        </button>
+        <button type="button" class="btn btn-outline-danger" (click)="closeAccountTable()"
+                jhiTranslate="entity.action.close">close
+        </button>
+    </div>
+</ng-template>
+<ng-template #content let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.saBill.saveMessage">Dữ liệu đã bị thay đổi, Bạn có muốn lưu lại?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="saveContent()" jhiTranslate="entity.action.save">
+            Save
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="close()"
+                jhiTranslate="ebwebApp.mBDeposit.dontSave">Don't save
+        </button>
+        <button type="button" class="btn btn-outline-danger" (click)="exit()" jhiTranslate="entity.action.close">close
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #pageRedirects let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.saBill.saveMessage">Dữ liệu đã bị thay đổi. Bạn có chắc chắn muốn chuyển
+                    hướng đến trang khác?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" jhiTranslate="ebwebApp.mBDeposit.agree">
+            Save
+        </button>
+        <button type="button" class="btn btn-outline-danger" (click)="exit()" jhiTranslate="entity.action.close">close
+        </button>
+    </div>
+</ng-template>

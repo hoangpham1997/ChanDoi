@@ -1,0 +1,90 @@
+<div class="body">
+    <div class="modal-header" style = "padding: 2px 10px; padding-top: 10px">
+        <div class="d-flex flex-wrap col-md-11">
+            <h6 *ngIf="reportType === BaoCao.MuaHang.SO_NHAT_KY_MUA_HANG" class="modal-title-detail"><img src="../../../../content/images/icon-logo.png" height="25px"
+                                                                                                          width="25px"> <span
+                class="text-uppercase" jhiTranslate="ebwebApp.baoCao.soNhatKyMuaHang"></span></h6>
+            <h6 *ngIf="reportType === BaoCao.BanHang.SO_NHAT_KY_BAN_HANG" class="modal-title-detail"><img src="../../../../content/images/icon-logo.png" height="25px"
+                                                                                                          width="25px"> <span
+                class="text-uppercase" jhiTranslate="ebwebApp.baoCao.soNhatKyBanHang.title"></span></h6>
+        </div>
+    </div>
+    <div style="padding: 5px 25px">
+        <div style="border: none;" class="form-main-new">
+            <div class="form-group row no-gutters-ct"
+                 *ngIf="treeOrganizationUnits?.length > 0 && treeOrganizationUnits && treeOrganizationUnits[0].children && treeOrganizationUnits[0].children.length>0">
+                <label jhiTranslate="ebwebApp.baoCao.canDoiKeToan.organization" class="col-ct-2 col-form-label"></label>
+                <div class="col-ct-10">
+                    <eb-tree-combo-box [tree]="treeOrganizationUnits" [(ngModel)]="sessionSearch.data.organizationUnit"
+                                       (ngModelChange)="changeOrganizationUnit()"></eb-tree-combo-box>
+                </div>
+            </div>
+            <div class="form-group row no-gutters-ct" *ngIf="isShowDependent && treeOrganizationUnits && treeOrganizationUnits.length > 0 && treeOrganizationUnits[0].children && treeOrganizationUnits[0].children.length > 0">
+                <label class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-10">
+                    <label for="checkboxx">
+                        <input id="checkboxx" type="checkbox" name="checkboxx"
+                               [(ngModel)]="sessionSearch.data.dependent"
+                               (ngModelChange)="changeSessionSearch()"></label>
+                    <label for="checkboxx" jhiTranslate="ebwebApp.baoCao.dependentBranch"></label>
+                </div>
+            </div>
+            <div class="form-group row no-gutters-ct">
+                <label jhiTranslate="ebwebApp.baoCao.canDoiKeToan.period" class="col-ct-2 col-form-label">Chọn thời gian</label>
+                <div class="col-ct-10">
+                    <combo-box style=""
+                               name="timeLine"
+                               [dataList]="listTimeLine"
+                               [listColumns]="utilsService.listColumnsTimeLine"
+                               [isOutTable]="true"
+                               displayMember="display"
+                               valueName="value"
+                               [headerColumns]="utilsService.listHeaderColumnsTimeLine"
+                               [isObject]="false"
+                               [(ngModel)]="sessionSearch.data.timeLineVoucher"
+                               (ngModelChange)="selectChangeBeginDateAndEndDate(sessionSearch.data.timeLineVoucher)"
+                    ></combo-box>
+                </div>
+            </div>
+            <div class="form-group row no-gutters-ct">
+                <label jhiTranslate="ebwebApp.saBill.invoice.fromDate" class="col-ct-2 col-form-label"></label>
+                <div class="col-ct-4">
+                    <eb-date-picker [(ngModel)]="sessionSearch.data.fromDate"
+                                    (ngModelChange)="changeSessionSearch()"
+                                    name="fromdate" format="YYYYMMDD"></eb-date-picker>
+                </div>
+                <label jhiTranslate="ebwebApp.saBill.invoice.toDate" class="col-ct-2 col-form-label"></label>
+                <div class="col-ct-4">
+                    <eb-date-picker [(ngModel)]="sessionSearch.data.toDate"
+                                    (ngModelChange)="changeSessionSearch()"
+                                    name="toDate" format="YYYYMMDD"></eb-date-picker>
+                </div>
+            </div>
+            <div class="form-group row no-gutters-ct">
+                <label class="col-ct-2 col-form-label"></label>
+                <div class="col-ct-10">
+                    <input type="checkbox"
+                           name="isBill1" id="inlineCheckbox3"
+                           value="option2" [(ngModel)]="sessionSearch.data.option"
+                           (ngModelChange)="changeSessionSearch()">
+                    <label for="inlineCheckbox3"
+                           jhiTranslate="ebwebApp.baoCao.soNhatKyBanHang.option"></label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer" style="padding: 5px 31px">
+<!--        <button *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_KetXuat]" class="btn btn-success" jhiTranslate="entity.action.render" (click)="export()">Kết xuất</button>-->
+<!--        <button id="save" (click)="showReport()" class="btn btn-success" style="margin-right: 5px">-->
+<!--            <span jhiTranslate="entity.action.ok"></span>-->
+<!--        </button>-->
+        <button id="save" (click)="showReport()" class="btn btn-success">
+            <span jhiTranslate="entity.action.preview"></span>
+        </button>
+        <button *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_KetXuat]" class="btn btn-danger" jhiTranslate="entity.action.render" (click)="export()">Kết xuất</button>
+        <button type="button" class="btn btn-dark" (click)="activeModal.dismiss('closed')"
+                data-dismiss="modal">
+            <span jhiTranslate="entity.action.close"></span>
+        </button>
+    </div>
+</div>

@@ -1,0 +1,392 @@
+<div >
+    <div >
+        <div class="menu-tool-bar he">
+            <div class="ptitle">
+                <span jhiTranslate="ebwebApp.prepaidExpense.home.title"></span>
+            </div>
+            <div class="gr-toolbar">
+                <a *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_Them]"  title="{{'ebwebApp.outWard.tooltipAdd' | translate}}" [routerLink]="['./new']"><i class="mdi mdi-plus"></i><span
+                    jhiTranslate="ebwebApp.gOtherVoucher.home.add"></span></a>
+                <a *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_Xoa]"  title="{{'ebwebApp.outWard.tooltipDrop' | translate}}" [class.disable]="!selectedRow?.id"  (click)="delete()"><i
+                    class="mdi mdi-delete"></i> <span jhiTranslate="ebwebApp.gOtherVoucher.home.delete"></span></a>
+                <a title="{{'ebwebApp.outWard.tooltipSearch' | translate}}" (click)="toggleSearch($event)" [hidden]="!isShowSearch">
+                    <i class="{{isShowSearch?'mdi mdi-chevron-up':'mdi mdi-magnify'}}"></i>
+                    <span jhiTranslate="ebwebApp.gOtherVoucher.home.hideAdvanceSearch"></span>
+                </a>
+                <a title="{{'ebwebApp.outWard.tooltipSearch' | translate}}" (click)="toggleSearch($event)" [hidden]="isShowSearch">
+                    <i class="{{isShowSearch?'mdi mdi-chevron-up':'mdi mdi-magnify'}}"></i>
+                    <span jhiTranslate="ebwebApp.gOtherVoucher.home.advanceSearch"></span>
+                </a>
+            </div>
+        </div>
+
+        <div class="frm-main frm-mains nobg">
+            <form id="seach" style="background: #cbdcf0;" [hidden]="!isShowSearch">
+                <div class="row no-gutters">
+                    <div class="col-lg-3">
+                        <div class="form-group row no-gutters">
+                            <label class="col-sm-5 my-col-form-label-CS" style="text-align: center"
+                                   jhiTranslate="ebwebApp.prepaidExpense.typeExpenseTitle"></label>
+                            <div class="col-sm-7 pd-l-0 pd-r-10 ">
+                                <combo-box name="debitAccount_DT" id="debitAccount_DT"
+                                           [dataList]="typeExpenseList"
+                                           [listColumns]="['name']"
+                                           displayMember="name"
+                                           valueName="id"
+                                           [isOutTable]="true"
+                                           [headerColumns]="['Loại chi phí']"
+                                           [isObject]="false"
+                                           [(ngModel)]="objSearch.typeExpense"
+                                           [hideRequiredWhenValueTrue]="true"
+                                           (ngModelChange)="loadAll()">
+                                    >
+                                </combo-box>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="form-group row no-gutters">
+                            <label class="col-sm-5 my-col-form-label-CS" style="text-align: center"
+                                   jhiTranslate="ebwebApp.gOtherVoucher.detail.fromDate"></label>
+                            <div class="col-sm-7">
+                                <div class="input-group" style="width: 113%">
+                                    <eb-date-picker [(ngModel)]="objSearch.fromDate" name="fromdate" format="YYYYMMDD"></eb-date-picker>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="form-group row no-gutters">
+                            <label class="col-sm-5 my-col-form-label-CS" style="text-align: center"
+                                   jhiTranslate="ebwebApp.mCAudit.home.toDate"></label>
+                            <div class="col-sm-7 pd-l-0 pd-r-10">
+                                <div class="input-group" style="width: 113%">
+                                    <eb-date-picker [(ngModel)]="objSearch.toDate" name="toDate" format="YYYYMMDD"></eb-date-picker>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="form-group row no-gutters">
+                            <label class="col-sm-5 my-col-form-label-CS" style="text-align: center"
+                                   jhiTranslate="ebwebApp.common.keySearch"></label>
+                            <div class="col-sm-7 pd-l-0 pd-r-10">
+                                <input [(ngModel)]="objSearch.textSearch" name="searchValue" id="field_searchValue"
+                                       type="text" class="form-control form-control-sm">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 d-flex justify-content-center">
+                        <div class="frm-button">
+                            <button class="btn btn-success btn-sm" (click)="search()" style="font-size: 16px"><i
+                                class="mdi mdi-magnify"
+                                aria-hidden="true"
+                                style="margin-right: 5px"></i> <span
+                                jhiTranslate="ebwebApp.common.search">tìm kiếm</span>
+
+                            </button>
+                            <button class="btn btn-danger btn-sm" (click)="clearSearch()"
+                                    style="font-size: 16px"><i
+                                class="mdi mdi-replay"
+                                style="margin-right: 5px"></i> <span
+                                jhiTranslate="ebwebApp.common.setAgain">Đặt lạis</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div class="frm-main frm-tables frm-padding" style="background: #cbdcf0; margin-top: 5px">
+                <div id="table-scroll0" class="table-scroll" style="z-index: 0">
+                    <table id="main-table0" class="main-table voucher-table">
+                        <thead class="header-table">
+                        <tr>
+                            <th scope="col" jhiTranslate="ebwebApp.prepaidExpense.titleCode1" style="min-width: 160px;">
+                            </th>
+                            <th scope="col" jhiTranslate="ebwebApp.prepaidExpense.titleName">
+                            </th>
+                            <th scope="col" jhiTranslate="ebwebApp.prepaidExpense.date">
+                            </th>
+                            <th scope="col" jhiTranslate="ebwebApp.prepaidExpense.amount"> số tiền
+                            </th>
+                            <th scope="col" class="" jhiTranslate="ebwebApp.prepaidExpense.allocationAmount">số tiền đã phân bổ</th>
+                            <th scope="col" jhiTranslate="ebwebApp.prepaidExpense.allocationTime"> số kỳ đã phân bổ
+                            </th>
+                            <th scope="col" jhiTranslate="ebwebApp.prepaidExpense.allocatedAmount"> số tiền phân bổ hàng kỳ
+                            </th>
+                            <th scope="col" jhiTranslate="ebwebApp.prepaidExpense.accountAllocation"> tài khoản chờ phân bổ
+                            </th>
+                            <th scope="col" jhiTranslate="ebwebApp.prepaidExpense.isActive"> Phan bo
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let item of prepaidExpenses ; let i = index; trackBy: trackId"
+                            (click)="selectMultiRow(item, $event, prepaidExpenses)"
+                            [class.row-selected]="selectedRows.indexOf(item) !== -1 || (selectedRow.id === item.id)"
+                            (dblclick)="doubleClickRow(selectedRow.id)"
+                            [class.mutipleSelected]="item === cssMultipleRow(item) ">
+                            <td title="{{item.prepaidExpenseCode}}"
+                                class="jsgrid-cell jsgrid-align-left  m-0 pb-0 pt-0"
+                                style="width: 150px">{{item.prepaidExpenseCode}}</td>
+                            <td title="{{item.prepaidExpenseName}}"
+                                class="jsgrid-cell jsgrid-align-left  m-0 pb-0 pt-0"
+                                style="width: 150px">{{item.prepaidExpenseName}}</td>
+                            <td title="{{item.date}}" class="jsgrid-cell jsgrid-align-center  m-0 pb-0 pt-0"
+                                style="width: 150px">{{item.date | date:'dd/MM/yyyy'}}</td>
+                            <td title="{{item.amount}}"
+                                class="jsgrid-cell jsgrid-align-left one-long-line  m-0 pb-0 pt-0"
+                                style="width: 150px">
+                                <input type="text" class="input-Cell bg-transparent border-0 w-100"
+                                       [(ngModel)]="item.amount" name="amount"
+                                       ebCurrencyMask [systemOptions]="currentAccount?.systemOption"
+                                       [allowNegative]="false"
+                                       [type]="currentAccount.organizationUnit.currencyID && currentAccount.organizationUnit.currencyID !== 'VND' ? 8 : 7"
+                                      readonly>
+                            </td>
+                            <td title="{{item.allocationAmount}}"
+                                class="jsgrid-cell jsgrid-align-center  text-right one-long-line  m-0 pb-0 pt-0"
+                                style="width: 150px">
+                                <input type="text" class="input-Cell bg-transparent border-0 w-100"
+                                       [(ngModel)]="item.allocationAmount" name="amount"
+                                       ebCurrencyMask [systemOptions]="currentAccount?.systemOption"
+                                       [allowNegative]="false"
+                                       [type]="currentAccount.organizationUnit.currencyID && currentAccount.organizationUnit.currencyID !== 'VND' ? 8 : 7"
+                                       readonly>
+                            </td>
+                            <td title="{{item.allocationTime}}"
+                                class="jsgrid-cell jsgrid-align-left   m-0 pb-0 pt-0 text-right one-long-line"
+                                style="width: 150px">
+                                <input type="text" class="input-Cell bg-transparent border-0 w-100"
+                                       [(ngModel)]="item.allocationTime" name="amount"
+                                       ebCurrencyMask [systemOptions]="currentAccount?.systemOption"
+                                       [allowNegative]="false"
+                                       [type]="3"
+                                       readonly>
+                            </td>
+                            <td title="{{item.allocatedAmount}}"
+                                class="jsgrid-cell jsgrid-align-left   m-0 pb-0 pt-0  text-right one-long-line "
+                                style="width: 150px">
+                                <input type="text" class="input-Cell bg-transparent border-0 w-100"
+                                       [(ngModel)]="item.allocatedAmount" name="amount"
+                                       ebCurrencyMask [systemOptions]="currentAccount?.systemOption"
+                                       [allowNegative]="false"
+                                       [type]="currentAccount.organizationUnit.currencyID && currentAccount.organizationUnit.currencyID !== 'VND' ? 8 : 7"
+                                       readonly>
+                            </td>
+                            <td title="{{item.allocationAccount}}"
+                                class="jsgrid-cell jsgrid-align-left text-center  m-0 pb-0 pt-0"
+                                style="width: 150px">{{item.allocationAccount}}</td>
+                            <td class="jsgrid-cell jsgrid-align-left   text-center">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="customCheck1"
+                                           [(ngModel)]="!item.isActive">
+                                    <label class="custom-control-label"></label>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr
+                            *ngFor="let l of newArr(9 - ((prepaidExpenses && prepaidExpenses.length) > 0 ? prepaidExpenses.length : 0))">
+                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                            </td>
+                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                            </td>
+                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                            </td>
+                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                            </td>
+                            <td class="cell-Table"><input
+                                type="text" class="input-Cell" readonly></td>
+                            <td class="cell-Table"><input
+                                type="text" class="input-Cell" readonly></td>
+                            <td class="cell-Table"><input
+                                type="text" class="input-Cell" readonly></td>
+                            <td class="cell-Table"><input
+                                type="text" class="input-Cell" readonly></td>
+                            <td class="cell-Table"><input
+                                type="text" class="input-Cell" readonly></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!--        phân trang-->
+        <div *ngIf="prepaidExpenses && prepaidExpenses.length"
+             style="padding-right: 16px">
+            <div class="row justify-content-end" style="height:32px">
+                <div>
+                    <div class="form-group  d-inline">
+                        <label class="col-form-label" for="itemsPerPage"
+                               style="padding-right: 0px;text-align: right;"><span
+                            jhiTranslate="ebwebApp.gOtherVoucher.totalPage"></span>: {{totalItems}}</label>
+                        <div  style="display: inline-block;
+                                        width: 56px;
+                                        margin-left: 5px;
+                                        margin-right: 5px;">
+                            <select class="form-control form-control-sm bg-transparent border-0 w-100" name="itemsPerPage"
+                                    id="itemsPerPage"
+                                    style="background-color: #fff !important;"
+                                    [(ngModel)]="itemsPerPage"
+                                    (ngModelChange)="selectedItemPerPage(itemsPerPage)"
+                            >
+                                <option [value]="10">10</option>
+                                <option [value]="20">20</option>
+                                <option [value]="30">30</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="justify-content-end">
+                    <ngb-pagination [size]="'sm'" [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage"
+                                    [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
+                                    (pageChange)="loadPage(page)"></ngb-pagination>
+                </div>
+            </div>
+        </div>
+        <!--        end of phan trang-->
+        <div>
+            <ngb-tabset class="tool-navbar">
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span jhiTranslate="global.commonInfo.allocating"></span></ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content">
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="home-detail"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-detail" class="table-scroll">
+                                    <table id="main-table-detail" class="main-table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col" class="" jhiTranslate="ebwebApp.prepaidExpense.prepaidExpenseCode"
+                                            >Mã đối tượng PB
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.prepaidExpense.prepaidExpenseName"> Tên đối tượng PB</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.prepaidExpenseAllocation.allocationRate">
+                                                Tỷ lệ PB
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.prepaidExpenseAllocation.costAccount"> TK Chi phí
+                                            </th>
+                                            <th jhiTranslate="ebwebApp.prepaidExpenseAllocation.expenseItemID">
+                                                Khoản mục CP
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody [class.myreadonlytrue]="true">
+
+                                        <tr *ngFor="let detail of prepaidExpenseAllocation">
+                                            <td title="{{detail.allocationObjectCode}}"
+                                                class="jsgrid-cell jsgrid-align-left m-0 pb-0 pt-0">
+                                                {{detail.allocationObjectCode}}</td>
+                                            <td title="{{detail.allocationObjectName}}"
+                                                class="jsgrid-cell jsgrid-align-left m-0 pb-0 pt-0">{{detail.allocationObjectName}}</td>
+                                            <td title="{{detail.allocationRate}}"
+                                                class="jsgrid-cell jsgrid-align-center m-0 pb-0 pt-0">
+                                                <input type="text"
+                                                       class="input-Cell bg-transparent border-0 w-100"
+                                                       [(ngModel)]="detail.allocationRate" name="amount"
+                                                       ebCurrencyMask [systemOptions]="currentAccount?.systemOption"
+                                                       [allowNegative]="false"
+                                                       [type]="6"
+                                                       readonly></td>
+                                            <td title="{{detail.costAccount}}"
+                                                class="jsgrid-cell jsgrid-align-center m-0 pb-0 pt-0">{{detail.costAccount}}</td>
+                                            <td title="{{detail.expenseItemCode}}"
+                                                class="jsgrid-cell jsgrid-align-right m-0 pb-0 pt-0">{{detail.expenseItemCode}}</td>
+                                        </tr>
+                                        <tr
+                                            *ngFor="let l of newArr(9 - ((prepaidExpenseAllocation && prepaidExpenseAllocation.length) > 0 ? prepaidExpenseAllocation.length : 0))">
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input
+                                                type="text" class="input-Cell" readonly></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.prepaidExpense.home.origin"></span></ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content">
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="home-tax"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-tax" class="table-scroll">
+                                    <table id="main-table-ref" class="main-table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col" jhiTranslate="global.commonInfo.vDate">Ngày chứng từ</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.saBill.postedDate">Ngày hạch toán</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.saBill.noFBook">Số chứng từ</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.saBill.reason">Diễn giải</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.mCPaymentDetails.amountOriginal">số tiền</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let viewVoucher of prepaidExpenseVoucher; let i = index">
+                                            <td class="text-center m-0 pb-0 pt-0"  [class.myreadonlytrue]="true">{{viewVoucher.date}}</td>
+                                            <td class="text-center m-0 pb-0 pt-0" [class.myreadonlytrue]="true" >{{viewVoucher.postedDate}}</td>
+                                            <td class="text-left m-0 pb-0 pt-0" (click)="utilsService.viewRefVoucher(viewVoucher)"  style="color:blue; text-decoration: underline;" >{{viewVoucher.no}}</td>
+                                            <td class="text-left one-long-line m-0 pb-0 pt-0"  [class.myreadonlytrue]="true" title="{{viewVoucher.reason}}">{{viewVoucher.reason}}</td>
+                                            <td class="text-right m-0 pb-0 pt-0" [class.myreadonlytrue]="true"  title="{{viewVoucher.totalAmountOriginal}}">
+                                                <input type="text" class="form-control form-control-sm bg-transparent border-0 w-100"
+                                                       [(ngModel)]="viewVoucher.totalAmountOriginal" name="amount"
+                                                       ebCurrencyMask [systemOptions]="currentAccount?.systemOption"
+                                                       [allowNegative]="false"
+                                                       [type]="currentAccount.organizationUnit.currencyID && currentAccount.organizationUnit.currencyID !== 'VND' ? 8 : 7"
+                                                       readonly>
+                                            </td>
+                                        </tr>
+                                        <tr
+                                            *ngFor="let l of newArr(9 - ((prepaidExpenseVoucher && prepaidExpenseVoucher.length) > 0 ? prepaidExpenseVoucher.length : 0))">
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input
+                                                type="text" class="input-Cell" readonly></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+            </ngb-tabset>
+        </div>
+    </div>
+</div>
+<ng-template #deleteModal let-dismissq="dismiss">
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label  *ngIf="this.selectedRows && this.selectedRows.length <= 1"jhiTranslate="ebwebApp.mBDeposit.delete.question">Xóa</label>
+                <label *ngIf="this.selectedRows && this.selectedRows.length > 1"  jhiTranslate="ebwebApp.mBDeposit.multiDeleteMessage">Xóa</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="deleteAfter()"
+                jhiTranslate="entity.action.delete">
+            Save
+        </button>
+        <button type="button" class="btn btn-outline-danger" (click)="dismissq('Close')" jhiTranslate="entity.action.cancel">close
+        </button>
+    </div>
+</ng-template>
+
+

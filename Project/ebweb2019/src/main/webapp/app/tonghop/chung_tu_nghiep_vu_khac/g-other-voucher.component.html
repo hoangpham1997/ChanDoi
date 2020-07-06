@@ -1,0 +1,2035 @@
+<div>
+    <div>
+        <div class="menu-tool-bar he">
+            <div class="ptitle">
+                <span jhiTranslate="ebwebApp.gOtherVoucher.home.title"></span>
+            </div>
+            <div class="gr-toolbar">
+                <button class="button-navigation" title="{{buttonAddTranslate | translate}}" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_CTNVK_THEM]"
+                   (click)="addNew(false)"><i class="mdi mdi-plus"></i><span
+                    jhiTranslate="ebwebApp.gOtherVoucher.home.add"></span></button>
+                <button class="button-navigation" title="{{buttonDeleteTranslate | translate}}"
+                   *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_CTNVK_XOA]"
+                   [disabled]="!selectedRow || (selectedRow?.recorded && selectedRows.length === 1) || checkCloseBook(this.currentAccount, this.selectedRow.postedDate) || !checkMultiButton(false)"
+                   (click)="delete()"><i
+                    class="mdi mdi-delete"></i> <span jhiTranslate="ebwebApp.gOtherVoucher.home.delete"></span></button>
+                <button class="button-navigation" title="{{buttonRecordTranslate | translate}}" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_CTNVK_GHISO]"
+                   [disabled]="!selectedRow || checkCloseBook(this.currentAccount, this.selectedRow.postedDate)"
+                   [hidden]="selectedRow?.recorded && !checkMultiButton(false)" (click)="record()"><i
+                    class="mdi mdi-border-color"></i><span
+                    jhiTranslate="ebwebApp.gOtherVoucher.home.record"></span></button>
+                <!--                isUnrecorded-->
+                <button class="button-navigation" title="{{buttonUnRecordTranslate | translate}}"
+                   *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_CTNVK_GHISO]"
+                   [hidden]="!selectedRow?.recorded && !checkMultiButton(true)"
+                   [disabled]="!selectedRow || checkCloseBook(this.currentAccount, this.selectedRow.postedDate)"
+                   (click)="unrecord()"><i class="mdi mdi-border-color"></i><span
+                    jhiTranslate="ebwebApp.gOtherVoucher.home.unrecord"></span></button>
+                <!--                isRecored-->
+                <button class="button-navigation" title="{{buttonExportTranslate | translate}}" [disabled]="gOtherVouchers?.length === 0"
+                   *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_CTNVK_KETXUAT]" (click)="export()"><i
+                    class="mdi mdi-file-export"></i><span
+                    jhiTranslate="ebwebApp.gOtherVoucher.home.exportExcel"></span></button>
+                <button class="button-navigation" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_CTNVK_XEM]" title="{{buttonSearchTranslate | translate}}"
+                   (click)="toggleSearch($event)" [hidden]="!isShowSearch">
+                    <i class="{{isShowSearch?'mdi mdi-chevron-up':'mdi mdi-magnify'}}"></i>
+                    <span jhiTranslate="ebwebApp.gOtherVoucher.home.hideAdvanceSearch"></span>
+                </button>
+                <button class="button-navigation" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_CTNVK_XEM]" title="{{buttonSearchTranslate | translate}}"
+                   (click)="toggleSearch($event)" [hidden]="isShowSearch">
+                    <i class="{{isShowSearch?'mdi mdi-chevron-up':'mdi mdi-magnify'}}"></i>
+                    <span jhiTranslate="ebwebApp.mBDeposit.home.advanceSearch"></span>
+                </button>
+            </div>
+        </div>
+
+        <div class="frm-main frm-mains nobg">
+            <form id="seach" style="background: #cbdcf0;" [hidden]="!isShowSearch">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <div class="form-group row">
+                            <label class="col-sm-5 col-form-label"
+                                   jhiTranslate="ebwebApp.gOtherVoucher.detail.typeName"></label>
+                            <div class="col-sm-7 pd-l-0">
+                                <combo-box style="" id="field_typeID"
+                                           name="comboboxListType"
+                                           [dataList]="types"
+                                           [isOutTable]="true"
+                                           [listColumns]="utilsService.listColumnsType"
+                                           displayMember="typeName"
+                                           valueName="id"
+                                           [headerColumns]="utilsService.listHeaderColumnsType"
+                                           [isObject]="false"
+                                           [(ngModel)]="objSearch.typeID">
+                                </combo-box>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-5 col-form-label"
+                                   jhiTranslate="ebwebApp.gOtherVoucher.detail.status"></label>
+                            <div class="col-sm-7 pd-l-0">
+                                <combo-box style="" id="field_listRecord"
+                                           name="comboboxListRecord"
+                                           [dataList]="listRecord"
+                                           [isOutTable]="true"
+                                           [listColumns]="listColumnsRecord"
+                                           displayMember="name"
+                                           valueName="value"
+                                           [headerColumns]="listHeaderColumnsRecord"
+                                           [isObject]="false"
+                                           [(ngModel)]="objSearch.statusRecorded">
+                                </combo-box>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-9">
+                        <div class="form-group row">
+                            <label class="col-sm-1 col-form-label text-right"
+                                   jhiTranslate="ebwebApp.gOtherVoucher.detail.currencyType"></label>
+                            <div class="col-sm-3">
+                                <combo-box style="" id="field_currencyID"
+                                           name="comboboxcurrencyID"
+                                           [dataList]="currencies"
+                                           [isOutTable]="true"
+                                           [listColumns]="utilsService.listColumnsCurrency"
+                                           displayMember="currencyCode"
+                                           valueName="currencyCode"
+                                           [headerColumns]="utilsService.listHeaderColumnsCurrency"
+                                           [isObject]="false"
+                                           [(ngModel)]="objSearch.currencyID">
+                                </combo-box>
+                            </div>
+                            <label class="col-sm-1 col-form-label text-right"
+                                   jhiTranslate="ebwebApp.gOtherVoucher.detail.fromDate"></label>
+                            <div class="col-sm-3">
+                                <div class="input-group">
+                                    <eb-date-picker [(ngModel)]="objSearch.fromDate" name="fromDate"
+                                                    format="YYYY-MM-DD"></eb-date-picker>
+                                </div>
+                            </div>
+                            <label class="col-sm-1 col-form-label text-right"
+                                   style="padding-top: 7px; padding-right: 0px"
+                                   jhiTranslate="ebwebApp.gOtherVoucher.detail.toDate"></label>
+                            <div class="col-sm-3">
+                                <div class="input-group">
+                                    <eb-date-picker [(ngModel)]="objSearch.toDate" name="toDate"
+                                                    format="YYYY-MM-DD"></eb-date-picker>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-1 col-form-label text-right"
+                                   jhiTranslate="ebwebApp.accountingObject.keyWord"></label>
+                            <div class="col-sm-11">
+                                <input [(ngModel)]="objSearch.textSearch" name="searchValue" id="field_searchValue"
+                                       type="text" class="form-control form-control-sm">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="frm-button">
+                            <button class="btn btn-success btn-sm" (click)="search()" style="font-size: 16px"><i
+                                class="mdi mdi-magnify"
+                                aria-hidden="true"
+                                style="margin-right: 5px"></i><span
+                                jhiTranslate="ebwebApp.accountingObject.search"></span>
+                            </button>
+                            <button class="btn btn-danger btn-sm" (click)="clearSearch()" style="font-size: 16px"><i
+                                class="mdi mdi-replay"
+                                style="margin-right: 5px"></i><span
+                                jhiTranslate="ebwebApp.gOtherVoucher.detail.reset"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div class="frm-main frm-tables frm-padding" style="background: #cbdcf0; margin-top: 5px">
+                <div id="table-scroll0" class="table-scroll voucher-table" style="height: 270px !important;">
+                    <table id="main-table0" class="main-table">
+                        <thead class="header-table">
+                        <tr>
+                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.date">
+                            </th>
+                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.postedDate">
+                            </th>
+                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.voucherNumber">
+                            </th>
+                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.typeVoucher">
+                            </th>
+                            <th scope="col" class="description" jhiTranslate="ebwebApp.gOtherVoucher.reason"></th>
+                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.totalAmountOriginal">
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let igOtherVoucher of gOtherVouchers ; let i = index; trackBy: trackId"
+                            (click)="selectMultiRow(igOtherVoucher, $event, gOtherVouchers)"
+                            [class.selected]="this.selectedRows.indexOf(igOtherVoucher) !== -1"
+                            (dblclick)="doubleClickRow($event)"
+                            [ngStyle]="getStyle(igOtherVoucher.recorded)">
+                            <td title="{{igOtherVoucher.date}}" class="jsgrid-cell jsgrid-align-center"
+                                style="width: 150px">{{igOtherVoucher.date | date:'dd/MM/yyyy'}}</td>
+                            <td title="{{igOtherVoucher.postedDate}}" class="jsgrid-cell jsgrid-align-center"
+                                style="width: 150px">{{igOtherVoucher.postedDate| date:'dd/MM/yyyy'}}</td>
+                            <td title="{{isSoTaiChinh ? igOtherVoucher.noFBook : igOtherVoucher.noMBook}}"
+                                class="jsgrid-cell jsgrid-align-left"
+                                style="width: 150px">{{isSoTaiChinh ? igOtherVoucher.noFBook : igOtherVoucher.noMBook}}</td>
+                            <td title="{{getTypeName(igOtherVoucher.typeID)}}"
+                                class="jsgrid-cell jsgrid-align-left"
+                                style="width: 150px">{{getTypeName(igOtherVoucher.typeID)}}</td>
+                            <td title="{{igOtherVoucher.reason}}" class="jsgrid-cell jsgrid-align-left"
+                                style="width: 150px">{{igOtherVoucher.reason}}</td>
+                            <td title="{{igOtherVoucher.totalAmount}}" class="jsgrid-cell jsgrid-align-right"
+                                style="width: 150px"><input type="text"
+                                                            class="input-Cell text-right inputFormatCurrency"
+                                                            [(ngModel)]="igOtherVoucher.totalAmount"
+                                                            [allowNegative]="false"
+                                                            [systemOptions]="currentAccount?.systemOption"
+                                                            [type]="7"
+                                                            ebCurrencyMask
+                                                            disabled></td>
+                        </tr>
+                        <tr *ngFor="let l of newArr(9 - gOtherVouchers?.length)">
+                            <td class="jsgrid-cell jsgrid-align-center"
+                                style="width: 150px">&nbsp;
+                            </td>
+                            <td class="jsgrid-cell jsgrid-align-center"
+                                style="width: 150px">&nbsp;
+                            </td>
+                            <td class="jsgrid-cell jsgrid-align-right"
+                                style="width: 150px"></td>
+                            <td class="jsgrid-cell jsgrid-align-right"
+                                style="width: 150px"></td>
+                            <td class="jsgrid-cell jsgrid-align-right"
+                                style="width: 150px"></td>
+                            <td class="jsgrid-cell jsgrid-align-right"
+                                style="width: 150px"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+        <!--        phân trang-->
+        <div *ngIf="gOtherVouchers && gOtherVouchers.length"
+             style="padding-right: 16px;">
+            <div class="row" style="height: 32px">
+                <div class="col-md-4">
+                    <p style="padding-right: 5px;">
+                        <span jhiTranslate="ebwebApp.saBill.totalAmountTt"></span>:
+                        <input type="text" class="input-Cell-total" disabled
+                               [ngModel]="gOtherVouchers[0]?.total"
+                               ebCurrencyMask [systemOptions]="currentAccount?.systemOption" [type]="7"
+                               [textAlign]="'left'">
+                    </p>
+                </div>
+                <div class="col-md-8">
+                    <div class="row justify-content-end" style="height:32px">
+                        <div class="col-lg-4">
+                            <div class="form-group row">
+                                <label class="col-sm-9 col-form-label" for="itemsPerPage"
+                                       style="padding-right: 0px;text-align: right;"><span
+                                    jhiTranslate="ebwebApp.mBDeposit.totalPage"></span>: {{totalItems}}</label>
+                                <div class="col-sm-3 pd-l-0">
+                                    <select class="form-control form-control-sm" name="itemsPerPage"
+                                            id="itemsPerPage"
+                                            style="background-color: #f5f7fa;"
+                                            [(ngModel)]="itemsPerPage"
+                                            (ngModelChange)="selectedItemPerPage()"
+                                    >
+                                        <option [value]="10">10</option>
+                                        <option [value]="20">20</option>
+                                        <option [value]="30">30</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="justify-content-end">
+                            <ngb-pagination [size]="'sm'" [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage"
+                                            [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
+                                            (pageChange)="loadPage(page)"></ngb-pagination>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!--        end of phan trang-->
+        <!--        Default-->
+        <div *ngIf="!selectedRow?.typeID">
+            <ngb-tabset class="tool-navbar">
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.gOtherVoucher.home.details"></span>
+                    </ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content">
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="home-detail"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-detail" class="table-scroll" style="height: 290px !important;">
+                                    <table id="main-table-detail" class="main-table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col" class="description"
+                                                jhiTranslate="ebwebApp.gOtherVoucher.reason"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.debitAccount"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.creditAccount"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.amountOriginal"></th>
+                                            <th scope="col"
+                                                *ngIf="selectedRow && selectedRow?.currencyID !== currency?.currencyCode"
+                                                jhiTranslate="ebwebApp.gOtherVoucher.amount"></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let detail of utilsService.getSortArray(gOtherVoucherDetails)">
+                                            <td title="{{detail.description}}"
+                                                class="jsgrid-cell jsgrid-align-left description">{{detail.description}}</td>
+                                            <td title="{{detail.debitAccount}}"
+                                                class="jsgrid-cell jsgrid-align-center">{{detail.debitAccount}}</td>
+                                            <td title="{{detail.creditAccount}}"
+                                                class="jsgrid-cell jsgrid-align-center">{{detail.creditAccount}}</td>
+                                            <td title="{{detail.amountOriginal}}"
+                                                class="jsgrid-cell jsgrid-align-right"><input type="text"
+                                                                                              class="input-Cell text-right inputFormatCurrency"
+                                                                                              [(ngModel)]="detail.amountOriginal"
+                                                                                              [allowNegative]="false"
+                                                                                              [systemOptions]="currentAccount?.systemOption"
+                                                                                              [type]="getAmountOriginalType()"
+                                                                                              ebCurrencyMask
+                                                                                              disabled></td>
+                                            <td *ngIf="selectedRow && selectedRow?.currencyID !== currency?.currencyCode"
+                                                title="{{detail.amount}}"
+                                                class="jsgrid-cell jsgrid-align-right"><input type="text"
+                                                                                              class="input-Cell text-right inputFormatCurrency"
+                                                                                              [(ngModel)]="detail.amount"
+                                                                                              [allowNegative]="false"
+                                                                                              [systemOptions]="currentAccount?.systemOption"
+                                                                                              [type]="7"
+                                                                                              ebCurrencyMask
+                                                                                              disabled></td>
+                                        </tr>
+                                        <tr *ngFor="let l of newArr(9 - gOtherVoucherDetails?.length)">
+                                            <td class="jsgrid-cell jsgrid-align-center"
+                                                style="width: 150px">&nbsp;
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-center"
+                                                style="width: 150px">&nbsp;
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td *ngIf="selectedRow && selectedRow?.currencyID !== currency?.currencyCode"
+                                                class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot [class.myreadonlytrue]="true">
+                                        <tr>
+                                            <td class="cell-Table countRow" style="width: 150px"><input type="text"
+                                                                                                        readonly
+                                                                                                        class="countRow input-Cell"
+                                                                                                        value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{gOtherVoucherDetails?.length}}">
+                                            </td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input type="text"
+                                                                                                        name="totalAmountOriginal_footer"
+                                                                                                        class="countRow input-Cell"
+                                                                                                        readonly
+                                                                                                        [ngModel]="getSumDetails('amountOriginal')"
+                                                                                                        ebCurrencyMask
+                                                                                                        [systemOptions]="currentAccount?.systemOption"
+                                                                                                        [type]="getAmountOriginalType()">
+                                            </td>
+                                            <td *ngIf="selectedRow && selectedRow?.currencyID !== currency?.currencyCode"
+                                                class="cell-Table countRow" style="width: 150px"><input type="text"
+                                                                                                        name="totalAmountOriginal_footer"
+                                                                                                        class="countRow input-Cell"
+                                                                                                        readonly
+                                                                                                        [ngModel]="getSumDetails('amount')"
+                                                                                                        ebCurrencyMask
+                                                                                                        [systemOptions]="currentAccount?.systemOption"
+                                                                                                        [type]="7">
+                                            </td>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.gOtherVoucher.home.vAT"></span></ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content">
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="home-tax"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-tax" class="table-scroll" style="height: 290px !important;">
+                                    <table id="main-table-tax" class="main-table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col" class="description"
+                                                jhiTranslate="ebwebApp.gOtherVoucher.reason"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.vATAccount">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.vATRate"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.vATAmount">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.pretaxAmount">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.accountingObject">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.mBCreditCard.accountingObjectName">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.mBCreditCard.taxCode">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.invoiceType"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.invoiceSeries">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.invoiceNo"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.invoiceDate"></th>
+                                            <th *ngIf="isShowGoodsServicePurchase" scope="col"
+                                                jhiTranslate="ebwebApp.mBCreditCard.goodServicePurchaseID"></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let detail of utilsService.getSortArray(gOtherVoucherDetailTax)">
+                                            <td title="{{detail.description}}"
+                                                class="jsgrid-cell jsgrid-align-left description">{{detail.description}}</td>
+                                            <td title="{{detail.vATAccount}}"
+                                                class="jsgrid-cell jsgrid-align-center">{{detail.vATAccount}}</td>
+                                            <td title="{{getVATRate(detail.vATRate)}}"
+                                                class="jsgrid-cell jsgrid-align-right">{{getVATRate(detail.vATRate)}}</td>
+                                            <td title="{{detail.vATAmount}}"
+                                                class="jsgrid-cell jsgrid-align-right"><input type="text"
+                                                                                              class="input-Cell text-right inputFormatCurrency"
+                                                                                              [(ngModel)]="detail.vATAmount"
+                                                                                              [allowNegative]="false"
+                                                                                              [systemOptions]="currentAccount?.systemOption"
+                                                                                              [type]="7"
+                                                                                              ebCurrencyMask
+                                                                                              disabled></td>
+
+                                            <td title="{{detail.pretaxAmount}}"
+                                                class="jsgrid-cell jsgrid-align-right"><input type="text"
+                                                                                              class="input-Cell text-right inputFormatCurrency"
+                                                                                              [(ngModel)]="detail.pretaxAmount"
+                                                                                              [allowNegative]="false"
+                                                                                              [systemOptions]="currentAccount?.systemOption"
+                                                                                              [type]="7"
+                                                                                              ebCurrencyMask
+                                                                                              disabled></td>
+                                            <td title="{{getAccountingObjectbyID(detail.accountingObjectID)}}"
+                                                class="jsgrid-cell jsgrid-align-left">{{getAccountingObjectbyID(detail.accountingObjectID)}}</td>
+                                            <td title="{{detail.accountingObjectName}}"
+                                                class="jsgrid-cell jsgrid-align-left">{{detail.accountingObjectName}}</td>
+                                            <td title="{{detail.taxCode}}"
+                                                class="jsgrid-cell jsgrid-align-left">{{detail.taxCode}}</td>
+                                            <td title="{{detail.invoiceTemplate}}"
+                                                class="jsgrid-cell jsgrid-align-left">{{detail.invoiceTemplate}}</td>
+                                            <td title="{{detail.invoiceSeries}}"
+                                                class="jsgrid-cell jsgrid-align-left">{{detail.invoiceSeries}}</td>
+                                            <td title="{{detail.invoiceNo}}"
+                                                class="jsgrid-cell jsgrid-align-left">{{detail.invoiceNo}}</td>
+                                            <td title="{{detail.invoiceDate}}"
+                                                class="jsgrid-cell jsgrid-align-center">{{detail.invoiceDate | date:'dd/MM/yyyy'}}</td>
+                                            <td *ngIf="isShowGoodsServicePurchase" title="{{detail.goodsServicePurchaseID}}"
+                                                class="jsgrid-cell jsgrid-align-center">{{getGoodsServicePurchasebyID(detail.goodsServicePurchaseID)}}</td>
+                                        </tr>
+                                        <tr *ngFor="let l of newArr(9 - gOtherVoucherDetailTax?.length)">
+                                            <td class="jsgrid-cell jsgrid-align-center"
+                                                style="width: 150px">&nbsp;
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-center"
+                                                style="width: 150px">&nbsp;
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td *ngIf="isShowGoodsServicePurchase" class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot [class.myreadonlytrue]="true">
+                                        <tr>
+                                            <td class="cell-Table countRow" style="width: 150px"><input type="text"
+                                                                                                        readonly
+                                                                                                        class="countRow input-Cell"
+                                                                                                        value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{gOtherVoucherDetailTax?.length}}">
+                                            </td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input type="text"
+                                                                                                        name="sumVATAmount_footer"
+                                                                                                        class="countRow input-Cell"
+                                                                                                        readonly
+                                                                                                        [ngModel]="getSumDetailTax('vATAmount')"
+                                                                                                        ebCurrencyMask
+                                                                                                        [systemOptions]="currentAccount?.systemOption"
+                                                                                                        [type]="7"></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input type="text"
+                                                                                                        name="sumPretaxAmount_footer"
+                                                                                                        class="countRow input-Cell"
+                                                                                                        readonly
+                                                                                                        [ngModel]="getSumDetailTax('pretaxAmount')"
+                                                                                                        ebCurrencyMask
+                                                                                                        [systemOptions]="currentAccount?.systemOption"
+                                                                                                        [type]="7"></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td *ngIf="isShowGoodsServicePurchase" class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.gOtherVoucher.home.statistical"></span>
+                    </ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content">
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="home-statistical"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-statistical" class="table-scroll" style="height: 290px !important;">
+                                    <table id="main-table-statistical" class="main-table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col" class="description"
+                                                jhiTranslate="ebwebApp.gOtherVoucher.reason"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.debitAccount"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.creditAccount"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.amountOriginal"></th>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.gOtherVoucher.debitAccountingObject"></th>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.gOtherVoucher.creditAccountingObject"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.employee"></th>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.gOtherVoucher.bankAccountDetailID"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.expenseItem"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.costSet"></th>
+                                            <!--                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.contract"></th>-->
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.budgetItem"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.department"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.statisticsCode"></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let detail of utilsService.getSortArray(gOtherVoucherDetails)">
+                                            <td title="{{detail.description}}"
+                                                class="jsgrid-cell jsgrid-align-left description">{{detail.description}}</td>
+                                            <td title="{{detail.debitAccount}}"
+                                                class="jsgrid-cell jsgrid-align-center">{{detail.debitAccount}}</td>
+                                            <td title="{{detail.creditAccount}}"
+                                                class="jsgrid-cell jsgrid-align-center">{{detail.creditAccount}}</td>
+                                            <td title="{{detail.amountOriginal}}"
+                                                class="jsgrid-cell jsgrid-align-right"><input type="text"
+                                                                                              class="input-Cell text-right inputFormatCurrency"
+                                                                                              [(ngModel)]="detail.amountOriginal"
+                                                                                              [allowNegative]="false"
+                                                                                              [systemOptions]="currentAccount?.systemOption"
+                                                                                              [type]="getAmountOriginalType()"
+                                                                                              ebCurrencyMask
+                                                                                              disabled></td>
+                                            <td title="{{getAccountingObjectbyID(detail.debitAccountingObjectID)}}"
+                                                class="jsgrid-cell jsgrid-align-left">{{getAccountingObjectbyID(detail.debitAccountingObjectID)}}</td>
+                                            <td title="{{getAccountingObjectbyID(detail.creditAccountingObjectID)}}"
+                                                class="jsgrid-cell jsgrid-align-left">{{getAccountingObjectbyID(detail.creditAccountingObjectID)}}</td>
+                                            <td title="{{getEmployeeByID(detail.employeeID)}}"
+                                                class="jsgrid-cell jsgrid-align-left">{{getAccountingObjectbyID(detail.employeeID)}}</td>
+                                            <td title="{{getBankAccountDetailbyID(detail.bankAccountDetailID)}}"
+                                                class="jsgrid-cell jsgrid-align-left">{{getBankAccountDetailbyID(detail.bankAccountDetailID)}}</td>
+                                            <td title="{{getExpenseItembyID(detail.expenseItemID)}}"
+                                                class="jsgrid-cell jsgrid-align-left">{{getExpenseItembyID(detail.expenseItemID)}}</td>
+                                            <td title="{{getCostSetbyID(detail.costSetID)}}"
+                                                class="jsgrid-cell jsgrid-align-left">{{getCostSetbyID(detail.costSetID)}}</td>
+                                            <!--                                            <td title="{{getEMContractsbyID(detail.contractID)}}"-->
+                                            <!--                                                class="jsgrid-cell jsgrid-align-left">{{getEMContractsbyID(detail.contractID)}}</td>-->
+                                            <td title="{{getBudgetItembyID(detail.budgetItemID)}}"
+                                                class="jsgrid-cell jsgrid-align-left">{{getBudgetItembyID(detail.budgetItemID)}}</td>
+                                            <td title="{{getOrganizationUnitbyID(detail.departmentID)}}"
+                                                class="jsgrid-cell jsgrid-align-left">{{getOrganizationUnitbyID(detail.departmentID)}}</td>
+                                            <td title="{{getStatisticsCodebyID(detail.statisticCodeID)}}"
+                                                class="jsgrid-cell jsgrid-align-left">{{getStatisticsCodebyID(detail.statisticCodeID)}}</td>
+                                        </tr>
+                                        <tr *ngFor="let l of newArr(9 - gOtherVoucherDetails?.length)">
+                                            <td class="jsgrid-cell jsgrid-align-center"
+                                                style="width: 150px">&nbsp;
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-center"
+                                                style="width: 150px">&nbsp;
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <!--                                            <td class="jsgrid-cell jsgrid-align-right"-->
+                                            <!--                                                style="width: 150px"></td>-->
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot [class.myreadonlytrue]="true">
+                                        <tr>
+                                            <td class="cell-Table countRow" style="width: 150px"><input type="text"
+                                                                                                        readonly
+                                                                                                        class="countRow input-Cell"
+                                                                                                        value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{gOtherVoucherDetails?.length}}">
+                                            </td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <!--                                            <td class="cell-Table countRow" style="width: 150px"><input-->
+                                            <!--                                                type="text"-->
+                                            <!--                                                class="countRow input-Cell"-->
+                                            <!--                                                readonly></td>-->
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.gOtherVoucher.referenceVoucher"></span>
+                    </ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content">
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="home-ref"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-ref" class="table-scroll" style="height: 290px !important;">
+                                    <table id="main-table-ref" class="main-table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.date"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.postedDate">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.voucherNumber"></th>
+                                            <th scope="col" class="description"
+                                                jhiTranslate="ebwebApp.gOtherVoucher.reason">
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let viewVoucher of viewVouchers; let i = index">
+                                            <td class="jsgrid-cell jsgrid-align-center">{{viewVoucher.date}}</td>
+                                            <td class="jsgrid-cell jsgrid-align-center">{{viewVoucher.postedDate}}</td>
+                                            <td class="jsgrid-cell jsgrid-align-left line-h pd-l-r-5"
+                                                (click)="utilsService.viewRefVoucher(viewVoucher)"
+                                                style="color:blue; text-decoration: underline;">{{viewVoucher.no}}
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-left description">{{viewVoucher.reason}}</td>
+                                        </tr>
+                                        <tr *ngFor="let l of newArr(9 - viewVouchers?.length)">
+                                            <td class="jsgrid-cell jsgrid-align-center"
+                                                style="width: 150px">&nbsp;
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-center"
+                                                style="width: 150px">&nbsp;
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot [class.myreadonlytrue]="true">
+                                        <tr>
+                                            <td class="cell-Table countRow" style="width: 150px"><input type="text"
+                                                                                                        readonly
+                                                                                                        class="countRow input-Cell"
+                                                                                                        value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{viewVouchers?.length}}">
+                                            </td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+            </ngb-tabset>
+        </div>
+        <!--        Chung tu nghiep vu khac-->
+        <div *ngIf="selectedRow?.typeID && (selectedRow.typeID === TYPE_CHUNG_TU_NGHIEP_VU_KHAC || selectedRow.typeID === TYPE_NGHIEM_THU_CONG_TRINH_DON_HANG_HOP_DONG)">
+            <ngb-tabset class="tool-navbar">
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.gOtherVoucher.home.details"></span>
+                    </ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content">
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="home-detail"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-detail" class="table-scroll" style="height: 290px !important;">
+                                    <table id="main-table-detail" class="main-table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col" class="description"
+                                                jhiTranslate="ebwebApp.gOtherVoucher.reason"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.debitAccount"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.creditAccount"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.amountOriginal"></th>
+                                            <th scope="col" *ngIf="selectedRow?.currencyID !== currency?.currencyCode"
+                                                jhiTranslate="ebwebApp.gOtherVoucher.amount"></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let detail of utilsService.getSortArray(gOtherVoucherDetails)">
+                                            <td title="{{detail.description}}"
+                                                class="jsgrid-cell jsgrid-align-left description">{{detail.description}}</td>
+                                            <td title="{{detail.debitAccount}}"
+                                                class="jsgrid-cell jsgrid-align-center">{{detail.debitAccount}}</td>
+                                            <td title="{{detail.creditAccount}}"
+                                                class="jsgrid-cell jsgrid-align-center">{{detail.creditAccount}}</td>
+                                            <td title="{{detail.amountOriginal}}"
+                                                class="jsgrid-cell jsgrid-align-right"><input type="text"
+                                                                                              class="input-Cell text-right inputFormatCurrency"
+                                                                                              [(ngModel)]="detail.amountOriginal"
+                                                                                              [allowNegative]="false"
+                                                                                              [systemOptions]="currentAccount?.systemOption"
+                                                                                              [type]="getAmountOriginalType()"
+                                                                                              ebCurrencyMask
+                                                                                              disabled></td>
+                                            <td *ngIf="selectedRow?.currencyID !== currency?.currencyCode"
+                                                title="{{detail.amount}}"
+                                                class="jsgrid-cell jsgrid-align-right"><input type="text"
+                                                                                              class="input-Cell text-right inputFormatCurrency"
+                                                                                              [(ngModel)]="detail.amount"
+                                                                                              [allowNegative]="false"
+                                                                                              [systemOptions]="currentAccount?.systemOption"
+                                                                                              [type]="7"
+                                                                                              ebCurrencyMask
+                                                                                              disabled></td>
+                                        </tr>
+                                        <tr *ngFor="let l of newArr(9 - gOtherVoucherDetails?.length)">
+                                            <td class="jsgrid-cell jsgrid-align-center"
+                                                style="width: 150px">&nbsp;
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-center"
+                                                style="width: 150px">&nbsp;
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td *ngIf="selectedRow?.currencyID !== currency?.currencyCode"
+                                                class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot [class.myreadonlytrue]="true">
+                                        <tr>
+                                            <td class="cell-Table countRow" style="width: 150px"><input type="text"
+                                                                                                        readonly
+                                                                                                        class="countRow input-Cell"
+                                                                                                        value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{gOtherVoucherDetails?.length}}">
+                                            </td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input type="text"
+                                                                                                        name="totalAmountOriginal_footer"
+                                                                                                        class="countRow input-Cell"
+                                                                                                        readonly
+                                                                                                        [ngModel]="getSumDetails('amountOriginal')"
+                                                                                                        ebCurrencyMask
+                                                                                                        [systemOptions]="currentAccount?.systemOption"
+                                                                                                        [type]="getAmountOriginalType()">
+                                            </td>
+                                            <td *ngIf="selectedRow?.currencyID !== currency?.currencyCode"
+                                                class="cell-Table countRow" style="width: 150px"><input type="text"
+                                                                                                        name="totalAmountOriginal_footer"
+                                                                                                        class="countRow input-Cell"
+                                                                                                        readonly
+                                                                                                        [ngModel]="getSumDetails('amount')"
+                                                                                                        ebCurrencyMask
+                                                                                                        [systemOptions]="currentAccount?.systemOption"
+                                                                                                        [type]="7">
+                                            </td>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.gOtherVoucher.home.vAT"></span></ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content">
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="home-tax"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-tax" class="table-scroll" style="height: 290px !important;">
+                                    <table id="main-table-tax" class="main-table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col" class="description"
+                                                jhiTranslate="ebwebApp.gOtherVoucher.reason"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.vATAccount">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.vATRate"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.vATAmount">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.pretaxAmount">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.accountingObject">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.mBCreditCard.accountingObjectName">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.mBCreditCard.taxCode">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.invoiceType"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.invoiceSeries">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.invoiceNo"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.invoiceDate"></th>
+                                            <th *ngIf="isShowGoodsServicePurchase" scope="col"
+                                                jhiTranslate="ebwebApp.mBCreditCard.goodServicePurchaseID"></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let detail of utilsService.getSortArray(gOtherVoucherDetailTax)">
+                                            <td title="{{detail.description}}"
+                                                class="jsgrid-cell jsgrid-align-left description">{{detail.description}}</td>
+                                            <td title="{{detail.vATAccount}}"
+                                                class="jsgrid-cell jsgrid-align-center">{{detail.vATAccount}}</td>
+                                            <td title="{{getVATRate(detail.vATRate)}}"
+                                                class="jsgrid-cell jsgrid-align-right">{{getVATRate(detail.vATRate)}}</td>
+                                            <td title="{{detail.vATAmount}}"
+                                                class="jsgrid-cell jsgrid-align-right"><input type="text"
+                                                                                              class="input-Cell text-right inputFormatCurrency"
+                                                                                              [(ngModel)]="detail.vATAmount"
+                                                                                              [allowNegative]="false"
+                                                                                              [systemOptions]="currentAccount?.systemOption"
+                                                                                              [type]="7"
+                                                                                              ebCurrencyMask
+                                                                                              disabled></td>
+
+                                            <td title="{{detail.pretaxAmount}}"
+                                                class="jsgrid-cell jsgrid-align-right"><input type="text"
+                                                                                              class="input-Cell text-right inputFormatCurrency"
+                                                                                              [(ngModel)]="detail.pretaxAmount"
+                                                                                              [allowNegative]="false"
+                                                                                              [systemOptions]="currentAccount?.systemOption"
+                                                                                              [type]="7"
+                                                                                              ebCurrencyMask
+                                                                                              disabled></td>
+                                            <td title="{{getAccountingObjectbyID(detail.accountingObjectID)}}"
+                                                class="jsgrid-cell jsgrid-align-left">{{getAccountingObjectbyID(detail.accountingObjectID)}}</td>
+                                            <td title="{{detail.accountingObjectName}}"
+                                                class="jsgrid-cell jsgrid-align-left">{{detail.accountingObjectName}}</td>
+                                            <td title="{{detail.taxCode}}"
+                                                class="jsgrid-cell jsgrid-align-left">{{detail.taxCode}}</td>
+                                            <td title="{{detail.invoiceTemplate}}"
+                                                class="jsgrid-cell jsgrid-align-left">{{detail.invoiceTemplate}}</td>
+                                            <td title="{{detail.invoiceSeries}}"
+                                                class="jsgrid-cell jsgrid-align-left">{{detail.invoiceSeries}}</td>
+                                            <td title="{{detail.invoiceNo}}"
+                                                class="jsgrid-cell jsgrid-align-left">{{detail.invoiceNo}}</td>
+                                            <td title="{{detail.invoiceDate}}"
+                                                class="jsgrid-cell jsgrid-align-center">{{detail.invoiceDate | date:'dd/MM/yyyy'}}</td>
+                                            <td *ngIf="isShowGoodsServicePurchase" title="{{detail.goodsServicePurchaseID}}"
+                                                class="jsgrid-cell jsgrid-align-center">{{getGoodsServicePurchasebyID(detail.goodsServicePurchaseID)}}</td>
+                                        </tr>
+                                        <tr *ngFor="let l of newArr(9 - gOtherVoucherDetailTax?.length)">
+                                            <td class="jsgrid-cell jsgrid-align-center"
+                                                style="width: 150px">&nbsp;
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-center"
+                                                style="width: 150px">&nbsp;
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td *ngIf="isShowGoodsServicePurchase" class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot [class.myreadonlytrue]="true">
+                                        <tr>
+                                            <td class="cell-Table countRow" style="width: 150px"><input type="text"
+                                                                                                        readonly
+                                                                                                        class="countRow input-Cell"
+                                                                                                        value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{gOtherVoucherDetailTax?.length}}">
+                                            </td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input type="text"
+                                                                                                        name="sumVATAmount_footer"
+                                                                                                        class="countRow input-Cell"
+                                                                                                        readonly
+                                                                                                        [ngModel]="getSumDetailTax('vATAmount')"
+                                                                                                        ebCurrencyMask
+                                                                                                        [systemOptions]="currentAccount?.systemOption"
+                                                                                                        [type]="7"></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input type="text"
+                                                                                                        name="sumPretaxAmount_footer"
+                                                                                                        class="countRow input-Cell"
+                                                                                                        readonly
+                                                                                                        [ngModel]="getSumDetailTax('pretaxAmount')"
+                                                                                                        ebCurrencyMask
+                                                                                                        [systemOptions]="currentAccount?.systemOption"
+                                                                                                        [type]="7"></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td *ngIf="isShowGoodsServicePurchase" class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.gOtherVoucher.home.statistical"></span>
+                    </ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content">
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="home-statistical"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-statistical" class="table-scroll" style="height: 290px !important;">
+                                    <table id="main-table-statistical" class="main-table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col" class="description"
+                                                jhiTranslate="ebwebApp.gOtherVoucher.reason"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.debitAccount"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.creditAccount"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.amountOriginal"></th>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.gOtherVoucher.debitAccountingObject"></th>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.gOtherVoucher.creditAccountingObject"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.employee"></th>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.gOtherVoucher.bankAccountDetailID"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.expenseItem"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.costSet"></th>
+                                            <!--                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.contract"></th>-->
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.budgetItem"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.department"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.statisticsCode"></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let detail of utilsService.getSortArray(gOtherVoucherDetails)">
+                                            <td title="{{detail.description}}"
+                                                class="jsgrid-cell jsgrid-align-left description">{{detail.description}}</td>
+                                            <td title="{{detail.debitAccount}}"
+                                                class="jsgrid-cell jsgrid-align-center">{{detail.debitAccount}}</td>
+                                            <td title="{{detail.creditAccount}}"
+                                                class="jsgrid-cell jsgrid-align-center">{{detail.creditAccount}}</td>
+                                            <td title="{{detail.amountOriginal}}"
+                                                class="jsgrid-cell jsgrid-align-right"><input type="text"
+                                                                                              class="input-Cell text-right inputFormatCurrency"
+                                                                                              [(ngModel)]="detail.amountOriginal"
+                                                                                              [allowNegative]="false"
+                                                                                              [systemOptions]="currentAccount?.systemOption"
+                                                                                              [type]="getAmountOriginalType()"
+                                                                                              ebCurrencyMask
+                                                                                              disabled></td>
+                                            <td title="{{getAccountingObjectbyID(detail.debitAccountingObjectID)}}"
+                                                class="jsgrid-cell jsgrid-align-left">{{getAccountingObjectbyID(detail.debitAccountingObjectID)}}</td>
+                                            <td title="{{getAccountingObjectbyID(detail.creditAccountingObjectID)}}"
+                                                class="jsgrid-cell jsgrid-align-left">{{getAccountingObjectbyID(detail.creditAccountingObjectID)}}</td>
+                                            <td title="{{getEmployeeByID(detail.employeeID)}}"
+                                                class="jsgrid-cell jsgrid-align-left">{{getAccountingObjectbyID(detail.employeeID)}}</td>
+                                            <td title="{{getBankAccountDetailbyID(detail.bankAccountDetailID)}}"
+                                                class="jsgrid-cell jsgrid-align-left">{{getBankAccountDetailbyID(detail.bankAccountDetailID)}}</td>
+                                            <td title="{{getExpenseItembyID(detail.expenseItemID)}}"
+                                                class="jsgrid-cell jsgrid-align-left">{{getExpenseItembyID(detail.expenseItemID)}}</td>
+                                            <td title="{{getCostSetbyID(detail.costSetID)}}"
+                                                class="jsgrid-cell jsgrid-align-left">{{getCostSetbyID(detail.costSetID)}}</td>
+                                            <!--                                            <td title="{{getEMContractsbyID(detail.contractID)}}"-->
+                                            <!--                                                class="jsgrid-cell jsgrid-align-left">{{getEMContractsbyID(detail.contractID)}}</td>-->
+                                            <td title="{{getBudgetItembyID(detail.budgetItemID)}}"
+                                                class="jsgrid-cell jsgrid-align-left">{{getBudgetItembyID(detail.budgetItemID)}}</td>
+                                            <td title="{{getOrganizationUnitbyID(detail.departmentID)}}"
+                                                class="jsgrid-cell jsgrid-align-left">{{getOrganizationUnitbyID(detail.departmentID)}}</td>
+                                            <td title="{{getStatisticsCodebyID(detail.statisticCodeID)}}"
+                                                class="jsgrid-cell jsgrid-align-left">{{getStatisticsCodebyID(detail.statisticCodeID)}}</td>
+                                        </tr>
+                                        <tr *ngFor="let l of newArr(9 - gOtherVoucherDetails?.length)">
+                                            <td class="jsgrid-cell jsgrid-align-center"
+                                                style="width: 150px">&nbsp;
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-center"
+                                                style="width: 150px">&nbsp;
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <!--                                            <td class="jsgrid-cell jsgrid-align-right"-->
+                                            <!--                                                style="width: 150px"></td>-->
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot [class.myreadonlytrue]="true">
+                                        <tr>
+                                            <td class="cell-Table countRow" style="width: 150px"><input type="text"
+                                                                                                        readonly
+                                                                                                        class="countRow input-Cell"
+                                                                                                        value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{gOtherVoucherDetails?.length}}">
+                                            </td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <!--                                            <td class="cell-Table countRow" style="width: 150px"><input-->
+                                            <!--                                                type="text"-->
+                                            <!--                                                class="countRow input-Cell"-->
+                                            <!--                                                readonly></td>-->
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.gOtherVoucher.referenceVoucher"></span>
+                    </ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content">
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="home-ref"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-ref" class="table-scroll" style="height: 290px !important;">
+                                    <table id="main-table-ref" class="main-table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.date"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.postedDate">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.voucherNumber"></th>
+                                            <th scope="col" class="description"
+                                                jhiTranslate="ebwebApp.gOtherVoucher.reason">
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let viewVoucher of viewVouchers; let i = index">
+                                            <td class="jsgrid-cell jsgrid-align-center">{{viewVoucher.date}}</td>
+                                            <td class="jsgrid-cell jsgrid-align-center">{{viewVoucher.postedDate}}</td>
+                                            <td class="jsgrid-cell jsgrid-align-left line-h pd-l-r-5"
+                                                (click)="utilsService.viewRefVoucher(viewVoucher)"
+                                                style="color:blue; text-decoration: underline;">{{viewVoucher.no}}
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-left description">{{viewVoucher.reason}}</td>
+                                        </tr>
+                                        <tr *ngFor="let l of newArr(9 - viewVouchers?.length)">
+                                            <td class="jsgrid-cell jsgrid-align-center"
+                                                style="width: 150px">&nbsp;
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-center"
+                                                style="width: 150px">&nbsp;
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot [class.myreadonlytrue]="true">
+                                        <tr>
+                                            <td class="cell-Table countRow" style="width: 150px"><input type="text"
+                                                                                                        readonly
+                                                                                                        class="countRow input-Cell"
+                                                                                                        value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{viewVouchers?.length}}">
+                                            </td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+            </ngb-tabset>
+        </div>
+        <!--        Phan bo chi phi tra truoc-->
+        <div *ngIf="selectedRow?.typeID && selectedRow.typeID === TYPE_PHAN_BO_CHI_PHI_TRA_TRUOC">
+            <ngb-tabset class="tool-navbar">
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.gOtherVoucher.home.infoCost"></span>
+                    </ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content">
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="home-detail"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-detail" class="table-scroll" style="height: 290px !important;">
+                                    <table id="main-table-detail" class="main-table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.prepaidExpense.titleCode1"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.prepaidExpense.titleName"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.prepaidExpense.amount">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.pPInvoice.soTienChuaPhanBo">
+                                            </th>
+                                            <th jhiTranslate="ebwebApp.pPInvoice.soTienPhanBoKyNay">
+                                        </tr>
+                                        </thead>
+                                        <tbody [class.myreadonlytrue]="!isEdit">
+                                        <tr *ngFor="let detail of utilsService.getSortArray(gOtherVoucherDetailExpenses);let i=index;">
+                                            <td class="cell-Table jsgrid-align-left description">
+                                                {{getPrepaidExpenseCode(detail.prepaidExpenseID)}}
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-left">
+                                                {{getPrepaidExpenseName(detail.prepaidExpenseID)}}
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-right"><input type="text"
+                                                                                             class="input-Cell text-right inputFormatCurrency"
+                                                                                             [(ngModel)]="detail.amount"
+                                                                                             [allowNegative]="false"
+                                                                                             [systemOptions]="currentAccount?.systemOption"
+                                                                                             [type]="7"
+                                                                                             ebCurrencyMask
+                                                                                             disabled>
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-right">
+                                                <input type="text"
+                                                       class="input-Cell text-right inputFormatCurrency"
+                                                       [(ngModel)]="detail.remainingAmount"
+                                                       [allowNegative]="false"
+                                                       [systemOptions]="currentAccount?.systemOption"
+                                                       [type]="7"
+                                                       ebCurrencyMask
+                                                       disabled>
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-right">
+                                                <input type="text"
+                                                       class="input-Cell text-right inputFormatCurrency"
+                                                       [(ngModel)]="detail.allocationAmount"
+                                                       [allowNegative]="false"
+                                                       [systemOptions]="currentAccount?.systemOption"
+                                                       [type]="7"
+                                                       ebCurrencyMask
+                                                       disabled>
+                                            </td>
+                                        </tr>
+                                        <tr *ngFor="let l of newArr(9 - (gOtherVoucherDetailExpenses?.length > 0 ? gOtherVoucherDetailExpenses.length : 0))">
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input
+                                                type="text" class="input-Cell" readonly></td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot>
+                                        <tr>
+                                            <td class="cell-Table color-tfoot" colspan="2"><span class="color-tfoot"
+                                                                                                 jhiTranslate="ebwebApp.pPInvoice.totalRow"
+                                                                                                 translateValues="{total: '{{ gOtherVoucherDetailExpenses.length }}'}"></span>
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-right color-tfoot">
+                                                <input type="text"
+                                                       class="input-Cell text-right inputFormatCurrency"
+                                                       [ngModel]="getSumDetailExpenses('amount')"
+                                                       [allowNegative]="false"
+                                                       [systemOptions]="currentAccount?.systemOption"
+                                                       [type]="7"
+                                                       ebCurrencyMask
+                                                       disabled>
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-right color-tfoot">
+                                                <input type="text"
+                                                       class="input-Cell text-right inputFormatCurrency"
+                                                       [ngModel]="getSumDetailExpenses('remainingAmount')"
+                                                       [allowNegative]="false"
+                                                       [systemOptions]="currentAccount?.systemOption"
+                                                       [type]="7"
+                                                       ebCurrencyMask
+                                                       disabled>
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-right color-tfoot">
+                                                <input type="text"
+                                                       class="input-Cell text-right inputFormatCurrency"
+                                                       [ngModel]="getSumDetailExpenses('allocationAmount')"
+                                                       [allowNegative]="false"
+                                                       [systemOptions]="currentAccount?.systemOption"
+                                                       [type]="7"
+                                                       ebCurrencyMask
+                                                       disabled>
+                                            </td>
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.gOtherVoucher.home.attributionDetails"></span>
+                    </ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content">
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="home-tax"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-tax" class="table-scroll" style="height: 290px !important;">
+                                    <table id="main-table-attributionDetails" class="main-table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.prepaidExpense.titleCode1"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.prepaidExpense.titleName"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.prepaidExpense.prepaidExpenseCode">
+                                                mã đối tượng pb
+                                            </th>
+                                            <th jhiTranslate="ebwebApp.pPInvoice.soTienPhanBoKyNay">
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.prepaidExpenseAllocation.allocationRate">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.prepaidExpense.amount">
+                                                số tiền
+                                            </th>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.prepaidExpenseAllocation.costAccount"> tk chi phí
+                                            </th>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.prepaidExpenseAllocation.expenseItemID"> khoản
+                                                mục chi phí
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let detail of utilsService.getSortArray(gOtherVoucherDetailExpenseAllocations);let i=index;">
+                                            <td class="cell-Table jsgrid-align-left description">
+                                                {{getPrepaidExpenseCode(detail.prepaidExpenseID)}}
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-left">
+                                                {{getPrepaidExpenseName(detail.prepaidExpenseID)}}
+                                            </td>
+                                            <!--                                            mã đối tượng pb-->
+                                            <td class="cell-Table jsgrid-align-center">
+                                                {{getObjectCode(detail.objectID)}}
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-right" [class.myreadonlytrue]="true">
+                                                <input type="text"
+                                                       class="input-Cell text-right inputFormatCurrency"
+                                                       [(ngModel)]="detail.allocationAmount"
+                                                       [allowNegative]="false"
+                                                       [systemOptions]="currentAccount?.systemOption"
+                                                       [type]="7"
+                                                       ebCurrencyMask
+                                                       disabled>
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-right position-relative">
+                                                {{detail.allocationRate}}
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-right">
+                                                <input type="text"
+                                                       class="input-Cell text-right inputFormatCurrency"
+                                                       [(ngModel)]="detail.amount"
+                                                       [allowNegative]="false"
+                                                       [systemOptions]="currentAccount?.systemOption"
+                                                       [type]="7"
+                                                       ebCurrencyMask
+                                                       disabled>
+                                            </td>
+                                            <!--                                             tk chi phí-->
+                                            <td class="cell-Table jsgrid-align-right">
+                                                {{detail.costAccount}}
+                                            </td>
+                                            <td class="cell-Table">
+                                                {{getExpenseItembyID(detail.expenseItemID)}}
+                                            </td>
+                                        </tr>
+                                        <tr *ngFor="let l of newArr(9 - (gOtherVoucherDetailExpenseAllocations?.length > 0 ? gOtherVoucherDetailExpenseAllocations?.length : 0))">
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input
+                                                type="text" class="input-Cell" readonly></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input
+                                                type="text" class="input-Cell" readonly></td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot>
+                                        <tr>
+                                            <td class="cell-Table color-tfoot" colspan="3"><span class="color-tfoot"
+                                                                                                 jhiTranslate="ebwebApp.pPInvoice.totalRow"
+                                                                                                 translateValues="{total: '{{ gOtherVoucherDetailExpenseAllocations?.length }}'}"></span>
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-right color-tfoot">
+                                                <input type="text"
+                                                       class="input-Cell text-right inputFormatCurrency"
+                                                       [ngModel]="getSumDetailAllocationExpenses('allocationAmount')"
+                                                       [allowNegative]="false"
+                                                       [systemOptions]="currentAccount?.systemOption"
+                                                       [type]="7"
+                                                       ebCurrencyMask
+                                                       disabled>
+                                            </td>
+                                            <td class="cell-Table color-tfoot">
+                                            </td>
+                                            <td class="cell-Table  jsgrid-align-right color-tfoot">
+                                                <input type="text"
+                                                       class="input-Cell text-right inputFormatCurrency"
+                                                       [ngModel]="getSumDetailAllocationExpenses('allocationAmount')"
+                                                       [allowNegative]="false"
+                                                       [systemOptions]="currentAccount?.systemOption"
+                                                       [type]="7"
+                                                       ebCurrencyMask
+                                                       disabled>
+                                            </td>
+                                            <td class="cell-Table color-tfoot" colspan="2">
+                                            </td>
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.gOtherVoucher.home.accounting"></span>
+                    </ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content">
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="home-statistical"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-statistical" class="table-scroll" style="height: 290px !important;">
+                                    <table id="main-table-GOtherVoucherDetail" class="main-table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col"
+                                                jhiTranslate="global.commonInfo.reason"> Diễn giải
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.saReturn.debitAccount">TK nợ</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.saReturn.creditAccount">TK có</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.prepaidExpense.amount">
+                                                số tiền
+                                            </th>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.gOtherVoucher.debitAccountingObject">đối tượng nợ
+                                            </th>
+                                            <!--                                            <th scope="col"-->
+                                            <!--                                                jhiTranslate="ebwebApp.gOtherVoucher.debitAccountingObjectName">đối tượng nợ</th>-->
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.gOtherVoucher.creditAccountingObject">đối tượng
+                                                có
+                                            </th>
+                                            <!--                                            <th scope="col"-->
+                                            <!--                                                jhiTranslate="ebwebApp.gOtherVoucher.creditAccountingObjectName">đối tượng có</th>-->
+                                            <th scope="col"
+                                                jhiTranslate="entity.searchform.employee">nhân viên
+                                            </th>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.pPDiscountReturnDetails.budgetItemID">mục thu chi
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.mCReceiptDetails.expenseItem">khoản
+                                                mục cp
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.saReturn.department">Phòng ban</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.mBInternalTransferDetails.costSetID">
+                                                đt tập hơp CP
+                                            </th>
+                                            <!--                                            <th scope="col" jhiTranslate="ebwebApp.saReturn.costSet">Đối tượng THCP</th>-->
+                                            <!--                                            <th scope="col" jhiTranslate="ebwebApp.saReturn.contract">Hợp đồng</th>-->
+                                            <th scope="col" jhiTranslate="ebwebApp.saReturn.statisticCode">Mã thống kê
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let detail of utilsService.getSortArray(gOtherVoucherDetails);let i=index;">
+                                            <td class="cell-Table jsgrid-align-left description">{{detail.description}}
+
+                                            </td>
+                                            <!--                                            tk nợ -->
+                                            <td class="cell-Table jsgrid-align-center">
+                                                {{detail.debitAccount}}
+                                            </td>
+                                            <!--    tk có-->
+                                            <td class="cell-Table jsgrid-align-center">
+                                                {{detail.creditAccount}}
+                                            </td>
+                                            <!--                                            số tiền-->
+                                            <td class="cell-Table jsgrid-align-right">
+                                                <input type="text"
+                                                       class="input-Cell text-right inputFormatCurrency"
+                                                       [(ngModel)]="detail.amount"
+                                                       [allowNegative]="false"
+                                                       [systemOptions]="currentAccount?.systemOption"
+                                                       [type]="7"
+                                                       ebCurrencyMask
+                                                       disabled>
+                                            </td>
+                                            <!--                                            đối tượng nợ-->
+                                            <td class="cell-Table jsgrid-align-left">
+                                                {{getAccountingObjectbyID(detail.debitAccountingObjectID)}}
+                                            </td>
+                                            <!--                                            Tên đối tượng nợ-->
+                                            <!--                                            <td class="cell-Table jsgrid-align-left">-->
+                                            <!--                                                <input type="text"-->
+                                            <!--                                                       class="input-Cell text-right"-->
+                                            <!--                                                       name="debitAccountingObject_statisticalName{{i}}"-->
+                                            <!--                                                       id="debitAccountingObject_statisticalName{{i}}"-->
+                                            <!--                                                       [(ngModel)]="detail.accountingObjectName">-->
+                                            <!--                                            </td>-->
+                                            <!--                                            đối tượng có -->
+                                            <td class="cell-Table jsgrid-align-left">
+                                                {{getAccountingObjectbyID(detail.creditAccountingObjectID)}}
+                                            </td>
+                                            <!--                                            Tên đối tượng có-->
+                                            <!--                                            <td class="cell-Table jsgrid-align-left">-->
+                                            <!--                                                <input type="text"-->
+                                            <!--                                                       class="input-Cell text-right"-->
+                                            <!--                                                       name="creditAccountingObject_statisticalName{{i}}"-->
+                                            <!--                                                       id="creditAccountingObject_statisticalName{{i}}"-->
+                                            <!--                                                       [(ngModel)]="detail.accountingObjectName">-->
+                                            <!--                                            </td>-->
+                                            <!--                                            nhân viên-->
+                                            <td class="cell-Table jsgrid-align-left">
+                                                {{getEmployeeByID(detail.employeeID)}}
+                                            </td>
+                                            <!--                                            mục thu chi-->
+                                            <td class="cell-Table jsgrid-align-right">
+                                                {{getBudgetItembyID(detail.budgetItemID)}}
+                                            </td>
+                                            <!--                                            khoản mục chi phí-->
+                                            <td class="cell-Table">
+                                                {{getExpenseItembyID(detail.expenseItemID)}}
+                                            </td>
+                                            <!--                                            Phongf ban-->
+                                            <td class="cell-Table">
+                                                {{getOrganizationUnitbyID(detail.departmentID)}}
+                                            </td>
+                                            <!--                                            DT tap hop chi phi-->
+                                            <td class="cell-Table">
+                                                {{getCostSetbyID(detail.costSetID)}}
+                                            </td>
+                                            <!--                                            hợp đồng -->
+                                            <!--                                            <td class="cell-Table jsgrid-align-left">-->
+                                            <!--                                                {{getEMContractsbyID(detail.contractID)}}-->
+                                            <!--                                            </td>-->
+                                            <!--                                            mã thống kê  -->
+                                            <td class="cell-Table jsgrid-align-left">
+                                                {{getStatisticsCodebyID(detail.statisticCodeID)}}
+                                            </td>
+                                        </tr>
+                                        <tr *ngFor="let l of newArr(9 - (gOtherVoucherDetails?.length > 0 ? gOtherVoucherDetails.length : 0))">
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input
+                                                type="text" class="input-Cell" readonly></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input
+                                                type="text" class="input-Cell" readonly></td>
+                                            <td class="cell-Table"><input
+                                                type="text" class="input-Cell" readonly></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <!--                                            <td class="cell-Table"><input-->
+                                            <!--                                                type="text" class="input-Cell" readonly></td>-->
+                                            <td class="cell-Table"><input
+                                                type="text" class="input-Cell" readonly></td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot>
+                                        <tr>
+                                            <td class="cell-Table color-tfoot" colspan="3"><span class="color-tfoot"
+                                                                                                 jhiTranslate="ebwebApp.pPInvoice.totalRow"
+                                                                                                 translateValues="{total: '{{ gOtherVoucherDetails?.length }}'}"></span>
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-right color-tfoot">
+                                                <input type="text"
+                                                       class="input-Cell text-right inputFormatCurrency"
+                                                       [ngModel]="getSumDetails('amount')"
+                                                       [allowNegative]="false"
+                                                       [systemOptions]="currentAccount?.systemOption"
+                                                       [type]="7"
+                                                       ebCurrencyMask
+                                                       disabled>
+                                            </td>
+                                            <td class="cell-Table color-tfoot" colspan="8">
+                                            </td>
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab id="refdoc">
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.saBill.refDoc"></span></ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content" [class.myreadonlytrue]="!isEdit">
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="home-ref2"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-ref2" class="table-scroll" style="z-index: 0; height: 290px !important;">
+                                    <table id="main-table-ref2" class="main-table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col" jhiTranslate="ebwebApp.saBill.vDate">Ngày chứng từ</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.saBill.postedDate">Ngày hạch toán
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.saBill.noFBook">Số chứng từ</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.saBill.reason">Diễn giải</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let viewVoucher of viewVouchers; let i = index">
+                                            <td class=" cell-Table p-0 jsgrid-cell jsgrid-align-center">{{viewVoucher.date}}</td>
+                                            <td class=" cell-Table p-0 jsgrid-cell jsgrid-align-center">{{viewVoucher.postedDate}}</td>
+                                            <td class="jsgrid-cell jsgrid-align-left line-h pd-l-r-5"
+                                                (click)="utilsService.viewRefVoucher(viewVoucher)"
+                                                style="color:blue; text-decoration: underline;">{{viewVoucher.no}}
+                                            </td>
+                                            <td class=" cell-Table p-0 jsgrid-cell jsgrid-align-left">{{viewVoucher.reason}}</td>
+                                        </tr>
+                                        <tr *ngFor="let l of newArr(9 - viewVouchers?.length)">
+                                            <td class="jsgrid-cell jsgrid-align-center"
+                                                style="width: 150px">&nbsp;
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-center"
+                                                style="width: 150px">&nbsp;
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot [class.myreadonlytrue]="true">
+                                        <tr>
+                                            <td class="cell-Table countRow" style="width: 150px"><input type="text"
+                                                                                                        readonly
+                                                                                                        class="countRow input-Cell"
+                                                                                                        value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{viewVouchers?.length}}">
+                                            </td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <!--                <ngb-tab>-->
+                <!--                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.mBCreditCard.referenceVoucher"></span>-->
+                <!--                    </ng-template>-->
+                <!--                    <ng-template ngbTabContent>-->
+                <!--                        <div class="tab-content">-->
+                <!--                            <div class="frm-main frm-padding tab-pane fade in active show" id="home-ref"-->
+                <!--                                 style="background: #cbdcf0">-->
+                <!--                                <div id="table-scroll-ref" class="table-scroll">-->
+                <!--                                </div>-->
+                <!--                            </div>-->
+                <!--                        </div>-->
+                <!--                    </ng-template>-->
+                <!--                </ngb-tab>-->
+            </ngb-tabset>
+        </div>
+        <!--        Ket chuyen lai lo-->
+        <div *ngIf="selectedRow?.typeID && selectedRow.typeID === TYPE_KET_CHUYEN_LAI_LO">
+            <ngb-tabset class="tool-navbar">
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.gOtherVoucher.home.details"></span>
+                    </ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content">
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="home-detail"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-detail" class="table-scroll" style="height: 290px !important;">
+                                    <table id="main-table-detail" class="main-table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col" class="description"
+                                                jhiTranslate="ebwebApp.gOtherVoucher.reason"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.debitAccount"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.creditAccount"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.amountOriginal"></th>
+                                            <th scope="col" *ngIf="selectedRow?.currencyID !== currency?.currencyCode"
+                                                jhiTranslate="ebwebApp.gOtherVoucher.amount"></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let detail of utilsService.getSortArray(gOtherVoucherDetails)">
+                                            <td title="{{detail.description}}"
+                                                class="jsgrid-cell jsgrid-align-left description">{{detail.description}}</td>
+                                            <td title="{{detail.debitAccount}}"
+                                                class="jsgrid-cell jsgrid-align-center">{{detail.debitAccount}}</td>
+                                            <td title="{{detail.creditAccount}}"
+                                                class="jsgrid-cell jsgrid-align-center">{{detail.creditAccount}}</td>
+                                            <td title="{{detail.amountOriginal}}"
+                                                class="jsgrid-cell jsgrid-align-right"><input type="text"
+                                                                                              class="input-Cell text-right inputFormatCurrency"
+                                                                                              [(ngModel)]="detail.amountOriginal"
+                                                                                              [allowNegative]="false"
+                                                                                              [systemOptions]="currentAccount?.systemOption"
+                                                                                              [type]="getAmountOriginalType()"
+                                                                                              ebCurrencyMask
+                                                                                              disabled></td>
+                                            <td *ngIf="selectedRow?.currencyID !== currency?.currencyCode"
+                                                title="{{detail.amount}}"
+                                                class="jsgrid-cell jsgrid-align-right"><input type="text"
+                                                                                              class="input-Cell text-right inputFormatCurrency"
+                                                                                              [(ngModel)]="detail.amount"
+                                                                                              [allowNegative]="false"
+                                                                                              [systemOptions]="currentAccount?.systemOption"
+                                                                                              [type]="7"
+                                                                                              ebCurrencyMask
+                                                                                              disabled></td>
+                                        </tr>
+                                        <tr *ngFor="let l of newArr(9 - gOtherVoucherDetails?.length)">
+                                            <td class="jsgrid-cell jsgrid-align-center"
+                                                style="width: 150px">&nbsp;
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-center"
+                                                style="width: 150px">&nbsp;
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td *ngIf="selectedRow?.currencyID !== currency?.currencyCode"
+                                                class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot [class.myreadonlytrue]="true">
+                                        <tr>
+                                            <td class="cell-Table countRow" style="width: 150px"><input type="text"
+                                                                                                        readonly
+                                                                                                        class="countRow input-Cell"
+                                                                                                        value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{gOtherVoucherDetails?.length}}">
+                                            </td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input type="text"
+                                                                                                        name="totalAmountOriginal_footer"
+                                                                                                        class="countRow input-Cell"
+                                                                                                        readonly
+                                                                                                        [ngModel]="getSumDetails('amountOriginal')"
+                                                                                                        ebCurrencyMask
+                                                                                                        [systemOptions]="currentAccount?.systemOption"
+                                                                                                        [type]="getAmountOriginalType()">
+                                            </td>
+                                            <td *ngIf="selectedRow?.currencyID !== currency?.currencyCode"
+                                                class="cell-Table countRow" style="width: 150px"><input type="text"
+                                                                                                        name="totalAmountOriginal_footer"
+                                                                                                        class="countRow input-Cell"
+                                                                                                        readonly
+                                                                                                        [ngModel]="getSumDetails('amount')"
+                                                                                                        ebCurrencyMask
+                                                                                                        [systemOptions]="currentAccount?.systemOption"
+                                                                                                        [type]="7">
+                                            </td>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.gOtherVoucher.referenceVoucher"></span>
+                    </ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content">
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="home-ref"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-ref" class="table-scroll" style="height: 290px !important;">
+                                    <table id="main-table-ref" class="main-table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.date"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.postedDate">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.voucherNumber"></th>
+                                            <th scope="col" class="description"
+                                                jhiTranslate="ebwebApp.gOtherVoucher.reason">
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let viewVoucher of viewVouchers; let i = index">
+                                            <td class="jsgrid-cell jsgrid-align-center">{{viewVoucher.date}}</td>
+                                            <td class="jsgrid-cell jsgrid-align-center">{{viewVoucher.postedDate}}</td>
+                                            <td class="jsgrid-cell jsgrid-align-left line-h pd-l-r-5"
+                                                (click)="utilsService.viewRefVoucher(viewVoucher)"
+                                                style="color:blue; text-decoration: underline;">{{viewVoucher.no}}
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-left description">{{viewVoucher.reason}}</td>
+                                        </tr>
+                                        <tr *ngFor="let l of newArr(9 - viewVouchers?.length)">
+                                            <td class="jsgrid-cell jsgrid-align-center"
+                                                style="width: 150px">&nbsp;
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-center"
+                                                style="width: 150px">&nbsp;
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-right"
+                                                style="width: 150px"></td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot [class.myreadonlytrue]="true">
+                                        <tr>
+                                            <td class="cell-Table countRow" style="width: 150px"><input type="text"
+                                                                                                        readonly
+                                                                                                        class="countRow input-Cell"
+                                                                                                        value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{viewVouchers?.length}}">
+                                            </td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                            <td class="cell-Table countRow" style="width: 150px"><input
+                                                type="text"
+                                                class="countRow input-Cell"
+                                                readonly></td>
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+            </ngb-tabset>
+        </div>
+    </div>
+</div>
+
+<ng-template #popUpMultiDelete let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label *ngIf="typeMultiAction === 0" jhiTranslate="ebwebApp.mBDeposit.multiDeleteMessage"></label>
+                <label *ngIf="typeMultiAction === 1" jhiTranslate="ebwebApp.mBDeposit.multiUnrecordMessage"></label>
+                <label *ngIf="typeMultiAction === 2" jhiTranslate="ebwebApp.mBDeposit.multiRecordMessage"></label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-danger" (click)="continueDelete()"
+                jhiTranslate="entity.action.ok">
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="closePopUpDelete()"
+                jhiTranslate="ebwebApp.mBDeposit.return">
+        </button>
+    </div>
+</ng-template>
+
+
+
+
+

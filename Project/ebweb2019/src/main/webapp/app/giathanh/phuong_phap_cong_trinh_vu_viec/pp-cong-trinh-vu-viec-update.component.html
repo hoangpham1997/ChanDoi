@@ -1,0 +1,834 @@
+<div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="menu-tool-bar he">
+                <div class="ptitle">
+                    <span *ngIf="indexTab === 1" jhiTranslate="ebwebApp.cPPeriod.updateForm.title"></span>
+                    <span *ngIf="indexTab === 2" jhiTranslate="ebwebApp.cPExpenseList.home.title0"></span>
+                    <span *ngIf="indexTab === 3" jhiTranslate="ebwebApp.cPExpenseList.home.title1"></span>
+                    <span *ngIf="indexTab === 4" jhiTranslate="ebwebApp.cPPeriod.cPAllocationGeneralExpenseDetail.title"></span>
+                    <span *ngIf="indexTab === 5" jhiTranslate="ebwebApp.cPPeriod.CPAcceptanceDetail.title"></span>
+                </div>
+                <div class="gr-toolbar">
+                    <button  *ngIf="indexTab !== 1" [disabled]="isAcceptance" (click)="changeTab(-1)" class="aprev button-navigation">
+                        <i class="mdi mdi-arrow-left"></i>
+                        <span jhiTranslate="ebwebApp.cPPeriod.updateForm.prev">Quay lại</span>
+                    </button>
+                    <button  *ngIf="indexTab !== 5" [disabled]="isAcceptance" (click)="changeTab(1)" class="anext button-navigation"><i
+                        class="mdi mdi-arrow-right"></i>
+                        <span jhiTranslate="ebwebApp.cPPeriod.updateForm.next">Tiếp theo</span></button>
+                    <button *ngIf="indexTab === 5" [disabled]="isAcceptance" (click)="save()" class="button-navigation"><i class="mdi mdi-briefcase-download"></i><span
+                        jhiTranslate="ebwebApp.mBTellerPaper.save">Save</span></button>
+                    <button *ngIf="indexTab === 5" [disabled]="isEdit" (click)="accepted()" class="button-navigation"><i class="mdi mdi-clipboard-check"></i><span
+                        jhiTranslate="ebwebApp.cPPeriod.CPAcceptanceDetail.accepted">Save</span></button>
+                    <button (click)="closeForm()" class="button-navigation"><i class="mdi mdi-window-close"></i><span
+                        jhiTranslate="ebwebApp.mBTellerPaper.close">Close</span></button>
+                </div>
+            </div>
+            <div *ngIf="indexTab === 1">
+                <div class="frm-main frm-mains nobg" style="margin-bottom: 0px">
+                    <form action="" id="search" style="background: #cbdcf0;">
+                        <div class="row">
+                            <div class="col-lg-7">
+                                <div class="form-group row">
+                                    <label class="col-sm-1 col-form-label"
+                                           style="text-align: right"
+                                           jhiTranslate="ebwebApp.cPPeriod.updateForm.ky"
+                                    >Kỳ</label>
+                                    <div class="col-sm-3">
+                                        <combo-box style=""
+                                                   name="timeLine"
+                                                   [dataList]="listTimeLine"
+                                                   [listColumns]="utilsService.listColumnsTimeLine"
+                                                   [isOutTable]="true"
+                                                   displayMember="display"
+                                                   valueName="value"
+                                                   [headerColumns]="utilsService.listHeaderColumnsTimeLine"
+                                                   [isObject]="false"
+                                                   [(ngModel)]="timeLineVoucher"
+                                                   (ngModelChange)="selectChangeBeginDateAndEndDate(timeLineVoucher)"
+                                        ></combo-box>
+                                    </div>
+                                    <label class="col-sm-1 col-form-label text-right"
+                                           style="padding-left: 0;padding-right: 0"
+                                           jhiTranslate="ebwebApp.mBTellerPaper.fromdate"
+                                    >Fromdate</label>
+                                    <div class="col-sm-3">
+                                        <eb-date-picker id="field_fromDate"
+                                                        [(ngModel)]="cPPeriod.fromDate"
+                                                        [isInTable]="false"
+                                                        (ngModelChange)="changeFromDate()" name="fromDate">
+                                        </eb-date-picker>
+                                    </div>
+                                    <label class="col-sm-1 col-form-label text-right"
+                                           style="padding-left: 0;padding-right: 0"
+                                           jhiTranslate="ebwebApp.mBTellerPaper.todate"
+                                    >Todate</label>
+                                    <div class="col-sm-3">
+                                        <eb-date-picker id="field_toDate"
+                                                        [(ngModel)]="cPPeriod.toDate" (ngModelChange)="changeToDate()"
+                                                        [isInTable]="false"
+                                                        name="toDate"></eb-date-picker>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-5">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label text-right" for="cPPeriodName"
+                                           jhiTranslate="ebwebApp.cPPeriod.updateForm.name"
+                                    >Name</label>
+                                    <div class="col-sm-9">
+                                        <input [(ngModel)]="cPPeriod.name" name="cPPeriodName" id="cPPeriodName"
+                                               type="text" class="form-control form-control-sm">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div style="padding-top: 15px">
+                    <ngb-tabset class="tool-navbar">
+                        <ngb-tab>
+                            <ng-template ngbTabTitle><span
+                                jhiTranslate="ebwebApp.cPPeriod.gridCostSet.title">Đối tượng tập hợp chi phí</span>
+                            </ng-template>
+                            <ng-template ngbTabContent>
+                                <div class="tab-content">
+                                    <div class="frm-main frm-padding tab-pane fade in active show" id="home-ref"
+                                         style="background: #cbdcf0; height: 700px!important;">
+                                        <div id="table-scroll-ref" class="table-scroll" style="height: 100%!important; max-height: 700px!important;">
+                                            <table id="main-table-ref" class="main-table">
+                                                <thead>
+                                                <tr>
+                                                    <th scope="col">
+                                                        <div class="custom-control custom-checkbox">
+                                                            <input type="checkbox" class="custom-control-input"
+                                                                   id="check-all"
+                                                                   [checked]="isCheckAll()" (change)="checkAll()">
+                                                            <label class="custom-control-label" for="check-all"></label>
+                                                        </div>
+                                                    </th>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.cPPeriod.gridCostSet.costSetCode">
+                                                        CostSetCode
+                                                    </th>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.cPPeriod.gridCostSet.costSetName">
+                                                        CostSetName
+                                                    </th>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.cPPeriod.gridCostSet.costSetType">
+                                                        CostSetType
+                                                    </th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr *ngFor="let costSet of costSets; let i = index"
+                                                    (click)="check(costSet)">
+                                                    <td class="text-center">
+                                                        <div class="custom-control custom-checkbox">
+                                                            <input type="checkbox" class="custom-control-input"
+                                                                   name="{{'checkbox' + i}}"
+                                                                   id="{{'checkbox' + i}}" [(ngModel)]="costSet.checked"
+                                                                   (click)="check(costSet)">
+                                                            <label class="custom-control-label"
+                                                                   for="{{'checkbox' + i}}"></label>
+                                                        </div>
+                                                    </td>
+                                                    <td class="">{{costSet.costSetCode}}</td>
+                                                    <td class="">{{costSet.costSetName}}</td>
+                                                    <td class="">
+                                                        <combo-box [(ngModel)]="costSet.costSetType"
+                                                                   [dataList]="listType"
+                                                                   [headerColumns]="listHeaderColumnsStatus"
+                                                                   [isObject]="false"
+                                                                   [listColumns]="listColumnsType"
+                                                                   [valueIsNumber]="true"
+                                                                   displayMember="name"
+                                                                   valueName="value"
+                                                                   [noEdit]="true">
+                                                        </combo-box>
+                                                    </td>
+                                                </tr>
+                                                <tr *ngFor="let row of newArr(30 - costSets?.length)">
+                                                    <td class="jsgrid-cell jsgrid-align">&nbsp;</td>
+                                                    <td class="jsgrid-cell jsgrid-align">&nbsp;</td>
+                                                    <td class="jsgrid-cell">&nbsp;</td>
+                                                    <td class="jsgrid-cell">&nbsp;</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </ngb-tab>
+                    </ngb-tabset>
+                </div>
+                <div *ngIf="costSets && costSets.length"
+                     style="padding-right: 16px;">
+                    <div class="row justify-content-end">
+                        <div class="col-lg-2">
+                            <div class="form-group row">
+                                <label class="col-sm-7 col-form-label" for="itemsPerPage"
+                                       style="padding-right: 0px;text-align: right;"><span
+                                    jhiTranslate="ebwebApp.mBDeposit.totalPage"></span>: {{totalItems}}</label>
+                                <div class="col-sm-5 pd-l-0">
+                                    <select class="form-control form-control-sm" name="itemsPerPage"
+                                            id="itemsPerPage"
+                                            style="background-color: #f5f7fa;"
+                                            [(ngModel)]="itemsPerPage"
+                                            (ngModelChange)="selectedItemPerPage()"
+                                    >
+                                        <option value="30">30</option>
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="justify-content-end">
+                            <ngb-pagination [size]="'sm'" [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage"
+                                            [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
+                                            (pageChange)="loadPage(page)"></ngb-pagination>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="indexTab === 2">
+                <div class="frm-main frm-mains nobg" style="margin-bottom: 0px">
+                    <form action="" id="search1" style="background: #cbdcf0;">
+                        <div class="row">
+                            <div class="col-lg-7">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label text-right"
+                                           jhiTranslate="ebwebApp.cPPeriod.updateForm.name"
+                                    >Name</label>
+                                    <div class="col-sm-9">
+                                        <input [ngModel]="getCPPeriodName()" name="searchValue"
+                                               id="field_searchValue1"
+                                               type="text" class="form-control form-control-sm noEdit">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="frm-main frm-padding tab-pane fade in active show" id="home-ref1"
+                     style="background: #cbdcf0; margin-top: 5px; height: 700px!important;">
+                    <div id="table-scroll-ref1" class="table-scroll" style="height: 100%!important; max-height: 700px!important;">
+                        <table id="main-table-ref1" class="main-table">
+                            <thead>
+                            <tr>
+                                <th scope="col" jhiTranslate="ebwebApp.cPExpenseList.costSetID">
+                                    CostSetID
+                                </th>
+                                <th scope="col" jhiTranslate="ebwebApp.cPExpenseList.date">
+                                    Date
+                                </th>
+                                <th scope="col" jhiTranslate="ebwebApp.cPExpenseList.postedDate">
+                                    PostedDate
+                                </th>
+                                <th scope="col" jhiTranslate="ebwebApp.cPExpenseList.no">
+                                    No
+                                </th>
+                                <th scope="col" jhiTranslate="ebwebApp.cPExpenseList.description">
+                                    Description
+                                </th>
+                                <th scope="col" jhiTranslate="ebwebApp.cPExpenseList.amount">
+                                    Amount
+                                </th>
+                                <th scope="col" jhiTranslate="ebwebApp.cPExpenseList.accountNumber">
+                                    AccountNumber
+                                </th>
+                                <th scope="col" jhiTranslate="ebwebApp.cPExpenseList.expenseItemID">
+                                    ExpenseItemID
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr *ngFor="let cPExpenseList of cPExpenseListType0; let i = index">
+                                <td class="ellip">{{cPExpenseList.costSetCode}}</td>
+                                <td class="text-center">{{cPExpenseList.date | date:'dd/MM/yyyy'}}</td>
+                                <td class="text-center">{{cPExpenseList.postedDate | date:'dd/MM/yyyy'}}</td>
+                                <td class="ellip" (click)="utilsService.viewRefVoucher(cPExpenseList)"
+                                    style="color:blue; text-decoration: underline;">{{cPExpenseList.no}}</td>
+                                <td class="ellip">{{cPExpenseList.description}}</td>
+                                <td class="text-right">{{cPExpenseList.amount | ebcurrency:7:account}}</td>
+                                <td class="text-center">{{cPExpenseList.accountNumber}}</td>
+                                <td class="ellip">{{cPExpenseList.expenseItemCode}}</td>
+                            </tr>
+                            <tr *ngFor="let row of newArr(30 - cPExpenseListType0?.length)">
+                                <td class="jsgrid-cell jsgrid-align">&nbsp;</td>
+                                <td class="jsgrid-cell jsgrid-align">&nbsp;</td>
+                                <td class="jsgrid-cell">&nbsp;</td>
+                                <td class="jsgrid-cell">&nbsp;</td>
+                                <td class="jsgrid-cell jsgrid-align">&nbsp;</td>
+                                <td class="jsgrid-cell jsgrid-align">&nbsp;</td>
+                                <td class="jsgrid-cell">&nbsp;</td>
+                                <td class="jsgrid-cell">&nbsp;</td>
+                            </tr>
+                            </tbody>
+                            <tfoot>
+                            <td class="cell-Table countRow">
+                                <input type="text" readonly
+                                       class="input-Cell"
+                                       value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{cPExpenseListType0.length}}">
+                            </td>
+                            <td class="cell-Table countRow">&nbsp;</td>
+                            <td class="cell-Table countRow">&nbsp;</td>
+                            <td class="cell-Table countRow">&nbsp;</td>
+                            <td class="cell-Table countRow">&nbsp;</td>
+                            <td class="cell-Table countRow"><input type="text" class="input-Cell text-right noEdit"
+                                                                   [ngModel]="sumCPExpenseListType0('amount')" readonly
+                                                                   ebCurrencyMask
+                                                                   [systemOptions]="account?.systemOption"
+                                                                   [type]="7"></td>
+                            <td class="cell-Table countRow">&nbsp;</td>
+                            <td class="cell-Table countRow">&nbsp;</td>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                <div *ngIf="cPExpenseListType0 && cPExpenseListType0.length"
+                     style="padding-right: 16px;">
+                    <div class="row" style="height: 32px">
+                        <div class="col-md-4">
+                            <p style="padding-right: 5px;">
+                                <span jhiTranslate="ebwebApp.cPPeriod.totalAmount"></span>:
+                                <input type="text" class="input-Cell-label" disabled
+                                       [ngModel]="totalAmountEx1"
+                                       ebCurrencyMask [systemOptions]="account?.systemOption" [type]="7"
+                                       [textAlign]="'left'">
+                            </p>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="row justify-content-end" style="height:32px">
+                                <div class="col-lg-3">
+                                    <div class="form-group row">
+                                        <label class="col-sm-7 col-form-label" for="itemsPerPage1"
+                                               style="padding-right: 0px;text-align: right;"><span
+                                            jhiTranslate="ebwebApp.mBDeposit.totalPage"></span>: {{totalItemsEx1}}</label>
+                                        <div class="col-sm-5 pd-l-0">
+                                            <select class="form-control form-control-sm" name="itemsPerPage1"
+                                                    id="itemsPerPage1"
+                                                    style="background-color: #f5f7fa;"
+                                                    [(ngModel)]="itemsPerPageEx1"
+                                                    (ngModelChange)="selectedItemPerPageEx1()"
+                                            >
+                                                <option value="30">30</option>
+                                                <option value="50">50</option>
+                                                <option value="100">100</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="justify-content-end">
+                                    <ngb-pagination [size]="'sm'" [collectionSize]="totalItemsEx1" [(page)]="pageEx1" [pageSize]="itemsPerPageEx1"
+                                                    [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
+                                                    (pageChange)="loadPageEx1(pageEx1)"></ngb-pagination>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="indexTab === 3">
+                <div class="frm-main frm-mains nobg" style="margin-bottom: 0px">
+                    <form action="" id="search2" style="background: #cbdcf0;">
+                        <div class="row">
+                            <div class="col-lg-7">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label text-right"
+                                           jhiTranslate="ebwebApp.cPPeriod.updateForm.name"
+                                    >Name</label>
+                                    <div class="col-sm-9">
+                                        <input [ngModel]="getCPPeriodName()" name="searchValue"
+                                               id="field_searchValue2"
+                                               type="text" class="form-control form-control-sm noEdit">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="frm-main frm-padding tab-pane fade in active show" id="home-ref2"
+                     style="background: #cbdcf0; margin-top: 5px; height: 700px!important;">
+                    <div id="table-scroll-ref2" class="table-scroll" style="height: 100%!important; max-height: 700px!important;">
+                        <table id="main-table-ref2" class="main-table">
+                            <thead>
+                            <tr>
+                                <th scope="col" jhiTranslate="ebwebApp.cPExpenseList.costSetID">
+                                    CostSetID
+                                </th>
+                                <th scope="col" jhiTranslate="ebwebApp.cPExpenseList.date">
+                                    Date
+                                </th>
+                                <th scope="col" jhiTranslate="ebwebApp.cPExpenseList.postedDate">
+                                    PostedDate
+                                </th>
+                                <th scope="col" jhiTranslate="ebwebApp.cPExpenseList.no">
+                                    No
+                                </th>
+                                <th scope="col" jhiTranslate="ebwebApp.cPExpenseList.description">
+                                    Description
+                                </th>
+                                <th scope="col" jhiTranslate="ebwebApp.cPExpenseList.amount">
+                                    Amount
+                                </th>
+                                <th scope="col" jhiTranslate="ebwebApp.cPExpenseList.accountNumber">
+                                    AccountNumber
+                                </th>
+                                <th scope="col" jhiTranslate="ebwebApp.cPExpenseList.expenseItemID">
+                                    ExpenseItemID
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr *ngFor="let cPExpenseList of cPExpenseListType1; let i = index">
+                                <td class="ellip">{{cPExpenseList.costSetCode}}</td>
+                                <td class="text-center">{{cPExpenseList.date | date:'dd/MM/yyyy'}}</td>
+                                <td class="text-center">{{cPExpenseList.postedDate | date:'dd/MM/yyyy'}}</td>
+                                <td class="ellip" (click)="utilsService.viewRefVoucher(cPExpenseList)"
+                                    style="color:blue; text-decoration: underline;">{{cPExpenseList.no}}</td>
+                                <td class="ellip">{{cPExpenseList.reason}}</td>
+                                <td class="text-right">{{cPExpenseList.amount | ebcurrency:7:account}}</td>
+                                <td class="text-center">{{cPExpenseList.accountNumber}}</td>
+                                <td class="ellip">{{cPExpenseList.expenseItemCode}}</td>
+                            </tr>
+                            <tr *ngFor="let row of newArr(30 - cPExpenseListType1?.length)">
+                                <td class="jsgrid-cell jsgrid-align">&nbsp;</td>
+                                <td class="jsgrid-cell jsgrid-align">&nbsp;</td>
+                                <td class="jsgrid-cell">&nbsp;</td>
+                                <td class="jsgrid-cell">&nbsp;</td>
+                                <td class="jsgrid-cell jsgrid-align">&nbsp;</td>
+                                <td class="jsgrid-cell jsgrid-align">&nbsp;</td>
+                                <td class="jsgrid-cell">&nbsp;</td>
+                                <td class="jsgrid-cell">&nbsp;</td>
+                            </tr>
+                            </tbody>
+                            <tfoot>
+                            <td class="cell-Table countRow">
+                                <input type="text" readonly
+                                       class="input-Cell"
+                                       value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{cPExpenseListType1.length}}">
+                            </td>
+                            <td class="cell-Table countRow">&nbsp;</td>
+                            <td class="cell-Table countRow">&nbsp;</td>
+                            <td class="cell-Table countRow">&nbsp;</td>
+                            <td class="cell-Table countRow">&nbsp;</td>
+                            <td class="cell-Table countRow"><input type="text" class="input-Cell text-right noEdit"
+                                                                   [ngModel]="sumCPExpenseListType1('amount')" readonly
+                                                                   ebCurrencyMask
+                                                                   [systemOptions]="account?.systemOption"
+                                                                   [type]="7"></td>
+                            <td class="cell-Table countRow">&nbsp;</td>
+                            <td class="cell-Table countRow">&nbsp;</td>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                <div *ngIf="cPExpenseListType1 && cPExpenseListType1.length"
+                     style="padding-right: 16px;">
+                    <div class="row" style="height: 32px">
+                        <div class="col-md-4">
+                            <p style="padding-right: 5px;">
+                                <span jhiTranslate="ebwebApp.cPPeriod.totalAmount"></span>:
+                                <input type="text" class="input-Cell-label" disabled
+                                       [ngModel]="totalAmountEx2"
+                                       ebCurrencyMask [systemOptions]="account?.systemOption" [type]="7"
+                                       [textAlign]="'left'">
+                            </p>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="row justify-content-end" style="height:32px">
+                                <div class="col-lg-3">
+                                    <div class="form-group row">
+                                        <label class="col-sm-7 col-form-label" for="itemsPerPage2"
+                                               style="padding-right: 0px;text-align: right;"><span
+                                            jhiTranslate="ebwebApp.mBDeposit.totalPage"></span>: {{totalItemsEx2}}</label>
+                                        <div class="col-sm-5 pd-l-0">
+                                            <select class="form-control form-control-sm" name="itemsPerPage2"
+                                                    id="itemsPerPage2"
+                                                    style="background-color: #f5f7fa;"
+                                                    [(ngModel)]="itemsPerPageEx2"
+                                                    (ngModelChange)="selectedItemPerPageEx2()"
+                                            >
+                                                <option value="30">30</option>
+                                                <option value="50">50</option>
+                                                <option value="100">100</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="justify-content-end">
+                                    <ngb-pagination [size]="'sm'" [collectionSize]="totalItemsEx2" [(page)]="pageEx2" [pageSize]="itemsPerPageEx2"
+                                                    [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
+                                                    (pageChange)="loadPageEx2(pageEx2)"></ngb-pagination>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="indexTab === 4">
+                <div class="frm-main frm-mains nobg" style="margin-bottom: 0px">
+                    <form action="" id="search3" style="background: #cbdcf0;">
+                        <div class="row">
+                            <div class="col-lg-7">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label text-right"
+                                           jhiTranslate="ebwebApp.cPPeriod.updateForm.name"
+                                    >Name</label>
+                                    <div class="col-sm-9">
+                                        <input [ngModel]="getCPPeriodName()" name="searchValue"
+                                               id="field_searchValue3"
+                                               type="text" class="form-control form-control-sm noEdit">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div style="padding-top: 10px; position: relative">
+                    <ngb-tabset class="tool-navbar">
+                        <ngb-tab>
+                            <ng-template ngbTabTitle><span
+                                jhiTranslate="ebwebApp.cPPeriod.cPAllocationGeneralExpenseDetail.gridTitle1">Chi phí phân bổ</span>
+                            </ng-template>
+                            <ng-template ngbTabContent>
+                                <div class="tab-content">
+                                    <div class="frm-main frm-padding tab-pane fade in active show" id="home-ref3"
+                                         style="background: #cbdcf0; margin-top: 5px">
+                                        <div id="table-scroll-ref3" class="table-scroll">
+                                            <table id="main-table-ref3" class="main-table">
+                                                <thead>
+                                                <tr>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.cPPeriod.cPAllocationGeneralExpenseDetail.accountNumber">
+                                                        AccountNumber
+                                                    </th>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.cPPeriod.cPAllocationGeneralExpenseDetail.expenseItemID">
+                                                        ExpenseItemID
+                                                    </th>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.cPPeriod.cPAllocationGeneralExpenseDetail.amount">
+                                                        Amount
+                                                    </th>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.cPPeriod.cPAllocationGeneralExpenseDetail.notAllocatedAmount">
+                                                        NotAllocatedAmount
+                                                    </th>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.cPPeriod.cPAllocationGeneralExpenseDetail.thisAllocatedRate">
+                                                        ThisAllocatedRate
+                                                    </th>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.cPPeriod.cPAllocationGeneralExpenseDetail.thisAllocatedAmount">
+                                                        ThisAllocatedAmount
+                                                    </th>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.cPPeriod.cPAllocationGeneralExpenseDetail.allocatedMethod">
+                                                        AllocatedMethod
+                                                    </th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr *ngFor="let detail of cPAllocationGeneralExpense; let i = index">
+                                                    <td class="text-center">{{detail.accountNumber}}</td>
+                                                    <td class="">{{detail.expenseItemCode}}</td>
+                                                    <td class="text-right">{{detail.totalCost | ebcurrency:7:account}}</td>
+                                                    <td class="text-right">{{detail.unallocatedAmount | ebcurrency:7:account}}</td>
+                                                    <td class="text-right"><input type="number" class="input-Cell text-right noSetDisable"
+                                                                                  [(ngModel)]="detail.allocatedRate"
+                                                                                  (ngModelChange)="changeAllocationRate(detail)"
+                                                                                  ebCurrencyMask [systemOptions]="account?.systemOption" [type]="5"></td>
+                                                    <td class="text-right">{{detail.allocatedAmount | ebcurrency:7:account}}</td>
+                                                    <td class="text-center p-0">
+                                                        <select style="border: none!important; background: transparent!important;" name="allocationMethod"
+                                                                id="field_allocationMethod"
+                                                                class="form-control form-control-sm noSetDisable"
+                                                                [(ngModel)]="detail.allocationMethod">
+                                                            <option [ngValue]="item.id"
+                                                                    *ngFor="let item of attributionCriteriaList">{{item.name}}</option>
+                                                        </select>
+                                                    </td>
+                                                </tr>
+                                                <tr *ngFor="let row of newArr(10 - cPAllocationGeneralExpense?.length)">
+                                                    <td class="jsgrid-cell jsgrid-align">&nbsp;</td>
+                                                    <td class="jsgrid-cell jsgrid-align">&nbsp;</td>
+                                                    <td class="jsgrid-cell">&nbsp;</td>
+                                                    <td class="jsgrid-cell">&nbsp;</td>
+                                                    <td class="jsgrid-cell jsgrid-align">&nbsp;</td>
+                                                    <td class="jsgrid-cell jsgrid-align">&nbsp;</td>
+                                                    <td class="jsgrid-cell">&nbsp;</td>
+                                                </tr>
+                                                </tbody>
+                                                <tfoot>
+                                                <td class="cell-Table countRow">
+                                                    <input type="text" readonly
+                                                           class="input-Cell"
+                                                           value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{cPAllocationGeneralExpense?.length}}">
+                                                </td>
+                                                <td class="cell-Table countRow"></td>
+                                                <td class="cell-Table countRow"><input type="text" class="input-Cell text-right noEdit"
+                                                                                       [ngModel]="sumCPAllocation('totalCost')" readonly
+                                                                                       ebCurrencyMask
+                                                                                       [systemOptions]="account?.systemOption"
+                                                                                       [type]="7"></td>
+                                                <td class="cell-Table countRow"><input type="text" class="input-Cell text-right noEdit"
+                                                                                       [ngModel]="sumCPAllocation('unallocatedAmount')" readonly
+                                                                                       ebCurrencyMask
+                                                                                       [systemOptions]="account?.systemOption"
+                                                                                       [type]="7"></td>
+                                                <td class="cell-Table countRow"></td>
+                                                <td class="cell-Table countRow"><input type="text" class="input-Cell text-right noEdit"
+                                                                                       [ngModel]="sumCPAllocation('allocatedAmount')" readonly
+                                                                                       ebCurrencyMask
+                                                                                       [systemOptions]="account?.systemOption"
+                                                                                       [type]="7"></td>
+                                                <td class="cell-Table countRow"></td>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </ngb-tab>
+                    </ngb-tabset>
+                </div>
+                <div style="padding-top: 10px">
+                    <ngb-tabset class="tool-navbar" (tabChange)="selectAllocationMethod($event)">
+                        <ngb-tab>
+                            <ng-template ngbTabTitle><span
+                                jhiTranslate="ebwebApp.cPPeriod.cPAllocationGeneralExpenseDetail.gridTitle2">Kết quả phân bố</span>
+                            </ng-template>
+                            <ng-template ngbTabContent>
+                                <div class="tab-content">
+                                    <div class="frm-main frm-padding tab-pane fade in active show" id="home-ref31"
+                                         style="background: #cbdcf0; margin-top: 5px">
+                                        <div id="table-scroll-ref31" class="table-scroll">
+                                            <table id="main-table-ref31" class="main-table">
+                                                <thead>
+                                                <tr>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.cPPeriod.cPAllocationGeneralExpenseDetail.costSetIDCode">
+                                                        CostSetID
+                                                    </th>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.cPPeriod.cPAllocationGeneralExpenseDetail.costSetIDName">
+                                                        CostSetName
+                                                    </th>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.cPPeriod.cPAllocationGeneralExpenseDetail.accountNumber">
+                                                        AccountNumber
+                                                    </th>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.cPPeriod.cPAllocationGeneralExpenseDetail.expenseItemID">
+                                                        ExpenseItemID
+                                                    </th>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.cPPeriod.cPAllocationGeneralExpenseDetail.allocatedRate">
+                                                        AllocatedRate
+                                                    </th>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.cPPeriod.cPAllocationGeneralExpenseDetail.allocatedAmount">
+                                                        AllocatedAmount
+                                                    </th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr *ngFor="let detail of cPAllocationGeneralExpenseDetails; let i = index">
+                                                    <td class="">{{detail.costSetCode}}</td>
+                                                    <td class="">{{detail.costSetName}}</td>
+                                                    <td class="text-center">{{detail.accountNumber}}</td>
+                                                    <td class="">{{detail.expenseItemCode}}</td>
+                                                    <td class="text-right">{{detail.allocatedRate | ebcurrency:5:account}}</td>
+                                                    <td class="text-right">{{detail.allocatedAmount | ebcurrency:7:account}}</td>
+                                                </tr>
+                                                <tr *ngFor="let row of newArr(10 - cPAllocationGeneralExpenseDetails?.length)">
+                                                    <td class="jsgrid-cell jsgrid-align">&nbsp;</td>
+                                                    <td class="jsgrid-cell jsgrid-align">&nbsp;</td>
+                                                    <td class="jsgrid-cell">&nbsp;</td>
+                                                    <td class="jsgrid-cell">&nbsp;</td>
+                                                    <td class="jsgrid-cell jsgrid-align">&nbsp;</td>
+                                                    <td class="jsgrid-cell jsgrid-align">&nbsp;</td>
+                                                </tr>
+                                                </tbody>
+                                                <tfoot>
+                                                <td class="cell-Table countRow">
+                                                    <input type="text" readonly
+                                                           class="input-Cell"
+                                                           value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{cPAllocationGeneralExpenseDetails?.length}}">
+                                                </td>
+                                                <td class="cell-Table countRow"></td>
+                                                <td class="cell-Table countRow"></td>
+                                                <td class="cell-Table countRow"></td>
+                                                <td class="cell-Table countRow"></td>
+                                                <td class="cell-Table countRow"><input type="text" class="input-Cell text-right noEdit"
+                                                                                       [ngModel]="sumCPAllocationDetail('allocatedAmount')" readonly
+                                                                                       ebCurrencyMask
+                                                                                       [systemOptions]="account?.systemOption"
+                                                                                       [type]="7"></td>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </ngb-tab>
+                        <ngb-tab x-placement="right" id="allocation">
+                            <ng-template ngbTabTitle><span
+                                jhiTranslate="ebwebApp.cPPeriod.cPAllocationGeneralExpenseDetail.btnGridTitle2">Phân bố</span>
+                            </ng-template>
+                        </ngb-tab>
+                    </ngb-tabset>
+                </div>
+            </div>
+            <div *ngIf="indexTab === 5">
+                <div class="frm-main frm-mains nobg" style="margin-bottom: 0px">
+                    <form action="" id="search4" style="background: #cbdcf0;">
+                        <div class="row">
+                            <div class="col-lg-7">
+                                <div class="form-group row">
+                                    <label class="col-sm-3 col-form-label text-right"
+                                           jhiTranslate="ebwebApp.cPPeriod.updateForm.name"
+                                    >Name</label>
+                                    <div class="col-sm-9">
+                                        <input [ngModel]="getCPPeriodName()" name="searchValue"
+                                               id="field_searchValue4"
+                                               type="text" class="form-control form-control-sm noEdit">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-5">
+                                <div class="row">
+                                    <label class="col-sm-2 col-form-label text-right"
+                                           jhiTranslate="ebwebApp.saReturn.debitAccount"
+                                    >Name</label>
+                                    <div class="col-sm-4">
+                                        <combo-box name="debitAccount"
+                                                   [dataList]="debitAccountList"
+                                                   [listColumns]="utilsService.listColumnsAccountList"
+                                                   displayMember="accountNumber"
+                                                   valueName="accountNumber"
+                                                   [headerColumns]="utilsService.listHeaderColumnsAccountList"
+                                                   [isObject]="false"
+                                                   [isRequired]="true"
+                                                   [isOutTable]="true"
+                                                   [(ngModel)]="debitAccount">
+                                        </combo-box>
+                                    </div>
+                                    <label class="col-sm-2 col-form-label text-right"
+                                           jhiTranslate="ebwebApp.saReturn.creditAccount"
+                                    >Name</label>
+                                    <div class="col-sm-4">
+                                        <combo-box name="creditAccount"
+                                                   [dataList]="creditAccountList"
+                                                   [listColumns]="utilsService.listColumnsAccountList"
+                                                   displayMember="accountNumber"
+                                                   valueName="accountNumber"
+                                                   [headerColumns]="utilsService.listHeaderColumnsAccountList"
+                                                   [isObject]="false"
+                                                   [isRequired]="true"
+                                                   [isOutTable]="true"
+                                                   [(ngModel)]="creditAccount">
+                                        </combo-box>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div style="padding-top: 10px">
+                    <ngb-tabset class="tool-navbar">
+                        <ngb-tab>
+                            <ng-template ngbTabTitle><span
+                                jhiTranslate="ebwebApp.cPPeriod.CPAcceptanceDetail.title">Xác định dở dang</span>
+                            </ng-template>
+                            <ng-template ngbTabContent>
+                                <div class="tab-content">
+                                    <div class="frm-main frm-padding tab-pane fade in active show" id="home-ref4"
+                                         style="background: #cbdcf0; margin-top: 5px; height: 700px!important;">
+                                        <div id="table-scroll-ref4" class="table-scroll" style="height: 100%!important; max-height: 700px!important;">
+                                            <table id="main-table-ref4" class="main-table">
+                                                <thead>
+                                                <tr>
+                                                    <th scope="col" *ngIf="cPPeriod.type === PHUONG_PHAP_CTVV"
+                                                        jhiTranslate="ebwebApp.cPPeriod.CPAcceptanceDetail.constructCode">
+                                                    </th>
+                                                    <th scope="col" *ngIf="cPPeriod.type === PHUONG_PHAP_CTVV"
+                                                        jhiTranslate="ebwebApp.cPPeriod.CPAcceptanceDetail.constructName">
+                                                    </th>
+                                                    <th scope="col" *ngIf="cPPeriod.type === PHUONG_PHAP_DON_HANG"
+                                                        jhiTranslate="ebwebApp.cPPeriod.CPAcceptanceDetail.orderCode">
+                                                    </th>
+                                                    <th scope="col" *ngIf="cPPeriod.type === PHUONG_PHAP_DON_HANG"
+                                                        jhiTranslate="ebwebApp.cPPeriod.CPAcceptanceDetail.orderName">
+                                                    </th>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.cPPeriod.CPAcceptanceDetail.revenueAmount">
+                                                    </th>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.cPPeriod.CPAcceptanceDetail.amount">
+                                                    </th>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.cPPeriod.CPAcceptanceDetail.acceptedRate">
+                                                    </th>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.cPPeriod.CPAcceptanceDetail.totalAcceptedAmount">
+                                                    </th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr *ngFor="let detail of cPAcceptanceDetails; let i = index">
+                                                    <td>{{detail.costSetCode}}</td>
+                                                    <td>{{detail.costSetName}}</td>
+                                                    <td class="text-right">{{detail.revenueAmount | ebcurrency:7:account}}</td>
+                                                    <td class="text-right">{{detail.amount | ebcurrency:7:account}}</td>
+                                                    <td class="text-right"><input type="number" class="input-Cell text-right noSetDisable"
+                                                                                  [(ngModel)]="detail.acceptedRate"
+                                                                                  (ngModelChange)="changeAcceptedRate(detail)"
+                                                                                  ebCurrencyMask [systemOptions]="account?.systemOption" [type]="5"></td>
+                                                    <td class="text-right">{{detail.totalAcceptedAmount | ebcurrency:7:account}}</td>
+                                                </tr>
+                                                <tr *ngFor="let row of newArr(30 - cPAcceptanceDetails?.length)">
+                                                    <td class="jsgrid-cell">&nbsp;</td>
+                                                    <td class="jsgrid-cell">&nbsp;</td>
+                                                    <td class="jsgrid-cell">&nbsp;</td>
+                                                    <td class="jsgrid-cell">&nbsp;</td>
+                                                    <td class="jsgrid-cell">&nbsp;</td>
+                                                    <td class="jsgrid-cell">&nbsp;</td>
+                                                </tr>
+                                                </tbody>
+                                                <tfoot>
+                                                <td class="cell-Table countRow">
+                                                    <input type="text" readonly
+                                                           class="input-Cell"
+                                                           value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{cPAcceptanceDetails?.length}}">
+                                                </td>
+                                                <td class="cell-Table countRow"></td>
+                                                <td class="cell-Table countRow"><input type="number" class="input-Cell text-right noEdit"
+                                                                                       [ngModel]="sumCPAcceptanceDetail('revenueAmount')"
+                                                                                       ebCurrencyMask [systemOptions]="account?.systemOption" [type]="7"></td>
+                                                <td class="cell-Table countRow"><input type="number" class="input-Cell text-right noEdit"
+                                                                                       [ngModel]="sumCPAcceptanceDetail('amount')"
+                                                                                       ebCurrencyMask [systemOptions]="account?.systemOption" [type]="7"></td>
+                                                <td class="cell-Table countRow"></td>
+                                                <td class="cell-Table countRow"><input type="number" class="input-Cell text-right noEdit"
+                                                                                       [ngModel]="sumCPAcceptanceDetail('totalAcceptedAmount')"
+                                                                                       ebCurrencyMask [systemOptions]="account?.systemOption" [type]="7"></td>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </ngb-tab>
+                    </ngb-tabset>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

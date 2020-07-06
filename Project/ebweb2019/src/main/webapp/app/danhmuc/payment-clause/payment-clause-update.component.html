@@ -1,0 +1,190 @@
+<div style="padding: 0px!important;">
+    <div class="margin-tp-5 margin-0 ">
+        <div class="">
+            <div class="itemw">
+                <div class="menu-tool-bar he">
+                    <div class="ptitle">
+                        <span jhiTranslate="ebwebApp.paymentClause.home.title">Điều khoản thanh toán</span>
+                    </div>
+                    <div class="gr-toolbar">
+                        <a (click)="save()"
+                           *ebHasSomeAuthorityOrCondition=
+                               "[[ROLE_DKTT_Them, !isEditUrl], ROLE_DKTT_Sua,'ROLE_ADMIN']"
+                           title="{{'ebwebApp.autoPrinciple.tooltipSave' | translate}}"><i
+                            class="mdi mdi-briefcase-download"
+                        ></i>
+                            <span jhiTranslate="ebwebApp.mCReceipt.home.save">Lưu</span>
+                        </a>
+                        <a (click)="saveAndNew()"
+                           *ebHasSomeAuthorityOrCondition=
+                               "[[ROLE_DKTT_Them , ROLE_DKTT_Sua], 'ROLE_ADMIN', [ROLE_DKTT_Them, isCreateUrl]]"
+                           title="{{'ebwebApp.autoPrinciple.tooltipSaveAndAdd' | translate}}"><i
+                            class="mdi mdi-plus fa-plus color-green"></i>
+                            <span jhiTranslate="ebwebApp.mCReceipt.home.saveAndAddNew">Lưu và thêm mới</span>
+                        </a>
+                        <a [class.disabled]="!paymentClause.id" (click)="delete()"
+                           *ebHasAnyAuthority="['ROLE_ADMIN', ROLE_DKTT_Xoa]"
+                           title="{{'ebwebApp.autoPrinciple.tooltipDelete' | translate}}"><i
+                            class="mdi mdi-delete-forever"></i>
+                            <span jhiTranslate="ebwebApp.mCReceipt.home.delete">Xóa</span>
+                        </a>
+                        <a (click)="closeForm()" *ebHasAnyAuthority="['ROLE_ADMIN', ROLE_DKTT_Xem]"
+                           title="{{'ebwebApp.autoPrinciple.tooltipBack' | translate}}"><i
+                            class="mdi mdi-window-close"
+                        ></i>
+                            <span jhiTranslate="ebwebApp.mCReceipt.home.close">Đóng</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="frm-main">
+                    <div class="row no-gutters">
+                        <div class="col-lg-12">
+                            <fieldset>
+                                <form style="border: none;">
+                                    <div class="row no-gutters">
+                                        <div class="col-lg-12">
+                                            <div class="form-group row no-gutters">
+                                                <label class="my-col-form-label" id="lb_paymentClauseCode"
+                                                       jhiTranslate="ebwebApp.paymentClause.paymentClauseCode1"
+                                                ></label>
+                                                <div class="col-sm-3 my-last-div-user-3">
+                                                    <input type="text" class="form-control form-control-sm"
+                                                           name="paymentClauseCode"
+                                                           id="field_paymentClauseCode"
+                                                           required
+                                                           maxlength="25"
+                                                           [tabindex]="1"
+                                                           [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                           [(ngModel)]="paymentClause.paymentClauseCode"/>
+                                                </div>
+                                                <label class="my-col-form-label-1" style="padding-left: 5px;"
+                                                       jhiTranslate="ebwebApp.paymentClause.paymentClauseName1">Tên
+                                                    điều khoản (*)</label>
+                                                <div class="col-sm-3 my-last-div-user-3">
+                                                    <input type="text" class="form-control form-control-sm"
+                                                           name="paymentClauseName"
+                                                           id="field_paymentClauseName"
+                                                           required
+                                                           maxlength="512"
+                                                           [tabindex]="2"
+                                                           [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                           [(ngModel)]="paymentClause.paymentClauseName"/>
+                                                </div>
+                                                <label class="my-col-form-label-1 "
+                                                       style=" padding-left: 5px !important;"
+                                                       jhiTranslate="ebwebApp.paymentClause.dueDate">Số ngày
+                                                    được nợ</label>
+                                                <div class="col-sm-3 my-last-div-user-3">
+                                                    <input name="dueDate" type="text" id="field_dueDate"
+                                                           [tabindex]="3"
+                                                           [(ngModel)]="paymentClause.dueDate"
+                                                           class="form-control form-control-sm"
+                                                           ebCurrencyMask
+                                                           [allowNegative]="false"
+                                                           [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                           [systemOptions]="account?.systemOption"
+                                                           [type]="9"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row no-gutters">
+                                        <div class="col-lg-12">
+                                            <div class="form-group row no-gutters">
+                                                <label class="my-col-form-label"
+                                                       jhiTranslate="ebwebApp.paymentClause.discountPercent1"
+                                                >Tỷ lệ chiết khấu</label>
+                                                <div class="col-sm-3 my-last-div-user-3">
+                                                    <input name="discountRate" type="text"
+                                                           id="field_discountPercent"
+                                                           [tabindex]="4"
+                                                           [(ngModel)]="paymentClause.discountPercent"
+                                                           [value]="5"
+                                                           [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                           class="form-control form-control-sm"
+                                                           ebCurrencyMask
+                                                           [allowNegative]="false"
+                                                           [systemOptions]="account?.systemOption"
+                                                           [type]="5"
+                                                    />
+                                                    <!--                                                    <span class="col-form-label">%</span>-->
+                                                </div>
+                                                <label class="my-col-form-label-1" style="padding-left: 5px !important;"
+                                                       jhiTranslate="ebwebApp.paymentClause.discountDate"
+                                                >Thời gian hưởng chiết khấu</label>
+                                                <div class="col-sm-3 my-last-div-user-3">
+                                                    <input name="discountDate" type="text"
+                                                           id="field_discountDate"
+                                                           [tabindex]="6"
+                                                           [(ngModel)]="paymentClause.discountDate"
+                                                           [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                           class="form-control form-control-sm"
+                                                           ebCurrencyMask
+                                                           [allowNegative]="false"
+                                                           [systemOptions]="account?.systemOption"
+                                                           [type]="9"
+                                                    />
+                                                </div>
+                                                <label class="my-col-form-label-1" id="lb_overdueInterestPercent"
+                                                       style="padding-left: 5px !important;"
+                                                       jhiTranslate="ebwebApp.paymentClause.overdueInterestPercent1"
+                                                >Số % lãi nợ quá hạn</label>
+                                                <div class="col-sm-3 my-last-div-user-3">
+                                                    <input name="overDueInterestPercent" type="text"
+                                                           id="field_overDueInterestPercent"
+                                                           [tabindex]="5"
+                                                           [(ngModel)]="paymentClause.overDueInterestPercent"
+                                                           [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                           class="form-control form-control-sm"
+                                                           ebCurrencyMask
+                                                           [allowNegative]="false"
+                                                           [systemOptions]="account?.systemOption"
+                                                           [type]="5"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="paymentClause.id" class="col-lg-12">
+                    <div class="form-group row">
+                        <div class="col-sm-3 pd-l-0 pd-r-10">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" [(ngModel)]="paymentClause.isActive" name="isActive"
+                                       [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                       class="custom-control-input"
+                                       id="isActive">
+                                <label class="custom-control-label" for="isActive"
+                                       jhiTranslate="ebwebApp.statisticsCode.isActive">Theo dõi</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #content let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.saBill.saveMessage">Dữ liệu đã bị thay đổi, Bạn có muốn lưu lại?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="save()" jhiTranslate="entity.action.save">Save
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="close()" jhiTranslate="entity.action.noSave">close
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="closeContent()" jhiTranslate="entity.action.close">
+            close
+        </button>
+    </div>
+</ng-template>
+

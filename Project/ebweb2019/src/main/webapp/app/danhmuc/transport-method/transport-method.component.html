@@ -1,0 +1,101 @@
+<div class="container-fluid">
+    <div class="margin-tp-5 margin-0">
+        <div class="">
+            <div class="itemw" style="color: #FFFFFF">
+                <div class="menu-tool-bar he">
+                    <div class="ptitle">
+                        <span jhiTranslate="ebwebApp.transportMethod.home.title">Phương thức vận chuyển</span>
+                    </div>
+                    <div class="gr-toolbar">
+                        <button class="button-navigation" (click)="addNew($event)" title="{{'ebwebApp.autoPrinciple.tooltipAdd' | translate}}"  *ebHasAnyAuthority="['ROLE_ADMIN', ROLE_TransportMethod_Them]">
+                            <i class="mdi mdi-plus"></i> <span jhiTranslate="ebwebApp.transportMethod.add"></span></button>
+                        <button class="button-navigation" [disabled]="transportMethods.length === 0" (click)="edit()" title="{{'ebwebApp.autoPrinciple.tooltipEdit' | translate}}" *ebHasAnyAuthority="['ROLE_ADMIN', ROLE_TransportMethod_Sua]">
+                           <i class="mdi mdi-pen"></i><span jhiTranslate="ebwebApp.transportMethod.edit"></span></button>
+                        <button class="button-navigation" [disabled]="transportMethods.length === 0" (click)="delete()" title="{{'ebwebApp.autoPrinciple.tooltipDelete' | translate}}" *ebHasAnyAuthority="['ROLE_ADMIN',ROLE_TransportMethod_Xoa]">
+                            <i class="mdi mdi-delete"></i><span jhiTranslate="ebwebApp.transportMethod.delete.delete"></span></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="frm-main frm-mains nobg" style="background: #cbdcf0; margin-top: 5px">
+                <div id="table-scroll0" class="table-scroll" style="max-height: 700px !important;">
+                    <table id="main-table0" class="main-table">
+                        <thead>
+                        <tr>
+                            <th scope="col" jhiTranslate="ebwebApp.transportMethod.transportMethodCode">phương thức vận chuyển</th>
+                            <th scope="col" jhiTranslate="ebwebApp.transportMethod.transportMethodName">Tên phương thức vận chuyển</th>
+                            <th scope="col" jhiTranslate="ebwebApp.transportMethod.description">Mô tả chi tiết</th>
+                            <th scope="col" jhiTranslate="ebwebApp.transportMethod.isActive">Theo dõi</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let transport of transportMethods; let i = index"
+                            (click)="selectMultiRow(transport, $event, transportMethods)"
+                            (dblclick)="edit()"
+                            [class.row-selected]="this.selectedRows.indexOf(transport) !== -1"
+                        >
+                            <td class="jsgrid-cell jsgrid-align-left"
+                                style="width: 150px">{{transport.transportMethodCode}}</td>
+                            <td class="jsgrid-cell jsgrid-align-left"
+                                style="width: 150px">{{transport.transportMethodName}}</td>
+                            <td class="jsgrid-cell jsgrid-align-left"
+                                style="width: 150px">{{transport.description}}</td>
+                            <td class="jsgrid-cell jsgrid-align-center"
+                                style="width: 150px">
+                                <div class="custom-control custom-checkbox" [class.myreadonlytrue]="true">
+                                    <input type="checkbox" [(ngModel)]="transport.isActive" name="isActive{{i}}"
+                                           class="custom-control-input"
+                                           id="isActive{{i}}">
+                                    <label class="custom-control-label" for="isActive{{i}}"></label>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr *ngFor="let arr of newArr(20 - transportMethods?.length )">
+                            <td class="jsgrid-cell jsgrid-align-center" style="width: 150px">&nbsp;</td>
+                            <td class="jsgrid-cell jsgrid-align-center" style="width: 150px">&nbsp;</td>
+                            <td class="jsgrid-cell jsgrid-align-center" style="width: 150px">&nbsp;</td>
+                            <td class="jsgrid-cell jsgrid-align-center" style="width: 150px">&nbsp;</td>
+                        </tr>
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <td class="cell-Table" colspan="6" style="padding: 0px"><input type="text" readonly
+                                                                                           class="countRow input-Cell"
+                                                                                           value="{{'ebwebApp.mBDeposit.countLine'| translate}} : {{transportMethods?.length}}">
+                            </td>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+            <div
+                style="padding-right: 16px">
+                <div class="row justify-content-end" style="height:32px">
+                    <div class="col-lg-2">
+                        <div class="form-group row">
+                            <label class="col-sm-7 col-form-label" for="itemsPerPage"
+                                   style="padding-right: 0px;text-align: right;"><span
+                                jhiTranslate="ebwebApp.mBDeposit.totalPage"></span>:{{totalItems}}</label>
+                            <div class="col-sm-5 pd-l-0">
+                                <select class="form-control form-control-sm" name="itemsPerPage"
+                                        id="itemsPerPage"
+                                        style="background-color: #f5f7fa;"
+                                        [(ngModel)]="itemsPerPage"
+                                        (ngModelChange)="loadAll()">
+                                    <option [value]="20">20</option>
+                                    <option [value]="30">30</option>
+                                    <option [value]="40">40</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="justify-content-end">
+                        <ngb-pagination [size]="'sm'" [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage"
+                                        [maxSize]="5" [rotate]="true" (pageChange)="loadPage(page)" [size]="'sm'"
+                        ></ngb-pagination>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

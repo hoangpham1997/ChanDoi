@@ -1,0 +1,116 @@
+<div class="container-fluid">
+    <div class="margin-tp-5 margin-0">
+        <div class="">
+            <div class="itemw" style="color: #FFFFFF">
+                <div class="menu-tool-bar he">
+                    <div class="ptitle">
+                        <span jhiTranslate="ebwebApp.accountTransfer.home.title"></span>
+                    </div>
+                    <div class="gr-toolbar">
+                        <button class="button-navigation" title="{{buttonAddTranslate | translate}}"
+                                *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_TaiKhoanKetChuyen_Them]"
+                                (click)="addNew($event)"><i
+                            class="mdi mdi-plus"></i><span jhiTranslate="ebwebApp.accountTransfer.add">Thêm</span>
+                        </button>
+                        <button class="button-navigation" title="{{buttonEditTranslate | translate}}"
+                                *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_TaiKhoanKetChuyen_Sua]" [hidden]="!selectedRow"
+                                (click)="edit()"><i
+                            class="mdi mdi-pen"></i><span jhiTranslate="ebwebApp.accountTransfer.edit">Sửa</span>
+                        </button>
+                        <button class="button-navigation" title="{{buttonDeleteTranslate | translate}}"
+                                *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_TaiKhoanKetChuyen_Xoa]" [hidden]="!selectedRow"
+                                (click)="delete()"
+                        ><i
+                            class="mdi mdi-delete"></i><span
+                            jhiTranslate="ebwebApp.accountTransfer.delete">Xóa</span></button>
+                    </div>
+                </div>
+            </div>
+            <div class="frm-main frm-mains nobg" style="background: #cbdcf0; margin-top: 5px">
+                <div id="table-scroll0" class="table-scroll" style="max-height: 700px !important;">
+                    <table id="main-table0" class="main-table">
+                        <thead>
+                        <tr>
+                            <th scope="col" jhiTranslate="ebwebApp.accountTransfer.accountTransferOrder"></th>
+                            <th scope="col" jhiTranslate="ebwebApp.accountTransfer.accountTransferCode"></th>
+                            <th scope="col" jhiTranslate="ebwebApp.accountTransfer.fromAccount"></th>
+                            <th scope="col" jhiTranslate="ebwebApp.accountTransfer.toAccount"></th>
+                            <th scope="col" jhiTranslate="ebwebApp.accountTransfer.description"></th>
+                            <th scope="col" jhiTranslate="ebwebApp.accountTransfer.fromAccountData"></th>
+                            <th scope="col" jhiTranslate="ebwebApp.accountTransfer.debitAccount"></th>
+                            <th scope="col" jhiTranslate="ebwebApp.accountTransfer.creditAccount"></th>
+                            <th scope="col" jhiTranslate="ebwebApp.accountTransfer.isActive"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let accountTransfer of accountTransfers; let i = index ;trackBy: trackId"
+                            (click)="selectMultiRow(accountTransfer, $event, accountTransfers)"
+                            [class.row-selected]="this.selectedRows.indexOf(accountTransfer) !== -1"
+                            (dblclick)="edit()">
+                            <td title="{{accountTransfer.accountTransferOrder}}" class="jsgrid-cell jsgrid-align-center"
+                                style="width: 50px">{{accountTransfer.accountTransferOrder}}</td>
+                            <td title="{{accountTransfer.accountTransferCode}}" class="jsgrid-cell jsgrid-align-left"
+                                style="width: 150px">{{accountTransfer.accountTransferCode}}</td>
+                            <td title="{{accountTransfer.fromAccount}}" class="jsgrid-cell jsgrid-align-center"
+                                style="width: 100px">{{accountTransfer.fromAccount}}</td>
+                            <td title="{{accountTransfer.toAccount}}" class="jsgrid-cell jsgrid-align-center"
+                                style="width: 100px">{{accountTransfer.toAccount}}</td>
+                            <td title="{{accountTransfer.description}}" class="jsgrid-cell jsgrid-align-left"
+                                style="min-width: 300px">{{accountTransfer.description}}</td>
+                            <td title="{{getFromDataAccount(accountTransfer.fromAccountData)}}"
+                                class="jsgrid-cell jsgrid-align-left"
+                                style="width: 100px">{{getFromDataAccount(accountTransfer.fromAccountData)}}</td>
+                            <td title="{{getDebitAccount(accountTransfer.debitAccount)}}"
+                                class="jsgrid-cell jsgrid-align-left"
+                                style="width: 100px">{{getDebitAccount(accountTransfer.debitAccount)}}</td>
+                            <td title="{{getCreditAccount(accountTransfer.creditAccount)}}"
+                                class="jsgrid-cell jsgrid-align-left"
+                                style="width: 100px">{{getCreditAccount(accountTransfer.creditAccount)}}</td>
+                            <td class="jsgrid-cell jsgrid-align-center"
+                                style="width: 150px">
+                                <div class="custom-control custom-checkbox" [class.myreadonlytrue]="true">
+                                    <input type="checkbox" [(ngModel)]="accountTransfer.isActive" name="isActive{{i}}"
+                                           class="custom-control-input"
+                                           id="isActive{{i}}">
+                                    <label class="custom-control-label" for="isActive{{i}}"></label>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr
+                            *ngFor="let l of newArr(20 - accountTransfers.length)">
+                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                            </td>
+                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                            </td>
+                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                            </td>
+                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                            </td>
+                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                            </td>
+                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                            </td>
+                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                            </td>
+                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                            </td>
+                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                            </td>
+                        </tr>
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <td class="cell-Table countRow" colspan="9">{{'ebwebApp.mBDeposit.countLine'| translate}}
+                                : {{accountTransfers?.length}}
+                            </td>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Footer -->
+<footer>
+</footer>

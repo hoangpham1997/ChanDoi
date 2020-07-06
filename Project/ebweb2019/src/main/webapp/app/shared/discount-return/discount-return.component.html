@@ -1,0 +1,161 @@
+<div class="modal-header">
+    <h4 class="modal-title" jhiTranslate="ebwebApp.pPDiscountReturn.selectLicense">chọn chứng từ mua hàng</h4>
+</div>
+<div class="modal-body" style="padding: 20px!important;">
+    <div class="row">
+        <!-- chọn đối tượng-->
+        <div class="col-5 row">
+            <div class="form-group col-6">
+                <label jhiTranslate="ebwebApp.common.object">Đối tượng</label>
+                <combo-box id="object"
+                           name="accountingObject"
+                           [dataList]="accountingObjects"
+                           [listColumns]="utilsService.listColumnsAccountingObjects"
+                           displayMember="accountingObjectCode"
+                           valueName="id"
+                           [headerColumns]="utilsService.listHeaderColumnsAccountingObject"
+                           [isObject]="false"
+                           [(ngModel)]="accountingObject"
+                           [isOutTable]="true"
+                           (ngModelChange)="search()"
+                >
+                </combo-box>
+            </div>
+            <div class="form-group col-6">
+                <label jhiTranslate="ebwebApp.receiveBill.detail.time">Chọn thời gian</label>
+                <combo-box style=""
+                           name="timeLine"
+                           [dataList]="listTimeLine"
+                           [listColumns]="utilsService.listColumnsTimeLine"
+                           [isOutTable]="true"
+                           displayMember="display"
+                           valueName="value"
+                           [headerColumns]="utilsService.listHeaderColumnsTimeLine"
+                           [isObject]="false"
+                           [(ngModel)]="timeLineVoucher"
+                           (ngModelChange)="selectChangeBeginDateAndEndDate(timeLineVoucher)"
+                ></combo-box>
+            </div>
+        </div>
+        <div class="col-5 row">
+            <div class="form-group col-6">
+                <label jhiTranslate="ebwebApp.saBill.invoice.fromDate">date</label>
+                <eb-date-picker [(ngModel)]="fromDate" name="fromdate" format="YYYYMMDD"></eb-date-picker>
+            </div>
+            <div class="form-group col-6">
+                <label jhiTranslate="ebwebApp.saBill.invoice.toDate">date</label>
+                <eb-date-picker [(ngModel)]="toDate" name="todate" format="YYYYMMDD"></eb-date-picker>
+            </div>
+        </div>
+        <div class="col-2">
+            <label>&nbsp;</label>
+            <div>
+                <button class="btn btn-success btn-sm ebwebApp.receiveBill.getData" (click)="search()"><i
+                    class="mdi mdi-magnify mr-2"
+                    aria-hidden="true"></i><span jhiTranslate="ebwebApp.receiveBill.getData"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="frm-main frm-padding tab-pane fade in active show" id="home-ref"
+             style="background: #cbdcf0">
+            <div id="table-scroll-ref" class="table-scroll-popup">
+                <table id="main-table-ref" class="main-table">
+                    <thead>
+                    <tr>
+                        <th scope="col">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="check-all"
+                                       [checked]="isCheckAll()" (change)="checkAll()">
+                                <label class="custom-control-label" for="check-all"></label>
+                            </div>
+                        </th>
+                        <th scope="col" jhiTranslate="global.commonInfo.vDate">Ngày chứng từ</th>
+                        <th scope="col" jhiTranslate="global.commonInfo.noFBook">Số chứng từ</th>
+                        <th scope="col" jhiTranslate="ebwebApp.pPDiscountReturnDetails.materialGoodsID">Mã hàng</th>
+                        <th scope="col" jhiTranslate="ebwebApp.pPDiscountReturnDetails.description">Tên hàng</th>
+                        <th scope="col" jhiTranslate="ebwebApp.common.quantityPurchased" *ngIf="status">Số lượng mua</th>
+                        <th scope="col" jhiTranslate="ebwebApp.common.amountReturned" *ngIf="status">Số lượng trả lại</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let viewVoucher of viewVouchers; let i = index">
+                        <td class="text-center" (click)="check(viewVoucher)">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" name="{{'checkbox' + i}}"
+                                       id="{{'checkbox' + i}}" [(ngModel)]="viewVoucher.checked"
+                                       (click)="check(viewVoucher)">
+                                <label class="custom-control-label" for="{{'checkbox' + i}}"></label>
+                            </div>
+                        </td>
+                        <td (click)="check(viewVoucher)"
+                            class="text-center">{{viewVoucher.date | date:'dd/MM/yyyy'}}</td>
+                        <td (click)="utilsService.viewRefVoucher(viewVoucher)" style="color:blue; text-decoration: underline;" class="text-left">{{viewVoucher.noMBook}}</td>
+                        <td (click)="check(viewVoucher)" class="text-left">{{viewVoucher.materialGoodsCode}}</td>
+                        <td (click)="check(viewVoucher)" class="text-left">{{viewVoucher.description}}</td>
+                        <td (click)="check(viewVoucher)" class="text-right"  *ngIf="status" readonly="true">
+                            <input type="number"
+                                   class="input-Cell text-right w-100 bg-transparent border-0"
+                                   name="{{'quantityRollBack' + i}}"
+                                   [(ngModel)]="viewVoucher.quantity" ebCurrencyMask
+                                    readonly
+                                   [systemOptions]="account?.systemOption" [type]="3"
+                                   [allowNegative]="false"></td>
+                        <td class="text-right"  *ngIf="status"><input type="number"
+                                                      class="input-Cell w-100 text-right bg-transparent border-0"
+                                                      name="{{'quantityRollBack' + i}}"
+                                                      [(ngModel)]="viewVoucher.quantityRollBack" ebCurrencyMask
+                                                      (blur)="changeQuantityRollBack(viewVoucher)"
+                                                      [systemOptions]="account?.systemOption" [type]="3"
+                                                      max="{{viewVoucher.quantity}}" [allowNegative]="false"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div *ngIf="viewVouchers && viewVouchers.length"
+                 style="padding-right: 16px;">
+                <div class="row justify-content-end" style="height:32px">
+                    <div class="col-lg-2">
+                        <div class="form-group row d-flex justify-content-end">
+                            <label class="col-form-label" for="itemsPerPagePPinvoice"
+                                   style="padding-right: 0px;text-align: right;">Tổng số : {{totalItems}}</label>
+                            <div class="pd-l-0 pl-1 pr-1">
+                                <select class="form-control form-control-sm" name="itemsPerPage"
+                                        id="itemsPerPagePPinvoice"
+                                        style="background-color: #f5f7fa;"
+                                        [(ngModel)]="itemsPerPage"
+                                        (ngModelChange)="selectedItemPerPage()"
+                                >
+                                    <option [selected] value="10">10</option>
+                                    <option value="20">20</option>
+                                    <option value="30">30</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="justify-content-end">
+                        <ngb-pagination [size]="'sm'" [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage"
+                                        [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
+                                        (pageChange)="loadPage(page)"></ngb-pagination>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-body" style="padding: 0!important; padding-bottom: 20px!important;">
+        <div class="row">
+            <div class="col-md-12 text-right">
+                <label>&nbsp;</label>
+                <div>
+                    <button class="btn btn-primary" (click)="apply()"><span jhiTranslate="entity.action.choose"></span>
+                    </button>
+                    <button class="btn btn-default" (click)="close()"><span jhiTranslate="entity.action.close"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

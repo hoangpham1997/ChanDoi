@@ -1,0 +1,291 @@
+<div >
+    <div >
+        <div class="menu-tool-bar he">
+            <div class="ptitle">
+                <span jhiTranslate="ebwebApp.dinhMucGiaThanhThanhPham.home.title"></span>
+            </div>
+            <div class="gr-toolbar">
+                <a title="{{buttonSaveTranslate | translate}}" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_DinhMucGiaThanhThanhPham_Sua]" (click)="save()"><i class="mdi mdi-briefcase-download"></i> <span
+                    jhiTranslate="ebwebApp.dinhMucGiaThanhThanhPham.save"></span>
+                </a>
+            </div>
+        </div>
+        <ngb-tabset class="tool-navbar">
+            <ngb-tab id="tab1">
+                <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.dinhMucGiaThanhThanhPham.details"></span>
+                </ng-template>
+                <ng-template ngbTabContent>
+                    <div class="tab-content">
+                        <div class="frm-main frm-padding tab-pane fade in active show" id="home-detail"
+                             style="background: #cbdcf0">
+                            <div id="table-scroll0" class="table-scroll voucher-table" style="height: 100%">
+                                <table id="main-table0" class="main-table">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col" class="jsgrid-align-center" rowspan="2"
+                                            jhiTranslate="ebwebApp.dinhMucGiaThanhThanhPham.materialGoodsCode"></th>
+                                        <th scope="col" class="jsgrid-align-center" rowspan="2"
+                                            jhiTranslate="ebwebApp.dinhMucGiaThanhThanhPham.materialGoodsName"></th>
+                                        <th scope="col" class="jsgrid-align-center" rowspan="2"
+                                            jhiTranslate="ebwebApp.dinhMucGiaThanhThanhPham.unit"></th>
+                                        <th scope="col" class="jsgrid-align-center" rowspan="2"
+                                            jhiTranslate="ebwebApp.dinhMucGiaThanhThanhPham.directMaterialAmount"></th>
+                                        <th scope="col" class="jsgrid-align-center" rowspan="2"
+                                            jhiTranslate="ebwebApp.dinhMucGiaThanhThanhPham.directLaborAmount"></th>
+                                        <th scope="col" class="jsgrid-align-center" colspan="6"
+                                            jhiTranslate="ebwebApp.dinhMucGiaThanhThanhPham.constructionMachines"></th>
+                                        <th scope="col" class="jsgrid-align-center" colspan="6"
+                                            jhiTranslate="ebwebApp.dinhMucGiaThanhThanhPham.generalProduction"></th>
+                                        <th scope="col" class="jsgrid-align-center"
+                                            rowspan="2"
+                                            jhiTranslate="ebwebApp.dinhMucGiaThanhThanhPham.totalCostAmount"></th>
+                                    </tr>
+                                    <tr>
+                                        <th scope="col" class="jsgrid-align-center sticky-30"
+                                            jhiTranslate="ebwebApp.dinhMucGiaThanhThanhPham.machineMaterialAmount"></th>
+                                        <th scope="col" class="jsgrid-align-center sticky-30"
+                                            jhiTranslate="ebwebApp.dinhMucGiaThanhThanhPham.machineLaborAmount"></th>
+                                        <th scope="col" class="jsgrid-align-center sticky-30"
+                                            jhiTranslate="ebwebApp.dinhMucGiaThanhThanhPham.machineToolsAmount"></th>
+                                        <th scope="col" class="jsgrid-align-center sticky-30"
+                                            jhiTranslate="ebwebApp.dinhMucGiaThanhThanhPham.machineDepreciationAmount"></th>
+                                        <th scope="col" class="jsgrid-align-center sticky-30"
+                                            jhiTranslate="ebwebApp.dinhMucGiaThanhThanhPham.machineServiceAmount"></th>
+                                        <th scope="col" class="jsgrid-align-center sticky-30"
+                                            jhiTranslate="ebwebApp.dinhMucGiaThanhThanhPham.machineGeneralAmount"></th>
+                                        <th scope="col" class="jsgrid-align-center sticky-30"
+                                            jhiTranslate="ebwebApp.dinhMucGiaThanhThanhPham.generalMaterialAmount"></th>
+                                        <th scope="col" class="jsgrid-align-center sticky-30"
+                                            jhiTranslate="ebwebApp.dinhMucGiaThanhThanhPham.generalLaborAmount"></th>
+                                        <th scope="col" class="jsgrid-align-center sticky-30"
+                                            jhiTranslate="ebwebApp.dinhMucGiaThanhThanhPham.generalToolsAmount"></th>
+                                        <th scope="col" class="jsgrid-align-center sticky-30"
+                                            jhiTranslate="ebwebApp.dinhMucGiaThanhThanhPham.generalDepreciationAmount"></th>
+                                        <th scope="col" class="jsgrid-align-center sticky-30"
+                                            jhiTranslate="ebwebApp.dinhMucGiaThanhThanhPham.generalServiceAmount"></th>
+                                        <th scope="col" class="jsgrid-align-center sticky-30"
+                                            jhiTranslate="ebwebApp.dinhMucGiaThanhThanhPham.otherGeneralAmount"></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr *ngFor="let cPQ of cPProductQuantums; let i = index;">
+                                        <td title="{{cPQ.materialGoodsCode}}" class="jsgrid-cell jsgrid-align-left">{{cPQ.materialGoodsCode}}</td>
+                                        <td title="{{cPQ.materialGoodsName}}" class="jsgrid-cell jsgrid-align-left">{{cPQ.materialGoodsName}}</td>
+                                        <td title="{{getUnitByID(cPQ.unitID)}}" class="jsgrid-cell jsgrid-align-left">{{getUnitByID(cPQ.unitID)}}</td>
+                                        <td title="{{cPQ.directMaterialAmount}}" class="jsgrid-cell jsgrid-align-right"><input class="input-Cell"
+                                                                                         ebCurrencyMask
+                                                                                         [allowNegative]="false"
+                                                                                         [systemOptions]="currentAccount?.systemOption"
+                                                                                         [type]="7"
+                                                                                         [(ngModel)]="cPQ.directMaterialAmount"
+                                                                                         (ngModelChange)="selectChangeTotalCostAmount(i)"/>
+                                        </td>
+                                        <td title="{{cPQ.directLaborAmount}}" class="jsgrid-cell jsgrid-align-right"><input class="input-Cell"
+                                                                                         ebCurrencyMask
+                                                                                         [allowNegative]="false"
+                                                                                         [systemOptions]="currentAccount?.systemOption"
+                                                                                         [type]="7"
+                                                                                         [(ngModel)]="cPQ.directLaborAmount"
+                                                                                         (ngModelChange)="selectChangeTotalCostAmount(i)"/>
+                                        </td>
+                                        <td title="{{cPQ.machineMaterialAmount}}" class="jsgrid-cell jsgrid-align-right"><input class="input-Cell"
+                                                                                         ebCurrencyMask
+                                                                                         [allowNegative]="false"
+                                                                                         [systemOptions]="currentAccount?.systemOption"
+                                                                                         [type]="7"
+                                                                                         [(ngModel)]="cPQ.machineMaterialAmount"
+                                                                                         (ngModelChange)="selectChangeTotalCostAmount(i)"/>
+                                        </td>
+                                        <td title="{{cPQ.machineLaborAmount}}" class="jsgrid-cell jsgrid-align-right"><input class="input-Cell"
+                                                                                         ebCurrencyMask
+                                                                                         [allowNegative]="false"
+                                                                                         [systemOptions]="currentAccount?.systemOption"
+                                                                                         [type]="7"
+                                                                                         [(ngModel)]="cPQ.machineLaborAmount"
+                                                                                         (ngModelChange)="selectChangeTotalCostAmount(i)"/>
+                                        </td>
+                                        <td title="{{cPQ.machineToolsAmount}}" class="jsgrid-cell jsgrid-align-right"><input class="input-Cell"
+                                                                                         ebCurrencyMask
+                                                                                         [allowNegative]="false"
+                                                                                         [systemOptions]="currentAccount?.systemOption"
+                                                                                         [type]="7"
+                                                                                         [(ngModel)]="cPQ.machineToolsAmount"
+                                                                                         (ngModelChange)="selectChangeTotalCostAmount(i)"/>
+                                        </td>
+                                        <td title="{{cPQ.machineDepreciationAmount}}" class="jsgrid-cell jsgrid-align-right"><input class="input-Cell"
+                                                                                         ebCurrencyMask
+                                                                                         [allowNegative]="false"
+                                                                                         [systemOptions]="currentAccount?.systemOption"
+                                                                                         [type]="7"
+                                                                                         [(ngModel)]="cPQ.machineDepreciationAmount"
+                                                                                         (ngModelChange)="selectChangeTotalCostAmount(i)"/>
+                                        </td>
+                                        <td title="{{cPQ.machineServiceAmount}}" class="jsgrid-cell jsgrid-align-right"><input class="input-Cell"
+                                                                                         ebCurrencyMask
+                                                                                         [allowNegative]="false"
+                                                                                         [systemOptions]="currentAccount?.systemOption"
+                                                                                         [type]="7"
+                                                                                         [(ngModel)]="cPQ.machineServiceAmount"
+                                                                                         (ngModelChange)="selectChangeTotalCostAmount(i)"/>
+                                        </td>
+                                        <td title="{{cPQ.machineGeneralAmount}}" class="jsgrid-cell jsgrid-align-right"><input class="input-Cell"
+                                                                                         ebCurrencyMask
+                                                                                         [allowNegative]="false"
+                                                                                         [systemOptions]="currentAccount?.systemOption"
+                                                                                         [type]="7"
+                                                                                         [(ngModel)]="cPQ.machineGeneralAmount"
+                                                                                         (ngModelChange)="selectChangeTotalCostAmount(i)"/>
+                                        </td>
+                                        <td title="{{cPQ.generalMaterialAmount}}" class="jsgrid-cell jsgrid-align-right"><input class="input-Cell"
+                                                                                         ebCurrencyMask
+                                                                                         [allowNegative]="false"
+                                                                                         [systemOptions]="currentAccount?.systemOption"
+                                                                                         [type]="7"
+                                                                                         [(ngModel)]="cPQ.generalMaterialAmount"
+                                                                                         (ngModelChange)="selectChangeTotalCostAmount(i)"/>
+                                        </td>
+                                        <td title="{{cPQ.generalLaborAmount}}" class="jsgrid-cell jsgrid-align-right"><input class="input-Cell"
+                                                                                         ebCurrencyMask
+                                                                                         [allowNegative]="false"
+                                                                                         [systemOptions]="currentAccount?.systemOption"
+                                                                                         [type]="7"
+                                                                                         [(ngModel)]="cPQ.generalLaborAmount"
+                                                                                         (ngModelChange)="selectChangeTotalCostAmount(i)"/>
+                                        </td>
+                                        <td title="{{cPQ.generalToolsAmount}}" class="jsgrid-cell jsgrid-align-right"><input class="input-Cell"
+                                                                                         ebCurrencyMask
+                                                                                         [allowNegative]="false"
+                                                                                         [systemOptions]="currentAccount?.systemOption"
+                                                                                         [type]="7"
+                                                                                         [(ngModel)]="cPQ.generalToolsAmount"
+                                                                                         (ngModelChange)="selectChangeTotalCostAmount(i)"/>
+                                        </td>
+                                        <td title="{{cPQ.generalDepreciationAmount}}" class="jsgrid-cell jsgrid-align-right"><input class="input-Cell"
+                                                                                         ebCurrencyMask
+                                                                                         [allowNegative]="false"
+                                                                                         [systemOptions]="currentAccount?.systemOption"
+                                                                                         [type]="7"
+                                                                                         [(ngModel)]="cPQ.generalDepreciationAmount"
+                                                                                         (ngModelChange)="selectChangeTotalCostAmount(i)"/>
+                                        </td>
+                                        <td title="{{cPQ.generalServiceAmount}}" class="jsgrid-cell jsgrid-align-right"><input class="input-Cell"
+                                                                                         ebCurrencyMask
+                                                                                         [allowNegative]="false"
+                                                                                         [systemOptions]="currentAccount?.systemOption"
+                                                                                         [type]="7"
+                                                                                         [(ngModel)]="cPQ.generalServiceAmount"
+                                                                                         (ngModelChange)="selectChangeTotalCostAmount(i)"/>
+                                        </td>
+                                        <td title="{{cPQ.otherGeneralAmount}}" class="jsgrid-cell jsgrid-align-right"><input class="input-Cell"
+                                                                                         ebCurrencyMask
+                                                                                         [allowNegative]="false"
+                                                                                         [systemOptions]="currentAccount?.systemOption"
+                                                                                         [type]="7"
+                                                                                         [(ngModel)]="cPQ.otherGeneralAmount"
+                                                                                         (ngModelChange)="selectChangeTotalCostAmount(i)"/>
+                                        </td>
+                                        <td title="{{cPQ.totalCostAmount}}" class="jsgrid-cell jsgrid-align-right"><input class="input-Cell"
+                                                                                         ebCurrencyMask
+                                                                                         [allowNegative]="false"
+                                                                                         [systemOptions]="currentAccount?.systemOption"
+                                                                                         [type]="7"
+                                                                                         [(ngModel)]="cPQ.totalCostAmount"
+                                                                                         [disabled]="true"/>
+                                        </td>
+                                    </tr>
+                                    <tr *ngFor="let l of newArr(19 - cPProductQuantums?.length)">
+                                        <td class="jsgrid-cell jsgrid-align-center"><input class="input-Cell" disabled>
+                                        </td>
+                                        <td class="jsgrid-cell jsgrid-align-center"><input class="input-Cell" disabled>
+                                        </td>
+                                        <td class="jsgrid-cell jsgrid-align-right"><input class="input-Cell" disabled></td>
+                                        <td class="jsgrid-cell jsgrid-align-right"><input class="input-Cell" disabled></td>
+                                        <td class="jsgrid-cell jsgrid-align-right"><input class="input-Cell" disabled></td>
+                                        <td class="jsgrid-cell jsgrid-align-right"><input class="input-Cell" disabled></td>
+                                        <td class="jsgrid-cell jsgrid-align-right"><input class="input-Cell" disabled>
+                                        </td>
+                                        <td class="jsgrid-cell jsgrid-align-right"><input class="input-Cell" disabled>
+                                        </td>
+                                        <td class="jsgrid-cell jsgrid-align-right"><input class="input-Cell" disabled>
+                                        </td>
+                                        <td class="jsgrid-cell jsgrid-align-right"><input class="input-Cell" disabled>
+                                        </td>
+                                        <td class="jsgrid-cell jsgrid-align-right"><input class="input-Cell" disabled>
+                                        </td>
+                                        <td class="jsgrid-cell jsgrid-align-right"><input class="input-Cell" disabled>
+                                        </td>
+                                        <td class="jsgrid-cell jsgrid-align-right"><input class="input-Cell" disabled>
+                                        </td>
+                                        <td class="jsgrid-cell jsgrid-align-right"><input class="input-Cell" disabled>
+                                        </td>
+                                        <td class="jsgrid-cell jsgrid-align-right"><input class="input-Cell" disabled>
+                                        </td>
+                                        <td class="jsgrid-cell jsgrid-align-right"><input class="input-Cell" disabled>
+                                        </td>
+                                        <td class="jsgrid-cell jsgrid-align-right"><input class="input-Cell" disabled>
+                                        </td>
+                                        <td class="jsgrid-cell jsgrid-align-right"><input class="input-Cell" disabled>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </ngb-tab>
+        </ngb-tabset>
+    </div>
+</div>
+<div *ngIf="cPProductQuantums && cPProductQuantums.length"
+     style="padding-right: 16px">
+    <div class="row justify-content-end" style="height:32px">
+        <div class="col-lg-2">
+            <div class="form-group row">
+                <label class="col-sm-7 col-form-label" for="itemsPerPage"
+                       style="padding-right: 0px;text-align: right;"><span
+                    jhiTranslate="ebwebApp.mBDeposit.totalPage"></span>: {{totalItems}}</label>
+                <div class="col-sm-5 pd-l-0">
+                    <select class="form-control form-control-sm" name="itemsPerPage"
+                            id="itemsPerPage"
+                            style="background-color: #f5f7fa;"
+                            [(ngModel)]="itemsPerPage"
+                            (ngModelChange)="selectedItemPerPage()"
+                    >
+<!--                        <option [value]="10">10</option>-->
+                        <option [value]="20">20</option>
+                        <option [value]="30">30</option>
+                        <option [value]="50">50</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="justify-content-end">
+            <ngb-pagination [size]="'sm'" [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage"
+                            [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
+                            (pageChange)="loadPage(page)"></ngb-pagination>
+        </div>
+    </div>
+</div>
+
+<ng-template #pageRedirects let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.saBill.saveMessage">Dữ liệu đã bị thay đổi. Bạn có chắc chắn muốn chuyển
+                    hướng đến trang khác?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" jhiTranslate="ebwebApp.mBDeposit.agree">
+            Save
+        </button>
+        <button type="button" class="btn btn-outline-danger" (click)="exit()" jhiTranslate="entity.action.close">close
+        </button>
+    </div>
+</ng-template>
+
+
+
+

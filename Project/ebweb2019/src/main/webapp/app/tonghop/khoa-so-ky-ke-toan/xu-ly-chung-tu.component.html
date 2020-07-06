@@ -1,0 +1,215 @@
+<div>
+    <div class="modal-header padding-0-modal-header">
+        <div>
+            <h3 class="modal-title-detail"><img src="../../../content/images/icon-logo.png" height="25px"
+                                                width="25px">
+                <span jhiTranslate="ebwebApp.lockBook.inprocess"></span></h3>
+        </div>
+    </div>
+    <div class="modal-body padding-0-modal-body">
+        <div class="row">
+            <div class="col">
+                <div class="row">
+                    <div class="col-sm-2">
+                        <label class="padding-left-5" jhiTranslate="ebwebApp.lockBook.function.record1" translateValues="{count: '{{count(1)}}'}"></label>
+                        <!--<input name="count1" type="text" class="input-Cell-total" disabled
+                               [ngModel]="count(1)">-->
+                    </div>
+                    <div class="col-sm-2">
+                        <label jhiTranslate="ebwebApp.lockBook.function.changePostedDate1" translateValues="{count: '{{count(2)}}'}"></label>
+                        <!--<input name="count2" type="text" class="input-Cell-total" disabled
+                               [ngModel]="count(2)">-->
+                    </div>
+                    <div class="col-sm-2">
+                        <label jhiTranslate="ebwebApp.lockBook.function.delete1" translateValues="{count: '{{count(3)}}'}"></label>
+                        <!--<input name="count3" type="text" class="input-Cell-total" disabled
+                               [ngModel]="count(3)">-->
+                    </div>
+                    <div class="col-sm-6 form-inline">
+                        <label jhiTranslate="ebwebApp.lockBook.PostedDateNow" style="padding-right: 10px">
+                        </label>
+                        <div style="width: 200px;">
+                            <eb-date-picker name="postedDateNew"
+                                            [(ngModel)]="postedDate"></eb-date-picker>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="frm-main frm-tables frm-padding main-body height-100 tb-cus">
+                        <div id="table-scroll-detail" class="table-scroll padding-5-table height-460">
+                            <table id="main-table-detail" class="main-table" style="min-width: auto">
+                                <thead>
+                                <tr>
+                                    <th scope="col" rowspan="2" jhiTranslate="ebwebApp.saBill.vDate">Ngày chứng từ</th>
+                                    <th scope="col" rowspan="2" jhiTranslate="ebwebApp.saBill.postedDate">Ngày hạch toán</th>
+                                    <th scope="col" rowspan="2" jhiTranslate="ebwebApp.mCReceipt.typeID"> Loại chứng từ</th>
+                                    <th scope="col" rowspan="2" jhiTranslate="ebwebApp.mCPayment.noFBook"> Số chứng từ</th>
+                                    <th scope="col" rowspan="2" jhiTranslate="ebwebApp.sAOrder.reason"> Diễn giải</th>
+                                    <th scope="col" rowspan="2" jhiTranslate="ebwebApp.lockBook.function.changePostedDate"> Chuyển ngày HT</th>
+                                    <th scope="col" colspan="3" jhiTranslate="ebwebApp.lockBook.choseFuntion"> Cách xử lý</th>
+                                </tr>
+                                <tr>
+                                    <th scope="col" colspan="1" class="check sticky-50">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="check-all-1"
+                                                   [disabled]="isCheckAll1()" [checked]="isCheckAll1()" (change)="checkAll(1)">
+                                            <label class="custom-control-label" for="check-all-1"> Ghi sổ</label>
+                                        </div>
+                                    </th>
+                                    <th scope="col" colspan="1" class="check sticky-50">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="check-all-2"
+                                                   [disabled]="isCheckAll2()" [checked]="isCheckAll2()" (change)="checkAll(2)">
+                                            <label class="custom-control-label" for="check-all-2"> Chuyển ngày HT</label>
+                                        </div>
+                                    </th>
+                                    <th scope="col" colspan="1" class="check sticky-50">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="check-all-3"
+                                                   [disabled]="isCheckAll3()" [checked]="isCheckAll3()" (change)="checkAll(3)">
+                                            <label class="custom-control-label" for="check-all-3"> Xóa</label>
+                                        </div>
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr *ngFor="let detial of viewVoucher ;let i = index;"
+                                    [class.selected]="detial === selectedRow"
+                                    (click)="onSelect(detial)"
+                                    (dblclick)="doubleClickRow(detial.id)">
+                                    <td class="jsgrid-cell jsgrid-align-center"
+                                        style="width: 150px">{{detial.date|date:'dd/MM/yyyy'}}</td>
+                                    <td class="jsgrid-cell jsgrid-align-center"
+                                        style="width: 150px">{{detial.postedDate|date:'dd/MM/yyyy'}}</td>
+                                    <td [title]="detial.typeGroupName" class="jsgrid-cell jsgrid-align-left"
+                                        style="width: 150px">{{detial.typeGroupName}}</td>
+                                    <td class="jsgrid-cell jsgrid-align-left"
+                                        style="width: 150px">{{isSoTaiChinh ? detial.noFBook : detial.noMBook}}</td>
+                                    <td [title]="detial.reason?detial.reason:''" class="jsgrid-cell jsgrid-align-left"
+                                        style="width: 150px">{{detial.reason}}</td>
+                                    <td class="jsgrid-cell jsgrid-align-left cell-Table overflow-unset"
+                                        style="width: 150px">
+                                        <eb-date-picker [isInTable]="true" [disabled]="!detial.checked2" [(ngModel)]="detial.postedDateChange"
+                                                        (ngModelChange)="changePostedDate(detial)"></eb-date-picker>
+                                    </td>
+                                    <td class="text-center check" colspan="1">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" name="{{'checkbox' + i}}"
+                                                   id="{{'checkbox1' + i}}" [(ngModel)]="detial.checked1"
+                                                   (click)="check(detial, 1)"
+                                                   [disabled]="detial.checked1">
+                                            <label class="custom-control-label" for="{{'checkbox1' + i}}"></label>
+                                        </div>
+                                    </td>
+                                    <td class="text-center check" colspan="1">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" name="{{'checkbox' + i}}"
+                                                   id="{{'checkbox2' + i}}" [(ngModel)]="detial.checked2"
+                                                   (click)="check(detial, 2)"
+                                                   [disabled]="detial.checked2">
+                                            <label class="custom-control-label" for="{{'checkbox2' + i}}"></label>
+                                        </div>
+                                    </td>
+                                    <td class="text-center check" colspan="1">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" name="{{'checkbox' + i}}"
+                                                   id="{{'checkbox3' + i}}" [(ngModel)]="detial.checked3"
+                                                   (click)="check(detial, 3)"
+                                                   [disabled]="detial.checked3">
+                                            <label class="custom-control-label" for="{{'checkbox3' + i}}"></label>
+                                        </div>
+                                    </td>
+
+                                </tr>
+                                <tr *ngFor="let l of newArr(10 - viewVoucher?.length)">
+                                    <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                    <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                    <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                    <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                    <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                    <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                    <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                    <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                    <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!--        phân trang-->
+                <div *ngIf="viewVoucher && viewVoucher?.length"
+                     style="padding-right: 16px">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="row justify-content-end padding-right-5">
+                                <div class="col-lg-3">
+                                    <div class="form-group row">
+                                        <label class="col-sm-7 col-form-label" for="itemsPerPage"
+                                               style="padding-right: 0px;text-align: right;"><span
+                                            jhiTranslate="ebwebApp.mBDeposit.totalItems"></span>: {{totalItems}}</label>
+                                        <div class="col-sm-5 pd-l-0">
+                                            <select class="form-control form-control-sm" name="itemsPerPage"
+                                                    id="itemsPerPage"
+                                                    style="background-color: #f5f7fa;"
+                                                    [(ngModel)]="itemsPerPage"
+                                                    (ngModelChange)="selectedItemPerPage()"
+                                            >
+                                                <option [value]="10">10</option>
+                                                <option [value]="20">20</option>
+                                                <option [value]="30">30</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="justify-content-end">
+                                    <ngb-pagination [size]="'sm'" [collectionSize]="totalItems" [(page)]="page"
+                                                    [pageSize]="itemsPerPage"
+                                                    [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
+                                                    (pageChange)="loadPage(page)"></ngb-pagination>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--        end of phan trang-->
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="accept()" jhiTranslate="entity.action.ok">Đồng ý</button>
+        <button type="button" class="btn btn-outline-dark" (click)="activeModal.dismiss('closed')" jhiTranslate="entity.action.close">Đóng</button>
+    </div>
+</div>
+
+<ng-template #contentPostedDate let-q="dismiss">
+    <div class="modal-header padding-0-modal-header">
+        <div>
+            <h3 class="modal-title-detail"><img src="../../../content/images/icon-logo.png" height="25px"
+                                                width="25px">
+                <span jhiTranslate="ebwebApp.lockBook.choseDateLockNew"></span>
+            </h3>
+        </div>
+    </div>
+    <div class="modal-body padding-0-modal-body-mess">
+        <div class="form">
+            <div class="form-group row">
+                <label class="offset-sm-1 col-form-label pd-r-10"><img src="../../../content/images/lock.png"
+                                                                       height="30px"
+                                                                       width="30px"> {{translate.instant('ebwebApp.lockBook.choseDateLockNew')}}
+                    : </label>
+                <div class="pd-l-0">
+                    <eb-date-picker name="postedDate" [(ngModel)]="this.postedDate"></eb-date-picker>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="selectPostedDate()" jhiTranslate="entity.action.ok">Đồng ý
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="closeChosePostedDate()"
+                jhiTranslate="entity.action.close">Đóng
+        </button>
+    </div>
+</ng-template>
+

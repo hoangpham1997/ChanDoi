@@ -1,0 +1,150 @@
+<div style="padding: 0px!important;">
+    <div class="margin-tp-5 margin-0">
+        <div class="">
+            <div class="itemw">
+                <div class="menu-tool-bar header-custom">
+                    <div class="ptitle">
+                        <span jhiTranslate="ebwebApp.statisticsCode.home.title">Mã thống kê</span>
+                    </div>
+                    <div class="gr-toolbar">
+                        <a (click)="save()"
+                           *ebHasSomeAuthorityOrCondition=
+                               "[[ROLE_MTK_Them, !isEditUrl], ROLE_MTK_Sua,'ROLE_ADMIN']"
+                           title="{{'ebwebApp.autoPrinciple.tooltipSave' | translate}}"><i
+                            class="mdi mdi-briefcase-download"></i>
+                            <span jhiTranslate="ebwebApp.mCReceipt.home.save">Lưu</span>
+                        </a>
+                        <a (click)="saveAndNew()"
+                           *ebHasSomeAuthorityOrCondition=
+                               "[[ROLE_MTK_Them , ROLE_MTK_Sua], 'ROLE_ADMIN', [ROLE_MTK_Them, isCreateUrl]]"
+                           title="{{'ebwebApp.autoPrinciple.tooltipSaveAndAdd' | translate}}"><i
+                            class="mdi mdi-plus fa-plus color-green"></i>
+                            <span jhiTranslate="ebwebApp.mCReceipt.home.saveAndAddNew">Lưu và thêm mới</span>
+                        </a>
+                        <a [class.disabled]="!statisticsCode.id" (click)="delete()"
+                           *ebHasAnyAuthority="['ROLE_ADMIN', ROLE_MTK_Xoa]"
+                           title="{{'ebwebApp.autoPrinciple.tooltipDelete' | translate}}"><i
+                            class="mdi mdi-delete-forever"></i>
+                            <span jhiTranslate="ebwebApp.mCReceipt.home.delete">Xóa</span>
+                        </a>
+                        <a (click)="closeForm()" title="{{'ebwebApp.autoPrinciple.tooltipBack' | translate}}"><i
+                            class="mdi mdi-window-close"></i>
+                            <span jhiTranslate="ebwebApp.mCReceipt.home.close">Đóng</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="frm-main">
+                    <div class="row">
+                        <div class="col-lg-12 pd-r-0">
+                            <fieldset>
+                                <form style="border: none;">
+                                    <div class="col-lg-12">
+                                        <div class="form-group row">
+                                            <div class="col-sm-2">
+                                                <label class="col-form-label" jhiTranslate="ebwebApp.statisticsCode.statisticsCode">
+                                                    Mã thống kê(*)
+                                                </label>
+                                            </div>
+                                            <div class="col-sm-2 pd-l-0">
+                                                <input type="text" class="form-control form-control-sm" name="statisticsCode"
+                                                       required
+                                                       [tabindex]="1"
+                                                       [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl) || statisticsCode.id"
+                                                       [(ngModel)]="statisticsCode.statisticsCode" maxlength="25"/>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <label class="col-form-label"
+                                                       jhiTranslate="ebwebApp.statisticsCode.statisticsCodeName">
+                                                    Tên thống kê(*)
+                                                </label>
+
+                                            </div>
+                                            <div class="col-sm-2 pd-l-0">
+                                                <input type="text" class="form-control form-control-sm"
+                                                       name="statisticsCodeName"
+                                                       required
+                                                       [tabindex]="2"
+                                                       [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                       [(ngModel)]="statisticsCode.statisticsCodeName" maxlength="512"/>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <label class="col-form-label pd-l-20"
+                                                       jhiTranslate="ebwebApp.statisticsCode.parentID">
+                                                    Thuộc nhóm
+                                                </label>
+                                            </div>
+                                            <div class="col-sm-2 pd-l-0 ">
+                                                <combo-box style="" id="field_parentID"
+                                                           name="comboboxParentID"
+                                                           [dataList]="cbxStatisticsCodes"
+                                                           [listColumns]="utilsService.listColumnsStatisticCode"
+                                                           [isOutTable]="true"
+                                                           displayMember="statisticsCode"
+                                                           valueName="id"
+                                                           [headerColumns]="utilsService.listHeaderColumnsStatisticCode"
+                                                           [isObject]="false"
+                                                           [tabindex]="3"
+                                                           [isReadOnly]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                           [(ngModel)]="statisticsCode.parentID">
+                                                </combo-box>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group row">
+                                            <div class="col-sm-2">
+                                                <label class="col-form-label" jhiTranslate="ebwebApp.statisticsCode.description">
+                                                    Mô tả chi tiết
+                                                </label>
+                                            </div>
+                                            <div class="col-sm-10 pd-l-0">
+                                                <input type="text" class="form-control form-control-sm" name="description"
+                                                       [tabindex]="4"
+                                                       [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                       [(ngModel)]="statisticsCode.description" maxlength="512"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+                <!--                checkbox-->
+                <div *ngIf="statisticsCode.id" class="col-lg-12">
+                    <div class="form-group row">
+                        <div class="col-sm-3 pd-l-0 pd-r-10">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" [(ngModel)]="statisticsCode.isActive" name="isActive"
+                                       class="custom-control-input"
+                                       [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                       id="isActive">
+                                <label class="custom-control-label" for="isActive"
+                                       jhiTranslate="ebwebApp.statisticsCode.isActive">Theo dõi</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #content let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.saBill.saveMessage">Dữ liệu đã bị thay đổi, Bạn có muốn lưu lại?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="save()" jhiTranslate="entity.action.save">Save
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="close()" jhiTranslate="entity.action.noSave">close
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="closeContent()" jhiTranslate="entity.action.close">
+            close
+        </button>
+    </div>
+</ng-template>

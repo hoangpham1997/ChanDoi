@@ -1,0 +1,703 @@
+<div >
+    <div >
+        <div class="menu-tool-bar he">
+            <div class="ptitle">
+                <span class="text-uppercase edit-color" jhiTranslate="ebwebApp.muaHang.muaDichVu.title.name"></span>
+            </div>
+            <div class='gr-toolbar'>
+                <a title="{{TOOLTIPS.ADD | translate}}" href="javascript:void(0);" (click)="onUpdateViewType()" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE.MuaDichVu_Them]">
+                    <i class="mdi mdi-plus"></i>
+                    <span jhiTranslate='ebwebApp.muaHang.muaDichVu.title.new'></span>
+                </a>
+                <a title="{{TOOLTIPS.DELETE | translate}}" href='javascript:void(0);'
+                   [class.disable]="((!muaDichVuResult || !muaDichVuResult.id || (muaDichVuResult && muaDichVuResult.recorded) || checkCloseBook(account, muaDichVuResult.postedDate)) && selectedRows.length === 1) || !muaDichVuResult || !muaDichVuResult.id"
+                   (click)="removePPService()"
+                   *ebHasSomeAuthority="['ROLE_ADMIN', ROLE.MuaDichVu_Xoa]">
+                    <i class="mdi mdi-delete"></i>
+                    <span jhiTranslate='ebwebApp.muaHang.muaDichVu.title.delete'></span>
+                </a>
+                <a title="{{TOOLTIPS.RECORD | translate}}" href='javascript:void(0);' (click)="record()" [class.disable]="isRecording || !muaDichVuResult || !muaDichVuResult.id"
+                   *ebHasSomeAuthorityAndCondition="[['ROLE_ADMIN', ROLE.MuaDichVu_GhiSo], !muaDichVuResult || !muaDichVuResult.id || (muaDichVuResult && !muaDichVuResult.recorded) || havingUnRecord]">
+                    <i class="mdi mdi-grease-pencil"></i>
+                    <span jhiTranslate='ebwebApp.muaHang.muaDichVu.title.record'></span>
+                </a>
+                <a title="{{TOOLTIPS.UNRECORD | translate}}" href='javascript:void(0);' (click)="unRecord()"
+                   *ebHasSomeAuthorityAndCondition="[['ROLE_ADMIN', ROLE.MuaDichVu_GhiSo], muaDichVuResult && muaDichVuResult.recorded || havingRecord]" [class.disable]="isRecording || checkCloseBook(account, muaDichVuResult.postedDate)">
+                    <i class="mdi mdi-pencil-off"></i>
+                    <span jhiTranslate='ebwebApp.muaHang.muaDichVu.title.unrecord'></span>
+                </a>
+
+                <a title="{{TOOLTIPS.EXPORT | translate}}" href="javascript:void(0);" [class.disable]="!muaDichVuResult || !muaDichVuResult.id" (click)="exportPdf()"
+                   *ebHasSomeAuthority="['ROLE_ADMIN', ROLE.MuaDichVu_KetXuat]">
+                    <i class="mdi mdi-file-export"></i>
+                    <span jhiTranslate="entity.action.render">Kết xuất</span>
+                </a>
+
+                <a title="{{TOOLTIPS.SEARCH | translate}}" href="javascript:void(0);" (click)="updateStatusBar()">
+                    <i class="{{statusSearch?'mdi mdi-chevron-up':'mdi mdi-magnify'}}"></i>
+                    <span [jhiTranslate]="statusSearch ? 'ebwebApp.muaHang.muaDichVu.title.hideSearch' : 'ebwebApp.muaHang.muaDichVu.title.showSearch'"></span>
+                </a>
+            </div>
+        </div>
+        <div class="frm-main frm-mains nobg" style="margin-bottom: 0px">
+            <form id="seach" style="background: #cbdcf0;" [hidden]="!statusSearch">
+                <div class="row">
+                    <div class="col-lg-3 col-ct-3">
+                        <div class="form-group row">
+                            <label class="col-md-5 col-ct-5 col-form-label" for="combobox-receipt-type-select" jhiTranslate="ebwebApp.muaHang.muaDichVu.search.receiptType.title"></label>
+                            <div class="col-md-7 col-ct-7 pd-l-0">
+                                <combo-box id="combobox-receipt-type-select"
+                                           [dataList]="receiptTypes"
+                                           [listColumns]="['typeName']"
+                                           displayMember="typeName"
+                                           valueName="id"
+                                           name="combo-box-select-receipt-type"
+                                           [valueIsNumber]="true"
+                                           [headerColumns]="utilsService.getListHeaderValueNumber()"
+                                           [isOutTable]="true"
+                                           [(ngModel)]="muaDichVuSearch.receiptType"
+                                           (ngModelChange)="updateSearchValue()">
+                                </combo-box>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-5 col-ct-5 col-form-label" for="currency-type-select" jhiTranslate="ebwebApp.muaHang.muaDichVu.search.status.title"></label>
+                            <div class="col-md-7 col-ct-7 pd-l-0">
+                                <combo-box id="select-status-record"
+                                           name="combobox-record-status"
+                                           [dataList]="statusRecord"
+                                           [listColumns]="['name']"
+                                           displayMember="name"
+                                           valueName="value"
+                                           [headerColumns]="utilsService.getListHeaderValueNumber()"
+                                           [isOutTable]="true"
+                                           [(ngModel)]="muaDichVuSearch.hasRecord"
+                                           (ngModelChange)="updateSearchValue()"
+                                ></combo-box>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-ct-3">
+                        <div class="form-group row">
+                            <label class="col-md-5 col-ct-5 col-form-label" jhiTranslate="ebwebApp.muaHang.muaDichVu.search.currencyType"></label>
+                            <div class="col-md-7 col-ct-7">
+                                <combo-box id="currency-type-select"
+                                           name="combobox-currency"
+                                           [dataList]="currencies"
+                                           [listColumns]="utilsService.listColumnsCurrency"
+                                           displayMember="currencyCode"
+                                           valueName="currencyCode"
+                                           [headerColumns]="utilsService.getListHeaderColumnsCurrency()"
+                                           [isOutTable]="true"
+                                           [(ngModel)]="muaDichVuSearch.currencyID"
+                                           (ngModelChange)="updateSearchValue()"
+                                ></combo-box>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-5 col-ct-5 col-form-label" jhiTranslate="ebwebApp.muaHang.muaDichVu.search.accountingObject"></label>
+                            <div class="col-md-7 col-ct-7">
+                                <combo-box id="accounting-object-select"
+                                            name="accounting-object-select"
+                                            [dataList]="accountObjects"
+                                            [listColumns]="utilsService.listColumnsAccountingObjects"
+                                            displayMember="accountingObjectCode"
+                                            valueName="id"
+                                           [(ngModel)]="muaDichVuSearch.accountingObjectID"
+                                           (ngModelChange)="updateSearchValue()"
+                                            [headerColumns]="utilsService.getListHeaderColumnsAccountingObject()"
+                                            [isOutTable]="true">
+                                </combo-box>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-ct-6">
+                        <div class="form-group row">
+                            <label class="col-md-2 col-ct-2 col-form-label pr-0" jhiTranslate="ebwebApp.muaHang.muaDichVu.search.fromDate"></label>
+                            <div class="col-4 col-ct-4">
+                                <eb-date-picker [isMultiTabs]="true" (ngModelChange)="updateSearchValue()" [(ngModel)]="muaDichVuSearch.fromDate" name="from-date" format="DD/MM/YYYY"></eb-date-picker>
+                            </div>
+
+                            <label class="col-md-2 col-ct-2 col-form-label" jhiTranslate="ebwebApp.muaHang.muaDichVu.search.toDate"></label>
+                            <div class="col-4 col-ct-4">
+                                <eb-date-picker [isMultiTabs]="true" (ngModelChange)="updateSearchValue()" [(ngModel)]="muaDichVuSearch.toDate" name="to-date" format="DD/MM/YYYY"></eb-date-picker>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-2 col-ct-2 col-form-label pr-0" for="txtSearchValue" jhiTranslate="ebwebApp.purchaseOrder.keywordSearch"></label>
+                            <div class="col-sm-10 col-ct-10">
+                                <input [(ngModel)]="muaDichVuSearch.freeSearch" (ngModelChange)="updateSearchValue()"
+                                       id="txtSearchValue" name="txtSearchValue" type="text"
+                                       class="form-control form-control-sm">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="frm-button">
+                            <button (click)="onBindPPServiceData()" class="btn btn-success btn-sm" style="font-size: 16px">
+                                <i class="mdi mdi-magnify" aria-hidden="true" style="margin-right: 5px"></i><span jhiTranslate="ebwebApp.purchaseOrder.search"></span>
+                            </button>
+                            <button (click)="resetSearch()" class="btn btn-danger btn-sm" style="font-size: 16px">
+                                <i class="mdi mdi-replay" style="margin-right: 5px"></i><span jhiTranslate="ebwebApp.purchaseOrder.setAgain"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="frm-main frm-tables frm-padding" style="background: #cbdcf0;" >
+                <div id="table-scroll0" class="table-scroll voucher-table">
+                <table id="main-table0" class="main-table">
+                    <thead class="header-table">
+                    <tr>
+                        <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.receiptDate">
+                        </th>
+                        <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.postedDate">
+                        </th>
+                        <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.noBook">
+                        </th>
+                        <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.ppOrderNo">
+                        </th>
+                        <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.receiptType">
+                        </th>
+                        <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.accountingObject">
+                        </th>
+                        <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.totalAmount">
+                        </th>
+                        <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.totalDiscountAmount">
+                        </th>
+                        <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.totalvatAmount">
+                        </th>
+                        <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.resultAmount">
+                        </th>
+                        <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.billReceived">
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody *ngIf="!isLoading">
+                        <tr *ngFor="let result of muaDichVuResults; trackBy: trackIdentity; let i = index"
+                        [class.selected]="result === muaDichVuResult || selectedRows.includes(result)"
+                        [ngStyle]="getStyle(result.recorded)"
+                        (click)="selectMultiRow(result, $event, muaDichVuResults)"
+                            id="pp-service-{{i}}"
+                        (dblclick)="doubleClickRow(result)">
+                        <td [title]="result?.receiptDate ? result?.receiptDate : ''" class="jsgrid-cell jsgrid-align-center"> {{result?.receiptDate}}</td>
+                        <td [title]="result?.postedDate ? result?.postedDate : ''" class="jsgrid-cell jsgrid-align-center"> {{result?.postedDate}}</td>
+                        <td [title]="currentBook === '0' ? result.noFBook : result.noMBook" class="jsgrid-cell"> {{currentBook === '0' ? result?.noFBook : result?.noMBook}}</td>
+                        <td [title]="result?.invoiceNo ? result?.invoiceNo : ''" class="jsgrid-cell"> {{result?.invoiceNo}}</td>
+                        <td [title]="result?.receiptType ? result?.receiptType : ''" class="jsgrid-cell"> {{result?.receiptType}}</td>
+                        <td [title]="result?.accountingObjectName ? result?.accountingObjectName : ''" class="jsgrid-cell"> {{result?.accountingObjectName}}</td>
+                        <td title="{{(result.currencyID === account.organizationUnit.currencyID ? result.totalAmountOriginal : result.totalAmount) | ebcurrency:7 : account}}" class="jsgrid-cell jsgrid-align-right">
+                            {{(result.currencyID === account.organizationUnit.currencyID ? result.totalAmountOriginal : result.totalAmount) | ebcurrency:7 : account}}
+                        </td>
+                        <td title="{{(result.currencyID === account.organizationUnit.currencyID ? result.totalDiscountAmountOriginal : result.totalDiscountAmount) | ebcurrency:7 : account}}" class="jsgrid-cell jsgrid-align-right">
+                            {{(result.currencyID === account.organizationUnit.currencyID ? result.totalDiscountAmountOriginal : result.totalDiscountAmount) | ebcurrency:7 : account}}
+                        </td>
+                        <td title="{{(result.currencyID === account.organizationUnit.currencyID ? result.totalVATAmountOriginal : result.totalVATAmount) | ebcurrency:7 : account}}" class="jsgrid-cell jsgrid-align-right">
+                            {{(result.currencyID === account.organizationUnit.currencyID ? result.totalVATAmountOriginal : result.totalVATAmount) | ebcurrency:7 : account}}
+                        </td>
+                        <td title="{{(result.currencyID === account.organizationUnit.currencyID ? result.resultAmountOriginal : result.resultAmount) | ebcurrency:7 : account}}" class="jsgrid-cell jsgrid-align-right">
+                            {{(result.currencyID === account.organizationUnit.currencyID ? result.resultAmountOriginal : result.resultAmount) | ebcurrency:7 : account}}
+                        </td>
+                        <td class="jsgrid-cell jsgrid-align-center "><input class="eb-read-only" type="checkbox" [checked]="result.billReceived"></td>
+                    </tr>
+                        <tr *ngFor="let detail of getEmptyRowResult()">
+                            <td class="jsgrid-cell">&nbsp;</td>
+                            <td class="jsgrid-cell">&nbsp;</td>
+                            <td class="jsgrid-cell">&nbsp;</td>
+                            <td class="jsgrid-cell">&nbsp;</td>
+                            <td class="jsgrid-cell">&nbsp;</td>
+                            <td class="jsgrid-cell">&nbsp;</td>
+                            <td class="jsgrid-cell">&nbsp;</td>
+                            <td class="jsgrid-cell">&nbsp;</td>
+                            <td class="jsgrid-cell">&nbsp;</td>
+                            <td class="jsgrid-cell">&nbsp;</td>
+                            <td class="jsgrid-cell">&nbsp;</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div *ngIf="muaDichVuResults && muaDichVuResults.length"
+             style="padding-right: 16px;">
+            <div class="row" style="height: 32px">
+                <div class="col-md-3">
+                    <p style="padding-right: 5px;">
+                        <span jhiTranslate="ebwebApp.saBill.totalAmountTt"></span> :
+                        {{totalResultAmountOriginal | ebcurrency:isVNDFormat ? 7 : 8 : account}}
+                    </p>
+                </div>
+                <div class="col-md-9">
+                    <div class="row justify-content-end" style="height:32px">
+                        <div class="col-5">
+                            <div class="form-group row">
+                                <label class="col-sm-10 col-form-label" for="itemsPerPage"
+                                       style="padding-right: 0px;text-align: right;"><span
+                                        jhiTranslate="ebwebApp.purchaseOrder.total"></span> {{dataSession.totalItems}}</label>
+                                <div class="col-sm-2 pd-l-0">
+                                    <select class="form-control form-control-sm" name="itemsPerPage"
+                                            id="itemsPerPage"
+                                            style="background-color: #f5f7fa;"
+                                            [(ngModel)]="dataSession.itemsPerPage"
+                                            (ngModelChange)="selectedItemPerPage()"
+                                    >
+                                        <option [value]="10">10</option>
+                                        <option [value]="20">20</option>
+                                        <option [value]="30">30</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="justify-content-end">
+                            <ngb-pagination [size]="'sm'" [collectionSize]="dataSession.totalItems" [(page)]="dataSession.page" [pageSize]="dataSession.itemsPerPage"
+                                            [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
+                                            (pageChange)="loadPage(dataSession.page)"></ngb-pagination>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--        end of phan trang-->
+        <div>
+            <ngb-tabset class="tool-navbar">
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.purchaseOrder.detail"></span></ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content">
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="home-detail"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-detail" class="table-scroll">
+                                    <table id="main-table-detail" class="main-table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.materialGoodsCode">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.materialGoodsName">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.debitAccount">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.creditAccount">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.taxation.postedObject">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.detail.unitName">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.detail.quantity">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.detail.unitPriceOriginal">
+                                            </th>
+                                            <th scope="col" *ngIf="!isVNDFormat" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.detail.unitPrice">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.detail.amountOriginal">
+                                            </th>
+                                            <th scope="col" *ngIf="!isVNDFormat" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.detail.amount">
+                                            </th>
+
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.detail.discountRate">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.detail.discountAmountOriginal">
+                                            </th>
+                                            <th scope="col" *ngIf="!isVNDFormat" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.detail.discountAmount">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.detail.ppOrderNo">
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let muaDichVuDetailResult of muaDichVuResult?.ppServiceDetailDTOS; trackBy: trackIdentity; let i = index">
+                                            <td title="{{muaDichVuDetailResult?.materialGoodsCode}}" class="jsgrid-cell"> {{muaDichVuDetailResult?.materialGoodsCode}}</td>
+                                            <td title="{{muaDichVuDetailResult?.materialGoodsName}}" class="jsgrid-cell jsgrid-align-left"> {{muaDichVuDetailResult?.materialGoodsName}}</td>
+                                            <td title="{{muaDichVuDetailResult?.debitAccount}}" class="jsgrid-align-center jsgrid-cell"> {{muaDichVuDetailResult?.debitAccount}}</td>
+                                            <td title="{{muaDichVuDetailResult?.creditAccount}}" class="jsgrid-align-center jsgrid-cell"> {{muaDichVuDetailResult?.creditAccount}}</td>
+                                            <td title="{{muaDichVuDetailResult?.postedObjectCode}}" class="jsgrid-align-left jsgrid-cell"> {{muaDichVuDetailResult?.postedObjectCode}}</td>
+                                            <td title="{{muaDichVuDetailResult?.unitName}}" class="jsgrid-align-left jsgrid-cell"> {{muaDichVuDetailResult?.unitName}}</td>
+                                            <td title="{{muaDichVuDetailResult?.quantity | ebcurrency:3:account}}" class="jsgrid-align-right jsgrid-cell"> {{muaDichVuDetailResult?.quantity | ebcurrency:3:account}}</td>
+                                            <td title="{{muaDichVuDetailResult?.unitPriceOriginal | ebcurrency:isVNDFormat ? 1 : 2: account}}" class="jsgrid-cell jsgrid-align-right">
+                                                {{muaDichVuDetailResult?.unitPriceOriginal | ebcurrency:isVNDFormat ? 1 : 2: account}}
+                                            </td>
+                                            <td *ngIf="!isVNDFormat" title="{{muaDichVuDetailResult?.unitPrice | ebcurrency:1: account}}" class="jsgrid-cell jsgrid-align-right">
+                                                {{muaDichVuDetailResult?.unitPrice | ebcurrency:1: account}}
+                                            </td>
+                                            <td title="{{muaDichVuDetailResult?.amountOriginal | ebcurrency:isVNDFormat ? 7 : 8 : account}}" class="jsgrid-cell jsgrid-align-right">
+                                                {{muaDichVuDetailResult?.amountOriginal | ebcurrency:isVNDFormat ? 7 : 8 : account}}
+                                            </td>
+                                            <td *ngIf="!isVNDFormat" title="{{muaDichVuDetailResult?.amount | ebcurrency:7 : account}}" class="jsgrid-cell jsgrid-align-right">
+                                                {{muaDichVuDetailResult?.amount | ebcurrency:7: account}}
+                                            </td>
+                                            <td title="{{muaDichVuDetailResult?.discountRate}}" class="jsgrid-cell jsgrid-align-right">
+                                                {{muaDichVuDetailResult?.discountRate}}</td>
+                                            <td title="{{muaDichVuDetailResult?.discountAmountOriginal | ebcurrency:isVNDFormat ? 7 : 8 : account}}" class="jsgrid-cell jsgrid-align-right">
+                                                {{muaDichVuDetailResult?.discountAmountOriginal | ebcurrency:isVNDFormat ? 7 : 8 : account}}
+                                            </td>
+                                            <td *ngIf="!isVNDFormat" title="{{muaDichVuDetailResult?.discountAmount | ebcurrency:7 : account}}" class="jsgrid-cell jsgrid-align-right">
+                                                {{muaDichVuDetailResult?.discountAmount | ebcurrency:7 : account}}
+                                            </td>
+
+                                            <td title="{{muaDichVuDetailResult?.ppOrderNo}}" class="jsgrid-align-left jsgrid-cell"> {{muaDichVuDetailResult.ppOrderNo}}</td>
+                                        </tr>
+
+                                        <tr *ngFor="let detail of getEmptyRow()">
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell" *ngIf="!isVNDFormat">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell" *ngIf="!isVNDFormat">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell" *ngIf="!isVNDFormat">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot>
+                                            <tr class="disable">
+                                                <td class="cell-Table color-tfoot" colspan="6">
+                                                    <input type="text" class="color-tfoot input-Cell"
+                                                           value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{muaDichVuResult?.ppServiceDetailDTOS?.length}}"></td>
+                                                <td title="{{muaDichVuResult?.totalquantity | ebcurrency:3: account}}" class="cell-Table color-tfoot jsgrid-align-right">
+                                                    {{muaDichVuResult?.totalquantity | ebcurrency:3: account}}
+                                                </td>
+                                                <td class="cell-Table color-tfoot input-Cell" ></td>
+                                                <td class="cell-Table color-tfoot input-Cell" *ngIf="!isVNDFormat"></td>
+                                                <td title="{{(muaDichVuResult?.totalAmountOriginal || 0) | ebcurrency:isVNDFormat ? 7 : 8 : account}}" class="cell-Table color-tfoot jsgrid-align-right">
+                                                    {{(muaDichVuResult?.totalAmountOriginal || 0) | ebcurrency:isVNDFormat ? 7 : 8 : account}}
+                                                </td>
+                                                <td *ngIf="!isVNDFormat" title="{{muaDichVuResult?.totalAmount | ebcurrency:7 : account}}" class="cell-Table color-tfoot jsgrid-align-right">
+                                                    {{muaDichVuResult?.totalAmount | ebcurrency:7: account}}
+                                                </td>
+
+                                                <td class="cell-Table color-tfoot input-Cell" ></td>
+                                                <td title="{{(muaDichVuResult?.totalDiscountAmountOriginal || 0) | ebcurrency:isVNDFormat ? 7 : 8 : account}}" class="cell-Table color-tfoot jsgrid-align-right">
+                                                    {{(muaDichVuResult?.totalDiscountAmountOriginal || 0) | ebcurrency:isVNDFormat ? 7 : 8: account}}
+                                                </td>
+                                                <td *ngIf="!isVNDFormat" title="{{(muaDichVuResult?.totalDiscountAmount || 0) | ebcurrency:7 : account}}" class="cell-Table color-tfoot jsgrid-align-right">
+                                                    {{(muaDichVuResult?.totalDiscountAmount || 0) | ebcurrency:7 : account}}
+                                                </td>
+
+                                                <td class="cell-Table color-tfoot input-Cell"></td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.tabs.taxation"></span></ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content">
+                            <div class="frm-main frm-padding tab-pane fade in active show"
+                                 style="background: #cbdcf0">
+                                <div class="table-scroll">
+                                    <table class="main-table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.materialGoodsCode">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.taxation.vatDescription">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.debitAccount">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.creditAccount">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.taxation.postedObject">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.taxation.vatRate">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.taxation.vatAmountOriginal">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.taxation.vatAmount" *ngIf="!isVNDFormat">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.taxation.vatAccount">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.taxation.deductionDebitAccount">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.taxation.invoiceTemplate">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.taxation.invoiceSeries">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.taxation.invoiceNo">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.taxation.invoiceDate">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.taxation.goodsServicePurchaseName" *ngIf="this.isCareerGroup">
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let muaDichVuTaxation of muaDichVuResult?.ppServiceDetailDTOS; trackBy: trackIdentity; let i = index">
+                                            <td title="{{muaDichVuTaxation?.materialGoodsCode}}" class="jsgrid-align-left jsgrid-cell" >{{muaDichVuTaxation.materialGoodsCode}}</td>
+                                            <td title="{{muaDichVuTaxation?.vatDescription}}" class="jsgrid-align-left jsgrid-cell">{{muaDichVuTaxation.vatDescription}}</td>
+                                            <td title="{{muaDichVuTaxation?.debitAccount}}" class="jsgrid-align-center jsgrid-cell">{{muaDichVuTaxation.debitAccount}}</td>
+                                            <td title="{{muaDichVuTaxation?.creditAccount}}" class="jsgrid-align-center jsgrid-cell">{{muaDichVuTaxation.creditAccount}}</td>
+                                            <td title="{{muaDichVuTaxation?.postedObjectCode}}" class="jsgrid-align-left jsgrid-cell">{{muaDichVuTaxation.postedObjectCode}}</td>
+                                            <td title="{{getVATRateValue(muaDichVuTaxation?.vatRate)}}" class="jsgrid-align-right jsgrid-cell">{{getVATRateValue(muaDichVuTaxation.vatRate)}}</td>
+                                            <td title="{{(muaDichVuTaxation.vatAmountOriginal || 0) | ebcurrency:isVNDFormat ? 7 : 8 : account}}" class="jsgrid-cell jsgrid-align-right">
+                                                {{(muaDichVuTaxation.vatAmountOriginal || 0) | ebcurrency:isVNDFormat ? 7 : 8 : account}}
+                                            </td>
+                                            <td title="{{(muaDichVuTaxation.vatAmount || 0) | ebcurrency:7: account}}" *ngIf="!isVNDFormat" class="jsgrid-cell jsgrid-align-right">
+                                                {{(muaDichVuTaxation.vatAmount || 0) | ebcurrency:7: account}}
+                                            </td>
+
+                                            <td title="{{muaDichVuTaxation?.vatAccount}}" class="jsgrid-align-center jsgrid-cell">{{muaDichVuTaxation.vatAccount}}</td>
+                                            <td title="{{muaDichVuTaxation?.deductionDebitAccount}}" class="jsgrid-align-center jsgrid-cell">{{muaDichVuTaxation.deductionDebitAccount}}</td>
+                                            <td title="{{muaDichVuTaxation?.invoiceTemplate}}" class="jsgrid-align-left jsgrid-cell">{{muaDichVuTaxation.invoiceTemplate}}</td>
+                                            <td title="{{muaDichVuTaxation?.invoiceSeries}}" class="jsgrid-align-left jsgrid-cell">{{muaDichVuTaxation.invoiceSeries}}</td>
+                                            <td title="{{muaDichVuTaxation?.invoiceNo}}" class="jsgrid-align-left jsgrid-cell">{{muaDichVuTaxation.invoiceNo}}</td>
+                                            <td title="{{muaDichVuTaxation?.invoiceDate}}" class="jsgrid-align-center jsgrid-cell">{{muaDichVuTaxation.invoiceDate}}</td>
+                                            <td title="{{muaDichVuTaxation?.goodsServicePurchaseName}}"
+                                                *ngIf="this.isCareerGroup"
+                                                class="jsgrid-align-left jsgrid-cell">{{muaDichVuTaxation.goodsServicePurchaseName}}</td>
+                                        </tr>
+
+                                        <tr *ngFor="let detail of getEmptyRow()">
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell" *ngIf="!isVNDFormat">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell" *ngIf="this.isCareerGroup">&nbsp;</td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot>
+                                        <tr>
+                                            <td class="cell-Table" colspan="6">
+                                                <input type="text" readonly
+                                                       class="color-tfoot input-Cell"
+                                                       value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{muaDichVuResult?.ppServiceDetailDTOS?.length}}"></td>
+                                            <td *ngIf="!isVNDFormat" class="cell-Table color-tfoot jsgrid-align-right" title="{{(muaDichVuResult.totalVATAmountOriginal || 0) | ebcurrency:isVNDFormat ? 7 : 8 : account}}">
+                                                {{(muaDichVuResult.totalVATAmountOriginal || 0) | ebcurrency:isVNDFormat ? 7 : 8 : account}}
+                                            </td>
+                                            <td class="cell-Table color-tfoot jsgrid-align-right" title="{{(muaDichVuResult.totalVATAmount || 0) | ebcurrency:7: account}}">
+                                                {{(muaDichVuResult.totalVATAmount || 0) | ebcurrency:7: account}}
+                                            </td>
+                                            <td class="cell-Table color-tfoot input-Cell" readonly></td>
+                                            <td class="cell-Table color-tfoot input-Cell" readonly></td>
+                                            <td class="cell-Table color-tfoot input-Cell" readonly></td>
+                                            <td class="cell-Table color-tfoot input-Cell" readonly></td>
+                                            <td class="cell-Table color-tfoot input-Cell" readonly></td>
+                                            <td class="cell-Table color-tfoot input-Cell" readonly></td>
+                                            <td class="cell-Table color-tfoot input-Cell" *ngIf="this.isCareerGroup" readonly></td>
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.tabs.statiscal"></span></ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content">
+                            <div class="frm-main frm-padding tab-pane fade in active show"
+                                 style="background: #cbdcf0">
+                                <div class="table-scroll">
+                                    <table class="main-table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">
+                                                <span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.materialGoodsCode"></span>
+                                            </th>
+                                            <th scope="col">
+                                                <span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.materialGoodsName"></span>
+                                            </th>
+                                            <th scope="col">
+                                                <span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.statiscal.expenseItemName"></span>
+                                            </th>
+                                            <th scope="col">
+                                                <span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.statiscal.costSetName"></span>
+                                            </th>
+<!--                                            <th scope="col">-->
+<!--                                                <span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.statiscal.EMContractName"></span>-->
+<!--                                            </th>-->
+                                            <th scope="col">
+                                                <span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.statiscal.budgetItemName"></span>
+                                            </th>
+                                            <th scope="col">
+                                                <span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.statiscal.departmentName"></span>
+                                            </th>
+                                            <th scope="col">
+                                                <span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.statiscal.statisticsCode"></span>
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let muaDichVuStatiscal of muaDichVuResult?.ppServiceDetailDTOS; trackBy: trackIdentity; let i = index">
+                                            <td title="{{muaDichVuStatiscal?.materialGoodsCode}}" class="jsgrid-align-left jsgrid-cell">
+                                                {{muaDichVuStatiscal.materialGoodsCode}}
+                                            </td>
+                                            <td title="{{muaDichVuStatiscal?.materialGoodsName}}" class="jsgrid-align-left jsgrid-cell">
+                                                {{muaDichVuStatiscal.materialGoodsName}}
+                                            </td>
+                                            <td title="{{muaDichVuStatiscal?.expenseItemCode}}" class="jsgrid-align-left jsgrid-cell">
+                                                {{muaDichVuStatiscal.expenseItemCode}}
+                                            </td>
+                                            <td title="{{muaDichVuStatiscal?.costSetCode}}" class="jsgrid-align-left jsgrid-cell">
+                                                {{muaDichVuStatiscal.costSetCode}}
+                                            </td>
+<!--                                            <td title="{{muaDichVuStatiscal?.emContractCode}}" class="jsgrid-align-left jsgrid-cell">-->
+<!--                                                {{muaDichVuStatiscal.emContractCode}}-->
+<!--                                            </td>-->
+                                            <td title="{{muaDichVuStatiscal?.budgetItemCode}}" class="jsgrid-align-left jsgrid-cell">{{muaDichVuStatiscal.budgetItemCode}}</td>
+                                            <td title="{{muaDichVuStatiscal?.departmentCode}}" class="jsgrid-align-left jsgrid-cell">{{muaDichVuStatiscal.departmentCode}}</td>
+                                            <td title="{{muaDichVuStatiscal?.statisticsCode}}" class="jsgrid-align-left jsgrid-cell">{{muaDichVuStatiscal.statisticsCode}}</td>
+                                        </tr>
+
+                                        <tr *ngFor="let detail of getEmptyRow()">
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+<!--                                            <td class="jsgrid-cell">&nbsp;</td>-->
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot>
+                                        <tr>
+                                            <td class="cell-Table" colspan="7">
+                                                <input type="text" readonly
+                                                       class="color-tfoot input-Cell"
+                                                       value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{muaDichVuResult?.ppServiceDetailDTOS?.length}}"></td>
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.tabs.referenceVoucher"></span></ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content">
+                            <div class="frm-main frm-padding tab-pane fade in active show"
+                                 style="background: #cbdcf0">
+                                <div class="table-scroll">
+                                    <table class="main-table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.receiptDate"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.postedDate"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.noBook"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.explain"></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let viewVoucher of muaDichVuResult.refVouchers; let i = index">
+                                            <td title="{{viewVoucher?.date}}" class="jsgrid-cell jsgrid-align-left jsgrid-cell">{{viewVoucher.date}}</td>
+                                            <td title="{{viewVoucher?.postedDate}}"  class="jsgrid-cell jsgrid-align-left jsgrid-cell">{{viewVoucher.postedDate}}</td>
+                                            <td title="{{viewVoucher?.no}}" class="jsgrid-cell jsgrid-align-left jsgrid-cell"
+                                                style="color:blue; text-decoration: underline;"
+                                                (click)="utilsService.viewRefVoucher(viewVoucher)"
+                                            >
+                                                {{viewVoucher.no}}</td>
+                                            <td title="{{viewVoucher?.reason}}" class="jsgrid-cell jsgrid-align-left jsgrid-cell">{{viewVoucher.reason}}</td>
+                                        </tr>
+
+                                        <tr *ngFor="let detail of getEmptyRow()">
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot>
+                                        <tr>
+                                            <td class="cell-Table" colspan="4">
+                                                <input type="text" readonly
+                                                       class="color-tfoot input-Cell"
+                                                       value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{muaDichVuResult.refVouchers?.length}}"></td>
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+            </ngb-tabset>
+        </div>
+    </div>
+</div>
+<ng-template #unRecordModal let-d="dismiss">
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="global.messages.receiptHadReference"></label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-primary" (click)="unRecording()" jhiTranslate="entity.action.ok">ok</button>
+        <button type="button" class="btn btn-outline-dark" (click)="modalRef.close()" jhiTranslate="entity.action.cancel">cancel</button>
+    </div>
+</ng-template>
+
+<ng-template #checkHadPaidModal let-d="dismiss">
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="global.messages.receiptHadPaid"></label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-primary" (click)="unRecording()" jhiTranslate="entity.action.ok">ok</button>
+        <button type="button" class="btn btn-outline-dark" (click)="modalRef.close()" jhiTranslate="entity.action.close">close</button>
+    </div>
+</ng-template>
+
+<ng-template #checkHadReferencePaidModal let-d="dismiss">
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <p jhiTranslate="global.messages.receiptHadReference"></p>
+                <p jhiTranslate="global.messages.receiptHadPaid"></p>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-primary" (click)="unRecording()" jhiTranslate="entity.action.ok">ok</button>
+        <button type="button" class="btn btn-outline-dark" (click)="modalRef.close()" jhiTranslate="entity.action.close">close</button>
+    </div>
+</ng-template>
+<ng-template #popUpMultiActions let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label *ngIf="typeMultiAction === 0" jhiTranslate="ebwebApp.mBDeposit.multiDeleteMessage"></label>
+                <label *ngIf="typeMultiAction === 1" jhiTranslate="ebwebApp.mBDeposit.multiUnrecordMessage"></label>
+                <label *ngIf="typeMultiAction === 2" jhiTranslate="ebwebApp.mBDeposit.multiRecordMessage"></label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-danger" (click)="continueMultiAction()"
+                jhiTranslate="entity.action.ok">
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="closePopUp()"
+                jhiTranslate="ebwebApp.mBDeposit.return">
+        </button>
+    </div>
+</ng-template>

@@ -1,0 +1,216 @@
+<div >
+    <div >
+        <div class="menu-tool-bar he">
+            <div class="ptitle">
+                <span>TRẢ TIỀN NHÀ CUNG CẤP</span>
+            </div>
+        </div>
+        <div class="row justify-content-end" style="height:32px">
+            <div class="col-lg-6">
+                <div class="form-group row justify-content-end">
+                    <label class="col-sm-2 col-form-label text-right"
+                           jhiTranslate="ebwebApp.mCAudit.home.fromDate">Từ ngày</label>
+                    <div class="col-sm-3">
+                        <eb-date-picker style="display: block" id="field_fromDate" [(ngModel)]="fromDate" name="fromDate"
+                                        (ngModelChange)="checkFromDate()"
+                                        required
+                                        [isInTable]="false"></eb-date-picker>
+                    </div>
+                    <label class="col-sm-2 col-form-label text-right"
+                           jhiTranslate="ebwebApp.mCAudit.home.toDate">Đến ngày</label>
+                    <div class="col-sm-3">
+                        <eb-date-picker style="display: block" id="field_toDate" [(ngModel)]="toDate" name="toDate"
+                                        (ngModelChange)="checkToDate()"
+                                        required
+                                        [isInTable]="false"></eb-date-picker>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="frm-main frm-tables frm-padding" style="background: #cbdcf0; margin-top: 5px">
+            <div id="table-scroll0" class="table-scroll voucher-table">
+                <table id="main-table0" class="main-table">
+                    <thead class="header-table">
+                    <tr>
+                        <th scope="col" jhiTranslate="ebwebApp.pPPayVendor.accountingObjectCode"></th>
+                        <th scope="col" jhiTranslate="ebwebApp.pPPayVendor.accountingObjectName"></th>
+                        <th scope="col" jhiTranslate="ebwebApp.pPPayVendor.openingBalance"></th>
+                        <th scope="col" jhiTranslate="ebwebApp.pPPayVendor.soPhatSinh"></th>
+                        <th scope="col" jhiTranslate="ebwebApp.pPPayVendor.soDaTra"></th>
+                        <th scope="col" jhiTranslate="ebwebApp.pPPayVendor.soConPhaiTra"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let pPPayVendor of pPPayVendors;"
+                        [class.selected]="pPPayVendor === selectedRow"
+                        (click)="onSelect(pPPayVendor)"
+                        (dblclick)="doubleClickRow(selectedRow)">
+                        <td class="jsgrid-cell jsgrid-align-left" style="width: 150px">{{pPPayVendor.accountingObjectCode}}</td>
+                        <td class="jsgrid-cell jsgrid-align-left" style="width: 150px">{{pPPayVendor.accountingObjectName}}</td>
+                        <td class="jsgrid-cell jsgrid-align-right" style="width: 150px">
+                            <input type="number"
+                                   class="input-Cell myreadonlytrue"
+                                   [readOnly]="true"
+                                   ebCurrencyMask
+                                   [systemOptions]="account?.systemOption"
+                                   [type]="7"
+                                   [(ngModel)]="pPPayVendor.soDuDauNam"/></td>
+                        <td class="jsgrid-cell jsgrid-align-right" style="width: 150px">
+                            <input type="number"
+                                   class="input-Cell myreadonlytrue"
+                                   [readOnly]="true"
+                                   ebCurrencyMask
+                                   [systemOptions]="account?.systemOption"
+                                   [type]="7"
+                                   [(ngModel)]="pPPayVendor.soPhatSinh"/></td>
+                        <td class="jsgrid-cell jsgrid-align-right" style="width: 150px">
+                            <input type="number"
+                                   class="input-Cell myreadonlytrue"
+                                   [readOnly]="true"
+                                   ebCurrencyMask
+                                   [systemOptions]="account?.systemOption"
+                                   [type]="7"
+                                   [(ngModel)]="pPPayVendor.soDaTra"/></td>
+                        <td class="jsgrid-cell jsgrid-align-right" style="width: 150px">
+                            <input type="number"
+                                   class="input-Cell myreadonlytrue"
+                                   [readOnly]="true"
+                                   ebCurrencyMask
+                                   [systemOptions]="account?.systemOption"
+                                   [type]="7"
+                                   [(ngModel)]="pPPayVendor.soConPhaiTra"/></td>
+                    </tr>
+                    <tr *ngFor="let l of newArr(9 - pPPayVendors?.length)">
+                        <td class="jsgrid-cell" style="width: 150px"><input type="text" class="input-Cell" readonly></td>
+                        <td class="jsgrid-cell jsgrid-align-right" style="width: 150px">&nbsp;</td>
+                        <td class="jsgrid-cell jsgrid-align-right" style="width: 150px">&nbsp;</td>
+                        <td class="jsgrid-cell jsgrid-align-right" style="width: 150px">&nbsp;</td>
+                        <td class="jsgrid-cell jsgrid-align-right" style="width: 150px">&nbsp;</td>
+                        <td class="jsgrid-cell jsgrid-align-right" style="width: 150px">&nbsp;</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!--        phân trang-->
+        <!--        <div *ngIf="mCAudits && mCAudits.length"-->
+        <!--             style="padding-top: 15px;padding-right: 16px;">-->
+        <!--            <div class="row justify-content-end">-->
+        <!--                <p style="padding-right: 5px;" jhiTranslate="ebwebApp.pPPayVendor.page">Trang {{page}} / {{pageCount}}</p>-->
+        <!--            </div>-->
+        <!--            <div class="row justify-content-end">-->
+        <!--                <div class="col-lg-2">-->
+        <!--                    <div class="form-group row">-->
+        <!--                        <label class="col-sm-7 col-form-label" for="itemsPerPage"-->
+        <!--                               style="padding-right: 0px;text-align: right;" jhiTranslate="ebwebApp.pPPayVendor.totalPage">Tổng-->
+        <!--                            số</label>-->
+        <!--                        <div class="col-sm-5 pd-l-0">-->
+        <!--                            <select class="form-control form-control-sm" name="itemsPerPage"-->
+        <!--                                    id="itemsPerPage"-->
+        <!--                                    style="background-color: #f5f7fa;"-->
+        <!--                                    [(ngModel)]="itemsPerPage"-->
+        <!--                                    (ngModelChange)="selectedItemPerPage()"-->
+        <!--                            >-->
+        <!--                                <option value="2">2</option>-->
+        <!--                                <option value="5">5</option>-->
+        <!--                                <option value="10">10</option>-->
+        <!--                                <option value="20">20</option>-->
+        <!--                                <option value="30">30</option>-->
+        <!--                            </select>-->
+        <!--                        </div>-->
+        <!--                    </div>-->
+        <!--                </div>-->
+        <!--                <div class="justify-content-end">-->
+        <!--                    <ngb-pagination [size]="'sm'" [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage"-->
+        <!--                                    [maxSize]="5" [rotate]="true" [boundaryLinks]="true"-->
+        <!--                                    (pageChange)="loadPage(page)"></ngb-pagination>-->
+        <!--                </div>-->
+        <!--            </div>-->
+        <!--        </div>-->
+        <!--        end of phan trang-->
+        <div>
+            <ngb-tabset class="tool-navbar">
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.pPPayVendor.home.voucher"></span>
+                    </ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content">
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="home-detail"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-detail" class="table-scroll">
+                                    <table id="main-table-detail" class="main-table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.pPPayVendorDetail.date">
+                                            </th>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.pPPayVendorDetail.no">
+                                            </th>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.pPPayVendorDetail.dueDate">
+                                            </th>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.pPPayVendor.soPhatSinh">
+                                            </th>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.pPPayVendor.soDaTra">
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let pPPayVendorDetail of pPPayVendorDetails;">
+                                            <td class="jsgrid-cell jsgrid-align-left" style="width: 150px">{{pPPayVendorDetail.date}}</td>
+                                            <td class="jsgrid-cell"
+                                                style="width: 150px" *ngIf="pPPayVendorDetail.typeID === TYPE_OPN"><a
+                                            >{{typeLedger === '1' ? pPPayVendorDetail.noMBook : pPPayVendorDetail.noFBook}}</a></td>
+                                            <td class="jsgrid-cell"
+                                                style="width: 150px" *ngIf="pPPayVendorDetail.typeID !== TYPE_OPN"><a
+                                                (click)="viewVoucher(pPPayVendorDetail)" style="color:blue; text-decoration: underline;">{{typeLedger === '1' ? pPPayVendorDetail.noMBook : pPPayVendorDetail.noFBook}}</a></td>
+                                            <td class="jsgrid-cell jsgrid-align-left" style="width: 150px">{{pPPayVendorDetail.dueDate}}</td>
+                                            <td class="jsgrid-cell jsgrid-align-right" style="width: 150px">
+                                                <input type="number"
+                                                       class="input-Cell myreadonlytrue"
+                                                       [readOnly]="true"
+                                                       ebCurrencyMask
+                                                       [systemOptions]="account?.systemOption"
+                                                       [type]="7"
+                                                       [(ngModel)]="pPPayVendorDetail.totalDebit"/></td>
+                                            <td class="jsgrid-cell jsgrid-align-right" style="width: 150px">
+                                                <input type="number"
+                                                       class="input-Cell myreadonlytrue"
+                                                       [readOnly]="true"
+                                                       ebCurrencyMask
+                                                       [systemOptions]="account?.systemOption"
+                                                       [type]="7"
+                                                       [(ngModel)]="pPPayVendorDetail.totalDebit - pPPayVendorDetail.debitAmount"/></td>
+                                        </tr>
+                                        <tr *ngFor="let l of newArr(9 - pPPayVendorDetails?.length)">
+                                            <td class="jsgrid-cell jsgrid-align-left" style="width: 150px"><input type="text" class="input-Cell" readonly></td>
+                                            <td class="jsgrid-cell jsgrid-align-left" style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-left" style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-left" style="width: 150px"></td>
+                                            <td class="jsgrid-cell jsgrid-align-left" style="width: 150px"></td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot>
+                                        <td class="cell-Table countRow">
+                                            <input type="text" readonly
+                                                   class="input-Cell"
+                                                   value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{pPPayVendorDetails?.length}}">
+                                        </td>
+                                        <td class="cell-Table countRow"></td>
+                                        <td class="cell-Table countRow"></td>
+                                        <td class="cell-Table countRow text-right">{{selectedRow.soPhatSinh | ebcurrency: 7:account}}</td>
+                                        <td class="cell-Table countRow text-right">{{selectedRow.soDaTra | ebcurrency: 7:account}}</td>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+            </ngb-tabset>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,134 @@
+<div class="body">
+    <div class="modal-header" style = "padding: 2px 10px; padding-top: 10px">
+        <div class="d-flex flex-wrap col-md-11">
+            <h6 class="modal-title-detail"><img src="../../../../content/images/icon-logo.png" height="24px"
+                                                width="24px"> <span
+                class="text-uppercase" jhiTranslate="ebwebApp.baoCao.cCDCFollowBook"></span></h6>
+        </div>
+    </div>
+    <div class="modal-body" style="padding: 5px 25px">
+        <div>
+            <div *ngIf="treeOrganizationUnits?.length > 0 && treeOrganizationUnits && treeOrganizationUnits[0].children?.length>0" class="form-group row">
+                <label jhiTranslate="ebwebApp.baoCao.canDoiKeToan.organization" class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-10">
+                    <eb-tree-combo-box [tree]="treeOrganizationUnits"
+                                       [(ngModel)]="organizationUnit" (ngModelChange)="getAllDepartments()"></eb-tree-combo-box>
+                </div>
+            </div>
+            <div *ngIf="isShowDependent && treeOrganizationUnits && treeOrganizationUnits?.length > 0 && treeOrganizationUnits[0].children && treeOrganizationUnits[0].children?.length>0"
+                 class="form-group row">
+                <label class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-10">
+                    <label for="checkboxx">
+                        <input id="checkboxx" type="checkbox" name="checkboxx"
+                               [(ngModel)]="dependent" (ngModelChange)="changeDependent()"
+                        ></label>
+                    <label for="checkboxx" jhiTranslate="ebwebApp.baoCao.dependentBranch"></label>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label jhiTranslate="ebwebApp.baoCao.canDoiKeToan.period" class="col-sm-2 col-form-label">Chọn thời
+                    gian</label>
+                <div class="col-sm-10">
+                    <combo-box style=""
+                               name="timeLine"
+                               [dataList]="listTimeLine"
+                               [listColumns]="utilsService.listColumnsTimeLine"
+                               [isOutTable]="true"
+                               displayMember="display"
+                               valueName="value"
+                               [headerColumns]="utilsService.listHeaderColumnsTimeLine"
+                               [isObject]="false"
+                               [(ngModel)]="timeLineVoucher"
+                               (ngModelChange)="selectChangeBeginDateAndEndDate(timeLineVoucher)"
+                    ></combo-box>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label jhiTranslate="ebwebApp.saBill.invoice.fromDate" class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-4">
+                    <eb-date-picker [(ngModel)]="fromDate" name="fromdate" format="YYYYMMDD"></eb-date-picker>
+                </div>
+                <label jhiTranslate="ebwebApp.saBill.invoice.toDate" class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-4">
+                    <eb-date-picker [(ngModel)]="toDate" name="toDate" format="YYYYMMDD"></eb-date-picker>
+                </div>
+            </div>
+<!--            <div class="form-group row">-->
+<!--                <label class="col-sm-2 col-form-label"></label>-->
+<!--                <div class="col-sm-8">-->
+<!--                    <label for="checkboxgroupTheSameItem"><input id="checkboxgroupTheSameItem" type="checkbox" name="checkboxgroupTheSameItem"-->
+<!--                                                  [(ngModel)]="groupTheSameItem"></label>-->
+<!--                    <label for="checkboxgroupTheSameItem" jhiTranslate="ebwebApp.baoCao.nhatKyChungPopup.option1"></label>-->
+<!--                </div>-->
+<!--            </div>-->
+        </div>
+        <div id="table-scroll0" class="table-scroll" style="z-index: 0;">
+            <table class="main-table">
+                <thead>
+                <tr>
+                    <th scope="col" style="width: 100px">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="check-all" [checked]="isCheckAll()" (change)="checkAll()">
+                            <label class="custom-control-label" for="check-all"></label>
+                        </div>
+                    </th>
+                    <th style="width: 200px" scope="col" jhiTranslate="ebwebApp.baoCao.department.departmentCode">Mã phòng ban</th>
+                    <th scope="col" jhiTranslate="ebwebApp.baoCao.department.departmentName">Tên phòng ban</th>
+                </tr>
+                <tr>
+                    <th class="col" class="jsgrid-align-center sticky-35"
+                        style="background: #fff !important; padding: 0px 10px !important;">
+                    </th>
+                    <th class="col" class="jsgrid-align-left sticky-35"
+                        style="background: #fff !important; padding: 0px 10px !important;"><input
+                        type="text" placeholder="{{'ebwebApp.accountDefault.searchHere' | translate}}"
+                        class="input-Cell"
+                        autocomplete="off"
+                        name="accountNumber"
+                        [(ngModel)]="departmentCode"
+                        (ngModelChange)="changeMGFilter()">
+                    </th>
+                    <th class="col" class="jsgrid-align-left sticky-35"
+                        style="background: #fff !important; padding: 0px 10px !important;"><input
+                        type="text"
+                        autocomplete="off"
+                        placeholder="{{'ebwebApp.accountDefault.searchHere' | translate}}"
+                        class="input-Cell"
+                        name="accountName"
+                        [(ngModel)]="departmentName"
+                        (ngModelChange)="changeMGFilter()"
+                    >
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let item of departments, let i = index">
+                    <td class="text-center css-td">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" name="{{'checkbox' + i}}"
+                                   id="{{'checkbox' + i}}" [(ngModel)]="item.checked" (click)="check(item)">
+                            <label class="custom-control-label" for="{{'checkbox' + i}}"></label>
+                        </div>
+                    </td>
+                    <td [title]="item.organizationUnitCode" class="jsgrid-align-left">
+                        {{item.organizationUnitCode}}
+                    </td>
+                    <td [title]="item.organizationUnitName" class="jsgrid-align-left">
+                        {{item.organizationUnitName}}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button id="save" (click)="showReport()" class="btn btn-success">
+            <span jhiTranslate="entity.action.preview"></span>
+        </button>
+        <button class="btn btn-danger" *ebHasSomeAuthorityAndCondition="[['ROLE_ADMIN', ROLE_KetXuat], isKetXuat]" jhiTranslate="entity.action.render" (click)="exportExcel()">Kết xuất</button>
+        <button type="button" class="btn btn-dark" (click)="activeModal.dismiss('closed')" data-dismiss="modal">
+            <span jhiTranslate="entity.action.close"></span>
+        </button>
+    </div>
+</div>

@@ -1,0 +1,272 @@
+<div class="modal-body" style="padding: 0px!important;" (click)="closeContextMenu()">
+    <div class="row margin-tp-5 margin-0">
+        <div class="col-lg-12 pd-0">
+            <div class="itemw">
+                <div class="menu-tool-bar header-custom he">
+                    <div class="ptitle">
+                        <span jhiTranslate="ebwebApp.costSet.home.title">Đối Tượng Tập Hợp Chi Phí </span>
+                    </div>
+                    <div class="gr-toolbar">
+                        <a (click)="save()" title="{{'ebwebApp.autoPrinciple.tooltipSave' | translate}}"
+                           *ebHasSomeAuthorityOrCondition=
+                               "[[ROLE_Them, !isEditUrl], ROLE_Sua,'ROLE_ADMIN']"><i class="mdi mdi-briefcase-download"></i>
+                            <span jhiTranslate="ebwebApp.mCReceipt.home.save"></span>
+                        </a>
+                        <a (click)="saveAndNew()" title="{{'ebwebApp.autoPrinciple.tooltipSaveAndAdd' | translate}}"
+                           *ebHasSomeAuthorityOrCondition=
+                               "[[ROLE_Them , ROLE_Sua], 'ROLE_ADMIN', [ROLE_Them, isCreateUrl]]"><i class="mdi mdi-plus fa-plus color-green"></i>
+                            <span jhiTranslate="ebwebApp.mCReceipt.home.saveAndAddNew"></span>
+                        </a>
+                        <a [class.disable]="!costSet.id" (click)="delete()"  title="{{'ebwebApp.autoPrinciple.tooltipDelete' | translate}}"
+                           *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_Xoa]"><i class="mdi mdi-delete-forever"></i>
+                            <span jhiTranslate="ebwebApp.accountingObject.delete.deleted"></span>
+                        </a>
+                        <a (click)="closeForm()" title="{{'ebwebApp.autoPrinciple.tooltipBack' | translate}}"><i class="mdi mdi-window-close"></i>
+                            <span jhiTranslate="ebwebApp.bank.closed"></span>
+                        </a>
+                    </div>
+                </div>
+                <div class="frm-main">
+                    <div class="row no-gutters">
+                        <div class="col-lg-12 pd-r-0">
+                            <fieldset>
+                                <legend jhiTranslate="ebwebApp.costSet.detail.title"
+                                        style="font-size: 19px; color: #f26f21;font-weight: bold;">
+                                    Thông tin chung
+                                </legend>
+                                <form action="" style="border: none;">
+                                    <div class="row no-gutters">
+                                        <div class="col-lg-12">
+                                            <div class="form-group row no-gutters">
+                                                <label class="my-col-form-label-80"
+                                                       jhiTranslate="ebwebApp.costSet.costSetType1">Loại (*)</label>
+                                                <div class="col-sm-2 pd-l-0 pd-r-10">
+                                                    <combo-box [(ngModel)]="costSet.costSetType"
+                                                               [dataList]="listType"
+                                                               [headerColumns]=" "
+                                                               [isObject]="false"
+                                                               [isOutTable]="true"
+                                                               [isRequired]="true"
+                                                               [listColumns]="listColumnsType"
+                                                               [valueIsNumber]="true"
+                                                               displayMember="name"
+                                                               id="field_costSetType"
+                                                               name="costSetType"
+                                                               valueName="value"
+                                                               [isReadOnly]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                               [tabindex]="1">
+                                                    </combo-box>
+                                                </div>
+                                                <label class="my-col-form-label-80"
+                                                       jhiTranslate="ebwebApp.costSet.costSetCode1"
+                                                       style="text-align: center">Mã ĐT-THCP
+                                                    (*)</label>
+                                                <div class="col-sm-2 pd-l-0 pd-r-10" *ngIf="![4].includes(costSet.costSetType)">
+                                                    <input [(ngModel)]="costSet.costSetCode"
+                                                           [class.required]="!costSet.costSetCode"
+                                                           class="form-control" id="field_costSetCode"
+                                                           maxlength="50"
+                                                           name="costSetCode" type="text"
+                                                           [disabled]="(!isRoleSua) || (!isRoleThem && isCreateUrl)"
+                                                           [tabindex]="2"/>
+                                                </div>
+                                                <div class="col-sm-2 pd-l-0 pd-r-10" *ngIf="[4].includes(costSet.costSetType)">
+                                                    <combo-box name="materialGoodsCode"
+                                                               [dataList]="materialGoodss"
+                                                               [listColumns]="utilsService.ColumnsMaterialGoods"
+                                                               displayMember="materialGoodsCode"
+                                                               valueName="id"
+                                                               [headerColumns]="utilsService.HeaderColumnsMaterialGoods"
+                                                               [showIconPlus]="true"
+                                                               [isOutTable]="true"
+                                                               [isObject]="true"
+                                                               [isRequired]="true"
+                                                               [isCostSet]="true"
+                                                               [(ngModel)]="costSet.materialGoods"
+                                                               (ngModelChange)="selectOnChangeMaterialGoods()"
+                                                               [nameCategory]="utilsService.VAT_TU_HANG_HOA"
+                                                               [isReadOnly]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                               (click)="saveParent()"
+                                                               [tabindex]="2">
+                                                    </combo-box>
+                                                </div>
+                                                <label class="my-col-form-label-80"
+                                                       jhiTranslate="ebwebApp.costSet.costSetName1"
+                                                       style="text-align: center">Tên Đối
+                                                    Tượng</label>
+                                                <div class="col-sm-2 pd-l-0 pd-r-10 my-last-div-3-2"
+                                                     *ngIf="![4].includes(costSet.costSetType)">
+                                                    <input [(ngModel)]="costSet.costSetName"
+                                                           [class.required]="!costSet.costSetName"
+                                                           class="form-control" id="field_costSetName"
+                                                           maxlength="50"
+                                                           name="costSetName" type="text"
+                                                           [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                           [tabindex]="3"/>
+                                                </div>
+                                                <div class="col-sm-2 pd-l-0 pd-r-10 my-last-div-3-2"
+                                                     *ngIf="[4].includes(costSet.costSetType)">
+                                                    <input [(ngModel)]="costSet.costSetName"
+                                                           [class.required]="!costSet.costSetName"
+                                                           class="form-control" id="field_costSetName1"
+                                                           maxlength="50"
+                                                           name="costSetName" type="text"
+                                                           [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                           [tabindex]="3"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row no-gutters">
+                                        <div class="col-lg-12">
+                                            <div class="form-group row no-gutters">
+                                                <label class="my-col-form-label-80"
+                                                       jhiTranslate="ebwebApp.costSet.deScription"></label>
+                                                <div class="col-sm-10 pd-l-0 pd-r-10 my-last-div-1-0">
+                                                    <input [(ngModel)]="costSet.deScription" class="form-control"
+                                                           id="field_deScription"
+                                                           maxlength="50"
+                                                           name="deScription" type="text"
+                                                           [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                           [tabindex]="4"
+                                                           (keydown.arrowDown)="moveArrowDown($event,3)"
+                                                           (keydown.arrowUp)="moveArrowUp($event,3)"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="padding-top: 15px;" *ngIf="[2].includes(costSet.costSetType)">
+        <ngb-tabset class="tool-navbar">
+            <ngb-tab>
+                <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.costSetMaterialGood.home.title">Đối Tượng Gía Thành</span>
+                </ng-template>
+                <ng-template ngbTabContent>
+                    <div class="tab-content">
+                        <div class="frm-main frm-padding tab-pane fade in active show" id="home-material"
+                             style="background: #cbdcf0">
+                            <div class="table-scroll" id="table-scroll-material">
+                                <table class="main-table main-table-custom" id="main-table-material"
+                                       (keydown.arrowDown)="moveArrowDown($event,3)"
+                                       (keydown.arrowUp)="moveArrowUp($event,3)">
+                                    <thead>
+                                    <tr>
+                                        <th jhiTranslate="ebwebApp.costSetMaterialGood.code" scope="col">Mã thành
+                                            phẩm
+                                        </th>
+                                        <th jhiTranslate="ebwebApp.costSetMaterialGood.name" scope="col">Tên thành
+                                            phẩm
+                                        </th>
+                                        <th jhiTranslate="ebwebApp.costSetMaterialGood.deScription" scope="col">Ghi
+                                            chú
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr oncontextmenu="return false;"
+                                        (contextmenu)="onRightClick($event, costSetMaterialGoods, detail, true, true, 0)"
+                                        *ngFor="let detail of costSetMaterialGoods; let i = index"
+                                        (keydown.control.delete)="KeyPress(detail, 'ctr + delete',0)"
+                                        (keydown.control.c)="KeyPress(detail,'ctr + c', 0)"
+                                        (keydown.control.insert)="KeyPress(detail,'ctr + insert', 0)"
+                                        (click)="saveRow(i)">
+                                        <td class="cell-Table">
+                                            <combo-box nameIp="{{'costSetMaterialGoodsCode'+i}}"
+                                                       idIp="{{'costSetMaterialGoodsCode'+i}}"
+                                                       [dataList]="materialGoodss"
+                                                       [headerColumns]="utilsService.listHeaderMaterialGoods"
+                                                       [isObject]="true"
+                                                       [isRequired]="true"
+                                                       [showIconPlus]="true"
+                                                       [listColumns]="utilsService.listColumnsMaterialGoodsPPService"
+                                                       displayMember="materialGoodsCode"
+                                                       valueName="materialGoodsCode"
+                                                       [(ngModel)]="detail.materialGoods"
+                                                       (ngModelChange)="selectChangeMaterialGoods(detail)"
+                                                       [nameCategory]="utilsService.VAT_TU_HANG_HOA"
+                                                       (focusInput)="actionFocus(0, i)"
+                                                       (click)="saveDetails(detail)"
+                                                       [tabindex]="5 + (3 * i) + 1"
+                                            ></combo-box>
+                                        </td>
+                                        <td class="cell-Table"><input
+                                            [ngModel]="detail.materialGoods?.materialGoodsName" class="input-Cell"
+                                            name="{{'costSetMaterialGoodsName'+i}}"
+                                            id="{{'costSetMaterialGoodsName'+i}}"
+                                            type="text"
+                                            [disabled]="true"
+                                            (focus)="actionFocus(1, i)"
+                                            [tabindex]="5 + (3 * i) + 2">
+                                        </td>
+                                        <td class="cell-Table"><input [(ngModel)]="detail.deScription"
+                                                                      class="input-Cell"
+                                                                      name="{{'costSetMaterialGoodsDes'+i}}"
+                                                                      id="{{'costSetMaterialGoodsDes'+i}}"
+                                                                      type="text"
+                                                                      [tabindex]="5 + (3 * i) + 3"
+                                                                      (focus)="actionFocus(2, i)"
+                                                                      (keydown.tab)="addIfLastInput()"></td>
+                                    </tr>
+                                    <tr (click)="addRowToInsert()">
+                                        <td class="cell-Table"><input
+                                            [title]="translate.instant('ebwebApp.purchaseOrder.addNewLine')"
+                                            class="input-Cell"
+                                            readonly
+                                            type="text"
+                                            value="{{'ebwebApp.purchaseOrder.addNewLine' | translate}}"></td>
+                                        <td class="cell-Table"><input class="input-Cell" readonly type="text"></td>
+                                        <td class="cell-Table"><input class="input-Cell" readonly type="text"></td>
+                                    </tr>
+                                    <tr *ngFor="let l of newArr(8 - costSetMaterialGoods?.length)">
+                                        <td class="cell-Table"><input class="input-Cell" readonly type="text"></td>
+                                        <td class="cell-Table"><input class="input-Cell" readonly type="text"></td>
+                                        <td class="cell-Table"><input class="input-Cell" readonly type="text"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </ngb-tab>
+        </ngb-tabset>
+    </div>
+<!--    <div class="col-lg-12" *ngIf="!isNew">-->
+    <div class="col-lg-12" *ngIf="!isNew">
+        <div class="row" style="padding-left: 15px">
+            <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" id="customCheck1" name="isActive"
+                       [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                       [(ngModel)]="costSet.isActive">
+                <label class="custom-control-label" for="customCheck1"
+                       jhiTranslate="ebwebApp.currency.isActive"></label>
+            </div>
+        </div>
+    </div>
+</div>
+<eb-context-menu [contextMenu]="contextMenu" [eventHandlingHere]="true" [useCopyRow]="true"></eb-context-menu>
+<ng-template #content let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.saBill.saveMessage">Dữ liệu đã bị thay đổi, Bạn có muốn lưu lại?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button (click)="saveContent()" class="btn btn-outline-success" jhiTranslate="entity.action.save" type="button">Save
+        </button>
+        <button (click)="close()" class="btn btn-outline-dark" jhiTranslate="entity.action.noSave" type="button">close
+        </button>
+        <button (click)="closeContent()" class="btn btn-outline-dark" jhiTranslate="entity.action.close" type="button">
+            close
+        </button>
+    </div>
+</ng-template>

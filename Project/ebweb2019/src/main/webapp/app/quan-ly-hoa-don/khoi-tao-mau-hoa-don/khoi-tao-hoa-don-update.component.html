@@ -1,0 +1,218 @@
+<div class="container-fluid">
+    <div class="margin-tp-5 margin-0">
+        <div class="">
+            <div class="itemw">
+                <div class="menu-tool-bar he">
+                    <div class="ptitle">
+                        <span jhiTranslate="ebwebApp.iAReport.home.title">Khởi tạo hóa đơn</span>
+                    </div>
+                    <div class="gr-toolbar">
+                        <a title="{{'ebwebApp.outWard.tooltipSave' | translate}}" *ebHasSomeAuthority="['ROLE_ADMIN', this.isEditUrl ? !ROLE_THEM : ROLE_THEM, ROLE_SUA]" (click)="save()" class="saveLuu"><i class="mdi mdi-briefcase-download"></i> <span
+                            jhiTranslate="ebwebApp.autoPrinciple.save"></span></a>
+                        <a title="{{'ebwebApp.outWard.tooltipBack' | translate}}" (click)="closeForm()">
+                            <i class="mdi mdi-window-close"></i>
+                            <span jhiTranslate="ebwebApp.autoPrinciple.closed"></span>
+                        </a>
+                    </div>
+                </div>
+                <div class="frm-main">
+                    <div class="form-group row">
+                        <div class="col-4 row no-gutters">
+                            <label class="col-form-label-1" for="ten-mau-hd">
+                                <span jhiTranslate="ebwebApp.iAReport.tenMauHD">Tên mẫu hóa đơn</span>
+                            </label>
+                            <div class="col-sm-auto pd-l-0 pd-r-30 type-1">
+                                <input
+                                           required id="ten-mau-hd" name="ten-mau-hd" type="text" class="form-control form-control-sm"
+                                       [(ngModel)]="iaReport.reportName" [disabled]="(!checkEditRoleSua && isEditUrl) || (!checkEditRoleThem && isNew)">
+                            </div>
+                        </div>
+                        <div class="col-4 row">
+                            <label class="col-form-label-2">
+                                <span jhiTranslate="ebwebApp.iAReport.hinhThucHoaDon">Hình thức hóa đơn</span>
+                            </label>
+                            <div class="col-sm-auto pd-l-0 pd-r-30 type-2">
+                                <select   required="" name="hinh-thuc-hd" class="form-control form-control-sm"
+                                        [(ngModel)]="iaReport.invoiceForm" (ngModelChange)="invoiceFormChange()"
+                                        [disabled]="(!checkEditRoleSua && isEditUrl) || (!checkEditRoleThem && isNew)">
+                                    <option [ngValue]="0" jhiTranslate="ebwebApp.iAReport.hinhThucHoaDon.0">
+                                        Hóa đơn điện tử
+                                    </option>
+                                    <option [ngValue]="1" jhiTranslate="ebwebApp.iAReport.hinhThucHoaDon.1">
+                                        Hóa đơn đặt in
+                                    </option>
+                                    <option [ngValue]="2" jhiTranslate="ebwebApp.iAReport.hinhThucHoaDon.2">
+                                        Hóa đơn tự in
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-4 row" [class.isReadonly]="(!checkEditRoleSua && isEditUrl) || (!checkEditRoleThem && isNew)">
+                            <label class="col-form-label-3"><span jhiTranslate="ebwebApp.iAReport.loaiHoaDon">Loại hóa đơn</span></label>
+                            <div class="col-sm-auto pd-l-0 pd-r-30 type-3" >
+                                <combo-box id="loai-hoa-don"
+                                           name="loai-hoa-don"
+                                           [isReadOnly]="false"
+                                           [dataList]="invoiceTypes"
+                                           [headerColumns]="['Mã loại hóa đơn', 'Tên loại hóa đơn']"
+                                           [listColumns]="['invoiceTypeCode', 'invoiceTypeName']"
+                                           displayMember="invoiceTypeName"
+                                           valueName="id"
+                                           [isObject]="true"
+                                           [isRequired]="true"
+                                           [isOutTable]="true"
+                                           [(ngModel)]="iaReport.invoiceType"
+                                           (ngModelChange)="changeInvoiceType()"
+                                           >
+                                </combo-box>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-2 row no gutters">
+                            <label class="col-form-label-4"><span jhiTranslate="ebwebApp.iAReport.soLien">Số liên</span></label>
+                            <div class="col-sm-auto pd-l-0 pd-r-30 type-4">
+                                <input   required name="so-lien" type="number" class="form-control form-control-sm height-28"
+                                       [(ngModel)]="iaReport.copyNumber" ebNumeric min="0"
+                                       (blur)="onBlurCopyNum()" (input)="onInputCopyNum($event)"
+                                       [disabled]="(!checkEditRoleSua && isEditUrl) || (!checkEditRoleThem && isNew)">
+                            </div>
+                        </div>
+                        <div class="col-2 row">
+                            <label class="col-form-label-5"><span jhiTranslate="ebwebApp.iAReport.soKyTuMau">Số ký tự mẫu</span></label>
+                            <div class="col-sm-auto pd-l-0 pd-r-30 type-5">
+                                <input  name="ky-tu-mau" type="number" class="form-control form-control-sm height-28"
+                                       [(ngModel)]="iaReport.tempSortOrder" ebNumeric min="0"
+                                       (blur)="checkTempSortOrder()"
+                                       [disabled]="(!checkEditRoleSua && isEditUrl) || (!checkEditRoleThem && isNew)">
+                            </div>
+                        </div>
+                        <div class="col-4 row">
+                            <label class="col-form-label-6"><span jhiTranslate="ebwebApp.iAReport.mauSoHD">Mẫu số hóa đơn</span></label>
+                            <div class="col-sm-auto pd-l-0 pd-r-30 type-6">
+                                <input  name="mau-so-hd" type="text" class="form-control form-control-sm height-28"
+                                       [(ngModel)]="iaReport.invoiceTemplate" [disabled]="!isSpecialInvoiceType"
+                                       [disabled]="(!checkEditRoleSua && isEditUrl) || (!checkEditRoleThem && isNew)">
+                            </div>
+                        </div>
+                        <div class="col-4 row">
+                            <label class="col-form-label-7"><span jhiTranslate="ebwebApp.iAReport.kyTuHD">Ký hiệu hóa đơn</span></label>
+                            <div class="col-sm-auto pd-l-o pd-r-30 type-7">
+                                <input  required name="ten-mau-hd" type="text" class="form-control form-control-sm height-28"
+                                       [(ngModel)]="iaReport.invoiceSeries" [disabled]="(!checkEditRoleSua && isEditUrl) || (!checkEditRoleThem && isNew)">
+                                </div>
+                            </div>
+                    </div>
+                <div class="form-group row">
+                    <div class="col-9 row" [class.isReadonly]="(!checkEditRoleSua && isEditUrl) || (!checkEditRoleThem && isNew)">
+                        <label class="col-form-label-9"  ><span jhiTranslate="ebwebApp.iAReport.duaTheoMau">Dựa theo mẫu</span></label>
+                        <div class="col-sm-8 pd-l-0 pd-r-30 type-9">
+                            <combo-box id="dua-theo-mau"
+                                       name="dua-theo-mau"
+                                       [isReadOnly]="false"
+                                       [dataList]="iaInvoiceTemplates"
+                                       [headerColumns]="['Tên mẫu']"
+                                       [listColumns]="['invoiceTemplateName']"
+                                       displayMember="invoiceTemplateName"
+                                       valueName="id"
+                                       [isObject]="true"
+                                       [isOutTable]="true"
+                                       [(ngModel)]="iaInvoiceTemplate">
+                            </combo-box>
+                        </div>
+                        <div class="col-2 row">
+                            <label ></label>
+                            <button class="btn btn-success d-block click-1"(click)="previewInvoiceTemplate()">
+                            <fa-icon [icon]="'search'"></fa-icon>
+                            <span jhiTranslate="ebwebApp.iAReport.xemMau">Xem Mẫu</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+                <div class="tab-content">
+                    <div class="frm-main frm-padding tab-pane fade in active show" id="home-detail"
+                         style="background: #cbdcf0">
+                        <div class="table-scroll">
+                            <table id="main-table-detail" class="main-table">
+                                <thead>
+                                <tr>
+                                    <th scope="col">
+                                        <span jhiTranslate="ebwebApp.iAReport.tenLien">Tên liên</span>
+                                    </th>
+                                    <th scope="col">
+                                        <span jhiTranslate="ebwebApp.iAReport.mucDich">Mục đích</span>
+                                    </th>
+                                    <th scope="col">
+                                        <span jhiTranslate="ebwebApp.iAReport.mauLien">Màu liên</span>
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr *ngFor="let detail of gridArray; let i = index;">
+                                    <td class="cell-Table">
+                                        <input type="text" [(ngModel)]="detail.name" class="input-Cell"
+                                               [disabled]="i < 3">
+                                    </td>
+                                    <td class="cell-Table fix-pd-input pl-0">
+                                        <input type="text" [(ngModel)]="detail.purpose"
+                                               class="input-Cell" [disabled]="i < 3"/>
+                                    </td>
+                                    <td class="cell-Table" (click)="openModelDelete(colorPickerModal, i)">
+                                        <button class="color-div btn-success" [ngStyle]="{'background-color': detail.color || 'black'}"></button>
+                                        <span class="text ml-2">{{detail.color}}</span>
+                                    </td>
+                                </tr>
+                                <tr *ngFor="let l of newArr(10 - gridArray.length)">
+                                    <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                    </td>
+                                    <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                    </td>
+                                    <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<ng-template #content let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.saBill.saveMessage">Dữ liệu đã bị thay đổi, Bạn có muốn lưu lại?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="save()" jhiTranslate="entity.action.save">Save</button>
+        <button type="button" class="btn btn-outline-danger" (click)="close()" jhiTranslate="entity.action.noSave">Save</button>
+        <button type="button" class="btn btn-outline-dark" (click)="modalRef.close(); isClosing = false" jhiTranslate="entity.action.close">close</button>
+    </div>
+</ng-template>
+
+<ng-template #colorPickerModal let-d="dismiss">
+    <form name="colorPickerModal">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                    (click)="d('Close')">&times;
+            </button>
+        </div>
+        <div class="modal-body">
+            <eb-color-picker (selectedColor)="selectedColor = $event"></eb-color-picker>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="d('Close')">
+                <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+            </button>
+            <button type="submit" class="btn btn-success" (click)="selectColor(); d('Close')">
+                <span jhiTranslate="entity.action.ok">Đồng ý</span>
+            </button>
+        </div>
+    </form>
+</ng-template>

@@ -1,0 +1,123 @@
+<div class="pd-10 bg-modal">
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-2">
+                <label jhiTranslate="ebwebApp.muaHang.muaDichVu.insertUpdate.accountObject"></label>
+                <combo-box id="field-account-object"
+                           name="combobox-account-object"
+                           [dataList]="accountObjects"
+                           [listColumns]="utilsService.listColumnsAccountingObjects"
+                           displayMember="accountingObjectCode"
+                           valueName="id"
+                           [headerColumns]="utilsService.getListHeaderColumnsAccountingObject()"
+                           [(ngModel)]="accountingObjectID"
+                           [isOutTable]="true">
+                </combo-box>
+            </div>
+            <div class="col-md-2">
+                <label jhiTranslate="ebwebApp.receiveBill.detail.time">Chọn thời gian</label>
+                <combo-box style=""
+                           name="timeLine"
+                           [dataList]="listTimeLine"
+                           [listColumns]="utilsService.listColumnsTimeLine"
+                           [isOutTable]="true"
+                           displayMember="display"
+                           valueName="value"
+                           [headerColumns]="utilsService.listHeaderColumnsTimeLine"
+                           [isObject]="false"
+                           [(ngModel)]="timeLineVoucher"
+                           (ngModelChange)="selectChangeBeginDateAndEndDate(timeLineVoucher)"
+                ></combo-box>
+            </div>
+            <div class="col-md-2">
+                <label jhiTranslate="ebwebApp.saBill.invoice.fromDate">date</label>
+                <eb-date-picker [(ngModel)]="fromDate" name="fromdate" format="YYYYMMDD"></eb-date-picker>
+            </div>
+            <div class="col-md-2">
+                <label jhiTranslate="ebwebApp.saBill.invoice.toDate">date</label>
+                <eb-date-picker [(ngModel)]="toDate" name="todate" format="YYYYMMDD"></eb-date-picker>
+            </div>
+            <div class="col-md-4">
+                <label class="d-block">&nbsp;</label>
+                <button (click)="queryData()" class="btn btn-success" jhiTranslate="ebwebApp.receiveBill.getData"></button>
+            </div>
+        </div>
+    </div>
+    <div class="frm-main frm-padding tab-pane fade in active show" id="home-ref"
+         style="background: #cbdcf0">
+        <div id="table-scroll-ref" class="table-scroll">
+            <table id="main-table-ref" class="main-table">
+                <thead>
+                <tr>
+                    <th scope="col">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="check-all" [checked]="isCheckAll()" (change)="checkAll()">
+                            <label class="custom-control-label" for="check-all"></label>
+                        </div>
+                    </th>
+                    <th scope="col">Ngày chứng từ</th>
+                    <th scope="col">Ngày hạch toán</th>
+                    <th scope="col">Số chứng từ</th>
+                    <th scope="col">Diễn giải</th>
+                    <th scope="col">Số tiền</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let ppOrder of saReturn; let i = index" (click)="check(ppOrder)">
+                    <td class="text-center">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" name="{{'checkbox' + i}}"
+                                   id="{{'checkbox' + i}}" [(ngModel)]="ppOrder.checked" (click)="check(ppOrder)">
+                            <label class="custom-control-label" for="{{'checkbox' + i}}"></label>
+                        </div>
+                    </td>
+                    <td class="text-center">{{ppOrder.date | date: 'dd/MM/yyyy'}}</td>
+                    <td class="one-long-line text-left" title="{{ppOrder.postedDate}}">{{ppOrder.postedDate | date: 'dd/MM/yyyy'}}</td>
+                    <td class="one-long-line text-left"
+                        (click)="utilsService.viewByTypeGroupID(ppOrder)" style="color:blue; text-decoration: underline;"
+                        title="{{ppOrder.book}}">{{ppOrder.book}}</td>
+                    <td class="one-long-line text-left" title="{{ppOrder.reason}}">{{ppOrder.reason}}</td>
+                    <td class="text-right">
+                        <input type="number"
+                               class="input-Cell bg-transparent border-0 w-100 noSetDisable"
+                               [(ngModel)]="ppOrder.total"
+                               name="sumMainQuantity" ebCurrencyMask
+                               [systemOptions]="account?.systemOption"
+                               [type]="7" disabled>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="modal-body pd-t-b-0">
+        <div class="row justify-content-end" style="height:32px">
+            <div class="col-lg-2">
+                <div class="form-group row">
+                    <label class="col-sm-7 col-form-label text-right" for="itemsPerPage">
+                        <span jhiTranslate="ebwebApp.mCPayment.total"></span> : {{totalItems}}
+                    </label>
+                    <div class="col-sm-5 pd-l-0">
+                        <select class="form-control form-control-sm" name="itemsPerPage" id="itemsPerPage"
+                                style="background-color: #f5f7fa;" [(ngModel)]="itemsPerPage" (ngModelChange)="queryData()" >
+                                        <option [value]="10">10</option>
+                            <option [value]="20">20</option>
+                            <option [value]="30">30</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="justify-content-end">
+                <ngb-pagination [size]="'sm'" [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage"
+                                [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
+                                (pageChange)="queryData()"></ngb-pagination>
+            </div>
+        </div>
+    </div>
+    <div class="row pd-t-b-0 text-right d-block">
+        <button type="button" class="btn btn-primary" (click)="apply()"><span jhiTranslate="entity.action.ok"></span>
+        </button>
+        <button type="button" class="btn btn-light" (click)="close()"><span jhiTranslate="entity.action.huyBo"></span>
+        </button>
+    </div>
+</div>

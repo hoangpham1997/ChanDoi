@@ -1,0 +1,337 @@
+<div >
+    <div >
+        <div class="menu-tool-bar he">
+            <div class="ptitle">
+                <span jhiTranslate="ebwebApp.accountingObject.home.suppliers">Nhà cung cấp</span>
+            </div>
+            <div class="gr-toolbar">
+                <a (click)="addNew($event)" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_DanhMucNhaCungCap_Them]"
+                   title="{{'ebwebApp.autoPrinciple.tooltipAdd' | translate}}"><i class="mdi mdi-plus"></i> <span
+                    jhiTranslate="ebwebApp.accountingObject.add"></span></a>
+                <a *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_DanhMucNhaCungCap_Sua]" [hidden]="!selectedRow"
+                   (click)="edit()" title="{{'ebwebApp.autoPrinciple.tooltipEdit' | translate}}"><i
+                    class="mdi mdi-pen"></i> <span
+                    jhiTranslate="ebwebApp.accountingObject.edit"></span></a>
+                <!--                        [routerLink]="['/account-list', selectedRow.id, 'edit']"-->
+                <a *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_DanhMucNhaCungCap_Xoa]" [hidden]="!selectedRow"
+                   (click)="delete()"><i class="mdi mdi-delete"
+                                         title="{{'ebwebApp.autoPrinciple.tooltipDelete' | translate}}"></i><span
+                    jhiTranslate="ebwebApp.accountingObject.delete.deleted"></span> </a>
+                <!--                        [routerLink]="['/', { outlets: { popup: 'account-list/'+ selectedRow.id + '/delete'} }]"-->
+                <!--                        replaceUrl="true"-->
+                <a href='javascript:void(0);' (click)="importFromExcel()" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE.DanhMucNhaCungCap_Xem]">
+                    <i class="mdi mdi-file-export"></i>
+                    <span jhiTranslate="ebwebApp.tienIch.soDuDauKy.fileExcelImport"></span>
+                </a>
+                <a (click)="toggleSearch($event)"
+                   title="{{'ebwebApp.outWard.tooltipSearch' | translate}}">
+                    <i class="{{isShowSearch?'mdi mdi-chevron-up':'mdi mdi-magnify'}}"></i>
+                    <span
+                        jhiTranslate="{{!isShowSearch ? 'ebwebApp.common.advancedSearch' : 'ebwebApp.common.hideSearch'}}"> Tìm kiếm </span>
+                </a>
+            </div>
+        </div>
+        <div class="frm-main frm-mains nobg">
+            <form id="search" style="background: #cbdcf0;" [hidden]="!isShowSearch">
+                <div class="row no-gutters">
+                    <div class="col-lg-12">
+                        <div class="col-lg-12">
+                            <div class="form-group row no-gutters">
+                                <label class="col-sm-2 my-col-form-label"
+                                       jhiTranslate="ebwebApp.accountingObject.scaleType">Quy mô (*)</label>
+                                <div class="col-sm-2 pd-l-0">
+                                    <combo-box style="" id="field_scaletype"
+                                               name="comboboxScaletype"
+                                               [dataList]="ScaleTypeList"
+                                               [isOutTable]="true"
+                                               [listColumns]="['name']"
+                                               displayMember="name"
+                                               valueName="id"
+                                               [headerColumns]="['Quy Mô']"
+                                               [isObject]="false"
+                                               [(ngModel)]="search.scaleType "
+                                               [tabindex]="1">
+                                    </combo-box>
+                                </div>
+                                <label class="col-sm-2 my-col-form-label"
+                                       jhiTranslate="ebwebApp.accountingObject.objectType"
+                                >Loại đối tượng (*)</label>
+                                <div class="col-sm-2 pd-l-0">
+                                    <combo-box style="" id="field_objecttypelist"
+                                               name="comboboxobjecttypelist"
+                                               [dataList]="ObjectTypeListes"
+                                               [isOutTable]="true"
+                                               [listColumns]="['name']"
+                                               displayMember="name"
+                                               valueName="id"
+                                               [headerColumns]="['Loại Đối Tượng']"
+                                               [isObject]="false"
+                                               [(ngModel)]="search.objectType "
+                                               [tabindex]="2">
+                                    </combo-box>
+                                </div>
+                                <label class="col-sm-2 my-col-form-label"
+                                       jhiTranslate="ebwebApp.accountingObject.supplierGroup">Nhóm
+                                    Nhà Cung Cấp</label>
+                                <div class="col-sm-2 pd-l-0 my-last-div-3-2">
+                                    <combo-box style="" id="field_comboboxAccountingObjectGroupes"
+                                               name="comboboxAccountingObjectGroupes"
+                                               [dataList]="accountingobjectgroups"
+                                               [isOutTable]="true"
+                                               [listColumns]="['accountingObjectGroupName']"
+                                               displayMember="accountingObjectGroupName"
+                                               valueName="id"
+                                               [headerColumns]="['Nhóm Nhà Cung Cấp']"
+                                               [isObject]="false"
+                                               [(ngModel)]="search.accountingObjectGroup "
+                                               [tabindex]="3">
+                                    </combo-box>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="form-group row no-gutters">
+                                <label class="col-sm-2 my-col-form-label"
+                                       jhiTranslate="ebwebApp.mBDeposit.detail.searchValue">Tìm kiếm</label>
+                                <div class="col-sm-7 my-last-div-1-0">
+                                    <input [(ngModel)]="search.keySearch" name="searchValue" id="field_searchValue"
+                                           type="text" class="form-control form-control-sm" [tabindex]="4">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="frm-button">
+                                <button class="btn btn-success btn-sm" (click)="startLoadAllButtonSearch()"
+                                        style="font-size: 16px"><i
+                                    class="mdi mdi-magnify"
+                                    aria-hidden="true"
+                                    style="margin-right: 5px"></i><span
+                                    jhiTranslate="ebwebApp.accountingObject.search"></span>
+                                </button>
+                                <button class="btn btn-danger btn-sm" (click)="resetSearch()"
+                                        style="font-size: 16px"><i
+                                    class="mdi mdi-replay"
+                                    style="margin-right: 5px"></i><span
+                                    jhiTranslate="ebwebApp.mBDeposit.detail.reset"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div class="frm-main frm-tables frm-padding no-highlight" style="background: #cbdcf0; margin-top: 2px">
+                <div id="table-scroll0" class="table-scroll voucher-table">
+                    <table id="main-table0" class="main-table">
+                        <thead class="header-table">
+                        <tr>
+                            <th scope="col" jhiTranslate="ebwebApp.accountingObject.supplierCode"></th>
+                            <th scope="col" jhiTranslate="ebwebApp.accountingObject.supplierName"></th>
+                            <th scope="col" jhiTranslate="ebwebApp.accountingObject.accountingObjectAddress"></th>
+                            <th scope="col" jhiTranslate="ebwebApp.accountingObject.tel"></th>
+                            <th scope="col" jhiTranslate="ebwebApp.accountingObject.taxCode"></th>
+                            <th scope="col" jhiTranslate="ebwebApp.accountingObject.isActive"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let supplier of accountingObjects ;trackBy: trackId"
+                            [class.row-selected]="this.selectedRows.indexOf(supplier) !== -1"
+                            [class.selected]="supplier === supplier"
+                            (click)="selectMultiRow(supplier, $event, accountingObjects)"
+                            (dblclick)="edit()"
+                            [class.selected]="supplier === selectedRow"
+                        >
+                            <td title="{{supplier.accountingObjectCode}}" class="jsgrid-cell jsgrid-align-left"
+                                style="width: 150px">{{supplier.accountingObjectCode}}</td>
+                            <td title="{{supplier.accountingObjectName}}" class="jsgrid-cell jsgrid-align-left"
+                                style="width: 150px">{{supplier.accountingObjectName}}</td>
+                            <td title="{{supplier.accountingObjectAddress}}" class="jsgrid-cell jsgrid-align-left"
+                                style="width: 150px">{{supplier.accountingObjectAddress}}</td>
+                            <td title="{{supplier.tel}}" class="jsgrid-cell jsgrid-align-left"
+                                style="width: 150px">{{supplier.tel}}</td>
+                            <td title="{{supplier.taxCode}}" class="jsgrid-cell jsgrid-align-left"
+                                style="width: 150px">{{supplier.taxCode}}</td>
+                            <td class="jsgrid-cell jsgrid-align-center"
+                                style="width: 150px"><input type="checkbox"
+                                                            class="jsgrid-cell jsgrid-align-center"
+                                                            name="isactive" id="field_isactive"
+                                                            [(ngModel)]="supplier.isActive" disabled/></td>
+                        </tr>
+                        <tr *ngFor="let l of newArr(10 - accountingObjects?.length)">
+                            <td class="jsgrid-cell jsgrid-align-left" style="width: 150px"></td>
+                            <td class="jsgrid-cell jsgrid-align-left" style="width: 150px"></td>
+                            <td class="jsgrid-cell jsgrid-align-left" style="width: 150px"></td>
+                            <td class="jsgrid-cell jsgrid-align-left" style="width: 150px"></td>
+                            <td class="jsgrid-cell jsgrid-align-left" style="width: 150px"></td>
+                            <td class="jsgrid-cell jsgrid-align-center" style="width: 150px"></td>
+                        </tr>
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <td class="cell-Table" colspan="6" style="padding: 0px"><input type="text" readonly
+                                                                                           class="countRow input-Cell"
+                                                                                           value="{{'ebwebApp.mBDeposit.countLine'| translate}} : {{accountingObjects?.length}}">
+                            </td>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+            <div *ngIf="accountingObjects && accountingObjects?.length"
+                 style="padding-right: 16px">
+                <div class="row justify-content-end" style="height:32px">
+                    <div class="col-lg-2">
+                        <div class="form-group row">
+                            <label class="col-sm-7 col-form-label" for="itemsPerPage"
+                                   style="padding-right: 0px;text-align: right;"><span
+                                jhiTranslate="ebwebApp.mBDeposit.totalPage"></span>: {{totalItems}}</label>
+                            <div class="col-sm-5 pd-l-0">
+                                <select class="form-control form-control-sm" name="itemsPerPage"
+                                        id="itemsPerPage"
+                                        style="background-color: #f5f7fa;"
+                                        [(ngModel)]="itemsPerPage"
+                                        (ngModelChange)="selectedItemPerPage()"
+                                >
+                                    <option [value]="10">10</option>
+                                    <option [value]="20">20</option>
+                                    <option [value]="30">30</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="justify-content-end">
+                        <ngb-pagination [size]="'sm'" [collectionSize]="totalItems" [(page)]="pageShow" [pageSize]="itemsPerPage"
+                                        [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
+                                        (pageChange)="loadPage(pageShow)"></ngb-pagination>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <ngb-tabset class="tool-navbar">
+                    <ngb-tab>
+                        <ng-template ngbTabTitle><span
+                            jhiTranslate="ebwebApp.accountingObject.detail.vouchersArise"></span>
+                        </ng-template>
+                        <ng-template ngbTabContent>
+                            <div class="tab-content">
+                                <div class="frm-main frm-padding tab-pane fade in active show" id="home-detail"
+                                     style="background: #cbdcf0">
+                                    <div id="table-scroll-detail" class="table-scroll">
+                                        <table id="main-table0" class="main-table">
+                                            <thead>
+                                            <tr>
+                                                <th scope="col"
+                                                    jhiTranslate="ebwebApp.accountingObject.typeID">
+                                                </th>
+                                                <th scope="col"
+                                                    jhiTranslate="ebwebApp.accountingObject.date">
+                                                </th>
+                                                <th scope="col"
+                                                    jhiTranslate="ebwebApp.accountingObject.noFBook">
+                                                </th>
+                                                <th scope="col"
+                                                    jhiTranslate="ebwebApp.accountingObject.description">
+                                                </th>
+                                                <th scope="col"
+                                                    jhiTranslate="ebwebApp.accountingObject.totalAmount">
+                                                </th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr *ngFor="let voucherRefCatalogDTOS of voucherRefCatalogDTO ; let i = index; trackBy: trackId"
+                                                (click)="selectRowVoucher(voucherRefCatalogDTOS, $event, voucherRefCatalogDTO)"
+                                                [class.row-selected]="this.selectedRows.indexOf(voucherRefCatalogDTOS) !== -1"
+                                            >
+
+                                                <td title="{{getTypeName(voucherRefCatalogDTOS.typeID)}}"
+                                                    class="jsgrid-cell jsgrid-align-left"
+                                                    style="width: 150px">{{getTypeName(voucherRefCatalogDTOS.typeID)}}</td>
+                                                <td title="{{voucherRefCatalogDTOS.date| date:'dd/MM/yyyy'}}"
+                                                    class="jsgrid-cell jsgrid-align-left"
+                                                    style="width: 150px">{{voucherRefCatalogDTOS.date| date:'dd/MM/yyyy'}}</td>
+                                                <td (click)="utilsService.viewVoucherByIDAndTypeGroupID(voucherRefCatalogDTOS)"
+                                                    style="color:blue; text-decoration: underline; width: 150px"
+                                                    title="{{isSoTaiChinh ? voucherRefCatalogDTOS.noFBook : voucherRefCatalogDTOS.noMBook}}"
+                                                    class="jsgrid-cell jsgrid-align-left"
+                                                >{{isSoTaiChinh ? voucherRefCatalogDTOS.noFBook : voucherRefCatalogDTOS.noMBook}}</td>
+                                                <td title="{{voucherRefCatalogDTOS.reason}}"
+                                                    class="jsgrid-cell jsgrid-align-left"
+                                                    style="width: 150px">{{voucherRefCatalogDTOS.reason}}</td>
+                                                <td title="{{voucherRefCatalogDTOS.totalAmountOriginal}}"
+                                                    class="jsgrid-cell jsgrid-align-right"
+                                                    style="width: 150px"><input type="text"
+                                                                                class="input-Cell text-right inputFormatCurrency"
+                                                                                [(ngModel)]="voucherRefCatalogDTOS.totalAmountOriginal"
+                                                                                [allowNegative]="false"
+                                                                                [systemOptions]="currentAccount?.systemOption"
+                                                                                [type]="7" ebCurrencyMask disabled></td>
+                                            </tr>
+                                            <tr *ngFor="let l of newArr(10 - voucherRefCatalogDTO?.length)">
+                                                <td class="jsgrid-cell jsgrid-align-left" style="width: 150px"></td>
+                                                <td class="jsgrid-cell jsgrid-align-left" style="width: 150px"></td>
+                                                <td class="jsgrid-cell jsgrid-align-left" style="width: 150px"></td>
+                                                <td class="jsgrid-cell jsgrid-align-left" style="width: 150px"></td>
+                                                <td class="jsgrid-cell jsgrid-align-right" style="width: 150px"></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </ngb-tab>
+                </ngb-tabset>
+            </div>
+            <div *ngIf="voucherRefCatalogDTO && voucherRefCatalogDTO?.length"
+                 style="padding-right: 16px">
+                <div class="row justify-content-end" style="height:32px">
+                    <div class="col-lg-2">
+                        <div class="form-group row">
+                            <label class="col-sm-7 col-form-label" for="itemsPerPage"
+                                   style="padding-right: 0px;text-align: right;"><span
+                                jhiTranslate="ebwebApp.mBDeposit.totalPage"></span>: {{totalItemsVoucher}}</label>
+                            <div class="col-sm-5 pd-l-0">
+                                <select class="form-control form-control-sm" name="itemsPerPage"
+                                        id="itemsPerPage"
+                                        style="background-color: #f5f7fa;"
+                                        [(ngModel)]="itemsPerPageVoucher"
+                                        (ngModelChange)="selectedItemPerPageVoucher()"
+                                >
+                                    <option [value]="10">10</option>
+                                    <option [value]="20">20</option>
+                                    <option [value]="30">30</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="justify-content-end">
+                        <ngb-pagination [size]="'sm'" [collectionSize]="totalItemsVoucher" [(page)]="pageVoucher"
+                                        [pageSize]="itemsPerPageVoucher"
+                                        [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
+                                        (pageChange)="loadPageVoucher(pageVoucher)"></ngb-pagination>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #deletePopup let-d="dismiss">
+    <form  name="deleteForm" (ngSubmit)="confirmDeleteList()">
+        <div class="modal-header">
+            <h4 class="modal-title" jhiTranslate="entity.delete.title">Confirm delete operation</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                    (click)="modalRef.close()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <eb-alert-error></eb-alert-error>
+            <p id="eb-delete-sAOrder-heading" jhiTranslate="ebwebApp.sAOrder.delete.questionList">Are you sure you want to delete this SA Order?</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="modalRef.close()">
+                <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+            </button>
+            <button id="eb-confirm-delete-sAOrder" type="submit" class="btn btn-danger">
+                <fa-icon [icon]="'times'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.delete">Delete</span>
+            </button>
+        </div>
+    </form>
+</ng-template>

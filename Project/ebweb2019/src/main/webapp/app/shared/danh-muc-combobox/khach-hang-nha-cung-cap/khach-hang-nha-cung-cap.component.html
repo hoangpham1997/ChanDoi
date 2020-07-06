@@ -1,0 +1,550 @@
+<div class="modal-body windowClass-DanhMuc-Combobox" style="padding: 10px!important;">
+    <div class="margin-tp-5 margin-0 no-gutters">
+        <div class="">
+            <div class="itemw">
+                <div class="menu-tool-bar header-custom">
+                    <div class="ptitle">
+                        <span *ngIf="type === 1"
+                              jhiTranslate="ebwebApp.accountingObject.home.title">KHÁCH HÀNG</span>
+                        <span *ngIf="type === 0"
+                              jhiTranslate="ebwebApp.accountingObject.home.suppliers">NHÀ CUNG CẤP</span>
+                    </div>
+                    <div class="gr-toolbar">
+                        <a (click)="save()"><i class="mdi mdi-briefcase-download"></i>
+                            <span jhiTranslate="ebwebApp.mCReceipt.home.save"></span>
+                        </a>
+                        <a (click)="saveAndNew()"><i class="mdi mdi-plus fa-plus color-green"></i>
+                            <span jhiTranslate="ebwebApp.mCReceipt.home.saveAndAddNew"></span>
+                        </a>
+                        <a (click)="close()"><i class="mdi mdi-window-close"></i>
+                            <span jhiTranslate="ebwebApp.mCReceipt.home.close"></span>
+                        </a>
+                    </div>
+                </div>
+                <!--                <eb-alert></eb-alert>-->
+                <div class="tool-navbar">
+                    <div class="form-group row" style="margin-bottom: 0px; padding-top: 10px; height: 32px;">
+                        <label class="col-sm-2 col-form-label" for="scaletype" style="text-align: center"
+                               jhiTranslate="ebwebApp.accountingObject.scaleType">Quy mô (*)</label>
+                        <div class="col-sm-2 pd-l-0 pd-r-10">
+                            <select name="scaletype" id="scaletype"
+                                    class="form-control form-control-sm"
+                                    [(ngModel)]="accountingObject.scaleType" required
+                            >
+                                <option [ngValue]="1" jhiTranslate="ebwebApp.accountingObject.personal">Cá nhân</option>
+                                <option [ngValue]="0" jhiTranslate="ebwebApp.accountingObject.organization">Tổ chức
+                                </option>
+                            </select>
+                        </div>
+                        <label class="col-sm-2 col-form-label" for="field_objecttype"
+                               jhiTranslate="ebwebApp.accountingObject.objectType"
+                        >Loại đối tượng (*)</label>
+                        <div class="col-sm-2 pd-l-0">
+                            <select name="objecttype" id="field_objecttype"
+                                    class="form-control form-control-sm"
+                                    [(ngModel)]="accountingObject.objectType" required
+                            >
+                                <option value="0" *ngIf="type === 0" jhiTranslate="ebwebApp.accountingObject.home.supplier">Nhà cung cấp
+                                </option>
+                                <option value="1" *ngIf="type === 1" jhiTranslate="ebwebApp.accountingObject.home.customer">Khách hàng
+                                </option>
+                                <option value="2" jhiTranslate="ebwebApp.accountingObject.home.customerAndSupplier">
+                                    Khách hàng/Nhà cung cấp
+                                </option>
+                                <option value="3" jhiTranslate="ebwebApp.accountingObject.home.other">Khác</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-2 pd-l-0 pd-r-10" style="text-align: center">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="field_isemployee"
+                                       [(ngModel)]="accountingObject.isEmployee">
+                                <label class="custom-control-label" for="field_isemployee"
+                                       jhiTranslate="ebwebApp.accountingObject.isEmployee"></label>
+                            </div>
+                        </div>
+                        <div class="col-sm-1 pd-l-0 pd-r-10">
+                            <div *ngIf="accountingObject.id" class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="customCheck1"
+                                       [(ngModel)]="accountingObject.isActive">
+                                <label class="custom-control-label" for="customCheck1"
+                                       jhiTranslate="ebwebApp.accountingObject.isActive"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="frm-main" style="margin-bottom: 0">
+                    <div class="row no-gutters">
+                        <div class="col-lg-12">
+                            <fieldset>
+                                <legend style="font-size: 19px; color: #f26f21;font-weight: bold;"
+                                        jhiTranslate="ebwebApp.accountingObject.detail.title">
+                                    Thông tin chung
+                                </legend>
+                                <div style="border: none; padding: 0!important;">
+                                    <div class="row no-gutters">
+                                        <div class="col-lg-12">
+                                            <div class="form-group row no-gutters">
+                                                <label *ngIf="type === 1"
+                                                       class="col-sm-2 my-col-form-label"
+                                                       for="field_accountingobjectcode"
+                                                       jhiTranslate="ebwebApp.accountingObject.accountingObjectCoded">Mã
+                                                    khách hàng (*)</label>
+                                                <label *ngIf="type === 0"
+                                                       class="col-sm-2 my-col-form-label"
+                                                       for="field_accountingobjectcode"
+                                                       jhiTranslate="ebwebApp.accountingObject.supplierCoded">Mã nhà
+                                                    cung cấp (*)</label>
+                                                <div class="col-sm-3 pd-l-0 pd-r-10">
+                                                    <input required type="text" class="form-control form-control-sm"
+                                                           name="accountingobjectcode" id="field_accountingobjectcode"
+                                                           [(ngModel)]="accountingObject.accountingObjectCode"
+                                                           [disabled]="accountingObject.id"
+                                                           [tabindex]="500001"
+                                                    />
+                                                </div>
+                                                <label *ngIf="type === 1"
+                                                       class="col-sm-2 my-col-form-label"
+                                                       for="field_accountingobjectname"
+                                                       jhiTranslate="ebwebApp.accountingObject.accountingObjectNamed">Tên
+                                                    khách hàng (*)</label>
+                                                <label *ngIf="type === 0"
+                                                       class="col-sm-2 my-col-form-label"
+                                                       for="field_accountingobjectname"
+                                                       jhiTranslate="ebwebApp.accountingObject.supplierNamed">Tên nhà
+                                                    cung cấp (*)</label>
+                                                <div class="col-sm-5 pd-l-0 my-last-div-2-1">
+                                                    <input required type="text" class="form-control form-control-sm"
+                                                           name="accountingobjectname" id="field_accountingobjectname"
+                                                           [(ngModel)]="accountingObject.accountingObjectName"
+                                                           [tabindex]="500002"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div class="form-group row no-gutters">
+                                                <label class="col-sm-2 my-col-form-label" for="field_tel"
+                                                       jhiTranslate="ebwebApp.accountingObject.tel">Điện thoại</label>
+                                                <div class="col-sm-3 pd-l-0 pd-r-10">
+                                                    <input type="text" class="form-control form-control-sm"
+                                                           name="tel" id="field_tel"
+                                                           [(ngModel)]="accountingObject.tel"
+                                                           [tabindex]="500003"
+                                                    />
+                                                </div>
+                                                <label class="col-sm-2 my-col-form-label"
+                                                       for="field_accountingobjectaddress"
+                                                       jhiTranslate="ebwebApp.accountingObject.accountingObjectAddress">Địa
+                                                    chỉ</label>
+                                                <div class="col-sm-5 pd-l-0 my-last-div-2-1">
+                                                    <input type="text" class="form-control form-control-sm"
+                                                           name="accountingobjectaddress"
+                                                           id="field_accountingobjectaddress"
+                                                           [(ngModel)]="accountingObject.accountingObjectAddress"
+                                                           [tabindex]="500004"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div class="form-group row no-gutters">
+                                                <label class="col-sm-2 my-col-form-label" for="field_taxcode"
+                                                       jhiTranslate="ebwebApp.accountingObject.taxCode">Mã số
+                                                    thuế</label>
+                                                <div class="col-sm-1 pd-l-0 pd-r-10">
+                                                    <input type="text" class="form-control form-control-sm"
+                                                           name="taxcode" id="field_taxcode"
+                                                           [(ngModel)]="accountingObject.taxCode"
+                                                           [tabindex]="500005"
+                                                    />
+                                                </div>
+                                                <button class="btn btn-success btn-sm" (click)="loadForTax()"
+                                                        style="font-size: 16px"><i
+                                                    style="margin-right: 5px"></i><span
+                                                    jhiTranslate="ebwebApp.accountingObject.get"></span>
+                                                </button>
+                                                <label class="col-sm-2 my-col-form-label" for="field_email"
+                                                       jhiTranslate="ebwebApp.accountingObject.email">Email</label>
+                                                <div class="col-sm-2 pd-l-0">
+                                                    <input type="text" class="form-control form-control-sm"
+                                                           name="emails" id="field_email"
+                                                           [(ngModel)]="accountingObject.email"
+                                                           [tabindex]="500006"
+                                                    />
+                                                </div>
+                                                <label class="col-sm-2 my-col-form-label" for="field_website"
+                                                       jhiTranslate="ebwebApp.accountingObject.website">Website</label>
+                                                <div class="col-sm-2 pd-l-0 my-last-div-3-2-2">
+                                                    <input type="text" class="form-control form-control-sm"
+                                                           name="website" id="field_website"
+                                                           [(ngModel)]="accountingObject.website"
+                                                           [tabindex]="500007"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div class="form-group row no-gutters">
+                                                <label class="col-sm-2 my-col-form-label" for="field_fax"
+                                                       jhiTranslate="ebwebApp.accountingObject.fax">Fax</label>
+                                                <div class="col-sm-3 pd-l-0 pd-r-10">
+                                                    <input type="text" class="form-control form-control-sm"
+                                                           name="fax" id="field_fax"
+                                                           [(ngModel)]="accountingObject.fax"
+                                                           maxlength="512"
+                                                           [tabindex]="500008"/>
+                                                </div>
+                                                <label *ngIf="type === 0"
+                                                       class="col-sm-2 my-col-form-label"
+                                                       for="field_accountingObjectGroups"
+                                                       jhiTranslate="ebwebApp.accountingObject.supplierGroup">Nhóm nhà
+                                                    cung cấp</label>
+                                                <div *ngIf="type === 0" class="col-sm-2 pd-l-0 my-last-div-2-1">
+                                                    <combo-box style="" id="field_accountingObjectGroups"
+                                                               name="comboboxAccountingObjectID"
+                                                               [dataList]="accountingobjectgroups"
+                                                               [listColumns]="listAccountingObjectGroups"
+                                                               displayMember="accountingObjectGroupName"
+                                                               valueName="id"
+                                                               [headerColumns]="listHeaderColumnsAccountingObjectGroups"
+                                                               [isObject]="true"
+                                                               [isOutTable]="true"
+                                                               [(ngModel)]="accountingObject.accountingObjectGroup"
+                                                               [tabindex]="500009">
+                                                    </combo-box>
+                                                </div>
+                                                <label *ngIf="type === 1" class="col-sm-2 my-col-form-label" for="field_maximizadebtamount"
+                                                       jhiTranslate="ebwebApp.accountingObject.maxDebtAmount">Số nợ tối
+                                                    đa</label>
+                                                <div *ngIf="type === 1" class="col-sm-2 pd-l-0">
+                                                    <input type="number" class="form-control form-control-sm"
+                                                           name="maximizadebtamount" id="field_maximizadebtamount"
+                                                           [(ngModel)]="accountingObject.maximizaDebtAmount"
+                                                           maxlength="512"
+                                                           [tabindex]="500009"/>
+                                                </div>
+                                                <label *ngIf="type === 1" class="col-sm-2 my-col-form-label" for="field_duetime"
+                                                       jhiTranslate="ebwebApp.accountingObject.dueTime">Số ngày được
+                                                    nợ</label>
+                                                <div *ngIf="type === 1" class="col-sm-2 pd-l-0 my-last-div-3-2">
+                                                    <input type="number" class="form-control form-control-sm"
+                                                           name="duetime" id="field_duetime"
+                                                           [(ngModel)]="accountingObject.dueTime"
+                                                           maxlength="512"
+                                                           [tabindex]="500010"/>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row no-gutters">
+                                                <label *ngIf="type === 1" class="col-sm-2 my-col-form-label" for="field_paymentClause"
+                                                       jhiTranslate="ebwebApp.accountingObject.paymentClauseId">Điều
+                                                    khoản thanh toán</label>
+                                                <div *ngIf="type === 1" class="col-sm-3 pd-l-0 pd-r-10">
+                                                    <combo-box style="" id="field_paymentClause"
+                                                               name="comboboxPaymentClause"
+                                                               [dataList]="paymentclauses"
+                                                               [listColumns]="listPaymentClause"
+                                                               displayMember="paymentClauseName"
+                                                               valueName="id"
+                                                               [headerColumns]="listHeaderColumnsPaymentClause"
+                                                               [isObject]="true"
+                                                               [isOutTable]="true"
+                                                               [(ngModel)]="accountingObject.paymentClause"
+                                                               [tabindex]="500011">
+                                                    </combo-box>
+                                                </div>
+                                                <label *ngIf="type === 1"
+                                                       class="col-sm-2 my-col-form-label"
+                                                       for="field_accountingObjectGroup"
+                                                       jhiTranslate="ebwebApp.accountingObject.accountingObjectGroupId">Nhóm
+                                                    khách hàng</label>
+                                                <div *ngIf="type === 1" class="col-sm-2 pd-l-0 my-last-div-2-1">
+                                                    <combo-box style="" id="field_accountingObjectGroup"
+                                                               name="comboboxAccountingObjectID"
+                                                               [dataList]="accountingobjectgroups"
+                                                               [listColumns]="listAccountingObjectGroups"
+                                                               displayMember="accountingObjectGroupName"
+                                                               valueName="id"
+                                                               [headerColumns]="listHeaderColumnsAccountingObjectGroups"
+                                                               [isObject]="true"
+                                                               [isOutTable]="true"
+                                                               [(ngModel)]="accountingObject.accountingObjectGroup"
+                                                               [tabindex]="500012">
+                                                    </combo-box>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+                <div class="frm-main" [hidden]="accountingObject.scaleType === 1">
+                    <div class="row no-gutters">
+                        <div class="col-lg-12">
+                            <fieldset>
+                                <legend style="font-size: 19px; color: #f26f21;font-weight: bold;"
+                                        jhiTranslate="ebwebApp.accountingObject.detail.contactInformation">Thông tin
+                                    người liên hệ
+                                </legend>
+                                <div style="border: none; padding: 0!important;">
+                                    <div class="row no-gutters">
+                                        <div class="col-lg-12">
+                                            <div class="form-group row no-gutters">
+                                                <label class="col-sm-2 my-col-form-label" for="field_contactname"
+                                                       jhiTranslate="ebwebApp.accountingObject.contactName">Tên người
+                                                    liên hệ</label>
+                                                <div class="col-sm-3 pd-l-0 pd-r-10">
+                                                    <input type="text" class="form-control form-control-sm"
+                                                           name="contactname" id="field_contactname"
+                                                           [(ngModel)]="accountingObject.contactName"
+                                                           [tabindex]="500013"
+                                                    />
+                                                </div>
+                                                <label class="col-sm-2 my-col-form-label" for="field_contacttitle"
+                                                       jhiTranslate="ebwebApp.accountingObject.contactTitle">Chức
+                                                    danh</label>
+                                                <div class="col-sm-2 pd-l-0">
+                                                    <input type="text" class="form-control form-control-sm"
+                                                           name="contacttitle" id="field_contacttitle"
+                                                           [(ngModel)]="accountingObject.contactTitle"
+                                                           [tabindex]="500014"
+                                                    />
+                                                </div>
+                                                <label class="col-sm-2 my-col-form-label" for="field_contactsex"
+                                                       jhiTranslate="ebwebApp.accountingObject.contactSex">Giới
+                                                    tính</label>
+                                                <div class="col-sm-2 pd-l-0 my-last-div-3-2">
+                                                    <select name="contactsex" id="field_contactsex"
+                                                            class="form-control form-control-sm"
+                                                            [(ngModel)]="accountingObject.contactSex"
+                                                            [tabindex]="500015"
+                                                    >
+                                                        <option value="0" selected
+                                                                jhiTranslate="ebwebApp.accountingObject.girl">Nữ
+                                                        </option>
+                                                        <option value="1" jhiTranslate="ebwebApp.accountingObject.boy">
+                                                            Nam
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row no-gutters">
+                                                <label class="col-sm-2 my-col-form-label" for="field_contactaddress"
+                                                       jhiTranslate="ebwebApp.accountingObject.contactAddress">Địa
+                                                    chỉ</label>
+                                                <div class="col-sm-7 pd-l-0 pd-r-10 my-col-form-label-41">
+                                                    <input type="text" class="form-control form-control-sm"
+                                                           name="contactaddress" id="field_contactaddress"
+                                                           [(ngModel)]="accountingObject.contactAddress"
+                                                           [tabindex]="500016"
+                                                    />
+                                                </div>
+                                                <label class="col-sm-2 my-col-form-label" for="field_contactmobile"
+                                                       jhiTranslate="ebwebApp.accountingObject.contactMobile">Điện thoại
+                                                    di động</label>
+                                                <div class="col-sm-2 pd-l-0 my-last-div-3-2">
+                                                    <input type="text" class="form-control form-control-sm"
+                                                           name="contactmobile" id="field_contactmobile"
+                                                           [(ngModel)]="accountingObject.contactMobile"
+                                                           [tabindex]="500017"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div class="form-group row no-gutters">
+                                                <label class="col-sm-2 my-col-form-label" for="field_contactemail"
+                                                       jhiTranslate="ebwebApp.accountingObject.contactEmail">Email</label>
+                                                <div class="col-sm-3 pd-l-0 pd-r-10">
+                                                    <input type="text" class="form-control form-control-sm"
+                                                           name="contactemail" id="field_contactemail"
+                                                           [(ngModel)]="accountingObject.contactEmail"
+                                                           [tabindex]="500018"
+                                                    />
+                                                </div>
+                                                <label class="col-sm-2 my-col-form-label" for="field_contacthometel"
+                                                       jhiTranslate="ebwebApp.accountingObject.contactHomeTel">Điện
+                                                    thoại nhà riêng</label>
+                                                <div class="col-sm-2 pd-l-0">
+                                                    <input type="text" class="form-control form-control-sm"
+                                                           name="contacthometel" id="field_contacthometel"
+                                                           [(ngModel)]="accountingObject.contactHomeTel"
+                                                           [tabindex]="500019"
+                                                    />
+                                                </div>
+                                                <label class="col-sm-2 my-col-form-label" for="field_contactofficetel"
+                                                       jhiTranslate="ebwebApp.accountingObject.contactOfficeTel">Điện
+                                                    thoại cơ quan</label>
+                                                <div class="col-sm-2 pd-l-0 my-last-div-3-2">
+                                                    <input type="text" class="form-control form-control-sm"
+                                                           name="contactofficetel" id="field_contactofficetel"
+                                                           [(ngModel)]="accountingObject.contactOfficeTel"
+                                                           [tabindex]="500020"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div class="form-group row no-gutters">
+                                                <label class="col-sm-2 my-col-form-label" for="field_identificationno"
+                                                       jhiTranslate="ebwebApp.accountingObject.identificationNo">Số
+                                                    CMTND</label>
+                                                <div class="col-sm-3 pd-l-0 pd-r-10">
+                                                    <input type="text" class="form-control form-control-sm"
+                                                           name="identificationno" id="field_identificationno"
+                                                           [(ngModel)]="accountingObject.identificationNo"
+                                                           [tabindex]="500021"
+                                                    />
+                                                </div>
+                                                <label class="col-sm-2 my-col-form-label"
+                                                       jhiTranslate="ebwebApp.accountingObject.issueDate"
+                                                       for="field_issuedate">Ngày cấp</label>
+                                                <div class="col-sm-2 pd-l-0 input-group">
+                                                    <eb-date-picker id="field_issuedate"
+                                                                    [(ngModel)]="accountingObject.issueDate"
+                                                                    name="issueDate" format="YYYY-MM-DD"
+                                                                    [tabindex]="500022">
+
+                                                    </eb-date-picker>
+                                                </div>
+
+                                                <label class="col-sm-2 my-col-form-label" for="field_issueby"
+                                                       jhiTranslate="ebwebApp.accountingObject.issueBy"
+                                                >Nơi cấp</label>
+                                                <div class="col-sm-2 pd-l-0 my-last-div-3-2">
+                                                    <input type="text" class="form-control form-control-sm"
+                                                           name="issueby" id="field_issueby"
+                                                           [(ngModel)]="accountingObject.issueBy"
+                                                           [tabindex]="500023"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <ngb-tabset class="tool-navbar">
+                        <ngb-tab>
+                            <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.accountingObject.detail.bankAccount">Tài khoản ngân hàng</span>
+                            </ng-template>
+                            <ng-template ngbTabContent>
+                                <div class="tab-content">
+                                    <div class="frm-main frm-padding tab-pane fade in active show" id="home-tax"
+                                         style="background: #cbdcf0">
+                                        <div id="table-scroll-tax" class="table-scroll">
+                                            <table id="main-table-tax" class="main-table"
+                                                   (keydown.arrowDown)="moveArrowDown($event,4)"
+                                                   (keydown.arrowUp)="moveArrowUp($event,4)">
+                                                <thead>
+                                                <tr>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.accountingObject.bankAccountNumber">Số
+                                                        tài khoản
+                                                    </th>
+                                                    <th scope="col" jhiTranslate="ebwebApp.accountingObject.bankName">
+                                                        Tên ngân hàng
+                                                    </th>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.accountingObject.bankBranchName">Tên chi
+                                                        nhánh
+                                                    </th>
+                                                    <th scope="col"
+                                                        jhiTranslate="ebwebApp.accountingObject.accountHolderName">Tên
+                                                        chủ tài khoản
+                                                    </th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr *ngFor="let detail of accountingobjectbankaccounts; let i = index"
+                                                    (keydown.control.delete)="KeyPress(detail, 'ctr + delete',0)"
+                                                    (keydown.control.c)="KeyPress(detail,'ctr + c',0)"
+                                                    (keydown.control.insert)="KeyPress(detail,'ctr + insert', 0)"
+                                                >
+                                                    <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                                  name="{{'bankAccount'+i}}"
+                                                                                  id="{{'bankAccount'+i}}"
+                                                                                  [(ngModel)]="detail.bankAccount"
+                                                                                  (focus)="actionFocus(0, i)"
+                                                                                  [tabindex]="500023+(4*i)+1"></td>
+                                                    <td class="cell-Table">
+                                                        <combo-box nameIp="{{'bankName'+i}}"
+                                                                   idIp="{{'bankName'+i}}"
+                                                                   [hideRequiredWhenValueTrue]="true"
+                                                                   [dataList]="bank"
+                                                                   [listColumns]="utilsService.listColumnsBanks"
+                                                                   displayMember="bankName"
+                                                                   valueName="bankName"
+                                                                   [headerColumns]="utilsService.listHeaderColumnsBanks"
+                                                                   [isObject]="false"
+                                                                   [(ngModel)]="detail.bankName"
+                                                                   (focusInput)="actionFocus(1, i)"
+                                                                   [tabindex]="500023+(4*i)+2"
+                                                        >
+                                                        </combo-box>
+                                                    </td>
+
+                                                    <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                                  name="{{'bankBranchName'+i}}"
+                                                                                  id="{{'bankBranchName'+i}}"
+                                                                                  [(ngModel)]="detail.bankBranchName"
+                                                                                  (focus)="actionFocus(2, i)"
+                                                                                  [tabindex]="500023+(4*i)+3">
+                                                    </td>
+                                                    <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                                  name="{{'accountHolderName'+i}}"
+                                                                                  id="{{'accountHolderName'+i}}"
+                                                                                  [(ngModel)]="detail.accountHolderName"
+                                                                                  [tabindex]="500023+(4*i)+4"
+                                                                                  (focus)="actionFocus(3, i)"
+                                                                                  (keydown.tab)="addIfLastInput()">
+                                                    </td>
+                                                </tr>
+                                                <tr (click)="addRowToInsert()">
+                                                    <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                                  [title]="translate.instant('ebwebApp.purchaseOrder.addNewLine')"
+                                                                                  value="{{'ebwebApp.purchaseOrder.addNewLine' | translate}}"
+                                                                                  readonly></td>
+                                                    <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                                  readonly></td>
+                                                    <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                                  readonly></td>
+                                                    <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                                  readonly></td>
+                                                </tr>
+                                                <tr *ngFor="let l of newArr(8 - accountingobjectbankaccounts?.length)">
+                                                    <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                                  readonly></td>
+                                                    <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                                  readonly></td>
+                                                    <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                                  readonly></td>
+                                                    <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                                  readonly></td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </ngb-tab>
+                    </ngb-tabset>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<eb-context-menu [contextMenu]="contextMenu" [eventHandlingHere]="true"></eb-context-menu>
+<ng-template #content let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.saBill.saveMessage">Dữ liệu đã bị thay đổi, Bạn có muốn lưu lại?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="save()" jhiTranslate="entity.action.save">Save
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="close()" jhiTranslate="entity.action.noSave">close
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="closeContent()" jhiTranslate="entity.action.close">
+            close
+        </button>
+    </div>
+</ng-template>

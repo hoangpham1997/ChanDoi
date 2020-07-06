@@ -1,0 +1,1072 @@
+<div >
+    <div >
+        <div class="menu-tool-bar he">
+            <div class="ptitle">
+                <span *ngIf="componentType === PPINVOICE_COMPONENT_TYPE.MUA_HANG_QUA_KHO" class="text-uppercase" jhiTranslate="ebwebApp.pPInvoice.home.titleRSI">Mua hàng qua kho</span>
+                <span *ngIf="componentType === PPINVOICE_COMPONENT_TYPE.MUA_HANG_KHONG_QUA_KHO" class="text-uppercase" jhiTranslate="ebwebApp.pPInvoice.home.title">Mua hàng qua kho</span>
+            </div>
+            <div class="gr-toolbar">
+                <button class="button-navigation" *ebHasAnyAuthority="['ROLE_ADMIN',isKho ? ROLE.MuaHangQuaKho_Them : ROLE.MuaHangKhongQuaKho_Them]" (click)="addNew()" title="{{'ebwebApp.outWard.tooltipAdd' | translate}}"><i class="mdi mdi-plus"></i> <span
+                    jhiTranslate="ebwebApp.common.add"> Thêm </span></button>
+                <button class="button-navigation"
+                        *ebHasAnyAuthority="['ROLE_ADMIN',isKho ? ROLE.MuaHangQuaKho_Xoa : ROLE.MuaHangKhongQuaKho_Xoa]"
+                        [disabled]="isLoading || pPInvoices.length === 0 || (selectedRows.length == 1 && (checkCloseBook(account, selectedRow.postedDate) || selectedRow.recorded)) || checkDisable(true)"
+                        (click)="openModel1(deleteItem)"
+                        title="{{'ebwebApp.outWard.tooltipDrop' | translate}}">
+                    <i class="mdi mdi-delete"></i> <span jhiTranslate="ebwebApp.mCReceipt.home.delete"></span></button>
+                <button class="button-navigation"
+                        *ebHasAnyAuthority="['ROLE_ADMIN', isKho ? ROLE.MuaHangQuaKho_GhiSo : ROLE.MuaHangKhongQuaKho_GhiSo]"
+                        [disabled]="isLoading || pPInvoices.length === 0"
+                        [hidden]="selectedRow?.recorded && !checkMultiButton(false)"
+                        (click)="recordPPI()" title="{{'ebwebApp.outWard.tooltipRecord' | translate}}">
+                    <i class="mdi mdi-grease-pencil"></i> <span
+                    jhiTranslate="ebwebApp.mCReceipt.home.record"></span></button>
+                <button class="button-navigation"
+                        *ebHasAnyAuthority="['ROLE_ADMIN', isKho ? ROLE.MuaHangQuaKho_GhiSo : ROLE.MuaHangKhongQuaKho_GhiSo]"
+                        [disabled]="isLoading || pPInvoices.length === 0 || (selectedRows.length == 1 && checkCloseBook(account, selectedRow.postedDate)) || checkDisable(false)"
+                        [hidden]="!pPInvoices || pPInvoices.length === 0 || (!selectedRow?.recorded && !checkMultiButton(true))"
+                        (click)="checkUnRecord(unRecordModal)"
+                   title="{{'ebwebApp.outWard.tooltipUnRecord' | translate}}">
+                    <i class="mdi mdi-grease-pencil"></i> <span jhiTranslate="ebwebApp.mCReceipt.home.unrecord"></span></button>
+                <button class="button-navigation" (click)="exportPdf()" *ebHasAnyAuthority="['ROLE_ADMIN',isKho ? ROLE.MuaHangQuaKho_KetXuat : ROLE.MuaHangKhongQuaKho_KetXuat]" [disabled]="isLoading || pPInvoices.length === 0" title="{{'ebwebApp.outWard.tooltipExport' | translate}}"><i class="mdi mdi-file-export"></i> <span
+                    jhiTranslate="ebwebApp.mCReceipt.home.export"></span></button>
+                <button class="button-navigation" (click)="toggleSearch($event)" title="{{'ebwebApp.outWard.tooltipSearch' | translate}}">
+                    <i class="{{isShowSearch?'mdi mdi-chevron-up':'mdi mdi-magnify'}}"></i>
+                    <span
+                        jhiTranslate="{{!isShowSearch ? 'ebwebApp.common.advancedSearch' : 'ebwebApp.common.hideSearch'}}"> Tìm kiếm </span>
+                </button>
+
+            </div>
+        </div>
+
+        <div class="frm-main frm-mains nobg">
+            <form id="seach" style="background: #cbdcf0;" [hidden]="!isShowSearch">
+                <div class="row">
+                    <div class="col-lg-3 col-ct-3">
+                        <div class="form-group row">
+                            <label class="col-sm-5 col-ct-5 col-form-label" jhiTranslate="ebwebApp.purchaseOrder.object">Đối tượng</label>
+                            <div class="col-sm-7 col-ct-7 pd-l-0">
+                                <combo-box style="z-index: 2" id="field_accountingObject"
+                                           name="accountingObject"
+                                           [isReadOnly]="false"
+                                           [dataList]="accountingObjects"
+                                           [headerColumns]="utilService.listHeaderColumnsAccountingObjectsSearch"
+                                           [listColumns]="utilService.listColumnsAccountingObjectsSearch"
+                                           displayMember="accountingObjectCode"
+                                           valueName="id"
+                                           [isObject]="true"
+                                           [(ngModel)]="accountingObject"
+                                           (ngModelChange)="loadAllForSearch()"
+                                >
+                                </combo-box>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-5 col-ct-5 col-form-label" jhiTranslate="ebwebApp.purchaseOrder.status">Trạng thái</label>
+                            <div class="col-sm-7 col-ct-7 pd-l-0">
+                                <select class="form-control" style="padding-bottom: 5px;padding-top: 5px;" name="typeLedger" id="field_typeLedger" [(ngModel)]="status" (ngModelChange)="loadAllForSearch()">
+                                    <option [ngValue]="null"></option>
+                                    <option [ngValue]="1" jhiTranslate="ebwebApp.common.carrying">Ghi sổ</option>
+                                    <option [ngValue]="0" jhiTranslate="ebwebApp.common.notCarrying">Chưa ghi sổ
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-ct-3">
+                        <div class="form-group row">
+                            <label class="col-sm-5 col-ct-5 col-form-label" jhiTranslate="ebwebApp.purchaseOrder.currency">Loại tiền</label>
+                            <div class="col-sm-7 col-ct-7">
+                                <combo-box style="" id="field_currencyID"
+                                           name="comboboxcurrencyID"
+                                           [dataList]="currencies"
+                                           [listColumns]="utilService.listColumnsCurrency"
+                                           displayMember="currencyCode"
+                                           valueName="currencyCode"
+                                           [headerColumns]="utilService.listHeaderColumnsCurrency"
+                                           [isObject]="true"
+                                           [(ngModel)]="currency"
+                                           (ngModelChange)="loadAllForSearch()"
+                                >
+                                </combo-box>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-5 col-ct-5 col-form-label" jhiTranslate="ebwebApp.purchaseOrder.employees">Nhân viên</label>
+                            <div class="col-sm-7 col-ct-7">
+                                <combo-box style="" id="field_employee"
+                                           name="accountingObjectEmployee"
+                                           [dataList]="accountingObjectEmployees"
+                                           [headerColumns]="utilService.listHeaderColumnsEmployees"
+                                           [listColumns]="utilService.listColumnsEmployees"
+                                           displayMember="accountingObjectCode"
+                                           valueName="id"
+                                           [isObject]="true"
+                                           [(ngModel)]="accountingObjectEmployee"
+                                           (ngModelChange)="loadAllForSearch()"
+                                ></combo-box>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-ct-6">
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-ct-2 col-form-label pr-0" jhiTranslate="ebwebApp.purchaseOrder.fromDate">Từ ngày</label>
+                            <div class="col-sm-4 col-ct-4">
+<!--                                <input type="text" placeholder="__/__/____"-->
+<!--                                       class="form-control form-control-sm"-->
+<!--                                       name="fromDate" ngbDatepicker #FromDate="ngbDatepicker"-->
+<!--                                       [(ngModel)]="fromDate"-->
+<!--                                       (ngModelChange)="checkToDateGreaterFromDate()"/>-->
+                                <eb-date-picker [(ngModel)]="fromDate" format="YYYYMMDD" name="fromDate" ></eb-date-picker>
+                            </div>
+                            <label class="col-sm-2 col-ct-2 col-form-label pr-0" jhiTranslate="ebwebApp.purchaseOrder.toDate">Đến ngày</label>
+                            <div class="col-sm-4 col-ct-4">
+                                <eb-date-picker [(ngModel)]="toDate" format="YYYYMMDD" name="toDate" ></eb-date-picker>
+<!--                                <input type="text" placeholder="__/__/____"-->
+<!--                                       class="form-control form-control-sm"-->
+<!--                                       name="toDate" ngbDatepicker #ToDate="ngbDatepicker"-->
+<!--                                       [(ngModel)]="toDate"-->
+<!--                                       (ngModelChange)="checkToDateGreaterFromDate()"/>-->
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-ct-2 col-form-label pr-0" for="txtSearchValue" jhiTranslate="ebwebApp.purchaseOrder.keywordSearch">Từ khóa tìm kiếm</label>
+                            <div class="col-sm-10 col-ct-10">
+                                <input [(ngModel)]="searchValue" (change)="loadAllForSearch()"
+                                       id="txtSearchValue" name="txtSearchValue" type="text"
+                                       class="form-control form-control-sm">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="frm-button">
+                            <button (click)="loadAllForSearch()" class="btn btn-success btn-sm" style="font-size: 16px">
+                                <i class="mdi mdi-magnify" aria-hidden="true" style="margin-right: 5px"></i><span jhiTranslate="ebwebApp.purchaseOrder.search">Tìm kiếm</span>
+                            </button>
+                            <button (click)="resetSeach()" class="btn btn-danger btn-sm" style="font-size: 16px">
+                                <i class="mdi mdi-replay" style="margin-right: 5px"></i><span jhiTranslate="ebwebApp.purchaseOrder.setAgain">Đặt lại</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div class="frm-main frm-tables frm-padding no-highlight" style="background: #cbdcf0; margin-top: 5px">
+                <div id="table-scroll0" class="table-scroll voucher-table">
+                    <table id="main-table0" class="main-table">
+                        <thead class="header-table">
+                        <tr>
+                            <th scope="col" jhiTranslate="ebwebApp.pPInvoice.date">
+                                Ngày chứng từ
+                            </th>
+                            <th scope="col" jhiTranslate="ebwebApp.pPInvoice.postedDate">Ngày hạch toán
+                            </th>
+                            <th scope="col" jhiTranslate="ebwebApp.pPInvoice.noFBook">
+                                Số chứng từ
+                            </th>
+                            <th scope="col" jhiTranslate="ebwebApp.pPInvoice.ppOrderNo">
+                                Số HĐ
+                            </th>
+                            <th scope="col" jhiTranslate="ebwebApp.pPInvoice.typeBook">
+                                Loại chứng từ
+                            </th>
+                            <th scope="col" jhiTranslate="ebwebApp.pPInvoice.object">
+                                Đối tượng
+                            </th>
+                            <th scope="col" jhiTranslate="ebwebApp.pPInvoice.totalAmount">Tổng tiền hàng
+                            </th>
+                            <th scope="col" jhiTranslate="ebwebApp.pPInvoice.totalDiscountAmount">Tổng tiền CK
+                            </th>
+                            <th scope="col" jhiTranslate="ebwebApp.pPInvoice.totalVATAmount">tổng thuế GTGT
+                            </th>
+                            <th scope="col" jhiTranslate="ebwebApp.pPInvoice.totalAmountPay">Tổng tiền TT
+                            </th>
+                            <th scope="col" jhiTranslate="ebwebApp.pPInvoice.billReceived">Đã nhận hóa đơn
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let item of pPInvoices; let i = index;"
+                            [class.selected]="selectedRow && item.id === selectedRow.id"
+                            [class.row-selected]="checkSelected(item)"
+                            (click)="selectMultiRow(item, $event, pPInvoices); index = i"
+                            [ngStyle]="getStyle(item.recorded)"
+                            (dblclick)="doubleClickRowPPI(item, i, false)">
+                            <td class="jsgrid-cell jsgrid-align-center">{{item.date | date:'dd/MM/yyyy'}}</td>
+                            <td class="jsgrid-cell jsgrid-align-center">{{item.postedDate| date:'dd/MM/yyyy'}}</td>
+                            <td class="jsgrid-cell">
+                               {{item.no}}
+                            </td>
+                            <td title="{{item.ppOrderNo}}">{{item.ppOrderNo}}</td>
+<!--                            <td>{{selectedRow.ppOrderNo}}</td>-->
+                            <td class="jsgrid-cell jsgrid-align-left" title="{{item.typeIdStr}}">{{item.typeIdStr}}
+<!--                                <span *ngIf="item.typeId === PPINVOICE_TYPE.TYPE_ID_CHUA_THANH_TOAN" jhiTranslate="ebwebApp.pPInvoice.chuaThanhToan"></span>-->
+<!--                                <span *ngIf="item.typeId === PPINVOICE_TYPE.TYPE_ID_TIEN_MAT" jhiTranslate="ebwebApp.pPInvoice.cash"></span>-->
+<!--                                <span *ngIf="item.typeId === PPINVOICE_TYPE.TYPE_ID_UY_NHIEM_CHI" jhiTranslate="ebwebApp.pPInvoice.uyNhiemChi"></span>-->
+<!--                                <span *ngIf="item.typeId === PPINVOICE_TYPE.TYPE_ID_SEC_CK" jhiTranslate="ebwebApp.pPInvoice.secChuyenKhoan"></span>-->
+<!--                                <span *ngIf="item.typeId === PPINVOICE_TYPE.TYPE_ID_SEC_TIEN_MAT" jhiTranslate="ebwebApp.pPInvoice.secTienMat"></span>-->
+<!--                                <span *ngIf="item.typeId === PPINVOICE_TYPE.TYPE_ID_THE_TIN_DUNG" jhiTranslate="ebwebApp.pPInvoice.theNganHang"></span>-->
+                            </td>
+                            <td class="jsgrid-cell jsgrid-align-left"
+                                title="{{item.accountingObjectName}}">{{item.accountingObjectName}}</td>
+                            <td class="jsgrid-cell jsgrid-align-right">
+                                <input type="number" class="input-Cell bg-transparent border-0 w-100"
+                                       name="totalAmount" [(ngModel)]="item.totalAmount"
+                                       [systemOptions]="account?.systemOption"
+                                       [type]="7"
+                                       ebCurrencyMask disabled></td>
+                            <td class="jsgrid-cell jsgrid-align-right">
+                                <input type="number" class="input-Cell bg-transparent border-0 w-100"
+                                       name="totalDiscountAmount" [(ngModel)]="item.totalDiscountAmount"
+                                       [systemOptions]="account?.systemOption"
+                                       [type]="7"
+                                       ebCurrencyMask disabled></td>
+                            <td class="jsgrid-cell jsgrid-align-right">
+                                <input type="number" class="input-Cell bg-transparent border-0 w-100"
+                                       name="totalVATAmount" [(ngModel)]="item.totalVATAmount"
+                                       [systemOptions]="account?.systemOption"
+                                       [type]="7"
+                                       ebCurrencyMask disabled></td>
+                            <td class="jsgrid-cell jsgrid-align-right">
+                                <input type="number" class="input-Cell bg-transparent border-0 w-100"
+                                       name="amount"
+                                       [(ngModel)]="item.amountTT"
+                                       [systemOptions]="account?.systemOption"
+                                       [type]="7"
+                                       ebCurrencyMask disabled>
+                            </td>
+                            <td class="cell-Table text-center">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="customCheck1" [(ngModel)]="item.billReceived">
+                                    <label class="custom-control-label"></label>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr *ngFor="let item of newArr(9 - (pPInvoices && pPInvoices.length ? pPInvoices.length : 0))">
+                            <td class="jsgrid-cell">&nbsp;</td>
+                            <td class="jsgrid-cell"></td>
+                            <td class="jsgrid-cell"></td>
+                            <td class="jsgrid-cell"></td>
+                            <td class="jsgrid-cell"></td>
+                            <td class="jsgrid-cell"></td>
+                            <td class="jsgrid-cell"></td>
+                            <td class="jsgrid-cell"></td>
+                            <td class="jsgrid-cell"></td>
+                            <td class="jsgrid-cell"></td>
+                            <td class="jsgrid-cell"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+        <!--        phân trang-->
+        <div *ngIf="pPInvoices && pPInvoices.length"
+             style="padding-right: 16px;">
+            <div class="row" style="height: 32px">
+                <div class="col-md-4">
+                    <p style="padding-right: 5px;">
+                        <span jhiTranslate="ebwebApp.pPInvoice.totalAmountPay">Tổng tiền TT</span>:
+                        <span class="input-Cell-total">{{pPInvoices[0]?.sumTotalAmount| ebcurrency:7:account}}</span>
+                    </p>
+                </div>
+                <div class="col-md-8">
+                    <div class="row justify-content-end" style="height:32px">
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-sm-9 col-form-label" for="itemsPerPage"
+                                       style="padding-right: 0px;text-align: right;"><span
+                                    jhiTranslate="ebwebApp.mBDeposit.totalItems"></span>: {{totalItems}}</label>
+                                <div class="col-sm-3 pd-l-0" style="padding-right: 5px;padding-left: 5px;">
+                                    <select class="form-control form-control-sm" name="itemsPerPage"
+                                            id="itemsPerPage"
+                                            style="background-color: #f5f7fa;"
+                                            [(ngModel)]="itemsPerPage"
+                                            (ngModelChange)="selectedItemPerPage()">
+                                        <option [value]="10">10</option>
+                                        <option [value]="20">20</option>
+                                        <option [value]="30">30</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="justify-content-end">
+                            <ngb-pagination [size]="'sm'" [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage"
+                                            [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
+                                            (pageChange)="loadPage(page)"></ngb-pagination>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--        end of phan trang-->
+        <div>
+            <ngb-tabset class="tool-navbar">
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.mBDepositDetails.detail.title"></span>
+                    </ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content">
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="home-detail"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-detail" class="table-scroll">
+                                    <table id="main-table-detail" class="main-table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.materialGoodsId">Mã hàng</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.description">Tên hàng</th>
+                                            <th *ngIf="componentType === PPINVOICE_COMPONENT_TYPE.MUA_HANG_QUA_KHO"
+                                                scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.repositoryId">Kho</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.debitAccount">TK nợ</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.creditAccount">TK có</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.accountingObjectId">ĐT hạch toán</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.unitId">Đơn vị tính</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.quantity">Số lượng</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.unitPriceOriginal">Đơn giá</th>
+                                            <th  *ngIf="selectedRow.currencyId !== account.organizationUnit.currencyID && isData"
+                                                 scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.unitPrice">Đơn giá QĐ</th>
+                                            <th *ngIf="isMau" scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.mainUnitId">ĐVT chính</th>
+                                            <th *ngIf="isMau" scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.mainConvertRate">Tỷ lệ chuyển đổi</th>
+                                            <th *ngIf="isMau" scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.formula">Phép tính</th>
+                                            <th *ngIf="isMau" scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.mainQuantity">Số lượng theo ĐVC</th>
+                                            <th *ngIf="isMau" scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.mainUnitPrice">Đơn giá theo ĐVC</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.amountOriginal">Thành tiền</th>
+                                            <th *ngIf="selectedRow.currencyId !== account.organizationUnit.currencyID && isData"
+                                                scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.amount">Thành tiền QĐ</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.discountRate">Tỷ lệ CK</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.discountAmountOriginal">Tiền CK</th>
+                                            <th *ngIf="selectedRow.currencyId !== account.organizationUnit.currencyID && isData"
+                                                scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.discountAmount">Tiền CK QĐ</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.freightAmountOriginal">Chi phí mua</th>
+                                            <th *ngIf="selectedRow.importPurchase" scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.importTaxExpenseAmountOriginal">Chi phí trước HQ</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.inwardAmountOriginal">Giá trị nhập kho</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.lotNo">Số lô</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.expiryDate">Hạn dùng</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.ppOrderDetailId">Số đơn hàng</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let detail of ppInvoiceDetails;let i=index;">
+                                            <td class="jsgrid-cell one-long-line">{{detail.materialGoodsCode}}</td>
+                                            <td class="jsgrid-cell one-long-line" title="{{detail.materialGoodsName}}">{{detail.materialGoodsName}}</td>
+                                            <td *ngIf="componentType === PPINVOICE_COMPONENT_TYPE.MUA_HANG_QUA_KHO"
+                                                class="jsgrid-cell one-long-line" title="{{detail.repositoryCode}}">{{detail.repositoryCode}}</td>
+                                            <td class="jsgrid-cell one-long-line jsgrid-align-center" title="{{detail.debitAccount}}">{{detail.debitAccount}}</td>
+                                            <td class="jsgrid-cell one-long-line jsgrid-align-center" title="{{detail.creditAccount}}">{{detail.creditAccount}}</td>
+                                            <td class="jsgrid-cell one-long-line" title="{{detail.accountingObjectCode}}">{{detail.accountingObjectCode}}</td>
+                                            <td class="jsgrid-cell one-long-line" title="{{detail.unitName}}">{{detail.unitName}}</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">
+                                                <input type="number" class="input-Cell bg-transparent border-0 w-100"
+                                                       name="totalAmount" [(ngModel)]="detail.quantity"
+                                                       [systemOptions]="account?.systemOption"
+                                                       [type]="3" disabled
+                                                       ebCurrencyMask>
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-right">
+                                                <input type="number" class="input-Cell bg-transparent border-0 w-100"
+                                                       name="totalAmount" [(ngModel)]="detail.unitPriceOriginal"
+                                                       [systemOptions]="account?.systemOption"
+                                                       [type]="selectedRow.currencyId !== currencyCode ? 2 : 1" disabled
+                                                       ebCurrencyMask>
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-right" *ngIf="selectedRow.currencyId !== account.organizationUnit.currencyID && isData">
+                                                <input type="number" class="input-Cell bg-transparent border-0 w-100"
+                                                       name="totalAmount" [(ngModel)]="detail.unitPrice"
+                                                       [systemOptions]="account?.systemOption"
+                                                       [type]="1"
+                                                       ebCurrencyMask>
+                                            </td>
+                                            <td *ngIf="isMau" class="jsgrid-cell">{{detail.mainUnitName}}</td>
+                                            <td *ngIf="isMau" class="jsgrid-cell jsgrid-align-right">
+                                                <input type="number" class="input-Cell bg-transparent border-0 w-100"
+                                                       name="totalAmount" [(ngModel)]="detail.mainConvertRate"
+                                                       [systemOptions]="account?.systemOption"
+                                                       [type]="5" disabled
+                                                       ebCurrencyMask>
+                                            </td>
+                                            <td *ngIf="isMau" class="jsgrid-cell">{{detail.formula}}</td>
+                                            <td *ngIf="isMau" class="jsgrid-cell jsgrid-align-right">
+                                                <input type="number" class="input-Cell bg-transparent border-0 w-100"
+                                                       name="totalAmount" [(ngModel)]="detail.mainQuantity"
+                                                       [systemOptions]="account?.systemOption"
+                                                       [type]="3" disabled
+                                                       ebCurrencyMask>
+                                            </td>
+                                            <td *ngIf="isMau" class="jsgrid-cell jsgrid-align-right">
+                                                <input type="number" class="input-Cell bg-transparent border-0 w-100"
+                                                       name="totalAmount" [(ngModel)]="detail.mainUnitPrice"
+                                                       [systemOptions]="account?.systemOption" disabled
+                                                       [type]="1"
+                                                       ebCurrencyMask>
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-right">
+                                                <input type="number" class="input-Cell bg-transparent border-0 w-100"
+                                                       name="totalAmount" [(ngModel)]="detail.amountOriginal"
+                                                       [systemOptions]="account?.systemOption" disabled
+                                                       [type]="selectedRow.currencyId !== currencyCode ? 8 : 7"
+                                                       ebCurrencyMask>
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-right" *ngIf="selectedRow.currencyId !== account.organizationUnit.currencyID && isData">
+                                                <input type="number" class="input-Cell bg-transparent border-0 w-100"
+                                                       name="totalAmount" [(ngModel)]="detail.amount"
+                                                       [systemOptions]="account?.systemOption" disabled
+                                                       [type]="7"
+                                                       ebCurrencyMask>
+                                            </td>
+                                            <td class="jsgrid-cell">
+                                                <input type="number" class="input-Cell bg-transparent border-0 w-100"
+                                                       name="totalAmount" [(ngModel)]="detail.discountRate"
+                                                       [systemOptions]="account?.systemOption"
+                                                       [type]="5" disabled
+                                                       ebCurrencyMask>
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-right">
+                                                <input type="number" class="input-Cell bg-transparent border-0 w-100"
+                                                       name="totalAmount" [(ngModel)]="detail.discountAmountOriginal"
+                                                       [systemOptions]="account?.systemOption" disabled
+                                                       [type]="selectedRow.currencyId !== currencyCode ? 8 : 7"
+                                                       ebCurrencyMask>
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-right" *ngIf="selectedRow.currencyId !== account.organizationUnit.currencyID && isData">
+                                                <input type="number" class="input-Cell bg-transparent border-0 w-100"
+                                                       name="totalAmount" [(ngModel)]="detail.discountAmount"
+                                                       [systemOptions]="account?.systemOption" disabled
+                                                       [type]="7"
+                                                       ebCurrencyMask>
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-right">
+                                                <input type="number" class="input-Cell bg-transparent border-0 w-100"
+                                                       name="totalAmount" [(ngModel)]="detail.freightAmount"
+                                                       [systemOptions]="account?.systemOption" disabled
+                                                       [type]="7"
+                                                       ebCurrencyMask>
+                                            </td>
+                                            <td *ngIf="selectedRow.importPurchase" class="jsgrid-cell jsgrid-align-right">
+                                                <input type="number" class="input-Cell bg-transparent border-0 w-100"
+                                                       name="totalAmount" [(ngModel)]="detail.importTaxExpenseAmount"
+                                                       [systemOptions]="account?.systemOption" disabled
+                                                       [type]="7"
+                                                       ebCurrencyMask>
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-right">
+                                                <input type="number" class="input-Cell bg-transparent border-0 w-100"
+                                                       name="totalAmount" [(ngModel)]="detail.inwardAmount"
+                                                       [systemOptions]="account?.systemOption" disabled
+                                                       [type]="7"
+                                                       ebCurrencyMask>
+                                             </td>
+                                            <td class="jsgrid-cell one-long-line" title="{{detail.lotNo}}">{{detail.lotNo}}</td>
+                                            <td class="jsgrid-cell jsgrid-align-center">{{detail.expiryDate   | date:'dd/MM/yyyy'}}</td>
+                                            <td class="jsgrid-cell">{{detail.ppOrderNo}}</td>
+                                        </tr>
+                                        <tr *ngFor="let item of newArr(9 - (ppInvoiceDetails ? ppInvoiceDetails.length : 0))">
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td *ngIf="componentType === PPINVOICE_COMPONENT_TYPE.MUA_HANG_QUA_KHO"
+                                                class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td *ngIf="selectedRow.currencyId !== account.organizationUnit.currencyID && isData" class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td *ngIf="isMau" class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td *ngIf="isMau" class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td *ngIf="isMau" class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td *ngIf="isMau" class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td *ngIf="isMau" class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td *ngIf="selectedRow.currencyId !== account.organizationUnit.currencyID && isData" class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td *ngIf="selectedRow.currencyId !== account.organizationUnit.currencyID && isData" class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td *ngIf="selectedRow.importPurchase" class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot>
+                                        <td colspan="2" class="color-tfoot">
+                                            <span class="color-tfoot"
+                                                  jhiTranslate="ebwebApp.pPInvoice.totalRow" translateValues="{total: '{{ppInvoiceDetails.length}}'}"></span>
+                                        </td>
+                                        <td colspan="1" *ngIf="componentType === PPINVOICE_COMPONENT_TYPE.MUA_HANG_QUA_KHO">
+                                        </td>
+                                        <td colspan="4">
+                                        </td>
+                                        <td class="cell-Table text-right">
+                                            <input type="number"
+                                                   class="input-Cell text-right bg-transparent border-0"
+                                                   [(ngModel)]="sumQuantity"
+                                                   name="sumQuantity" ebCurrencyMask
+                                                   [systemOptions]="account?.systemOption"
+                                                   [type]="3" disabled></td>
+                                        <td class="cell-Table text-right">
+<!--                                            <input type="number"-->
+<!--                                                   class="input-Cell text-right bg-transparent border-0"-->
+<!--                                                   [(ngModel)]="sumUnitPriceOriginal"-->
+<!--                                                   name="sumUnitPriceOriginal" ebCurrencyMask-->
+<!--                                                   [systemOptions]="account?.systemOption"-->
+<!--                                                   [type]="currency?.currencyCode && currency.currencyCode !== 'VND' ? 8 : 7" disabled>-->
+                                        </td>
+
+                                        <td class="cell-Table text-right" *ngIf="selectedRow.currencyId !== account.organizationUnit.currencyID && isData">
+<!--                                            <input type="number"-->
+<!--                                                   class="input-Cell text-right bg-transparent border-0"-->
+<!--                                                   [(ngModel)]="sumUnitPrice"-->
+<!--                                                   name="sumUnitPrice"-->
+<!--                                                   ebCurrencyMask [systemOptions]="account?.systemOption" disabled-->
+<!--                                                   [type]="account.organizationUnit.currencyID && account.organizationUnit.currencyID !== 'VND' ? 8 : 7">-->
+                                        </td>
+                                        <td *ngIf="isMau" colspan="3"></td>
+                                        <td *ngIf="isMau" class="cell-Table text-right">
+                                            <input type="number"
+                                                   class="input-Cell text-right bg-transparent border-0"
+                                                   [(ngModel)]="sumMainQuantity"
+                                                   name="sumMainQuantity" ebCurrencyMask
+                                                   [systemOptions]="account?.systemOption"
+                                                   [type]="3" disabled>
+                                        </td>
+                                        <td *ngIf="isMau" class="cell-Table text-right">
+<!--                                            <input type="number"-->
+<!--                                                   class="input-Cell text-right bg-transparent border-0"-->
+<!--                                                   [(ngModel)]="sumMainUnitPrice"-->
+<!--                                                   name="sumMainUnitPrice" ebCurrencyMask-->
+<!--                                                   [systemOptions]="account?.systemOption" disabled-->
+<!--                                                   [type]="account.organizationUnit.currencyID && account.organizationUnit.currencyID !== 'VND' ? 8 : 7">-->
+                                        </td>
+                                        <td class="cell-Table text-right">
+                                            <input type="number"
+                                                   class="input-Cell text-right bg-transparent border-0"
+                                                   [(ngModel)]="totalAmountOriginal"
+                                                   name="sumAmountOriginal" ebCurrencyMask
+                                                   [systemOptions]="account?.systemOption" disabled
+                                                   [type]="selectedRow.currencyId !== currencyCode ? 8 : 7">
+                                        </td>
+                                        <td class="cell-Table text-right" *ngIf="selectedRow.currencyId !== account.organizationUnit.currencyID && isData" >
+                                            <input type="number"
+                                                   class="input-Cell text-right bg-transparent border-0"
+                                                   [(ngModel)]="totalAmount"
+                                                   name="sumAmount"
+                                                   ebCurrencyMask [systemOptions]="account?.systemOption" disabled
+                                                   [type]="7">
+                                        </td>
+                                        <td class="cell-Table text-right"></td>
+                                        <td class="cell-Table text-right">
+                                            <input type="number"
+                                                   class="input-Cell text-right bg-transparent border-0"
+                                                   [(ngModel)]="totalDiscountAmountOriginal"
+                                                   name="sumAmountOriginal" ebCurrencyMask
+                                                   [systemOptions]="account?.systemOption" disabled
+                                                   [type]="selectedRow.currencyId !== currencyCode ? 8 : 7">
+                                        </td>
+                                        <td class="cell-Table text-right" *ngIf="selectedRow.currencyId !== account.organizationUnit.currencyID && isData" >
+                                            <input type="number"
+                                                   class="input-Cell text-right bg-transparent border-0"
+                                                   [(ngModel)]="totalDiscountAmount"
+                                                   name="sumAmount"
+                                                   ebCurrencyMask [systemOptions]="account?.systemOption" disabled
+                                                   [type]="7">
+                                        </td>
+                                        <td class="cell-Table text-right">
+                                            <input type="number"
+                                                   class="input-Cell text-right bg-transparent border-0"
+                                                   [(ngModel)]="totalFreightAmount"
+                                                   name="sumAmountOriginal" ebCurrencyMask
+                                                   [systemOptions]="account?.systemOption" disabled
+                                                   [type]="7">
+                                        </td>
+                                        <td class="cell-Table text-right" *ngIf="selectedRow.importPurchase">
+                                            <input type="number"
+                                                   class="input-Cell text-right bg-transparent border-0"
+                                                   [(ngModel)]="totalImportTaxExpenseAmount"
+                                                   name="sumAmountOriginal" ebCurrencyMask
+                                                   [systemOptions]="account?.systemOption" disabled
+                                                   [type]="7">
+                                        </td>
+                                        <td class="cell-Table text-right">
+                                            <input type="number"
+                                                   class="input-Cell text-right bg-transparent border-0"
+                                                   [(ngModel)]="totalInwardAmount"
+                                                   name="sumAmountOriginal" ebCurrencyMask
+                                                   [systemOptions]="account?.systemOption" disabled
+                                                   [type]="7">
+                                        </td>
+                                        <td colspan="3"></td>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.common.tax">Thuế</span></ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content">
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="home-tax"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-tax" class="table-scroll">
+                                    <table id="main-table-tax" class="main-table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.materialGoodsId">Mã hàng</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.vatDescription">Diễn giải thuế</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.debitAccount">TK Nợ</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.creditAccount">TK Có</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.accountingObjectId">ĐT hạch toán</th>
+                                            <th *ngIf="selectedRow.currencyId !== account.organizationUnit.currencyID"
+                                                scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.customUnitPrice">Giá tính thuế</th>
+                                            <th *ngIf="selectedRow.importPurchase"
+                                                scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.importTaxRate">% thuế NK</th>
+                                            <th *ngIf="selectedRow.importPurchase"
+                                                scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.importTaxAmountOriginal">Tiền thuế NK</th>
+                                            <th *ngIf="selectedRow.importPurchase"
+                                                scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.importTaxAccount">TK thuế NK</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.specialConsumeTaxRate">% thuế TTĐB</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.specialConsumeTaxAmountOriginal">Tiền thuế TTĐB</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.specialConsumeTaxAccount">TK thuế TTĐB</th>
+                                            <th *ngIf="!taxCalculationMethod" scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.vatRate">Thuế suất thuế GTGT</th>
+                                            <th *ngIf="!selectedRow.importPurchase && !taxCalculationMethod"
+                                                scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.vatAmountOriginal">Tiền thuế GTGT</th>
+                                            <th *ngIf="((selectedRow.currencyId !== account.organizationUnit.currencyID) || selectedRow.importPurchase) && isData && !taxCalculationMethod"
+                                                scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.vatAmount">Tiền thuế GTGT QĐ</th>
+                                            <th *ngIf="!taxCalculationMethod" scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.vatAccount">TK thuế GTGT</th>
+                                            <th *ngIf="!taxCalculationMethod" scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.deductionDebitAccount">TKĐƯ thuế GTGT</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.invoiceTemplate">Mẫu số HĐ</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.invoiceSeries">Ký hiệu HĐ</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.invoiceNo">Số HĐ</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.invoiceDate">Ngày HĐ</th>
+                                            <th *ngIf="!taxCalculationMethod" scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.goodsServicePurchaseId">Nhóm HHDV mua vào</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let detail of ppInvoiceDetails; let i=index;">
+                                            <td title="{{detail.materialGoodsCode}}" class="jsgrid-cell one-long-line">{{detail.materialGoodsCode}}</td>
+                                            <td title="{{detail.vatDescription}}" class="jsgrid-cell one-long-line">{{detail.vatDescription}}</td>
+                                            <td title="{{detail.debitAccount}}" class="jsgrid-cell one-long-line jsgrid-align-center">{{detail.debitAccount}}</td>
+                                            <td title="{{detail.creditAccount}}" class="jsgrid-cell one-long-line jsgrid-align-center">{{detail.creditAccount}}</td>
+                                            <td title="{{detail.accountingObjectCode}}" class="jsgrid-cell one-long-line">{{detail.accountingObjectCode}}</td>
+                                            <td class="jsgrid-cell one-long-line jsgrid-align-right" *ngIf="selectedRow.currencyId !== account.organizationUnit.currencyID">
+                                                <input type="number" class="input-Cell bg-transparent border-0 w-100"
+                                                       name="totalAmount" [(ngModel)]="detail.customUnitPrice"
+                                                       [systemOptions]="account?.systemOption"
+                                                       [type]="7"
+                                                       ebCurrencyMask disabled>
+                                            </td>
+                                            <td *ngIf="selectedRow.importPurchase" class="jsgrid-cell">
+                                                <input type="number" class="input-Cell bg-transparent border-0 w-100"
+                                                       name="totalAmount" [(ngModel)]="detail.importTaxRate"
+                                                       [systemOptions]="account?.systemOption"
+                                                       [type]="5"
+                                                       ebCurrencyMask disabled>
+                                            </td>
+                                            <td *ngIf="selectedRow.importPurchase" class="jsgrid-cell jsgrid-align-right">
+                                                <input type="number" class="input-Cell bg-transparent border-0 w-100"
+                                                       name="totalAmount" [(ngModel)]="detail.importTaxAmount"
+                                                       [systemOptions]="account?.systemOption"
+                                                       [type]="7"
+                                                       ebCurrencyMask disabled>
+                                            </td>
+                                            <td *ngIf="selectedRow.importPurchase" class="jsgrid-cell jsgrid-align-center">{{detail.importTaxAccount                }}</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">
+                                                <input type="number" class="input-Cell bg-transparent border-0 w-100"
+                                                       name="totalAmount" [(ngModel)]="detail.specialConsumeTaxRate"
+                                                       [systemOptions]="account?.systemOption"
+                                                       [type]="5"
+                                                       ebCurrencyMask disabled>
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-right">
+                                                <input type="number" class="input-Cell bg-transparent border-0 w-100"
+                                                       name="totalAmount" [(ngModel)]="detail.specialConsumeTaxAmount"
+                                                       [systemOptions]="account?.systemOption"
+                                                       [type]="7"
+                                                       ebCurrencyMask disabled>
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-center">{{detail.specialConsumeTaxAccount}}</td>
+                                            <td *ngIf="!taxCalculationMethod" class="jsgrid-cell jsgrid-align-right">
+                                                {{getVATRateValue(detail.vatRate)}}
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-right" *ngIf="!selectedRow.importPurchase && !taxCalculationMethod">
+                                                <input type="number" class="input-Cell bg-transparent border-0 w-100"
+                                                       name="totalAmount" [(ngModel)]="detail.vatAmountOriginal"
+                                                       [systemOptions]="account?.systemOption"
+                                                       [type]="selectedRow.currencyId !== currencyCode ? 8 : 7"
+                                                       ebCurrencyMask disabled>
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-right" *ngIf="((selectedRow.currencyId !== account.organizationUnit.currencyID) || selectedRow.importPurchase) && isData && !taxCalculationMethod">
+                                                <input type="number" class="input-Cell bg-transparent border-0 w-100"
+                                                       name="totalAmount" [(ngModel)]="detail.vatAmount"
+                                                       [systemOptions]="account?.systemOption"
+                                                       [type]="7"
+                                                       ebCurrencyMask disabled>
+                                            </td>
+                                            <td *ngIf="!taxCalculationMethod" title="{{detail.vatAccount}}" class="jsgrid-cell one-long-line jsgrid-align-center">{{detail.vatAccount}}</td>
+                                            <td *ngIf="!taxCalculationMethod" title="{{detail.deductionDebitAccount}}" class="jsgrid-cell one-long-line jsgrid-align-center">{{detail.deductionDebitAccount}}</td>
+                                            <td title="{{detail.invoiceTemplate}}" class="jsgrid-cell one-long-line">{{detail.invoiceTemplate}}</td>
+                                            <td title="{{detail.invoiceSeries}}" class="jsgrid-cell one-long-line">{{detail.invoiceSeries}}</td>
+                                            <td title="{{detail.invoiceNo}}" class="jsgrid-cell one-long-line">{{detail.invoiceNo}}</td>
+                                            <td class="jsgrid-cell one-long-line jsgrid-align-center">{{detail.invoiceDate  | date:'dd/MM/yyyy'}}</td>
+                                            <td *ngIf="!taxCalculationMethod" title="{{detail.goodsServicePurchaseCode}}" class="jsgrid-cell one-long-line">{{detail.goodsServicePurchaseCode}}</td>
+                                        </tr>
+                                        <tr *ngFor="let item of newArr(9 - (ppInvoiceDetails ? ppInvoiceDetails.length : 0))">
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell"></td>
+                                            <td class="jsgrid-cell"></td>
+                                            <td class="jsgrid-cell"></td>
+                                            <td class="jsgrid-cell"></td>
+                                            <td *ngIf="selectedRow.currencyId !== account.organizationUnit.currencyID"></td>
+                                            <td *ngIf="selectedRow.importPurchase"></td>
+                                            <td *ngIf="selectedRow.importPurchase"></td>
+                                            <td *ngIf="selectedRow.importPurchase"></td>
+                                            <td class="jsgrid-cell"></td>
+                                            <td class="jsgrid-cell"></td>
+                                            <td class="jsgrid-cell"></td>
+                                            <td *ngIf="!taxCalculationMethod"></td>
+                                            <td *ngIf="!selectedRow.importPurchase && !taxCalculationMethod"></td>
+                                            <td *ngIf="((selectedRow.currencyId !== account.organizationUnit.currencyID) || selectedRow.importPurchase) && isData && !taxCalculationMethod"></td>
+                                            <td *ngIf="!taxCalculationMethod"></td>
+                                            <td *ngIf="!taxCalculationMethod"></td>
+                                            <td class="jsgrid-cell"></td>
+                                            <td class="jsgrid-cell"></td>
+                                            <td class="jsgrid-cell"></td>
+                                            <td class="jsgrid-cell"></td>
+                                            <td *ngIf="!taxCalculationMethod"></td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot>
+                                        <td colspan="5">&nbsp;
+                                            <span class="color-tfoot"
+                                                  jhiTranslate="ebwebApp.pPInvoice.totalRow" translateValues="{total: '{{ppInvoiceDetails.length}}'}"></span>
+                                        </td>
+                                        <td class="cell-Table text-right" *ngIf="selectedRow.currencyId !== account.organizationUnit.currencyID">
+                                            <input type="number"
+                                                   class="input-Cell text-right bg-transparent border-0"
+                                                   [(ngModel)]="sumCustomUnitPrice"
+                                                   name="sumQuantity" ebCurrencyMask
+                                                   [systemOptions]="account?.systemOption" disabled
+                                                   [type]="7">
+                                        </td>
+                                        <td colspan="1" *ngIf="selectedRow.importPurchase"></td>
+                                        <td class="cell-Table text-right" *ngIf="selectedRow.importPurchase">
+                                            <input type="number"
+                                                   class="input-Cell text-right bg-transparent border-0"
+                                                   [(ngModel)]="totalImportTaxAmount"
+                                                   name="sumQuantity" ebCurrencyMask
+                                                   [systemOptions]="account?.systemOption" disabled
+                                                   [type]="7">
+                                        </td>
+                                        <td colspan="1" *ngIf="selectedRow.importPurchase"></td>
+                                        <td colspan="1"></td>
+                                        <td class="cell-Table text-right">
+                                            <input type="number"
+                                                   class="input-Cell text-right bg-transparent border-0"
+                                                   [(ngModel)]="totalSpecialConsumeTaxAmount"
+                                                   name="sumUnitPriceOriginal" ebCurrencyMask
+                                                   [systemOptions]="account?.systemOption" disabled
+                                                   [type]="7">
+                                        </td>
+                                        <td colspan="1"></td>
+                                        <td *ngIf="!taxCalculationMethod" colspan="1"></td>
+                                        <td class="cell-Table text-right" *ngIf="!selectedRow.importPurchase && !taxCalculationMethod">
+                                            <input type="number"
+                                                   class="input-Cell text-right bg-transparent border-0"
+                                                   [(ngModel)]="totalVATAmountOriginal"
+                                                   name="sumUnitPriceOriginal" ebCurrencyMask
+                                                   [systemOptions]="account?.systemOption" disabled
+                                                   [type]="selectedRow.currencyId !== currencyCode ? 8 : 7">
+                                        </td>
+                                        <td class="cell-Table text-right" *ngIf="((selectedRow.currencyId !== account.organizationUnit.currencyID) || selectedRow.importPurchase) && !taxCalculationMethod">
+                                            <input type="number"
+                                                   class="input-Cell text-right bg-transparent border-0"
+                                                   [(ngModel)]="totalVATAmount"
+                                                   name="sumUnitPriceOriginal" ebCurrencyMask
+                                                   [systemOptions]="account?.systemOption" disabled
+                                                   [type]="7">
+                                        </td>
+                                        <td *ngIf="!taxCalculationMethod" colspan="1"></td>
+                                        <td *ngIf="!taxCalculationMethod" colspan="1"></td>
+                                        <td colspan="4"></td>
+                                        <td *ngIf="!taxCalculationMethod" colspan="1"></td>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.common.statistical">Thống kê</span>
+                    </ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content">
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="home-report"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-report" class="table-scroll">
+                                    <table id="main-table-report" class="main-table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col" jhiTranslate="ebwebApp.pPDiscountReturnDetails.materialGoodsID">
+                                                Mã
+                                                hàng
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.pPDiscountReturnDetails.description">Tên
+                                                hàng
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.pPDiscountReturnDetails.expenseItemID">
+                                                Khoản
+                                                mục CP
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.pPDiscountReturnDetails.costSetID">Đối
+                                                tượng
+                                                THCP
+                                            </th>
+<!--                                            <th scope="col" jhiTranslate="ebwebApp.pPDiscountReturnDetails.contractID">Hợp-->
+<!--                                                đồng-->
+<!--                                            </th>-->
+                                            <th scope="col" jhiTranslate="ebwebApp.pPDiscountReturnDetails.budgetItemID">mục
+                                                thu
+                                                chi
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.pPDiscountReturnDetails.departmentID">
+                                                Phòng
+                                                banp
+                                            </th>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.pPDiscountReturnDetails.statisticsCodeID">Hợp
+                                                đồng
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                        <tr *ngFor="let detail of ppInvoiceDetails; let i=index;">
+                                            <td title="{{detail.materialGoodsCode}}" class="jsgrid-cell one-long-line">{{detail.materialGoodsCode}}</td>
+                                            <td title="{{detail.materialGoodsName}}" class="jsgrid-cell one-long-line">{{detail.materialGoodsName}}</td>
+                                            <td title="{{detail.expenseItemCode}}" class="jsgrid-cell one-long-line">{{detail.expenseItemCode}}</td>
+                                            <td title="{{detail.costSetCode}}" class="jsgrid-cell one-long-line">{{detail.costSetCode}}</td>
+<!--                                            <td title="{{detail.noMBook}}" class="jsgrid-cell one-long-line">{{detail.noMBook}}</td>-->
+                                            <td title="{{detail.budgetItemCode}}" class="jsgrid-cell one-long-line">{{detail.budgetItemCode}}</td>
+                                            <td title="{{detail.organizationUnitCode}}" class="jsgrid-cell one-long-line">{{detail.organizationUnitCode}}</td>
+                                            <td title="{{detail.statisticsCode}}" class="jsgrid-cell one-long-line">{{detail.statisticsCode}}</td>
+                                        </tr>
+                                        <tr *ngFor="let item of newArr(9 - (ppInvoiceDetails ? ppInvoiceDetails.length : 0))">
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell"></td>
+                                            <td class="jsgrid-cell"></td>
+                                            <td class="jsgrid-cell"></td>
+<!--                                            <td></td>-->
+                                            <td class="jsgrid-cell"></td>
+                                            <td class="jsgrid-cell"></td>
+                                            <td class="jsgrid-cell"></td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot>
+                                        <td colspan="7">&nbsp;
+                                            <span class="color-tfoot"
+                                                  jhiTranslate="ebwebApp.pPInvoice.totalRow" translateValues="{total: '{{ppInvoiceDetails.length}}'}"></span>
+                                        </td>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab id ="muaDichVu-tab-cost-vouncher">
+                    <ng-template ngbTabTitle>
+                        <span jhiTranslate="ebwebApp.pPInvoice.chungTuChiPhi">Chứng từ chi phí</span>
+                    </ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content" >
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="cost-vouncher"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-detail-cost-vouncher" class="table-scroll">
+                                    <table id="main-table-detail-cost-vouncher" class="main-table">
+                                        <thead>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPInvoice.noFBook">Số chứng từ</th>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPInvoice.postedDate">Ngày hạch toán</th>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPInvoice.date">Ngày chứng từ</th>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPInvoice.provider">Nhà cung cấp</th>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPInvoice.sumFreightAmount">Tổng chi phí mua</th>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPInvoice.chiPhiPhanBoLanNay">Chi phí phân bổ lần này</th>
+                                        <th scope="col" jhiTranslate="ebwebApp.pPInvoice.chiPhiDaLuyKe">Chi phí đã lũy kế</th>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let detailCost of ppInvoiceDetailCost; let i = index">
+                                            <td class="cell-Table jsgrid-align-left">
+                                                <span *ngIf="currentBook && currentBook === '0'" style="color:blue; text-decoration: underline;"  (click)="utilsService.viewRefVoucher({refID2: detailCost.ppServiceID, typeGroupID: GROUP_ID.GROUP_PPSERVICE})">{{detailCost.noFBook}}</span>
+                                                <span *ngIf="currentBook && currentBook !== '0'" style="color:blue; text-decoration: underline;"  (click)="utilsService.viewRefVoucher({refID2: detailCost.ppServiceID, typeGroupID: GROUP_ID.GROUP_PPSERVICE})">{{detailCost.noMBook}}</span>
+
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-center">
+                                                    {{detailCost.postedDate | date:'dd/MM/yyyy'}}
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-center">
+                                                    {{detailCost.date | date:'dd/MM/yyyy'}}
+                                            </td>
+                                            <td title="{{detailCost.accountingObjectName}}"
+                                                class="cell-Table jsgrid-align-left one-long-line">
+                                                {{detailCost.accountingObjectName}}
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-right">
+                                                <input type="number" class="input-Cell bg-transparent border-0 w-100"
+                                                       name="totalAmount" [(ngModel)]="detailCost.totalFreightAmount"
+                                                       [systemOptions]="account?.systemOption"
+                                                       [type]="7"
+                                                       ebCurrencyMask disabled>
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-right">
+                                                <input type="number" class="input-Cell bg-transparent border-0 w-100"
+                                                       name="totalAmount" [(ngModel)]="detailCost.amount"
+                                                       [systemOptions]="account?.systemOption"
+                                                       [type]="7"
+                                                       ebCurrencyMask disabled>
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-right">
+                                                <input type="number" class="input-Cell bg-transparent border-0 w-100"
+                                                       name="totalAmount" [(ngModel)]="detailCost.accumulatedAllocateAmount"
+                                                       [systemOptions]="account?.systemOption"
+                                                       [type]="7"
+                                                       ebCurrencyMask disabled>
+                                            </td>
+                                        </tr>
+                                        <tr *ngFor="let item of newArr(9 - (ppInvoiceDetailCost ? ppInvoiceDetailCost.length : 0))">
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell"></td>
+                                            <td class="jsgrid-cell"></td>
+                                            <td class="jsgrid-cell"></td>
+                                            <td class="jsgrid-cell"></td>
+                                            <td class="jsgrid-cell"></td>
+                                            <td class="jsgrid-cell"></td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot>
+                                        <td colspan="7">&nbsp;
+                                            <span class="color-tfoot"
+                                                  jhiTranslate="ebwebApp.pPInvoice.totalRow" translateValues="{total: '{{ppInvoiceDetailCost.length}}'}"></span>
+                                        </td>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab id ="muaDichVu-tab-reference-voucher">
+                    <ng-template ngbTabTitle>
+                        <span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.tabs.referenceVoucher">Chi tiết</span>
+                    </ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content" >
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="referenceVoucher-tabs"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-detail-referenceVoucher" class="table-scroll">
+                                    <table id="main-table-detail-referenceVoucher" class="main-table">
+                                        <thead>
+                                        <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.receiptDate"></th>
+                                        <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.postedDate"></th>
+                                        <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.noBook"></th>
+                                        <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.explain"></th>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let viewVoucher of refVouchers; let i = index">
+                                            <td class="jsgrid-cell jsgrid-align-center">
+                                            <span>
+                                                {{viewVoucher.date}}
+                                            </span>
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-center">
+                                            <span>
+                                                {{viewVoucher.postedDate}}
+                                            </span>
+                                            </td>
+                                            <td class="cell-Table jsgrid-cell jsgrid-align-left line-h pd-l-r-5"
+                                                (click)="utilsService.viewRefVoucher(viewVoucher)"
+                                                style="color:blue; text-decoration: underline;">{{viewVoucher.no}}
+                                            </td>
+                                            <td title="{{viewVoucher.reason}}" class="jsgrid-cell jsgrid-align-left one-long-line">
+                                                {{viewVoucher.reason}}
+                                            </td>
+                                        </tr>
+                                        <tr *ngFor="let item of newArr(9 - (refVouchers ? refVouchers.length : 0))">
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell"></td>
+                                            <td class="jsgrid-cell"></td>
+                                            <td class="jsgrid-cell"></td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot>
+                                        <td colspan="4">&nbsp;
+                                            <span class="color-tfoot"
+                                                  jhiTranslate="ebwebApp.pPInvoice.totalRow" translateValues="{total: '{{refVouchers.length}}'}"></span>
+                                        </td>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+            </ngb-tabset>
+        </div>
+    </div>
+</div>
+<!--xóa-->
+<ng-template #deleteItem  let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.pPInvoice.deletePPInvoice"></label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button [class.disable]="isLoading" type="button" class="btn btn-outline-danger" (click)="deletePPI()"
+                jhiTranslate="entity.action.ok">
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="closeModalDeleteItem()"
+                jhiTranslate="ebwebApp.mBDeposit.return">
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #unRecordModal let-d="dismiss">
+    <form name="unRecordForm">
+        <div class="modal-header">
+            <h4 class="modal-title" jhiTranslate="ebwebApp.pPInvoice.unrRecordAlert"></h4>
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                    (click)="d('Close')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p *ngIf="selectedRow.isUsed" jhiTranslate="ebwebApp.pPInvoice.unrRecordTitle"></p>
+            <p *ngIf="selectedRow.isPlayVendor" jhiTranslate="ebwebApp.pPInvoice.error.unrRecordPlayVendor"></p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-eb" [class.disable]="isLoading" (click)="unRecordPPI()" jhiTranslate="entity.action.ok">Save</button>
+            <button type="button" class="btn btn-light" (click)="d('Close')" jhiTranslate="entity.action.close">close</button>
+        </div>
+    </form>
+</ng-template>
+<ng-template #popUpMultiDelete let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label *ngIf="typeMultiAction === 0" jhiTranslate="ebwebApp.mBDeposit.multiDeleteMessage"></label>
+                <label *ngIf="typeMultiAction === 1" jhiTranslate="ebwebApp.mBDeposit.multiUnrecordMessage"></label>
+                <label *ngIf="typeMultiAction === 2" jhiTranslate="ebwebApp.mBDeposit.multiRecordMessage"></label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-danger" [class.disable]="isLoading" (click)="continueMultiAction()"
+                jhiTranslate="entity.action.ok">
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="closePopUp()"
+                jhiTranslate="ebwebApp.mBDeposit.return">
+        </button>
+    </div>
+</ng-template>

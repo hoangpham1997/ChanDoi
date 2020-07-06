@@ -1,0 +1,84 @@
+<div>
+    <h2 id="page-heading">
+        <span jhiTranslate="ebwebApp.budgetItem.home.title">Budget Items</span>
+        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-budget-item" [routerLink]="['/budget-item/new']">
+            <fa-icon [icon]="'plus'"></fa-icon>
+            <span  jhiTranslate="ebwebApp.budgetItem.home.createLabel">
+            Create new Budget Item
+            </span>
+        </button>
+    </h2>
+    <eb-alert></eb-alert>
+    <br/>
+    <div class="table-responsive" *ngIf="budgetItems">
+        <table class="table table-striped">
+            <thead>
+            <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
+            <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="budgetItemCode"><span jhiTranslate="ebwebApp.budgetItem.budgetItemCode">Budget Item Code</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="budgetItemName"><span jhiTranslate="ebwebApp.budgetItem.budgetItemName">Budget Item Name</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="budgetItemType"><span jhiTranslate="ebwebApp.budgetItem.budgetItemType">Budget Item Type</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="description"><span jhiTranslate="ebwebApp.budgetItem.description">Description</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="parentID"><span jhiTranslate="ebwebApp.budgetItem.parentID">Parent ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="isParentNode"><span jhiTranslate="ebwebApp.budgetItem.isParentNode">Is Parent Node</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="orderFixCode"><span jhiTranslate="ebwebApp.budgetItem.orderFixCode">Order Fix Code</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="grade"><span jhiTranslate="ebwebApp.budgetItem.grade">Grade</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="isActive"><span jhiTranslate="ebwebApp.budgetItem.isActive">Is Active</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="parent.id"><span jhiTranslate="ebwebApp.budgetItem.parent">Parent</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let budgetItem of budgetItems ;trackBy: trackId">
+                <td><a [routerLink]="['/budget-item', budgetItem.id, 'view' ]">{{budgetItem.id}}</a></td>
+                <td>{{budgetItem.budgetItemCode}}</td>
+                <td>{{budgetItem.budgetItemName}}</td>
+                <td>{{budgetItem.budgetItemType}}</td>
+                <td>{{budgetItem.description}}</td>
+                <td>{{budgetItem.parentID}}</td>
+                <td>{{budgetItem.isParentNode}}</td>
+                <td>{{budgetItem.orderFixCode}}</td>
+                <td>{{budgetItem.grade}}</td>
+                <td>{{budgetItem.isActive}}</td>
+                <td>
+                    <div *ngIf="budgetItem.parent">
+                        <a [routerLink]="['../budget-item', budgetItem.parent?.id, 'view' ]" >{{budgetItem.parent?.id}}</a>
+                    </div>
+                </td>
+                <td class="text-right">
+                    <div class="btn-group flex-btn-group-container">
+                        <button type="submit"
+                                [routerLink]="['/budget-item', budgetItem.id, 'view' ]"
+                                class="btn btn-info btn-sm">
+                            <fa-icon [icon]="'eye'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/budget-item', budgetItem.id, 'edit']"
+                                class="btn btn-primary btn-sm">
+                            <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/', { outlets: { popup: 'budget-item/'+ budgetItem.id + '/delete'} }]"
+                                replaceUrl="true"
+                                queryParamsHandling="merge"
+                                class="btn btn-danger btn-sm">
+                            <fa-icon [icon]="'times'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div *ngIf="budgetItems && budgetItems.length">
+        <div class="row justify-content-center">
+            <jhi-item-count [page]="page" [total]="queryCount" [maxSize]="5" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+        </div>
+        <div class="row justify-content-center">
+            <ngb-pagination [size]="'sm'" [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage" [maxSize]="5" [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage(page)"></ngb-pagination>
+        </div>
+    </div>
+</div>

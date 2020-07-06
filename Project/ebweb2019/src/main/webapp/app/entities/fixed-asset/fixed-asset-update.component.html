@@ -1,0 +1,1161 @@
+
+<eb-alert></eb-alert>
+<div class="container-fluid">
+    <div class="margin-tp-5 margin-0">
+        <div class="">
+            <form name="editForm" role="form" novalidate #editForm="ngForm">
+                <div class="itemw">
+                    <div class="menu-tool-bar he">
+                        <div class="ptitle">
+                            <span>Tài sản cố định</span>
+                        </div>
+
+                        <div class="gr-toolbar">
+                            <a (click)="save()"><i class="fas fa-plus"></i>Lưu</a>
+                            <a (click)="saveAndCreate()" *ngIf="!fixedAsset.id"
+                               [routerLink]="['../../fixedAsset/new']"><i class="fas fa-trash-alt"></i>Lưu & thêm
+                                mới</a>
+                            <a *ngIf="fixedAsset.id" [routerLink]="['/', { outlets: { popup: 'fixed-asset/'+ fixedAsset.id + '/delete'} }]"
+                               replaceUrl="true"
+                               queryParamsHandling="merge"><i class="fas fa-pen"></i>Xoá</a>
+                            <a (click)="previousState()"><i class="fas fa-pen"></i>Đóng</a>
+                        </div>
+                    </div>
+
+                    <div class="frm-main">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <ngb-tabset class="tool-navbar">
+                                    <ngb-tab title="Thông tin TSCĐ">
+                                        <ng-template ngbTabContent>
+                                            <div class="row">
+                                                <div class="col-lg-12" [hidden]="true">
+                                                    <div [hidden]="!fixedAsset.id" class="form-group row">
+                                                        <label for="id" class="col-sm-2 col-form-label"
+                                                               jhiTranslate="global.field.id">ID</label>
+                                                        <div class="col-sm-10 pd-l-0 pd-r-10">
+                                                            <input type="text" class="col-sm-10 col-form-label-sm"
+                                                                   id="id" name="id"
+                                                                   [(ngModel)]="fixedAsset.id" readonly/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="form-group row">
+                                                        <label class="col-sm-1 col-form-label">Mã(*)</label>
+                                                        <div class="col-sm-2 pd-l-0 pd-r-10">
+                                                            <input type="text" class="form-control"
+                                                                   name="fixedAssetCode" id="field_fixedAssetCode"
+                                                                   [(ngModel)]="fixedAsset.fixedAssetCode" required
+                                                                   maxlength="25"/>
+                                                            <div
+                                                                [hidden]="!(editForm.controls.fixedAssetCode?.dirty && editForm.controls.fixedAssetCode?.invalid)">
+                                                                <small class="form-text text-danger"
+                                                                       [hidden]="!editForm.controls.fixedAssetCode?.errors?.required"
+                                                                       jhiTranslate="entity.validation.required">
+                                                                    This field is required.
+                                                                </small>
+                                                                <small class="form-text text-danger"
+                                                                       [hidden]="!editForm.controls.fixedAssetCode?.errors?.maxlength"
+                                                                       jhiTranslate="entity.validation.maxlength"
+                                                                       translateValues="{ max: 25 }">
+                                                                    This field cannot be longer than 25 characters.
+                                                                </small>
+                                                            </div>
+                                                        </div>
+                                                        <label class="col-sm-1 col-form-label">Tên (*)</label>
+                                                        <div class="col-sm-5 pd-l-0 pd-r-10">
+                                                            <input type="text" class="form-control"
+                                                                   name="fixedAssetName" id="field_fixedAssetName"
+                                                                   [(ngModel)]="fixedAsset.fixedAssetName" required
+                                                                   maxlength="512"/>
+                                                            <div
+                                                                [hidden]="!(editForm.controls.fixedAssetName?.dirty && editForm.controls.fixedAssetName?.invalid)">
+                                                                <small class="form-text text-danger"
+                                                                       [hidden]="!editForm.controls.fixedAssetName?.errors?.required"
+                                                                       jhiTranslate="entity.validation.required">
+                                                                    This field is required.
+                                                                </small>
+                                                                <small class="form-text text-danger"
+                                                                       [hidden]="!editForm.controls.fixedAssetName?.errors?.maxlength"
+                                                                       jhiTranslate="entity.validation.maxlength"
+                                                                       translateValues="{ max: 512 }">
+                                                                    This field cannot be longer than 512 characters.
+                                                                </small>
+                                                            </div>
+                                                        </div>
+                                                        <label class="col-sm-1 col-form-label">Loại (*)</label>
+                                                        <div class="col-sm-2 pd-l-0 pd-r-10">
+<!--                                                            <select class="form-control"-->
+<!--                                                                    id="field_fixedAssetCategoryID"-->
+<!--                                                                    name="fixedAssetCategoryID"-->
+<!--                                                                    [(ngModel)]="fixedAsset.fixedAssetCategoryID">-->
+<!--                                                                <option [ngValue]="null"></option>-->
+<!--                                                                <option-->
+<!--                                                                    [ngValue]="fixedAssetCategoryOption.id === fixedAsset.fixedAssetCategoryID?.id ? fixedAsset.fixedAssetCategoryID : fixedAssetCategoryOption"-->
+<!--                                                                    *ngFor="let fixedAssetCategoryOption of fixedassetcategories; trackBy: trackFixedAssetCategoryById">{{fixedAssetCategoryOption.fixedAssetCategoryName}}</option>-->
+<!--                                                            </select>-->
+                                                            <combo-box style="" id="field_parentID"
+                                                                       name="comboboxparentID"
+                                                                       [dataList]="fixedassetcategories"
+                                                                       [listColumns]="utilsService.listColumnsFixedAssetCategory"
+                                                                       displayMember="fixedAssetCategoryName"
+                                                                       valueName="id"
+                                                                       [headerColumns]="utilsService.listHeaderColumnsFixedAssetCategory"
+                                                                       [isObject]="true"
+                                                                       [(ngModel)]= "fixedAsset.fixedAssetCategoryID">
+                                                            </combo-box>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="form-group row">
+                                                        <label class="col-sm-1 col-form-label">Mô tả</label>
+                                                        <div class="col-sm-8 pd-l-0 pd-r-10">
+                                                            <input type="text" class="form-control"
+                                                                   name="description" id="field_description"
+                                                                   [(ngModel)]="fixedAsset.description"
+                                                                   maxlength="512"/>
+                                                            <div
+                                                                [hidden]="!(editForm.controls.description?.dirty && editForm.controls.description?.invalid)">
+                                                                <small class="form-text text-danger"
+                                                                       [hidden]="!editForm.controls.description?.errors?.maxlength"
+                                                                       jhiTranslate="entity.validation.maxlength"
+                                                                       translateValues="{ max: 512 }">
+                                                                    This field cannot be longer than 512 characters.
+                                                                </small>
+                                                            </div>
+                                                        </div>
+                                                        <label class="col-sm-1 col-form-label">Phòng ban(*)</label>
+                                                        <div class="col-sm-2 pd-l-0 pd-r-10">
+<!--                                                            <select class="form-control"-->
+<!--                                                                    id="field_organizationUnitID"-->
+<!--                                                                    name="organizationUnitID"-->
+<!--                                                                    [(ngModel)]="fixedAsset.organizationUnitID">-->
+<!--                                                                <option [ngValue]="null"></option>-->
+<!--                                                                <option-->
+<!--                                                                    [ngValue]="organizationUnitOption.id === fixedAsset.organizationUnitID?.id ? fixedAsset.organizationUnitID : organizationUnitOption"-->
+<!--                                                                    *ngFor="let organizationUnitOption of organizationunits; trackBy: trackOrganizationUnitById">{{organizationUnitOption.organizationUnitName}}</option>-->
+<!--                                                            </select>-->
+                                                            <combo-box style="" id="field_organizationUnit"
+                                                                       name="comboboxorganizationUnit"
+                                                                       [dataList]="organizationunits"
+                                                                       [listColumns]="utilsService.listColumnsOrganizationUnit"
+                                                                       displayMember="organizationUnitCode"
+                                                                       valueName="id"
+                                                                       [headerColumns]="utilsService.listHeaderColumnsOrganizationUnit"
+                                                                       [isObject]="true"
+                                                                       [(ngModel)]= "fixedAsset.organizationUnitID">
+                                                            </combo-box>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="form-group row">
+                                                        <label class="col-sm-1 col-form-label">Số hiệu</label>
+                                                        <div class="col-sm-2 pd-l-0 pd-r-10">
+                                                            <input type="text" class="form-control"
+                                                                   name="serialNumber" id="field_serialNumber"
+                                                                   [(ngModel)]="fixedAsset.serialNumber"
+                                                                   maxlength="100"/>
+                                                            <div
+                                                                [hidden]="!(editForm.controls.serialNumber?.dirty && editForm.controls.serialNumber?.invalid)">
+                                                                <small class="form-text text-danger"
+                                                                       [hidden]="!editForm.controls.serialNumber?.errors?.maxlength"
+                                                                       jhiTranslate="entity.validation.maxlength"
+                                                                       translateValues="{ max: 100 }">
+                                                                    This field cannot be longer than 100 characters.
+                                                                </small>
+                                                            </div>
+                                                        </div>
+                                                        <label class="col-sm-1 col-form-label">Năm sản xuất</label>
+                                                        <div class="col-sm-2 pd-l-0 pd-r-10">
+                                                            <input type="number" class="form-control"
+                                                                   name="productionYear" id="field_productionYear"
+                                                                   [(ngModel)]="fixedAsset.productionYear"/>
+                                                        </div>
+                                                        <label class="col-sm-1 col-form-label">Nơi sản xuất</label>
+                                                        <div class="col-sm-2 pd-l-0 pd-r-10">
+                                                            <input type="text" class="form-control" name="madeIn"
+                                                                   id="field_madeIn"
+                                                                   [(ngModel)]="fixedAsset.madeIn" maxlength="100"/>
+                                                            <div
+                                                                [hidden]="!(editForm.controls.madeIn?.dirty && editForm.controls.madeIn?.invalid)">
+                                                                <small class="form-text text-danger"
+                                                                       [hidden]="!editForm.controls.madeIn?.errors?.maxlength"
+                                                                       jhiTranslate="entity.validation.maxlength"
+                                                                       translateValues="{ max: 100 }">
+                                                                    This field cannot be longer than 100 characters.
+                                                                </small>
+                                                            </div>
+                                                        </div>
+                                                        <label class="col-sm-1 col-form-label">Thời gian BH</label>
+                                                        <div class="col-sm-2 pd-l-0 pd-r-10">
+                                                            <select class="form-control"
+                                                                    id="field_warranty"
+                                                                    name="warranty"
+                                                                    [(ngModel)]="fixedAsset.warranty">
+                                                                <option [ngValue]="null"></option>
+                                                                <option
+                                                                    [ngValue]="a.warrantyName === fixedAsset.warranty ? fixedAsset.warranty : a.warrantyName"
+                                                                    *ngFor="let a of warranty; trackBy: trackWarrantyById">{{a.warrantyTime}}</option>
+                                                            </select>
+<!--                                                            <div-->
+<!--                                                                [hidden]="!(editForm.controls.warranty?.dirty && editForm.controls.warranty?.invalid)">-->
+<!--                                                                <small class="form-text text-danger"-->
+<!--                                                                       [hidden]="!editForm.controls.warranty?.errors?.maxlength"-->
+<!--                                                                       jhiTranslate="entity.validation.maxlength"-->
+<!--                                                                       translateValues="{ max: 25 }">-->
+<!--                                                                    This field cannot be longer than 25 characters.-->
+<!--                                                                </small>-->
+<!--                                                            </div>-->
+<!--                                                            <combo-box style="" id="field_warranty"-->
+<!--                                                                       name="comboboxwarranty"-->
+<!--                                                                       [dataList]="warranty"-->
+<!--                                                                       [listColumns]="utilsService.listColumnsWarranty"-->
+<!--                                                                       displayMember="warrantyName"-->
+<!--                                                                       valueName="id"-->
+<!--                                                                       [headerColumns]="utilsService.listHeaderColumnsWarranty"-->
+<!--                                                                       [isObject]="false"-->
+<!--                                                                       [(ngModel)]= "fixedAsset.warranty">-->
+<!--                                                            </combo-box>-->
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="form-group row">
+                                                        <label class="col-sm-1 col-form-label">ĐK bảo hành</label>
+                                                        <div class="col-sm-2 pd-l-0 pd-r-10">
+                                                            <input type="text" class="form-control"
+                                                                   name="guaranteeCodition"
+                                                                   id="field_guaranteeCodition"
+                                                                   [(ngModel)]="fixedAsset.guaranteeCodition"
+                                                                   maxlength="20"/>
+                                                            <div
+                                                                [hidden]="!(editForm.controls.guaranteeCodition?.dirty && editForm.controls.guaranteeCodition?.invalid)">
+                                                                <small class="form-text text-danger"
+                                                                       [hidden]="!editForm.controls.guaranteeCodition?.errors?.maxlength"
+                                                                       jhiTranslate="entity.validation.maxlength"
+                                                                       translateValues="{ max: 20 }">
+                                                                    This field cannot be longer than 20 characters.
+                                                                </small>
+                                                            </div>
+                                                        </div>
+                                                        <label class="col-sm-1 col-form-label">Nhà cung cấp</label>
+                                                        <div class="col-sm-2 pd-l-0 pd-r-10">
+<!--                                                            <select class="form-control"-->
+<!--                                                                    id="field_accountingObjectID"-->
+<!--                                                                    name="accountingObjectID"-->
+<!--                                                                    [(ngModel)]="fixedAsset.accountingObjectID">-->
+<!--                                                                <option [ngValue]="null"></option>-->
+<!--                                                                <option-->
+<!--                                                                    [ngValue]="a.id === fixedAsset.accountingObjectID?.id ? fixedAsset.accountingObjectID : a"-->
+<!--                                                                    *ngFor="let a of accountingobjects; trackBy: trackAccountingObjectById">{{a.accountingObjectName}}</option>-->
+<!--                                                            </select>-->
+<!--                                                            <div-->
+<!--                                                                [hidden]="!(editForm.controls.accountingObjectName?.dirty && editForm.controls.accountingObjectName?.invalid)">-->
+<!--                                                                <small class="form-text text-danger"-->
+<!--                                                                       [hidden]="!editForm.controls.accountingObjectName?.errors?.maxlength"-->
+<!--                                                                       jhiTranslate="entity.validation.maxlength"-->
+<!--                                                                       translateValues="{ max: 512 }">-->
+<!--                                                                    This field cannot be longer than 512 characters.-->
+<!--                                                                </small>-->
+<!--                                                            </div>-->
+                                                            <combo-box style="" id="field_suppliers"
+                                                                       name="comboboxsuppliers"
+                                                                       [dataList]="suppliers"
+                                                                       [listColumns]="utilsService.listColumnsAccountingObjects"
+                                                                       displayMember="accountingobjectcode"
+                                                                       valueName="id"
+                                                                       [headerColumns]="utilsService.listHeaderColumnsAccountingObject"
+                                                                       [isObject]="true"
+                                                                       [(ngModel)]= "fixedAsset.accountingObjectID">
+                                                            </combo-box>
+                                                        </div>
+                                                        <label class="col-sm-1 col-form-label">Tình trạng</label>
+                                                        <div class="col-sm-2 pd-l-0 pd-r-10">
+                                                            <input type="checkbox" class="form-control"
+                                                                   name="isSecondHand" id="field_isSecondHand"
+                                                                   [(ngModel)]="fixedAsset.isSecondHand"/>
+                                                            <div
+                                                                [hidden]="!(editForm.controls.isSecondHand?.dirty && editForm.controls.isSecondHand?.invalid)">
+                                                                <small class="form-text text-danger"
+                                                                       [hidden]="!editForm.controls.isSecondHand?.errors?.required"
+                                                                       jhiTranslate="entity.validation.required">
+                                                                    This field is required.
+                                                                </small>
+                                                            </div>
+                                                        </div>
+                                                        <label class="col-sm-1 col-form-label">Trạng thái</label>
+                                                        <div class="col-sm-2 pd-l-0 pd-r-10">
+                                                            <select class="form-control"
+                                                                    id="field_currentState"
+                                                                    name="currentState"
+                                                                    [(ngModel)]="fixedAsset.currentState">
+                                                                <option [ngValue]="0">Không chọn</option>
+                                                                <option [ngValue]="1">Đã mua chưa dùng</option>
+                                                                <option [ngValue]="2">Đang sử dụng</option>
+                                                                <option [ngValue]="3">Đã thanh lý - Nhượng bán</option>
+                                                                <option [ngValue]="4">Đang sử dụng - Ngừng tính</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <div class="form-group row">
+                                                        <label class="col-sm-1 col-form-label">BB giao nhận
+                                                            sổ</label>
+                                                        <div class="col-sm-5 pd-l-0 pd-r-10">
+                                                            <input type="text" class="form-control"
+                                                                   name="deliveryRecordNo"
+                                                                   id="field_deliveryRecordNo"
+                                                                   [(ngModel)]="fixedAsset.deliveryRecordNo"
+                                                                   maxlength="50"/>
+                                                            <div
+                                                                [hidden]="!(editForm.controls.deliveryRecordNo?.dirty && editForm.controls.deliveryRecordNo?.invalid)">
+                                                                <small class="form-text text-danger"
+                                                                       [hidden]="!editForm.controls.deliveryRecordNo?.errors?.maxlength"
+                                                                       jhiTranslate="entity.validation.maxlength"
+                                                                       translateValues="{ max: 50 }">
+                                                                    This field cannot be longer than 50 characters.
+                                                                </small>
+                                                            </div>
+                                                        </div>
+                                                        <label class="col-sm-1 col-form-label">Ngày</label>
+                                                        <div class="col-sm-2 pd-l-0 pd-r-10">
+                                                            <input id="field_deliveryRecordDate" type="text"
+                                                                   class="form-control" name="deliveryRecordDate"
+                                                                   ngbDatepicker
+                                                                   #deliveryRecordDateDp="ngbDatepicker"
+                                                                   [(ngModel)]="fixedAsset.deliveryRecordDate"/>
+                                                            <span class="input-group-append">
+                                                          <button type="button" class="btn btn-secondary"
+                                                                  (click)="deliveryRecordDateDp.toggle()">
+                                                              <fa-icon [icon]="'calendar-alt'"></fa-icon></button>
+                                                                </span>
+                                                        </div>
+                                                        <label class="col-sm-1 col-form-label">Theo dõi</label>
+                                                        <div class="col-sm-2 pd-l-0 pd-r-10">
+                                                            <input type="checkbox" class="form-control"
+                                                                   name="isActive" id="field_isActive"
+                                                                   [(ngModel)]="fixedAsset.isActive"/>
+                                                            <div
+                                                                [hidden]="!(editForm.controls.isActive?.dirty && editForm.controls.isActive?.invalid)">
+                                                                <small class="form-text text-danger"
+                                                                       [hidden]="!editForm.controls.isActive?.errors?.required"
+                                                                       jhiTranslate="entity.validation.required">
+                                                                    This field is required.
+                                                                </small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </ng-template>
+                                    </ngb-tab>
+                                    <ngb-tab>
+                                        <ng-template ngbTabTitle><b>Thông tin khấu hao</b></ng-template>
+                                        <ng-template ngbTabContent>
+                                            <div class="dt-result">
+                                                <div class="col-lg-12">
+                                                    <div class="row">
+                                                        <div class="col-lg-6 pd-r-0">
+                                                            <form>
+                                                                <h3>Ngày tháng ghi nhận tài sản</h3>
+                                                                <div class="row">
+                                                                    <div class="col-lg-12">
+                                                                        <div class="form-group row">
+                                                                            <label class="col-sm-3 col-form-label">Ngày
+                                                                                mua</label>
+                                                                            <div class="col-sm-3 pd-l-0 pd-r-10">
+                                                                                <input id="field_purchasedDate"
+                                                                                       type="text"
+                                                                                       class="form-control"
+                                                                                       name="purchasedDate"
+                                                                                       ngbDatepicker
+                                                                                       #purchasedDateDp="ngbDatepicker"
+                                                                                       [(ngModel)]="fixedAsset.purchasedDate" required/>
+                                                                                <span class="input-group-append">
+                                                          <button type="button" class="btn btn-secondary"
+                                                                  (click)="purchasedDateDp.toggle()">
+                                                              <fa-icon [icon]="'calendar-alt'"></fa-icon></button>
+                                                                </span>
+                                                                            </div>
+                                                                            <label class="col-sm-3 col-form-label">Ngày
+                                                                                ghi tăng(*)</label>
+                                                                            <div class="col-sm-3 pd-l-0 pd-r-10">
+                                                                                <input id="field_incrementDate"
+                                                                                       type="text"
+                                                                                       class="form-control"
+                                                                                       name="incrementDate"
+                                                                                       ngbDatepicker
+                                                                                       #incrementDateDp="ngbDatepicker"
+                                                                                       [(ngModel)]="fixedAsset.incrementDate" required>
+                                                                                <span class="input-group-append">
+                                                          <button type="button" class="btn btn-secondary"
+                                                                  (click)="incrementDateDp.toggle()">
+                                                              <fa-icon [icon]="'calendar-alt'"></fa-icon></button>
+                                                                </span>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="form-group row">
+                                                                            <label class="col-sm-3 col-form-label">Ngày
+                                                                                sử dụng</label>
+                                                                            <div class="col-sm-3 pd-l-0 pd-r-10">
+                                                                                <input id="field_usedDate"
+                                                                                       type="text"
+                                                                                       class="form-control"
+                                                                                       name="usedDate"
+                                                                                       ngbDatepicker
+                                                                                       #usedDateDp="ngbDatepicker"
+                                                                                       [(ngModel)]="fixedAsset.usedDate" required>
+                                                                                <span class="input-group-append">
+                                                              <button type="button" class="btn btn-secondary"
+                                                                      (click)="usedDateDp.toggle()">
+                                                              <fa-icon [icon]="'calendar-alt'"></fa-icon></button>
+                                                                </span>
+                                                                            </div>
+                                                                            <label class="col-sm-3 col-form-label">Ngày
+                                                                                bđ tính khấu hao</label>
+                                                                            <div class="col-sm-3 pd-l-0 pd-r-10">
+                                                                                <input id="field_depreciationDate"
+                                                                                       type="text"
+                                                                                       class="form-control"
+                                                                                       name="depreciationDate"
+                                                                                       ngbDatepicker
+                                                                                       #depreciationRateDp="ngbDatepicker"
+                                                                                       [(ngModel)]="fixedAsset.depreciationDate" required>
+                                                                                <span class="input-group-append">
+                                                          <button type="button" class="btn btn-secondary"
+                                                                  (click)="depreciationRateDp.toggle()">
+                                                              <fa-icon [icon]="'calendar-alt'"></fa-icon></button>
+                                                                </span>
+                                                                            </div>
+                                                                        </div>
+
+
+                                                                    </div>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                        <div class="col-lg-6 pd-only-l-10">
+                                                            <form>
+                                                                <h3>Tài khoản</h3>
+                                                                <div class="row">
+                                                                    <div class="col-lg-12">
+                                                                        <div class="form-group row">
+                                                                            <label class="col-sm-2 col-form-label">TK nguyên giá(*)</label>
+                                                                            <div class="col-sm-4 pd-l-0">
+<!--                                                                                <select class="form-control"-->
+<!--                                                                                        id="field_originalPriceAccount"-->
+<!--                                                                                        name="originalPriceAccount"-->
+<!--                                                                                        [(ngModel)]="fixedAsset.originalPriceAccount">-->
+<!--                                                                                    <option [ngValue]="null"></option>-->
+<!--                                                                                    <option-->
+<!--                                                                                        [ngValue]="a.accountNumber === fixedAsset.originalPriceAccount ? fixedAsset.originalPriceAccount : a.accountNumber"-->
+<!--                                                                                        *ngFor="let a of accountlists; trackBy: trackOrganizationUnitById">{{a.accountNumber}}</option>-->
+<!--                                                                                </select>-->
+                                                                                <combo-box style="" id="field_originalPriceAccount"
+                                                                                           name="comboboxoriginalPriceAccount"
+                                                                                           [dataList]="accountlists"
+                                                                                           [listColumns]="utilsService.listColumnsAccountList"
+                                                                                           displayMember="accountNumber"
+                                                                                           valueName="id"
+                                                                                           [headerColumns]="utilsService.listHeaderColumnsAccountList"
+                                                                                           [isObject]="false"
+                                                                                           [(ngModel)]= "fixedAsset.originalPriceAccount">
+                                                                                </combo-box>
+                                                                            </div>
+                                                                            <label class="col-sm-2 col-form-label">TK khấu hao</label>
+                                                                            <div class="col-sm-4 pd-l-0">
+<!--                                                                                <select class="form-control"-->
+<!--                                                                                        id="field_depreciationAccount"-->
+<!--                                                                                        name="depreciationAccount"-->
+<!--                                                                                        [(ngModel)]="fixedAsset.depreciationAccount">-->
+<!--                                                                                    <option [ngValue]="null"></option>-->
+<!--                                                                                    <option-->
+<!--                                                                                        [ngValue]="a.accountNumber === fixedAsset.depreciationAccount ? fixedAsset.depreciationAccount : a.accountNumber"-->
+<!--                                                                                        *ngFor="let a of accountlists; trackBy: trackOrganizationUnitById">{{a.accountNumber}}</option>-->
+<!--                                                                                </select>-->
+                                                                                <combo-box style="" id="field_depreciationAccount"
+                                                                                           name="comboboxdepreciationAccount"
+                                                                                           [dataList]="accountlists"
+                                                                                           [listColumns]="utilsService.listColumnsAccountList"
+                                                                                           displayMember="accountNumber"
+                                                                                           valueName="id"
+                                                                                           [headerColumns]="utilsService.listHeaderColumnsAccountList"
+                                                                                           [isObject]="false"
+                                                                                           [(ngModel)]= "fixedAsset.depreciationAccount">
+                                                                                </combo-box>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="form-group row">
+                                                                            <label class="col-sm-2 col-form-label">TK chi phí(*)</label>
+                                                                            <div class="col-sm-4 pd-l-0">
+<!--                                                                                <select class="form-control"-->
+<!--                                                                                        id="field_expenditureAccount"-->
+<!--                                                                                        name="expenditureAccount"-->
+<!--                                                                                        [(ngModel)]="fixedAsset.expenditureAccount">-->
+<!--                                                                                    <option [ngValue]="null"></option>-->
+<!--                                                                                    <option-->
+<!--                                                                                        [ngValue]="a.accountNumber === fixedAsset.expenditureAccount ? fixedAsset.expenditureAccount : a.accountNumber"-->
+<!--                                                                                        *ngFor="let a of accountlists; trackBy: trackOrganizationUnitById">{{a.accountNumber}}</option>-->
+<!--                                                                                </select>-->
+                                                                                <combo-box style="" id="field_expenditureAccount"
+                                                                                           name="comboboxexpenditureAccount"
+                                                                                           [dataList]="accountlists"
+                                                                                           [listColumns]="utilsService.listColumnsAccountList"
+                                                                                           displayMember="accountNumber"
+                                                                                           valueName="id"
+                                                                                           [headerColumns]="utilsService.listHeaderColumnsAccountList"
+                                                                                           [isObject]="false"
+                                                                                           [(ngModel)]= "fixedAsset.expenditureAccount">
+                                                                                </combo-box>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <form>
+                                                                <h3>Nguyên giá và tính khấu hao</h3>
+
+                                                                    <div class="col-lg-12">
+                                                                        <div class="form-group row">
+                                                                            <label class="col-sm-2 col-form-label">Phương pháp tính KH</label>
+                                                                            <div class="col-sm-2 pd-l-0 pd-r-10">
+                                                                                <select class="form-control"
+                                                                                        id="field_depreciationMethod"
+                                                                                        name="depreciationMethod"
+                                                                                        [(ngModel)]="fixedAsset.depreciationMethod">
+                                                                                    <option [ngValue]="0">Đường thẳng</option>
+                                                                                </select>
+                                                                            </div>
+                                                                            <label class="col-sm-2 col-form-label">Nguyên giá</label>
+                                                                            <div class="col-sm-2 pd-l-0 pd-r-10">
+                                                                                <input id="field_originalPrice"
+                                                                                       type="text"
+                                                                                       class="form-control"
+                                                                                       name="originalPrice"
+                                                                                       [(ngModel)]="fixedAsset.originalPrice"/>
+                                                                            </div>
+                                                                            <label class="col-sm-2 col-form-label">Giá trị tính khấu hao</label>
+                                                                            <div class="col-sm-2 pd-l-0 pd-r-10">
+                                                                                <input id="field_purchasePrice"
+                                                                                       type="text"
+                                                                                       class="form-control"
+                                                                                       name="purchasePrice"
+                                                                                       [(ngModel)]="fixedAsset.purchasePrice"/>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="form-group row">
+                                                                            <label class="col-sm-2 col-form-label">Thời gian sử dụng</label>
+                                                                            <div class="col-sm-1 pd-l-0 pd-r-10">
+                                                                                <input id="field_usedTime"
+                                                                                       type="text"
+                                                                                       class="form-control"
+                                                                                       name="usedTime"
+                                                                                       [(ngModel)]="fixedAsset.usedTime"/>
+                                                                            </div>
+                                                                            <div class="col-sm-1 pd-l-0 pd-r-10">
+                                                                                <select class="form-control"
+                                                                                        id="field_displayMonthYear"
+                                                                                        name="displayMonthYear"
+                                                                                        [(ngModel)]="fixedAsset.displayMonthYear">
+                                                                                    <option [ngValue]="1" selected>Năm</option>
+                                                                                    <option [ngValue]="0">Tháng</option>
+                                                                                </select>
+                                                                            </div>
+
+                                                                            <label class="col-sm-2 col-form-label">Tỷ lệ KH năm(%)</label>
+                                                                            <div class="col-sm-2 pd-l-0 pd-r-10">
+                                                                                <input id="field_depreciationRate"
+                                                                                       type="text"
+                                                                                       class="form-control"
+                                                                                       name="depreciationRate"
+                                                                                       [(ngModel)]="fixedAsset.depreciationRate"/>
+                                                                            </div>
+                                                                            <label class="col-sm-2 col-form-label">Tỷ lệ KH tháng(%)</label>
+                                                                            <div class="col-sm-2 pd-l-0 pd-r-10">
+                                                                                <input id="field_monthDepreciationRate"
+                                                                                       type="text"
+                                                                                       class="form-control"
+                                                                                       name="monthDepreciationRate"
+                                                                                       [(ngModel)]="fixedAsset.monthDepreciationRate"/>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="form-group row">
+                                                                            <label class="col-sm-2 col-form-label">Giá trị KH năm (%)</label>
+                                                                            <div class="col-sm-2 pd-l-0 pd-r-10">
+                                                                                <input id="field_periodDepreciationAmount"
+                                                                                       type="text"
+                                                                                       class="form-control"
+                                                                                       name="periodDepreciationAmount"
+                                                                                       [(ngModel)]="fixedAsset.periodDepreciationAmount"/>
+                                                                            </div>
+                                                                            <label class="col-sm-2 col-form-label">Tỷ lệ KH tháng (%)</label>
+                                                                            <div class="col-sm-2 pd-l-0 pd-r-10">
+                                                                                <input id="field_monthPeriodDepreciationAmount"
+                                                                                       type="text"
+                                                                                       class="form-control"
+                                                                                       name="monthPeriodDepreciationAmount"
+                                                                                       [(ngModel)]="fixedAsset.monthPeriodDepreciationAmount"/>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </ng-template>
+                                    </ngb-tab>
+                                    <ngb-tab>
+                                        <ng-template ngbTabTitle><b>Chi tiết phân bổ</b></ng-template>
+                                        <ng-template ngbTabContent>
+                                            <div class="dt-result">
+                                                <div class="tbl-header">
+                                                    <table cellpadding="0" cellspacing="0" border="0">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>Đối tượng phân bổ</th>
+                                                            <th>Tỷ lệ phân bổ</th>
+                                                            <th>Tài khoản chi phí</th>
+                                                            <th>Khoản mục chi phí</th>
+                                                        </tr>
+                                                        </thead>
+                                                    </table>
+                                                </div>
+                                                        <div class="tbl-content">
+                                                            <table cellpadding="0" cellspacing="0" border="0" class="easy-table">
+                                                                <tbody>
+                                                                <tr *ngFor="let fAA of fixedAssetAllocation; let i = index"
+                                                                    (keydown.control.delete)="KeyPress(fixedAssetAllocation.indexOf(fAA),0)">
+                                                                    <td>
+                                                                        <select class="form-control"
+                                                                                 name="{{'object'+ i}}"
+                                                                                 [(ngModel)]="fAA.objectID">
+                                                                        <option [ngValue]="null"></option>
+                                                                        <option
+                                                                            [ngValue]="object.id === fAA?.objectID?.id ? fAA.objectID : object"
+                                                                            *ngFor="let object of objects; trackBy: trackFixedAssetCategoryById">{{object.costSetName}}</option>
+                                                                    </select>
+                                                                    </td>
+                                                                    <td><input  type="number" name="{{'rate'+ i}}" [(ngModel)]="fAA.rate" ></td>
+                                                                    <td><select class="form-control" name="{{'costAccount'+ i}}" [(ngModel)]="fAA.costAccount">
+                                                                        <option [ngValue]="null"></option>
+                                                                        <option [ngValue]="accountlist.id === fAA.costAccount?.id ? fAA.costAccount : accountlist"
+                                                                            *ngFor="let accountlist of accountlists; trackBy: trackFixedAssetCategoryById">{{accountlist.accountNumber}}</option>
+                                                                    </select></td>
+                                                                    <td><select class="form-control" name="{{'expenseItem'+ i}}" [(ngModel)]="fAA.expenseItem">
+                                                                        <option [ngValue]="null"></option>
+                                                                        <option [ngValue]="eI.id === fAA.expenseItem?.id ? fAA.expenseItem : eI"
+                                                                                *ngFor="let eI of expenseItem; trackBy: trackFixedAssetCategoryById">{{eI.expenseItemName}}</option>
+                                                                    </select></td>
+                                                                </tr>
+                                                                <tr (click)="AddnewRow(0)">
+                                                                    <td><input type="text" readonly value="Insert Rows..."></td>
+                                                                    <td><input type="text" readonly></td>
+                                                                    <td><input type="text" readonly></td>
+                                                                    <td><input type="text" readonly></td>
+                                                                </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </ng-template>
+                                    </ngb-tab>
+                                    <ngb-tab>
+                                        <ng-template ngbTabTitle><b>Thành phần</b></ng-template>
+                                        <ng-template ngbTabContent>
+                                            <div class="dt-result">
+                                                <div class="tbl-header">
+                                                    <table cellpadding="0" cellspacing="0" border="0">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>Tên thành phần</th>
+                                                            <th>Số lượng</th>
+                                                            <th>Thời hạn bảo hành</th>
+                                                        </tr>
+                                                        </thead>
+                                                    </table>
+                                                </div>
+                                                <div class="tbl-content">
+                                                    <table cellpadding="0" cellspacing="0" border="0" class="easy-table">
+                                                        <tbody>
+                                                        <tr *ngFor="let fAD of fixedAssetDetails; let i = index"
+                                                            (keydown.control.delete)="KeyPress(fixedAssetDetails.indexOf(fAD),1)">
+                                                            <td><input type="text" [(ngModel)]="fAD.description" name="{{'description_fAD' + i}}"></td>
+                                                            <td><input type="number" [(ngModel)]="fAD.quantity" name="{{'quantity_fAD' + i}}"></td>
+                                                            <td><input type="text" [(ngModel)]="fAD.warranty" name="{{'warranty_fAD' + i}}"></td>
+
+                                                        </tr>
+                                                        <tr (click)="AddnewRow(1)">
+                                                            <td><input type="text" readonly  value="Insert Rows..."></td>
+                                                            <td><input type="text" readonly></td>
+                                                            <td><input type="text" readonly></td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </ng-template>
+                                    </ngb-tab>
+                                    <ngb-tab>
+                                        <ng-template ngbTabTitle><b>Phụ kiện kèm theo</b></ng-template>
+                                        <ng-template ngbTabContent>
+                                            <div class="dt-result">
+                                                <div class="tbl-header">
+                                                    <table cellpadding="0" cellspacing="0" border="0">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>Tên quy cách phụ kiện</th>
+                                                            <th>Đơn vị tính</th>
+                                                            <th>Số lượng</th>
+                                                            <th>Gía trị</th>
+                                                        </tr>
+                                                        </thead>
+                                                    </table>
+                                                </div>
+                                                <div class="tbl-content">
+                                                    <table cellpadding="0" cellspacing="0" border="0" class="easy-table">
+                                                        <tbody>
+                                                        <tr *ngFor="let fAA of fixedAssetAccessories; let i = index"
+                                                            (keydown.control.delete)="KeyPress(fixedAssetAccessories.indexOf(fAA),2)">
+                                                            <td><input type="text" autofocus [(ngModel)]="fAA.fixedAssetAccessoriesName" name="{{'fixedAssetAccessoriesName_fAA' + i}}"></td>
+                                                            <td> <select class="form-control" id="fixedAssetAccessoriesUnitID_fAA" name="{{'fixedAssetAccessoriesUnitID_fAA' + i}}"
+                                                                                            [(ngModel)]="fAA.fixedAssetAccessoriesUnitID">
+                                                                                        <option [ngValue]="null"></option>
+                                                                                        <option
+                                                                                            [ngValue]="u.id === fAA.fixedAssetAccessoriesUnitID?.id ? fAA.fixedAssetAccessoriesUnitID :u "
+                                                                                            *ngFor="let u of unit; trackBy: trackFixedAssetCategoryById">{{u.unitName}}</option>
+                                                                                    </select>
+                                                            </td>
+                                                            <td><input type="number" [(ngModel)]="fAA.fixedAssetAccessoriesQuantity" name="{{'fixedAssetAccessoriesQuantity_fAA' + i}}"></td>
+                                                            <td><input type="number" [(ngModel)]="fAA.fixedAssetAccessoriesAmount" name="{{'fixedAssetAccessoriesAmount_fAA' + i}}"></td>
+                                                        </tr>
+                                                        <tr (click)="AddnewRow(2)">
+                                                            <td><input type="text" readonly value="Insert Rows..."></td>
+                                                            <td><input type="text" readonly></td>
+                                                            <td><input type="text" readonly></td>
+                                                            <td><input type="text" readonly></td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </ng-template>
+                                    </ngb-tab>
+                                </ngb-tabset>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Footer -->
+
+
+
+
+
+<!--<div class="row justify-content-center">-->
+<!--    <div class="col-8">-->
+<!--        <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">-->
+<!--            <h2 id="eb-fixed-asset-heading" jhiTranslate="ebwebApp.fixedAsset.home.createOrEditLabel">Create or edit a-->
+<!--                Fixed Asset</h2>-->
+<!--            <div>-->
+<!--                <eb-alert-error></eb-alert-error>-->
+<!--                <div class="form-group" [hidden]="!fixedAsset.id">-->
+<!--                    <label for="id" jhiTranslate="global.field.id">ID</label>-->
+<!--                    <input Type="text" class="form-control" id="id" name="id"-->
+<!--                           [(ngModel)]="fixedAsset.id" readonly/>-->
+<!--                </div>-->
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="ebwebApp.fixedAsset.fixedAssetCode"-->
+<!--                           for="field_fixedAssetCode">Fixed Asset Code</label>-->
+<!--                    <input Type="text" class="form-control" name="fixedAssetCode" id="field_fixedAssetCode"-->
+<!--                           [(ngModel)]="fixedAsset.fixedAssetCode" required maxlength="25"/>-->
+<!--                    <div-->
+<!--                        [hidden]="!(editForm.controls.fixedAssetCode?.dirty && editForm.controls.fixedAssetCode?.invalid)">-->
+<!--                        <small class="form-text text-danger"-->
+<!--                               [hidden]="!editForm.controls.fixedAssetCode?.errors?.required"-->
+<!--                               jhiTranslate="entity.validation.required">-->
+<!--                            This field is required.-->
+<!--                        </small>-->
+<!--                        <small class="form-text text-danger"-->
+<!--                               [hidden]="!editForm.controls.fixedAssetCode?.errors?.maxlength"-->
+<!--                               jhiTranslate="entity.validation.maxlength" translateValues="{ max: 25 }">-->
+<!--                            This field cannot be longer than 25 characters.-->
+<!--                        </small>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="ebwebApp.fixedAsset.fixedAssetName"-->
+<!--                           for="field_fixedAssetName">Fixed Asset Name</label>-->
+<!--                    <input Type="text" class="form-control" name="fixedAssetName" id="field_fixedAssetName"-->
+<!--                           [(ngModel)]="fixedAsset.fixedAssetName" required maxlength="512"/>-->
+<!--                    <div-->
+<!--                        [hidden]="!(editForm.controls.fixedAssetName?.dirty && editForm.controls.fixedAssetName?.invalid)">-->
+<!--                        <small class="form-text text-danger"-->
+<!--                               [hidden]="!editForm.controls.fixedAssetName?.errors?.required"-->
+<!--                               jhiTranslate="entity.validation.required">-->
+<!--                            This field is required.-->
+<!--                        </small>-->
+<!--                        <small class="form-text text-danger"-->
+<!--                               [hidden]="!editForm.controls.fixedAssetName?.errors?.maxlength"-->
+<!--                               jhiTranslate="entity.validation.maxlength" translateValues="{ max: 512 }">-->
+<!--                            This field cannot be longer than 512 characters.-->
+<!--                        </small>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="ebwebApp.fixedAsset.description"-->
+<!--                           for="field_description">Description</label>-->
+<!--                    <input Type="text" class="form-control" name="description" id="field_description"-->
+<!--                           [(ngModel)]="fixedAsset.description" maxlength="512"/>-->
+<!--                    <div [hidden]="!(editForm.controls.description?.dirty && editForm.controls.description?.invalid)">-->
+<!--                        <small class="form-text text-danger"-->
+<!--                               [hidden]="!editForm.controls.description?.errors?.maxlength"-->
+<!--                               jhiTranslate="entity.validation.maxlength" translateValues="{ max: 512 }">-->
+<!--                            This field cannot be longer than 512 characters.-->
+<!--                        </small>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="ebwebApp.fixedAsset.productionYear"-->
+<!--                           for="field_productionYear">Production Year</label>-->
+<!--                    <input Type="number" class="form-control" name="productionYear" id="field_productionYear"-->
+<!--                           [(ngModel)]="fixedAsset.productionYear"/>-->
+<!--                </div>-->
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="ebwebApp.fixedAsset.madeIn" for="field_madeIn">Made-->
+<!--                        In</label>-->
+<!--                    <input Type="text" class="form-control" name="madeIn" id="field_madeIn"-->
+<!--                           [(ngModel)]="fixedAsset.madeIn" maxlength="100"/>-->
+<!--                    <div [hidden]="!(editForm.controls.madeIn?.dirty && editForm.controls.madeIn?.invalid)">-->
+<!--                        <small class="form-text text-danger"-->
+<!--                               [hidden]="!editForm.controls.madeIn?.errors?.maxlength"-->
+<!--                               jhiTranslate="entity.validation.maxlength" translateValues="{ max: 100 }">-->
+<!--                            This field cannot be longer than 100 characters.-->
+<!--                        </small>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="ebwebApp.fixedAsset.serialNumber"-->
+<!--                           for="field_serialNumber">Serial Number</label>-->
+<!--                    <input Type="text" class="form-control" name="serialNumber" id="field_serialNumber"-->
+<!--                           [(ngModel)]="fixedAsset.serialNumber" maxlength="100"/>-->
+<!--                    <div [hidden]="!(editForm.controls.serialNumber?.dirty && editForm.controls.serialNumber?.invalid)">-->
+<!--                        <small class="form-text text-danger"-->
+<!--                               [hidden]="!editForm.controls.serialNumber?.errors?.maxlength"-->
+<!--                               jhiTranslate="entity.validation.maxlength" translateValues="{ max: 100 }">-->
+<!--                            This field cannot be longer than 100 characters.-->
+<!--                        </small>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="ebwebApp.fixedAsset.accountingObjectName"-->
+<!--                           for="field_accountingObjectName">Accounting Object Name</label>-->
+<!--                    <input Type="text" class="form-control" name="accountingObjectName" id="field_accountingObjectName"-->
+<!--                           [(ngModel)]="fixedAsset.accountingObjectName" maxlength="512"/>-->
+<!--                    <div-->
+<!--                        [hidden]="!(editForm.controls.accountingObjectName?.dirty && editForm.controls.accountingObjectName?.invalid)">-->
+<!--                        <small class="form-text text-danger"-->
+<!--                               [hidden]="!editForm.controls.accountingObjectName?.errors?.maxlength"-->
+<!--                               jhiTranslate="entity.validation.maxlength" translateValues="{ max: 512 }">-->
+<!--                            This field cannot be longer than 512 characters.-->
+<!--                        </small>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="ebwebApp.fixedAsset.warranty" for="field_warranty">Warranty</label>-->
+<!--                    <input Type="text" class="form-control" name="warranty" id="field_warranty"-->
+<!--                           [(ngModel)]="fixedAsset.warranty" maxlength="25"/>-->
+<!--                    <div [hidden]="!(editForm.controls.warranty?.dirty && editForm.controls.warranty?.invalid)">-->
+<!--                        <small class="form-text text-danger"-->
+<!--                               [hidden]="!editForm.controls.warranty?.errors?.maxlength"-->
+<!--                               jhiTranslate="entity.validation.maxlength" translateValues="{ max: 25 }">-->
+<!--                            This field cannot be longer than 25 characters.-->
+<!--                        </small>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="ebwebApp.fixedAsset.guaranteeCodition"-->
+<!--                           for="field_guaranteeCodition">Guarantee Codition</label>-->
+<!--                    <input Type="text" class="form-control" name="guaranteeCodition" id="field_guaranteeCodition"-->
+<!--                           [(ngModel)]="fixedAsset.guaranteeCodition" maxlength="20"/>-->
+<!--                    <div-->
+<!--                        [hidden]="!(editForm.controls.guaranteeCodition?.dirty && editForm.controls.guaranteeCodition?.invalid)">-->
+<!--                        <small class="form-text text-danger"-->
+<!--                               [hidden]="!editForm.controls.guaranteeCodition?.errors?.maxlength"-->
+<!--                               jhiTranslate="entity.validation.maxlength" translateValues="{ max: 20 }">-->
+<!--                            This field cannot be longer than 20 characters.-->
+<!--                        </small>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="ebwebApp.fixedAsset.isSecondHand"-->
+<!--                           for="field_isSecondHand">Is Second Hand</label>-->
+<!--                    <input Type="checkbox" class="form-control" name="isSecondHand" id="field_isSecondHand"-->
+<!--                           [(ngModel)]="fixedAsset.isSecondHand"/>-->
+<!--                    <div [hidden]="!(editForm.controls.isSecondHand?.dirty && editForm.controls.isSecondHand?.invalid)">-->
+<!--                        <small class="form-text text-danger"-->
+<!--                               [hidden]="!editForm.controls.isSecondHand?.errors?.required"-->
+<!--                               jhiTranslate="entity.validation.required">-->
+<!--                            This field is required.-->
+<!--                        </small>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="ebwebApp.fixedAsset.currentState"-->
+<!--                           for="field_currentState">Current State</label>-->
+<!--                    <input Type="number" class="form-control" name="currentState" id="field_currentState"-->
+<!--                           [(ngModel)]="fixedAsset.currentState"/>-->
+<!--                </div>-->
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="ebwebApp.fixedAsset.deliveryRecordNo"-->
+<!--                           for="field_deliveryRecordNo">Delivery Record No</label>-->
+<!--                    <input Type="text" class="form-control" name="deliveryRecordNo" id="field_deliveryRecordNo"-->
+<!--                           [(ngModel)]="fixedAsset.deliveryRecordNo" maxlength="50"/>-->
+<!--                    <div-->
+<!--                        [hidden]="!(editForm.controls.deliveryRecordNo?.dirty && editForm.controls.deliveryRecordNo?.invalid)">-->
+<!--                        <small class="form-text text-danger"-->
+<!--                               [hidden]="!editForm.controls.deliveryRecordNo?.errors?.maxlength"-->
+<!--                               jhiTranslate="entity.validation.maxlength" translateValues="{ max: 50 }">-->
+<!--                            This field cannot be longer than 50 characters.-->
+<!--                        </small>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="ebwebApp.fixedAsset.deliveryRecordDate"-->
+<!--                           for="field_deliveryRecordDate">Delivery Record Date</label>-->
+<!--                    <div class="input-group">-->
+<!--                        <input id="field_deliveryRecordDate" Type="text" class="form-control" name="deliveryRecordDate"-->
+<!--                               ngbDatepicker #deliveryRecordDateDp="ngbDatepicker"-->
+<!--                               [(ngModel)]="fixedAsset.deliveryRecordDate"-->
+<!--                        />-->
+<!--                        <span class="input-group-append">-->
+<!--                            <button Type="button" class="btn btn-secondary" (click)="deliveryRecordDateDp.toggle()"><fa-icon-->
+<!--                                [icon]="'calendar-alt'"></fa-icon></button>-->
+<!--                        </span>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="ebwebApp.fixedAsset.purchasedDate"-->
+<!--                           for="field_purchasedDate">Purchased Date</label>-->
+<!--                    <div class="input-group">-->
+<!--                        <input id="field_purchasedDate" Type="text" class="form-control" name="purchasedDate"-->
+<!--                               ngbDatepicker #purchasedDateDp="ngbDatepicker" [(ngModel)]="fixedAsset.purchasedDate"-->
+<!--                        />-->
+<!--                        <span class="input-group-append">-->
+<!--                            <button Type="button" class="btn btn-secondary" (click)="purchasedDateDp.toggle()"><fa-icon-->
+<!--                                [icon]="'calendar-alt'"></fa-icon></button>-->
+<!--                        </span>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="ebwebApp.fixedAsset.incrementDate"-->
+<!--                           for="field_incrementDate">Increment Date</label>-->
+<!--                    <div class="input-group">-->
+<!--                        <input id="field_incrementDate" Type="text" class="form-control" name="incrementDate"-->
+<!--                               ngbDatepicker #incrementDateDp="ngbDatepicker" [(ngModel)]="fixedAsset.incrementDate"-->
+<!--                        />-->
+<!--                        <span class="input-group-append">-->
+<!--                            <button Type="button" class="btn btn-secondary" (click)="incrementDateDp.toggle()"><fa-icon-->
+<!--                                [icon]="'calendar-alt'"></fa-icon></button>-->
+<!--                        </span>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="ebwebApp.fixedAsset.depreciationDate"-->
+<!--                           for="field_depreciationDate">Depreciation Date</label>-->
+<!--                    <div class="input-group">-->
+<!--                        <input id="field_depreciationDate" Type="text" class="form-control" name="depreciationDate"-->
+<!--                               ngbDatepicker #depreciationDateDp="ngbDatepicker"-->
+<!--                               [(ngModel)]="fixedAsset.depreciationDate"-->
+<!--                        />-->
+<!--                        <span class="input-group-append">-->
+<!--                            <button Type="button" class="btn btn-secondary" (click)="depreciationDateDp.toggle()"><fa-icon-->
+<!--                                [icon]="'calendar-alt'"></fa-icon></button>-->
+<!--                        </span>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="ebwebApp.fixedAsset.usedDate" for="field_usedDate">Used-->
+<!--                        Date</label>-->
+<!--                    <div class="input-group">-->
+<!--                        <input id="field_usedDate" Type="text" class="form-control" name="usedDate" ngbDatepicker-->
+<!--                               #usedDateDp="ngbDatepicker" [(ngModel)]="fixedAsset.usedDate"-->
+<!--                        />-->
+<!--                        <span class="input-group-append">-->
+<!--                            <button Type="button" class="btn btn-secondary" (click)="usedDateDp.toggle()"><fa-icon-->
+<!--                                [icon]="'calendar-alt'"></fa-icon></button>-->
+<!--                        </span>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="ebwebApp.fixedAsset.purchasePrice"-->
+<!--                           for="field_purchasePrice">Purchase Price</label>-->
+<!--                    <input Type="number" class="form-control" name="purchasePrice" id="field_purchasePrice"-->
+<!--                           [(ngModel)]="fixedAsset.purchasePrice"/>-->
+<!--                </div>-->
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="ebwebApp.fixedAsset.originalPrice"-->
+<!--                           for="field_originalPrice">Original Price</label>-->
+<!--                    <input Type="number" class="form-control" name="originalPrice" id="field_originalPrice"-->
+<!--                           [(ngModel)]="fixedAsset.originalPrice"/>-->
+<!--                </div>-->
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="ebwebApp.fixedAsset.depreciationMethod"-->
+<!--                           for="field_depreciationMethod">Depreciation Method</label>-->
+<!--                    <input Type="number" class="form-control" name="depreciationMethod" id="field_depreciationMethod"-->
+<!--                           [(ngModel)]="fixedAsset.depreciationMethod"/>-->
+<!--                </div>-->
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="ebwebApp.fixedAsset.usedTime" for="field_usedTime">Used-->
+<!--                        Time</label>-->
+<!--                    <input Type="number" class="form-control" name="usedTime" id="field_usedTime"-->
+<!--                           [(ngModel)]="fixedAsset.usedTime"/>-->
+<!--                </div>-->
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="ebwebApp.fixedAsset.displayMonthYear"-->
+<!--                           for="field_displayMonthYear">Display Month Year</label>-->
+<!--                    <input Type="checkbox" class="form-control" name="displayMonthYear" id="field_displayMonthYear"-->
+<!--                           [(ngModel)]="fixedAsset.displayMonthYear"/>-->
+<!--                </div>-->
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="ebwebApp.fixedAsset.periodDepreciationAmount"-->
+<!--                           for="field_periodDepreciationAmount">Period Depreciation Amount</label>-->
+<!--                    <input Type="number" class="form-control" name="periodDepreciationAmount"-->
+<!--                           id="field_periodDepreciationAmount"-->
+<!--                           [(ngModel)]="fixedAsset.periodDepreciationAmount"/>-->
+<!--                </div>-->
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="ebwebApp.fixedAsset.depreciationRate"-->
+<!--                           for="field_depreciationRate">Depreciation Rate</label>-->
+<!--                    <input Type="number" class="form-control" name="depreciationRate" id="field_depreciationRate"-->
+<!--                           [(ngModel)]="fixedAsset.depreciationRate"/>-->
+<!--                </div>-->
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="ebwebApp.fixedAsset.monthDepreciationRate"-->
+<!--                           for="field_monthDepreciationRate">Month Depreciation Rate</label>-->
+<!--                    <input Type="number" class="form-control" name="monthDepreciationRate"-->
+<!--                           id="field_monthDepreciationRate"-->
+<!--                           [(ngModel)]="fixedAsset.monthDepreciationRate"/>-->
+<!--                </div>-->
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="ebwebApp.fixedAsset.monthPeriodDepreciationAmount"-->
+<!--                           for="field_monthPeriodDepreciationAmount">Month Period Depreciation Amount</label>-->
+<!--                    <input Type="number" class="form-control" name="monthPeriodDepreciationAmount"-->
+<!--                           id="field_monthPeriodDepreciationAmount"-->
+<!--                           [(ngModel)]="fixedAsset.monthPeriodDepreciationAmount"/>-->
+<!--                </div>-->
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="ebwebApp.fixedAsset.isActive" for="field_isActive">Is-->
+<!--                        Active</label>-->
+<!--                    <input Type="checkbox" class="form-control" name="isActive" id="field_isActive"-->
+<!--                           [(ngModel)]="fixedAsset.isActive"/>-->
+<!--                    <div [hidden]="!(editForm.controls.isActive?.dirty && editForm.controls.isActive?.invalid)">-->
+<!--                        <small class="form-text text-danger"-->
+<!--                               [hidden]="!editForm.controls.isActive?.errors?.required"-->
+<!--                               jhiTranslate="entity.validation.required">-->
+<!--                            This field is required.-->
+<!--                        </small>-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="ebwebApp.fixedAsset.fixedAssetCategoryID"-->
+<!--                           for="field_fixedAssetCategoryID">Fixed Asset Category ID</label>-->
+<!--                    <select class="form-control" id="field_fixedAssetCategoryID" name="fixedAssetCategoryID"-->
+<!--                            [(ngModel)]="fixedAsset.fixedAssetCategoryID">-->
+<!--                        <option [ngValue]="null"></option>-->
+<!--                        <option-->
+<!--                            [ngValue]="fixedAssetCategoryOption.id === fixedAsset.fixedAssetCategoryID?.id ? fixedAsset.fixedAssetCategoryID : fixedAssetCategoryOption"-->
+<!--                            *ngFor="let fixedAssetCategoryOption of fixedassetcategories; trackBy: trackFixedAssetCategoryById">{{fixedAssetCategoryOption.id}}</option>-->
+<!--                    </select>-->
+<!--                </div>-->
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="ebwebApp.fixedAsset.branchID" for="field_branchID">Branch-->
+<!--                        ID</label>-->
+<!--                    <select class="form-control" id="field_branchID" name="branchID" [(ngModel)]="fixedAsset.branchID">-->
+<!--                        <option [ngValue]="null"></option>-->
+<!--                        <option-->
+<!--                            [ngValue]="organizationUnitOption.id === fixedAsset.branchID?.id ? fixedAsset.branchID : organizationUnitOption"-->
+<!--                            *ngFor="let organizationUnitOption of organizationunits; trackBy: trackOrganizationUnitById">{{organizationUnitOption.branchID}}</option>-->
+<!--                    </select>-->
+<!--                </div>-->
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="ebwebApp.fixedAsset.organizationUnitID"-->
+<!--                           for="field_organizationUnitID">Organization Unit ID</label>-->
+<!--                    <select class="form-control" id="field_organizationUnitID" name="organizationUnitID"-->
+<!--                            [(ngModel)]="fixedAsset.organizationUnitID">-->
+<!--                        <option [ngValue]="null"></option>-->
+<!--                        <option-->
+<!--                            [ngValue]="organizationUnitOption.id === fixedAsset.organizationUnitID?.id ? fixedAsset.organizationUnitID : organizationUnitOption"-->
+<!--                            *ngFor="let organizationUnitOption of organizationunits; trackBy: trackOrganizationUnitById">{{organizationUnitOption.id}}</option>-->
+<!--                    </select>-->
+<!--                </div>-->
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="ebwebApp.fixedAsset.accountingObjectID"-->
+<!--                           for="field_accountingObjectID">Accounting Object ID</label>-->
+<!--                    <select class="form-control" id="field_accountingObjectID" name="accountingObjectID"-->
+<!--                            [(ngModel)]="fixedAsset.accountingObjectID">-->
+<!--                        <option [ngValue]="null"></option>-->
+<!--                        <option-->
+<!--                            [ngValue]="accountingObjectOption.id === fixedAsset.accountingObjectID?.id ? fixedAsset.accountingObjectID : accountingObjectOption"-->
+<!--                            *ngFor="let accountingObjectOption of accountingobjects; trackBy: trackAccountingObjectById">{{accountingObjectOption.id}}</option>-->
+<!--                    </select>-->
+<!--                </div>-->
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="ebwebApp.fixedAsset.depreciationAccount"-->
+<!--                           for="field_depreciationAccount">Depreciation Account</label>-->
+<!--                    <select class="form-control" id="field_depreciationAccount" name="depreciationAccount"-->
+<!--                            [(ngModel)]="fixedAsset.depreciationAccount">-->
+<!--                        <option [ngValue]="null"></option>-->
+<!--                        <option-->
+<!--                            [ngValue]="accountListOption.id === fixedAsset.depreciationAccount?.id ? fixedAsset.depreciationAccount : accountListOption"-->
+<!--                            *ngFor="let accountListOption of accountlists; trackBy: trackAccountListById">{{accountListOption.accountNumber}}</option>-->
+<!--                    </select>-->
+<!--                </div>-->
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="ebwebApp.fixedAsset.originalPriceAccount"-->
+<!--                           for="field_originalPriceAccount">Original Price Account</label>-->
+<!--                    <select class="form-control" id="field_originalPriceAccount" name="originalPriceAccount"-->
+<!--                            [(ngModel)]="fixedAsset.originalPriceAccount">-->
+<!--                        <option [ngValue]="null"></option>-->
+<!--                        <option-->
+<!--                            [ngValue]="accountListOption.id === fixedAsset.originalPriceAccount?.id ? fixedAsset.originalPriceAccount : accountListOption"-->
+<!--                            *ngFor="let accountListOption of accountlists; trackBy: trackAccountListById">{{accountListOption.accountNumber}}</option>-->
+<!--                    </select>-->
+<!--                </div>-->
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="ebwebApp.fixedAsset.expenditureAccount"-->
+<!--                           for="field_expenditureAccount">Expenditure Account</label>-->
+<!--                    <select class="form-control" id="field_expenditureAccount" name="expenditureAccount"-->
+<!--                            [(ngModel)]="fixedAsset.expenditureAccount">-->
+<!--                        <option [ngValue]="null"></option>-->
+<!--                        <option-->
+<!--                            [ngValue]="accountListOption.id === fixedAsset.expenditureAccount?.id ? fixedAsset.expenditureAccount : accountListOption"-->
+<!--                            *ngFor="let accountListOption of accountlists; trackBy: trackAccountListById">{{accountListOption.accountNumber}}</option>-->
+<!--                    </select>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div>-->
+<!--                <button Type="button" id="cancel-save" class="btn btn-secondary" (click)="previousState()">-->
+<!--                    <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>-->
+<!--                </button>-->
+<!--                <button Type="submit" id="save-entity" [disabled]="editForm.form.invalid || isSaving"-->
+<!--                        class="btn btn-primary">-->
+<!--                    <fa-icon [icon]="'save'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>-->
+<!--                </button>-->
+<!--            </div>-->
+<!--        </form>-->
+<!--    </div>-->
+<!--</div>-->

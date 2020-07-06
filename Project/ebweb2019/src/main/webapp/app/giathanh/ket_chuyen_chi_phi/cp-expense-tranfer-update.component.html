@@ -1,0 +1,552 @@
+<div class="row" (click)="closeContextMenu()">
+    <div class="col-md-12">
+        <div class="menu-tool-bar he" style="line-height: 16px;">
+            <div class="gr-tool-bar2">
+                <button class="aprev button-navigation" (click)="previousEdit()"
+                        [disabled]="rowNum===count || statusVoucher === 0 || count == 1 || isCreateUrl"><i
+                    class="mdi mdi-arrow-left"></i>
+                </button>
+                <button class="anext disable button-navigation" (click)="nextEdit()"
+                        [disabled]="rowNum===1 || statusVoucher === 0 || count == 1 || isCreateUrl"><i
+                    class="mdi mdi-arrow-right"></i>
+                </button>
+                <button class="button-navigation" title="{{buttonAddTranslate | translate}}"
+                        *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_KCCP_THEM]"
+                        (click)="addNew($event)"
+                        [disabled]="!disableAddButton || isCreateUrl"><i
+                    class="mdi mdi-plus"></i><span jhiTranslate="ebwebApp.mBCreditCard.home.add"
+                                                   [class.disable]="!disableAddButton || isCreateUrl"></span>
+                </button>
+                <button class="button-navigation" title="{{buttonEditTranslate | translate}}"
+                        *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_KCCP_SUA]"
+                        (click)="edit()"
+                        [disabled]="disableEditButton || checkCloseBook(this.currentAccount, this.cPExpenseTranfer.postedDate)">
+                    <i
+                        class="mdi mdi-file-document-edit"></i><span jhiTranslate="ebwebApp.mBCreditCard.home.edit"
+                                                                     [class.disable]="disableEditButton"></span>
+                </button>
+                <button class="button-navigation" title="{{buttonSaveTranslate | translate}}"
+                        *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_KCCP_THEM, ROLE_KCCP_SUA]"
+                        (click)="save(false)"
+                        [disabled]="!isCreateUrl"><i class="mdi mdi-briefcase-download"></i>
+                    <span jhiTranslate="ebwebApp.mBCreditCard.home.save"
+                          [class.disable]="!isCreateUrl"></span>
+                </button>
+                <button class="button-navigation" title="{{buttonSaveAndNewTranslate | translate}}"
+                        *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_KCCP_THEM]" [disabled]="!isCreateUrl"
+                        (click)="saveAndNew()"><i
+                    class="mdi mdi-plus" [class.disable]="!isCreateUrl"></i><span
+                    jhiTranslate="ebwebApp.mBCreditCard.home.saveAndCreate"></span></button>
+                <button class="button-navigation" title="{{buttonRecordTranslate | translate}}"
+                        *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_KCCP_GHISO]"
+                        [disabled]="isCreateUrl || checkCloseBook(currentAccount, cPExpenseTranfer.postedDate)"
+                        [hidden]="cPExpenseTranfer.recorded"
+                        (click)="record()"><i
+                    class="mdi mdi-border-color"></i><span jhiTranslate="ebwebApp.mBCreditCard.home.record"
+                ></span>
+                </button>
+                <button class="button-navigation" title="{{buttonUnRecordTranslate | translate}}"
+                        *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_KCCP_GHISO]" [hidden]="!cPExpenseTranfer.recorded"
+                        (click)="unrecord()"
+                        [disabled]="isCreateUrl || checkCloseBook(currentAccount, cPExpenseTranfer.postedDate)"><i
+                    class="mdi mdi-border-color"></i><span jhiTranslate="ebwebApp.mBCreditCard.home.unrecord"
+                                                           [class.disable]="isCreateUrl"></span>
+                </button>
+<!--                <button class="button-navigation" title="{{buttonCopyAndNewTranslate | translate}}"-->
+<!--                        *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_KCCP_THEM]" [disabled]="isCreateUrl"-->
+<!--                        (click)="copyAndNew()"><i class="mdi mdi-plus"></i> <span-->
+<!--                    jhiTranslate="ebwebApp.mBCreditCard.home.copyAndCreate" [class.disable]="isCreateUrl"></span>-->
+<!--                </button>-->
+                <button class="button-navigation" title="{{buttonDeleteTranslate | translate}}"
+                        *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_KCCP_XOA]"
+                        (click)="delete()"
+                        [disabled]="isCreateUrl || this.cPExpenseTranfer.recorded || checkCloseBook(this.currentAccount, this.cPExpenseTranfer.postedDate)">
+                    <i
+                        class="mdi mdi-delete-forever"></i> <span jhiTranslate="ebwebApp.mBCreditCard.home.delete"
+                                                                  [class.disable]="isCreateUrl"></span>
+                </button>
+                <div ngbDropdown class="d-inline-block"
+                     *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_KCCP_IN]">
+                    <button id="dropdownBasic1" ngbDropdownToggle [class.disableDiv]="isEdit" class="button-navigation"
+                            style="background: transparent;border: none; color: #f0f0f0"><i class="mdi mdi-printer"></i><span
+                        jhiTranslate="ebwebApp.mBTellerPaper.print"></span>
+                    </button>
+                    <div ngbDropdownMenu aria-labelledby="dropdownBasic1" style="padding: 0 !important;">
+                        <button ngbDropdownItem class="custom-dropdown" (click)="CTKTExportPDF(false, 1)"><span
+                            jhiTranslate="global.reportName.chungTuKeToan"></span></button>
+                    </div>
+                </div>
+                <button class="button-navigation" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_KCCP_XEM]"
+                        title="{{buttonCloseFormTranslate | translate}}"
+                        (click)="closeForm()"><i
+                    class="mdi mdi-window-close"></i> <span
+                    jhiTranslate="ebwebApp.mBCreditCard.home.exit"></span>
+                </button>
+            </div>
+        </div>
+        <div class="tool-navbar">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="line-btn" style="margin-bottom: 4px">
+                        <div class="lbtn-action">
+                            <ul class="nav nav-tabs">
+                                <li class="active"><a class="active" style="text-decoration: none" data-toggle="tab"
+                                                      href="#home0"><span
+                                    jhiTranslate="ebwebApp.cPExpenseTranfer.home.title"></span></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="row" style="justify-content: flex-end;">
+                        <label class="col-sm-3 form-check-label" style="font-size: 14px; padding-left: 5px;
+                                            font-weight: 600; text-align: center; line-height: 35px;"></label>
+                        <div class="col-lg-3" style="padding-right: 0px">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row no-gutters">
+            <div class="col-lg-9 pd-r-0 form-main-new">
+                <form>
+                    <h3 jhiTranslate="ebwebApp.mBCreditCard.generalInformation"></h3>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group row no-gutters">
+                                <label class="col-sm-2 col-form-label"
+                                       jhiTranslate="ebwebApp.cPExpenseTranfer.cPPeriodID"></label>
+                                <div class="col-sm-10 pd-l-0 last-div-1-0">
+                                    <input type="text" class="form-control form-control-sm" name="cPPeriod"
+                                           [(ngModel)]="cPPeriodName" maxlength="512"
+                                           [tabindex]="5">
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters">
+                                <label class="col-sm-2 col-form-label"
+                                       jhiTranslate="ebwebApp.gOtherVoucher.autoPrinciple"></label>
+                                <div class="col-sm-10 pd-l-0 last-div-1-0">
+                                    <input type="text" class="form-control form-control-sm" name="reason"
+                                           id="reason_save"
+                                           [(ngModel)]="cPExpenseTranfer.reason" maxlength="512"
+                                           [tabindex]="5">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-lg-4 pd-only-l-10 form-main-new">
+                <form>
+                    <h3>Chứng từ</h3>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group row no-gutters">
+                                <label class="col-sm-4 col-form-label"
+                                       jhiTranslate="ebwebApp.mBCreditCard.voucherNumber"></label>
+                                <div class="col-sm-8 pd-l-0 last-div-1-0">
+                                    <input type="text" class="form-control form-control-sm"
+                                           [(ngModel)]="no" name="noMBook" required
+                                           [tabindex]="6">
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters">
+                                <label class="col-sm-4 col-form-label"
+                                       jhiTranslate="ebwebApp.mBCreditCard.date"></label>
+                                <div class="col-sm-8 last-div-1-0" style="padding-right: 15px;">
+                                    <eb-date-picker style="display: block" [(ngModel)]="cPExpenseTranfer.date" required
+                                                    name="date" [tabindex]="7"
+                                                    (ngModelChange)="selectChangeDate()"></eb-date-picker>
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters">
+                                <label class="col-sm-4 col-form-label"
+                                       jhiTranslate="ebwebApp.mBCreditCard.postedDate"></label>
+                                <div class="col-sm-8 last-div-1-0" style="padding-right: 15px;">
+                                    <eb-date-picker style="display: block" [(ngModel)]="cPExpenseTranfer.postedDate"
+                                                    required name="postedDate" [tabindex]="8"></eb-date-picker>
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters">
+                                <label *ngIf="!isHideTypeLedger" class="col-sm-4 col-form-label"
+                                       jhiTranslate="ebwebApp.mBCreditCard.typeLedger"></label>
+                                <div *ngIf="!isHideTypeLedger" class="col-sm-8 pd-l-0 last-div-1-0">
+                                    <select name="typeLedger" class="form-control form-control-sm"
+                                            [(ngModel)]="cPExpenseTranfer.typeLedger" [tabindex]="3">
+                                        <option value="0" *ngIf="sysTypeLedger === '0'"
+                                                jhiTranslate="ebwebApp.mBCreditCard.financialBook">
+                                        </option>
+                                        <option value="1" *ngIf="sysTypeLedger === '1'"
+                                                jhiTranslate="ebwebApp.mBCreditCard.managementBook">
+                                        </option>
+                                        <option value="2" jhiTranslate="ebwebApp.mBCreditCard.bothBooks">
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div>
+            <ngb-tabset class="tool-navbar" (tabChange)="beforeChange($event)">
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.mBCreditCard.home.details"></span>
+                    </ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content">
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="home-detail"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-detail" class="table-scroll" style="height: 286px !important;">
+                                    <table id="main-table-detail" class="main-table"
+                                           (keydown.arrowDown)="moveArrowDown($event,5)"
+                                           (keydown.arrowUp)="moveArrowUp($event,5)">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col" class="description"
+                                                jhiTranslate="ebwebApp.mBCreditCard.description"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.cPExpenseTranfer.costSetID"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.cPExpenseTranfer.costSetName"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.mBCreditCard.debitAccount"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.mBCreditCard.creditAccount">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.mBCreditCard.amountOriginal">
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.expenseItem"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.gOtherVoucher.statisticsCode"></th>
+                                            <!--                                            <th *ngIf="cPExpenseTranfer?.currencyID !== currency?.currencyCode"-->
+                                            <!--                                                jhiTranslate="ebwebApp.mBCreditCard.amount"></th>-->
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let detail of utilService.getSortArray(cPExpenseTranferDetails);let i=index;">
+                                            <td class="jsgrid-cell description" title="{{detail.description}}"><input
+                                                type="text"
+                                                class="input-Cell"
+                                                name="diengiai{{i}}"
+                                                id="diengiai{{i}}"
+                                                [value]="detail.description"
+                                                [(ngModel)]="detail.description"
+                                                [tabindex]="8 + (5 * i) + 1">
+                                            </td>
+                                            <td class="jsgrid-cell"  title="{{detail.costSetCode}}">
+                                                <combo-box style=""
+                                                           name="{{'costSetID_DT'+i}}"
+                                                           [dataList]="costSets"
+                                                           [listColumns]="utilService.listColumnsCostSet"
+                                                           displayMember="costSetCode"
+                                                           valueName="id"
+                                                           [headerColumns]="utilService.listHeaderColumnsCostSet"
+                                                           [isObject]="false"
+                                                           [(ngModel)]="detail.costSetID"
+                                                           [isRequired]="true"
+                                                           [hideRequiredWhenValueTrue]="true"
+                                                           [isOutTable]="false"
+                                                           (ngModelChange)="selectChangeCostSet(i)"
+                                                           [tabindex]="8 + (5 * i) + 2"
+                                                ></combo-box>
+                                            </td>
+                                            <td class="jsgrid-cell" title="{{detail.costSetName}}">
+                                                <input type="text"
+                                                       class="input-Cell"
+                                                       name="costSetName{{i}}"
+                                                       id="costSetName{{i}}"
+                                                       [value]="detail.costSetName"
+                                                       [(ngModel)]="detail.costSetName"
+                                                       [tabindex]="8 + (5 * i) + 2" [disabled]="true">
+                                            </td>
+                                            <td class="jsgrid-cell" title="{{detail.debitAccount}}">
+                                                <combo-box style=""
+                                                           name="{{'debitAccount_DT'+i}}"
+                                                           [dataList]="debitAccountList"
+                                                           [listColumns]="utilService.listColumnsAccountList"
+                                                           displayMember="accountNumber"
+                                                           valueName="accountNumber"
+                                                           [headerColumns]="utilService.listHeaderColumnsAccountList"
+                                                           [isObject]="false"
+                                                           [(ngModel)]="detail.debitAccount"
+                                                           [isRequired]="true"
+                                                           [isOutTable]="false"
+                                                           [hideRequiredWhenValueTrue]="true"
+                                                           [tabindex]="8 + (5 * i) + 2"
+                                                ></combo-box>
+                                            </td>
+                                            <td class="jsgrid-cell" title="{{detail.creditAccount}}">
+                                                <combo-box style=""
+                                                           name="{{'creditAccount_DT'+i}}"
+                                                           [dataList]="creditAccountList"
+                                                           [listColumns]="utilService.listColumnsAccountList"
+                                                           displayMember="accountNumber"
+                                                           valueName="accountNumber"
+                                                           [headerColumns]="utilService.listHeaderColumnsAccountList"
+                                                           [isObject]="false"
+                                                           [(ngModel)]="detail.creditAccount"
+                                                           [isRequired]="true"
+                                                           [isOutTable]="false"
+                                                           [hideRequiredWhenValueTrue]="true"
+                                                           [tabindex]="8 + (5 * i) + 3"
+                                                ></combo-box>
+                                            </td>
+                                            <td class="jsgrid-cell" title="{{detail.amountOriginal}}"><input type="number"
+                                                                           class="input-Cell"
+                                                                           name="amountoriginal{{i}}"
+                                                                           id="amountoriginal{{i}}"
+                                                                           [(ngModel)]="detail.amount"
+                                                                           [systemOptions]="currentAccount?.systemOption"
+                                                                           [type]="7"
+                                                                           ebCurrencyMask
+                                                                           [tabindex]="8 + (5 * i) + 4"
+                                                                           (ngModelChange)="selectChangeAmount()">
+                                            </td>
+                                            <!--                                            <td *ngIf="cPExpenseTranfer?.currencyID !== currency?.currencyCode"-->
+                                            <!--                                                class="jsgrid-cell">-->
+                                            <!--                                                <input type="number" class="input-Cell"-->
+                                            <!--                                                       [(ngModel)]="detail.amount"-->
+                                            <!--                                                       name="amount{{i}}"-->
+                                            <!--                                                       id="amount{{i}}"-->
+                                            <!--                                                       [allowNegative]="false"-->
+                                            <!--                                                       (ngModelChange)="changeAmount(i)"-->
+                                            <!--                                                       ebCurrencyMask-->
+                                            <!--                                                       [systemOptions]="currentAccount?.systemOption"-->
+                                            <!--                                                       [type]="7"-->
+                                            <!--                                                       [tabindex]="8 + (5 * i) + 5"-->
+                                            <!--                                                >-->
+                                            <!--                                            </td>-->
+                                            <td class="jsgrid-cell">
+                                                <combo-box style=""
+                                                           name="{{'expenseItem_statistical'+i}}"
+                                                           [dataList]="expenseItems"
+                                                           [listColumns]="utilService.listColumnsExpenseItem"
+                                                           [nameCategory]="utilsService.KHOAN_MUC_CHI_PHI"
+                                                           [showIconPlus]="true"
+                                                           displayMember="expenseItemCode"
+                                                           valueName="id"
+                                                           [headerColumns]="utilService.listHeaderColumnsExpenseItem"
+                                                           [isObject]="false"
+                                                           [(ngModel)]="detail.expenseItemID"
+                                                           [isOutTable]="false"
+                                                           [tabindex]="8 + (14 * i)*3 + 9"
+                                                           (click)="saveDetails(i)"
+                                                ></combo-box>
+                                            </td>
+                                            <td class="jsgrid-cell">
+                                                <combo-box style=""
+                                                           name="{{'statisticsCode_statistical'+i}}"
+                                                           [dataList]="statisticCodes"
+                                                           [listColumns]="utilService.listColumnsStatisticCode"
+                                                           displayMember="statisticsCode"
+                                                           valueName="id"
+                                                           [headerColumns]="utilService.listHeaderColumnsStatisticCode"
+                                                           [isObject]="false"
+                                                           [(ngModel)]="detail.statisticsCodeID"
+                                                           [tabindex]="8 + (14 * i)*3 + 14"
+                                                           [nameCategory]="utilsService.MA_THONG_KE"
+                                                           [showIconPlus]="true"
+                                                           [isOutTable]="false"
+                                                           (click)="saveDetails(i)"
+                                                ></combo-box>
+                                            </td>
+                                        </tr>
+                                        <tr (contextmenu)="onRightClick($event, cPExpenseTranferDetails, null, true, false, 0, null)"
+                                            *ngFor="let l of newArr(9 - cPExpenseTranferDetails.length)">
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot>
+                                        <tr>
+                                            <td class="cell-Table" colspan="5"><input type="text" readonly
+                                                                                      class="countRow input-Cell"
+                                                                                      value="{{'ebwebApp.mBDeposit.countLine'| translate}} : {{cPExpenseTranferDetails?.length}}">
+                                            </td>
+                                            <td class="cell-Table"><input type="text"
+                                                                          name="totalAmountOriginal_footer"
+                                                                          class="countRow input-Cell"
+                                                                          ebCurrencyMask
+                                                                          [ngModel]="getAmount()"
+                                                                          [allowNegative]="false"
+                                                                          [systemOptions]="currentAccount?.systemOption"
+                                                                          [type]="7"
+                                                                          readonly
+                                                                          >
+                                            </td>
+                                            <td class="cell-Table" colspan="2"><input type="text" readonly
+                                                                                      class="countRow input-Cell">
+                                            </td>
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.mBCreditCard.referenceVoucher"></span>
+                    </ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content">
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="home-ref"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-ref" class="table-scroll" style="height: 286px !important;">
+                                    <table id="main-table-ref" class="main-table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col" jhiTranslate="ebwebApp.mBCreditCard.date"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.mBCreditCard.postedDate">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.mBCreditCard.voucherNumber">
+                                            <th scope="col" jhiTranslate="ebwebApp.mBCreditCard.description">
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let viewVoucher of viewVouchersSelected; let i = index"
+                                            oncontextmenu="return false;"
+                                            (contextmenu)="onRightClick($event, viewVouchersSelected, viewVoucher, false, true, 4, viewVouchersSelected.indexOf(viewVoucher))"
+                                            (keydown.control.delete)="keyPress(i ,0)">
+                                            <td class="jsgrid-cell jsgrid-align-center">{{viewVoucher.date}}</td>
+                                            <td class="jsgrid-cell jsgrid-align-center">{{viewVoucher.postedDate}}</td>
+                                            <td class="jsgrid-cell jsgrid-align-left line-h pd-l-r-5"
+                                                (click)="utilsService.viewRefVoucher(viewVoucher)"
+                                                style="color:blue; text-decoration: underline;">{{viewVoucher.no}}
+                                            </td>
+                                            <td class="jsgrid-cell jsgrid-align-left description">{{viewVoucher.reason}}</td>
+                                        </tr>
+                                        <tr *ngFor="let l of newArr(9 - viewVouchersSelected?.length)">
+                                            <td class="jsgrid-cell"
+                                                style="width: 150px">&nbsp;
+                                            </td>
+                                            <td class="jsgrid-cell"
+                                                style="width: 150px">&nbsp;
+                                            </td>
+                                            <td class="jsgrid-cell"
+                                                style="width: 150px"></td>
+                                            <td class="jsgrid-cell" style="width: 150px"></td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot [class.myreadonlytrue]="true">
+                                        <tr>
+                                            <td class="cell-Table countRow" colspan="5" style="width: 150px"><input
+                                                type="text"
+                                                readonly
+                                                class="countRow input-Cell"
+                                                value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{viewVouchersSelected?.length}}">
+                                            </td>
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab x-placement="right" id="reference">
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.mBCreditCard.reference"></span>
+                    </ng-template>
+                </ngb-tab>
+            </ngb-tabset>
+            <div class="row justify-content-end" style="height:32px">
+                <div class="col-lg-3 pd-l-0">
+                    <div class="form-group row justify-content-end">
+                        <label class="col-sm-3 col-form-label pd-r-0"
+                               style="padding-left: 0px;padding-right: 0px;text-align: right;"
+                               for="field_totalAmountOriginal" jhiTranslate="ebwebApp.mBCreditCard.totalAmountOriginal">Tổng
+                            tiền TT</label>
+                        <div class="col-sm-4 pd-l-0 pd-r-5" style="padding-right: 0px;margin-right: 5px;">
+                            <input type="number" class="form-control form-control-sm text-right noPointer"
+                                   name="totalAmountOriginal" id="field_totalAmountOriginal"
+                                   [(ngModel)]="cPExpenseTranfer.totalAmountOriginal" ebCurrencyMask
+                                   [type]="7"
+                                   [systemOptions]="currentAccount?.systemOption" readonly/>
+                        </div>
+                        <div class="col-sm-4 pd-l-0" style="padding-left: 0px;">
+                            <input type="number" class="form-control form-control-sm text-right noPointer"
+                                   name="totalAmount" id="field_totalAmount"
+                                   [(ngModel)]="cPExpenseTranfer.totalAmount" ebCurrencyMask
+                                   [systemOptions]="currentAccount?.systemOption"
+                                   [type]="7"
+                                   readonly/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!--display when right click mbdetail-->
+</div>
+<eb-context-menu [contextMenu]="contextMenu" [eventHandlingHere]="true" [useCopyRow]="true"></eb-context-menu>
+<ng-template #content let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.saBill.saveMessage">Dữ liệu đã bị thay đổi, Bạn có muốn lưu lại?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="saveContent()" jhiTranslate="entity.action.save">
+            Save
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="close()" jhiTranslate="ebwebApp.mBDeposit.dontSave">
+            close
+        </button>
+        <button type="button" class="btn btn-outline-danger" (click)="exit()" jhiTranslate="entity.action.close">close
+        </button>
+    </div>
+</ng-template>
+
+<!--<ng-template #test let-modal>-->
+<!--    <div class="modal-body">-->
+<!--        <form>-->
+<!--            <div class="form-group">-->
+<!--                <label jhiTranslate="ebwebApp.mBDeposit.totalAmountNotEqualVatAmount"-->
+<!--                       translateValues="{param: '{{no}}'}"></label>-->
+<!--            </div>-->
+<!--        </form>-->
+<!--    </div>-->
+<!--    <div class="modal-footer">-->
+<!--        <button type="button" class="btn btn-outline-success" (click)="continueSave()"-->
+<!--                jhiTranslate="entity.action.save">-->
+<!--            Save-->
+<!--        </button>-->
+<!--        <button type="button" class="btn btn-outline-danger" (click)="exit()" jhiTranslate="entity.action.close">close-->
+<!--        </button>-->
+<!--    </div>-->
+<!--</ng-template>-->
+
+<ng-template #contentAmount let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.mBDeposit.totalAmountNotEqualVatAmount"
+                       translateValues="{param: '{{no}}'}"></label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="continueModalSaveComponent()"
+                jhiTranslate="entity.action.save">Save
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="closeModalSaveComponent()"
+                jhiTranslate="entity.action.noSave">close
+        </button>
+    </div>
+</ng-template>
+

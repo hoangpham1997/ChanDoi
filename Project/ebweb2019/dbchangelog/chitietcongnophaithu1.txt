@@ -1,0 +1,1725 @@
+alter PROCEDURE [dbo].[Proc_Chi_Tiet_Cong_No_Phai_Thu] @FromDate DATETIME,
+    @ToDate DATETIME,
+    @AccountNumber NVARCHAR(20),
+    @AccountObjectID AS NVARCHAR(MAX),
+    @CurrencyID NVARCHAR(3),
+    @IsSimilarSum BIT,
+    @CompanyID UNIQUEIDENTIFIER,
+    @currentBook INT,
+    @isDependent BIT = 0
+    AS
+    BEGIN
+DECLARE
+            @companyIDParent uniqueidentifier;
+        DECLARE
+            @unitType int;
+        set @companyIDParent = (select parentID from EbOrganizationUnit where id = @CompanyID)
+        set @unitType = (select unitType from EbOrganizationUnit where id = @CompanyID)
+        DECLARE @ID UNIQUEIDENTIFIER
+        SET @ID = '00000000-0000-0000-0000-000000000000'
+
+        CREATE TABLE #tblListAccountObjectID
+        (
+            AccountObjectID            UNIQUEIDENTIFIER,
+            AccountObjectCode          NVARCHAR(25)
+                COLLATE Latin1_General_CI_AS,
+            AccountObjectName          NVARCHAR(512)
+                COLLATE Latin1_General_CI_AS,
+            AccountObjectAddress       NVARCHAR(512)
+                COLLATE Latin1_General_CI_AS,
+            AccountObjectGroupListCode NVARCHAR(MAX)
+                COLLATE Latin1_General_CI_AS
+                NULL,
+            AccountObjectGroupListName NVARCHAR(MAX)
+                COLLATE Latin1_General_CI_AS
+                NULL,
+            CompanyTaxCode             NVARCHAR(50) COLLATE Latin1_General_CI_AS
+                NULL
+        )
+        INSERT INTO #tblListAccountObjectID
+        SELECT AO.ID,
+               AccountingObjectCode,
+               AccountingObjectName,
+               AccountingObjectAddress,
+               AOG.AccountingObjectGroupCode,
+               AOG.AccountingObjectGroupName,
+               CASE
+                   WHEN AO.ObjectType = 0 THEN TaxCode
+                   ELSE ''
+                   END AS CompanyTaxCode
+        FROM dbo.Func_ConvertStringIntoTable_Nvarchar(@AccountObjectID,
+                                                      ',') tblAccountObjectSelected
+                 INNER JOIN dbo.AccountingObject AO ON AO.ID = tblAccountObjectSelected.Value
+                 left JOIN dbo.AccountingObjectGroup AOG ON AO.AccountObjectGroupID = AOG.ID
+
+        CREATE TABLE #tblResult
+        (
+            RowNum                     INT PRIMARY KEY
+                IDENTITY (1, 1),
+            AccountObjectID            UNIQUEIDENTIFIER,
+            AccountObjectCode          NVARCHAR(100)
+                COLLATE Latin1_General_CI_AS
+                NULL,
+            AccountObjectName          NVARCHAR(512)
+                COLLATE Latin1_General_CI_AS
+                NULL,
+            AccountObjectGroupListCode NVARCHAR(MAX)
+                COLLATE Latin1_General_CI_AS
+                NULL,
+            AccountObjectGroupListName NVARCHAR(MAX)
+                COLLATE Latin1_General_CI_AS
+                NULL,
+            AccountObjectAddress       NVARCHAR(512)
+                COLLATE Latin1_General_CI_AS
+                NULL,
+            CompanyTaxCode             NVARCHAR(50) COLLATE Latin1_General_CI_AS
+                NULL,
+            PostedDate                 DATETIME,
+            RefDate                    DATETIME,
+            RefNo                      NVARCHAR(25) COLLATE Latin1_General_CI_AS
+                NULL,
+            InvDate                    DATETIME,
+            InvNo                      NVARCHAR(MAX) COLLATE Latin1_General_CI_AS
+                NULL,
+
+            RefType                    INT,
+            RefID                      UNIQUEIDENTIFIER,
+            RefDetailID                NVARCHAR(50) COLLATE Latin1_General_CI_AS
+                NULL,
+            JournalMemo                NVARCHAR(512) COLLATE Latin1_General_CI_AS
+                NULL,
+            AccountNumber              NVARCHAR(20) COLLATE Latin1_General_CI_AS
+                NULL,
+            AccountCategoryKind        INT,
+            CorrespondingAccountNumber NVARCHAR(20)
+                COLLATE Latin1_General_CI_AS
+                NULL,
+            ExchangeRate               DECIMAL(18, 4),
+            DebitAmountOC              DECIMAL(30, 10),
+            DebitAmount                DECIMAL(30, 10),
+            CreditAmountOC             DECIMAL(30, 10),
+            CreditAmount               DECIMAL(30, 10),
+            ClosingDebitAmountOC       DECIMAL(30, 10),
+            ClosingDebitAmount         DECIMAL(30, 10),
+            ClosingCreditAmountOC      DECIMAL(30, 10),
+            ClosingCreditAmount        DECIMAL(30, 10),
+            InventoryItemCode          NVARCHAR(50)
+                COLLATE Latin1_General_CI_AS,
+            InventoryItemName          NVARCHAR(512)
+                COLLATE Latin1_General_CI_AS,
+            UnitName                   NVARCHAR(20) COLLATE Latin1_General_CI_AS
+                NULL,
+            Quantity                   DECIMAL(22, 8),
+            UnitPrice                  DECIMAL(20, 6),
+            IsBold                     BIT,
+            OrderType                  INT,
+            BranchName                 NVARCHAR(512) COLLATE Latin1_General_CI_AS
+                NULL,
+            GLJournalMemo              NVARCHAR(512) COLLATE Latin1_General_CI_AS
+                NULL,
+            MasterCustomField1         NVARCHAR(255)
+                COLLATE Latin1_General_CI_AS
+                NULL,
+            MasterCustomField2         NVARCHAR(512)
+                COLLATE Latin1_General_CI_AS
+                NULL,
+            MasterCustomField3         NVARCHAR(512)
+                COLLATE Latin1_General_CI_AS
+                NULL,
+            MasterCustomField4         NVARCHAR(512)
+                COLLATE Latin1_General_CI_AS
+                NULL,
+            MasterCustomField5         NVARCHAR(512)
+                COLLATE Latin1_General_CI_AS
+                NULL,
+            MasterCustomField6         NVARCHAR(512)
+                COLLATE Latin1_General_CI_AS
+                NULL,
+            MasterCustomField7         NVARCHAR(512)
+                COLLATE Latin1_General_CI_AS
+                NULL,
+            MasterCustomField8         NVARCHAR(512)
+                COLLATE Latin1_General_CI_AS
+                NULL,
+            MasterCustomField9         NVARCHAR(512)
+                COLLATE Latin1_General_CI_AS
+                NULL,
+            MasterCustomField10        NVARCHAR(512)
+                COLLATE Latin1_General_CI_AS
+                NULL,
+            CustomField1               NVARCHAR(512) COLLATE Latin1_General_CI_AS
+                NULL,
+            CustomField2               NVARCHAR(512) COLLATE Latin1_General_CI_AS
+                NULL,
+            CustomField3               NVARCHAR(512) COLLATE Latin1_General_CI_AS
+                NULL,
+            CustomField4               NVARCHAR(512) COLLATE Latin1_General_CI_AS
+                NULL,
+            CustomField5               NVARCHAR(512) COLLATE Latin1_General_CI_AS
+                NULL,
+            CustomField6               NVARCHAR(512) COLLATE Latin1_General_CI_AS
+                NULL,
+            CustomField7               NVARCHAR(512) COLLATE Latin1_General_CI_AS
+                NULL,
+            CustomField8               NVARCHAR(512) COLLATE Latin1_General_CI_AS
+                NULL,
+            CustomField9               NVARCHAR(512) COLLATE Latin1_General_CI_AS
+                NULL,
+            CustomField10              NVARCHAR(512) COLLATE Latin1_General_CI_AS
+                NULL,
+            /*cột số lượng, đơn giá*/
+            MainUnitName               NVARCHAR(255) COLLATE Latin1_General_CI_AS
+                NULL,
+            MainUnitPrice              DECIMAL(20, 6),
+            MainQuantity               DECIMAL(22, 8),
+            /*mã thống kê, và tên loại chứng từ*/
+            ListItemCode               NVARCHAR(20),
+            ListItemName               NVARCHAR(128),
+            RefTypeName                NVARCHAR(128),
+            OrderPriority              int
+        )
+
+        CREATE TABLE #tblAccountNumber
+        (
+            AccountNumber       NVARCHAR(20) COLLATE Latin1_General_CI_AS
+                PRIMARY KEY,
+            AccountCategoryKind INT
+        )
+        IF @AccountNumber IS NOT NULL
+            BEGIN
+                INSERT INTO #tblAccountNumber
+                SELECT A.AccountNumber,
+                       A.AccountGroupKind
+                FROM dbo.AccountList AS A
+                WHERE AccountNumber LIKE @AccountNumber + '%'
+                  and CompanyID = (case
+                             when @unitType = 0 then @CompanyID
+                             else @companyIDParent
+        end)
+                ORDER BY A.AccountNumber,
+                         A.AccountName
+            END
+        ELSE
+            BEGIN
+                INSERT INTO #tblAccountNumber
+                SELECT A.AccountNumber,
+                       A.AccountGroupKind
+                FROM dbo.AccountList AS A
+                WHERE DetailType LIKE '%1%'
+                  and CompanyID = (case
+                             when @unitType = 0 then @CompanyID
+                             else @companyIDParent
+        end)
+                ORDER BY A.AccountNumber,
+                         A.AccountName
+            END
+
+/*Lấy số dư đầu kỳ và dữ liệu phát sinh trong kỳ:*/
+
+        IF (@CurrencyID = 'VND')
+            BEGIN
+                IF @IsSimilarSum = 0
+                    BEGIN
+                        INSERT INTO #tblResult
+                        (AccountObjectID,
+                         AccountObjectCode,
+                         AccountObjectName,
+                         AccountObjectGroupListCode,
+                         AccountObjectGroupListName,
+                         AccountObjectAddress,
+                         CompanyTaxCode,
+                         PostedDate,
+                         RefDate,
+                         RefNo,
+                         InvDate,
+                         InvNo,
+                         RefType,
+                         RefID,
+                         RefDetailID,
+                         JournalMemo,
+                         AccountNumber,
+                         AccountCategoryKind,
+                         CorrespondingAccountNumber,
+                         ExchangeRate,
+                         DebitAmountOC,
+                         DebitAmount,
+                         CreditAmountOC,
+                         CreditAmount,
+                         ClosingDebitAmountOC,
+                         ClosingDebitAmount,
+                         ClosingCreditAmountOC,
+                         ClosingCreditAmount,
+                         IsBold,
+                         OrderType,
+                         OrderPriority)
+                        SELECT AccountingObjectID,
+                               AccountObjectCode,
+                               AccountObjectName,
+                               AccountObjectGroupListCode,
+                               AccountObjectGroupListName,
+                               AccountObjectAddress,
+                               CompanyTaxCode,
+                               PostedDate,
+                               RefDate,
+                               RefNo,
+                               InvDate,
+                               InvNo,
+                               RefType,
+                               RefID,
+                               RefDetailID,
+                               JournalMemo,
+                               AccountNumber,
+                               AccountCategoryKind,
+                               CorrespondingAccountNumber,
+                               ExchangeRate,
+                               SUM(DebitAmountOC),
+                               SUM(DebitAmount),
+                               SUM(CreditAmountOC),
+                               SUM(CreditAmount),
+                               (CASE
+                                    WHEN AccountCategoryKind = 0
+                                        THEN SUM(ClosingDebitAmountOC)
+                                        - SUM(ClosingCreditAmountOC)
+                                    WHEN AccountCategoryKind = 1 THEN $0
+                                    ELSE CASE
+                                             WHEN (SUM(ClosingDebitAmountOC)
+                                                 - SUM(ClosingCreditAmountOC)) > 0
+                                                 THEN (SUM(ClosingDebitAmountOC)
+                                                 - SUM(ClosingCreditAmountOC))
+                                             ELSE $0
+                                        END
+                                   END) AS ClosingDebitAmountOC,
+                               (CASE
+                                    WHEN AccountCategoryKind = 0
+                                        THEN (SUM(ClosingDebitAmount)
+                                        - SUM(ClosingCreditAmount))
+                                    WHEN AccountCategoryKind = 1 THEN $0
+                                    ELSE CASE
+                                             WHEN (SUM(ClosingDebitAmount)
+                                                 - SUM(ClosingCreditAmount)) > 0
+                                                 THEN SUM(ClosingDebitAmount)
+                                                 - SUM(ClosingCreditAmount)
+                                             ELSE $0
+                                        END
+                                   END) AS ClosingDebitAmount,
+                               (CASE
+                                    WHEN AccountCategoryKind = 1
+                                        THEN (SUM(ClosingCreditAmountOC)
+                                        - SUM(ClosingDebitAmountOC))
+                                    WHEN AccountCategoryKind = 0 THEN $0
+                                    ELSE CASE
+                                             WHEN (SUM(ClosingCreditAmountOC)
+                                                 - SUM(ClosingDebitAmountOC)) > 0
+                                                 THEN (SUM(ClosingCreditAmountOC)
+                                                 - SUM(ClosingDebitAmountOC))
+                                             ELSE $0
+                                        END
+                                   END) AS ClosingCreditAmountOC,
+                               (CASE
+                                    WHEN AccountCategoryKind = 1
+                                        THEN (SUM(ClosingCreditAmount)
+                                        - SUM(ClosingDebitAmount))
+                                    WHEN AccountCategoryKind = 0 THEN $0
+                                    ELSE CASE
+                                             WHEN (SUM(ClosingCreditAmount)
+                                                 - SUM(ClosingDebitAmount)) > 0
+                                                 THEN (SUM(ClosingCreditAmount)
+                                                 - SUM(ClosingDebitAmount))
+                                             ELSE $0
+                                        END
+                                   END) AS ClosingCreditAmount,
+
+                               IsBold,
+                               OrderType,
+                               OrderPriority
+
+
+                        FROM (SELECT AOL.AccountingObjectID,
+                                     LAOI.AccountObjectCode,
+                                     LAOI.AccountObjectName,
+                                     LAOI.AccountObjectGroupListCode,
+                                     LAOI.AccountObjectGroupListName,
+                                     LAOI.AccountObjectAddress,
+                                     LAOI.CompanyTaxCode,
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN NULL
+                                         ELSE AOL.PostedDate
+                                         END AS PostedDate,
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN NULL
+                                         ELSE AOL.Date
+                                         END AS RefDate,
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN NULL
+                                         ELSE iif(@CurrentBook = 0, AOL.NoFBook, AOL.NoMBook)
+                                         END AS RefNo,
+
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN NULL
+                                         ELSE AOL.InvoiceDate
+                                         END AS InvDate,
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN NULL
+                                         ELSE AOL.InvoiceNo
+                                         END AS InvNo,
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN NULL
+                                         ELSE AOL.ReferenceID
+                                         END AS RefID,
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN NULL
+                                         ELSE AOL.TypeID
+                                         END AS RefType,
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN NULL
+                                         ELSE CAST(AOL.DetailID AS NVARCHAR(50))
+                                         END AS RefDetailID,
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN N'Số dư đầu kỳ'
+                                         ELSE ISNULL(AOL.DESCRIPTION,
+                                                     AOL.Reason)
+                                         END AS JournalMemo,
+                                     TBAN.AccountNumber,
+                                     TBAN.AccountCategoryKind,
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN NULL
+                                         ELSE AOL.AccountCorresponding
+                                         END AS CorrespondingAccountNumber,
+
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN NULL
+                                         ELSE AOL.ExchangeRate
+                                         END AS ExchangeRate,
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN $0
+                                         ELSE AOL.DebitAmountOriginal
+                                         END AS DebitAmountOC,
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN $0
+                                         ELSE AOL.DebitAmount
+                                         END AS DebitAmount,
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN $0
+                                         ELSE AOL.CreditAmountOriginal
+                                         END AS CreditAmountOC,
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN $0
+                                         ELSE AOL.CreditAmount
+                                         END AS CreditAmount,
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN AOL.DebitAmountOriginal
+                                         ELSE $0
+                                         END AS ClosingDebitAmountOC,
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN AOL.DebitAmount
+                                         ELSE $0
+                                         END AS ClosingDebitAmount,
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN AOL.CreditAmountOriginal
+                                         ELSE $0
+                                         END AS ClosingCreditAmountOC,
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN AOL.CreditAmount
+                                         ELSE $0
+                                         END AS ClosingCreditAmount,
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN 1
+                                         ELSE 0
+                                         END AS IsBold,
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN 0
+                                         ELSE 1
+                                         END AS OrderType,
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN null
+                                         ELSE OrderPriority
+                                         END AS OrderPriority
+                              FROM GeneralLedger AS AOL /*edit by cuongpv dbo.GeneralLedger -> @tbDataGL*/
+                                       INNER JOIN #tblAccountNumber TBAN ON AOL.Account LIKE TBAN.AccountNumber
+                                  + '%'
+                                       INNER JOIN #tblListAccountObjectID
+                                  AS LAOI ON AOL.AccountingObjectID = LAOI.AccountObjectID
+                              WHERE AOL.PostedDate <= @ToDate
+                                and AOL.CompanyID in (select id from Func_getCompany (@CompanyID, @isDependent))
+                                and AOL.TypeLedger in (@currentBook, 2)
+                              group by AOL.AccountingObjectID,
+                                       LAOI.AccountObjectCode,
+                                       LAOI.AccountObjectName,
+                                       LAOI.AccountObjectGroupListCode,
+                                       LAOI.AccountObjectGroupListName,
+                                       LAOI.AccountObjectAddress,
+                                       LAOI.CompanyTaxCode,
+                                       AOL.PostedDate,
+                                       AOL.Date,
+                                       AOL.NoFBook, AOL.NoMBook,
+                                       AOL.InvoiceNo,
+                                       AOL.InvoiceDate,
+                                       AOL.ReferenceID,
+                                       AOL.TypeID,
+                                       AOL.Description,
+                                       AOL.DetailID,
+                                       AOL.AccountCorresponding,
+                                       AOL.DebitAmountOriginal,
+                                       AOL.DebitAmount,
+                                       AOL.CreditAmount,
+                                       AOL.CreditAmountOriginal,
+                                       TBAN.AccountNumber,
+                                       AOL.Reason,
+                                       AOL.ExchangeRate,
+                                       TBAN.AccountCategoryKind, AOL.OrderPriority
+                             ) AS RSNS
+                        GROUP BY RSNS.AccountingObjectID,
+                                 RSNS.AccountObjectCode,
+                                 RSNS.AccountObjectName,
+                                 RSNS.AccountObjectGroupListCode,
+                                 RSNS.AccountObjectGroupListName,
+                                 RSNS.AccountObjectAddress,
+                                 RSNS.CompanyTaxCode,
+                                 RSNS.PostedDate,
+                                 RSNS.RefDate,
+                                 RSNS.RefNo,
+                                 RSNS.InvDate,
+                                 RSNS.InvNo,
+                                 RSNS.RefType,
+                                 RSNS.RefID,
+                                 RSNS.RefDetailID,
+                                 RSNS.JournalMemo,
+                                 RSNS.AccountNumber,
+                                 RSNS.AccountCategoryKind,
+                                 RSNS.CorrespondingAccountNumber,
+                                 RSNS.ExchangeRate,
+                                 RSNS.IsBold,
+                                 RSNS.OrderType,
+                                 RSNS.OrderPriority
+                        HAVING SUM(DebitAmountOC) <> 0
+                            OR SUM(DebitAmount) <> 0
+                            OR SUM(CreditAmountOC) <> 0
+                            OR SUM(CreditAmount) <> 0
+                            OR SUM(ClosingDebitAmountOC
+                            - ClosingCreditAmountOC) <> 0
+                            OR SUM(ClosingDebitAmount
+                            - ClosingCreditAmount) <> 0
+                        ORDER BY RSNS.AccountObjectCode,
+                                 RSNS.AccountNumber,
+                                 RSNS.OrderType,
+                                 RSNS.PostedDate,
+                                 RSNS.OrderPriority,
+                                 RSNS.RefDate,
+                                 RSNS.RefNo
+                    END
+                ELSE
+                    BEGIN
+                        INSERT INTO #tblResult
+                        (AccountObjectID,
+                         AccountObjectCode,
+                         AccountObjectName,
+                         AccountObjectGroupListCode,
+                         AccountObjectGroupListName,
+                         AccountObjectAddress,
+                         CompanyTaxCode,
+                         PostedDate,
+                         RefDate,
+                         RefNo,
+                         InvDate,
+                         InvNo,
+                         RefType,
+                         RefID,
+                         RefDetailID,
+                         JournalMemo,
+                         AccountNumber,
+                         AccountCategoryKind,
+                         CorrespondingAccountNumber,
+                         ExchangeRate,
+                         DebitAmountOC,
+                         DebitAmount,
+                         CreditAmountOC,
+                         CreditAmount,
+                         ClosingDebitAmountOC,
+                         ClosingDebitAmount,
+                         ClosingCreditAmountOC,
+                         ClosingCreditAmount,
+                         IsBold,
+                         OrderType,
+                         OrderPriority)
+                        SELECT AccountingObjectID,
+                               AccountObjectCode,
+                               AccountObjectName,
+                               AccountObjectGroupListCode,
+                               AccountObjectGroupListName,
+                               AccountObjectAddress,
+                               CompanyTaxCode,
+                               PostedDate,
+                               RefDate,
+                               RefNo,
+                               InvDate,
+                               InvNo,
+                               RefType,
+                               RefID,
+                               RefDetailID,
+                               JournalMemo,
+                               AccountNumber,
+                               AccountCategoryKind,
+                               CorrespondingAccountNumber,
+                               ExchangeRate,
+                               DebitAmountOC,
+                               DebitAmount,
+                               CreditAmountOC,
+                               CreditAmount,
+                               (CASE
+                                    WHEN AccountCategoryKind = 0
+                                        THEN (ClosingDebitAmountOC
+                                        - ClosingCreditAmountOC)
+                                    WHEN AccountCategoryKind = 1 THEN $0
+                                    ELSE CASE
+                                             WHEN (ClosingDebitAmountOC
+                                                 - ClosingCreditAmountOC) > 0
+                                                 THEN ClosingDebitAmountOC
+                                                 - ClosingCreditAmountOC
+                                             ELSE $0
+                                        END
+                                   END) AS ClosingDebitAmountOC,
+                               (CASE
+                                    WHEN AccountCategoryKind = 0
+                                        THEN (ClosingDebitAmount
+                                        - ClosingCreditAmount)
+                                    WHEN AccountCategoryKind = 1 THEN $0
+                                    ELSE CASE
+                                             WHEN (ClosingDebitAmount
+                                                 - ClosingCreditAmount) > 0
+                                                 THEN ClosingDebitAmount
+                                                 - ClosingCreditAmount
+                                             ELSE $0
+                                        END
+                                   END) AS ClosingDebitAmount,
+                               (CASE
+                                    WHEN AccountCategoryKind = 1
+                                        THEN (ClosingCreditAmountOC
+                                        - ClosingDebitAmountOC)
+                                    WHEN AccountCategoryKind = 0 THEN $0
+                                    ELSE CASE
+                                             WHEN (ClosingCreditAmountOC
+                                                 - ClosingDebitAmountOC) > 0
+                                                 THEN (ClosingCreditAmountOC
+                                                 - ClosingDebitAmountOC)
+                                             ELSE $0
+                                        END
+                                   END) AS ClosingCreditAmountOC,
+                               (CASE
+                                    WHEN AccountCategoryKind = 1
+                                        THEN (ClosingCreditAmount
+                                        - ClosingDebitAmount)
+                                    WHEN AccountCategoryKind = 0 THEN $0
+                                    ELSE CASE
+                                             WHEN (ClosingCreditAmount
+                                                 - ClosingDebitAmount) > 0
+                                                 THEN (ClosingCreditAmount
+                                                 - ClosingDebitAmount)
+                                             ELSE $0
+                                        END
+                                   END) AS ClosingCreditAmount,
+                               IsBold,
+                               OrderType,
+                               OrderPriority
+                        FROM (SELECT AD.AccountingObjectID,
+                                     AD.AccountObjectCode,
+                                     AD.AccountObjectName,
+                                     AD.AccountObjectGroupListCode,
+                                     AD.AccountObjectGroupListName,
+                                     AD.AccountObjectAddress,
+                                     CompanyTaxCode,
+                                     AD.PostedDate,
+                                     AD.RefDate,
+                                     AD.RefNo,
+                                     AD.InvDate,
+                                     AD.InvNo,
+                                     AD.RefID,
+                                     AD.RefType,
+                                     MAX(AD.RefDetailID)           AS RefDetailID,
+                                     AD.JournalMemo,
+                                     AD.AccountNumber,
+                                     AD.AccountCategoryKind,
+                                     AD.CorrespondingAccountNumber,
+                                     AD.ExchangeRate,
+                                     SUM(AD.DebitAmountOC)         AS DebitAmountOC,
+                                     SUM(AD.DebitAmount)           AS DebitAmount,
+                                     SUM(AD.CreditAmountOC)        AS CreditAmountOC,
+                                     SUM(AD.CreditAmount)          AS CreditAmount,
+                                     SUM(AD.ClosingDebitAmountOC)  AS ClosingDebitAmountOC,
+                                     SUM(AD.ClosingDebitAmount)    AS ClosingDebitAmount,
+                                     SUM(AD.ClosingCreditAmountOC) AS ClosingCreditAmountOC,
+                                     SUM(AD.ClosingCreditAmount)   AS ClosingCreditAmount,
+                                     AD.IsBold,
+                                     AD.OrderType,
+                                     AD.OrderPriority
+
+                              FROM (SELECT AOL.AccountingObjectID,
+                                           LAOI.AccountObjectCode,
+                                           LAOI.AccountObjectName,
+                                           LAOI.AccountObjectGroupListCode,
+                                           LAOI.AccountObjectGroupListName,
+                                           LAOI.AccountObjectAddress,
+                                           LAOI.CompanyTaxCode,
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN NULL
+                                               ELSE AOL.PostedDate
+                                               END AS PostedDate,
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN NULL
+                                               ELSE AOL.Date
+                                               END AS RefDate,
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN NULL
+                                               ELSE iif(@CurrentBook = 0, AOL.NoFBook, AOL.NoMBook)
+                                               END AS RefNo,
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN NULL
+                                               ELSE AOL.InvoiceDate
+                                               END AS InvDate,
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN NULL
+                                               ELSE AOL.InvoiceNo
+                                               END AS InvNo,
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN NULL
+                                               ELSE AOL.ReferenceID
+                                               END AS RefID,
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN NULL
+                                               ELSE AOL.TypeID
+                                               END AS RefType,
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN NULL
+                                               ELSE CAST(DetailID AS NVARCHAR(50))
+                                               END AS RefDetailID,
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN N'Số dư đầu kỳ'
+                                               ELSE AOL.Reason
+                                               END AS JournalMemo,
+                                           TBAN.AccountNumber,
+                                           TBAN.AccountCategoryKind,
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN NULL
+                                               ELSE AOL.AccountCorresponding
+                                               END AS CorrespondingAccountNumber,
+
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN NULL
+                                               ELSE AOL.ExchangeRate
+                                               END AS ExchangeRate,
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN $0
+                                               ELSE AOL.DebitAmountOriginal
+                                               END AS DebitAmountOC,
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN $0
+                                               ELSE AOL.DebitAmount
+                                               END AS DebitAmount,
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN $0
+                                               ELSE AOL.CreditAmountOriginal
+                                               END AS CreditAmountOC,
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN $0
+                                               ELSE AOL.CreditAmount
+                                               END AS CreditAmount,
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN AOL.DebitAmountOriginal
+                                               ELSE $0
+                                               END AS ClosingDebitAmountOC,
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN AOL.DebitAmount
+                                               ELSE $0
+                                               END AS ClosingDebitAmount,
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN AOL.CreditAmountOriginal
+                                               ELSE $0
+                                               END AS ClosingCreditAmountOC,
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN AOL.CreditAmount
+                                               ELSE $0
+                                               END AS ClosingCreditAmount,
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN 1
+                                               ELSE 0
+                                               END AS IsBold,
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN 0
+                                               ELSE 1
+                                               END AS OrderType,
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN 0
+                                               ELSE OrderPriority
+                                               END AS OrderPriority
+                                    FROM GeneralLedger AS AOL /*edit by cuongpv dbo.GeneralLedger -> @tbDataGL*/
+                                             INNER JOIN #tblListAccountObjectID
+                                        AS LAOI ON AOL.AccountingObjectID = LAOI.AccountObjectID
+                                             INNER JOIN #tblAccountNumber TBAN ON AOL.Account LIKE TBAN.AccountNumber
+                                        + '%'
+                                    WHERE AOL.PostedDate <= @ToDate
+                                      and AOL.CompanyID in (select id from Func_getCompany (@CompanyID, @isDependent))
+                                      and AOL.TypeLedger in (@currentBook, 2)
+                                   ) AS AD
+                              GROUP BY AD.AccountingObjectID,
+                                       AD.AccountObjectCode,
+                                       AD.AccountObjectName,
+                                       AD.AccountObjectGroupListCode,
+                                       AD.AccountObjectGroupListName,
+                                       AD.AccountObjectAddress,
+                                       AD.CompanyTaxCode,
+                                       AD.PostedDate,
+                                       AD.RefDate,
+                                       AD.RefNo,
+                                       AD.InvDate,
+                                       AD.InvNo,
+                                       AD.RefID,
+                                       AD.RefType,
+                                       AD.JournalMemo,
+                                       AD.AccountNumber,
+                                       AD.AccountCategoryKind,
+                                       AD.CorrespondingAccountNumber,
+                                       AD.ExchangeRate,
+                                       AD.IsBold,
+                                       AD.OrderType,
+                                       AD.OrderPriority
+                             ) AS RSS
+                        WHERE RSS.DebitAmountOC <> 0
+                           OR RSS.CreditAmountOC <> 0
+                           OR RSS.DebitAmount <> 0
+                           OR RSS.CreditAmount <> 0
+                           OR ClosingCreditAmountOC
+                                  - ClosingDebitAmountOC <> 0
+                           OR ClosingCreditAmount - ClosingDebitAmount <> 0
+                        ORDER BY RSS.AccountObjectCode,
+                                 RSS.AccountNumber,
+                                 RSS.OrderType,
+                                 RSS.PostedDate,
+                                 RSS.OrderPriority,
+                                 RSS.RefDate,
+                                 RSS.RefNo,
+                                 RSS.InvDate,
+                                 RSS.InvNo
+                    END
+            END
+        ELSE
+            BEGIN
+                IF @IsSimilarSum = 0
+                    BEGIN
+                        INSERT INTO #tblResult
+                        (AccountObjectID,
+                         AccountObjectCode,
+                         AccountObjectName,
+                         AccountObjectGroupListCode,
+                         AccountObjectGroupListName,
+                         AccountObjectAddress,
+                         CompanyTaxCode,
+                         PostedDate,
+                         RefDate,
+                         RefNo,
+                         InvDate,
+                         InvNo,
+                         RefType,
+                         RefID,
+                         RefDetailID,
+                         JournalMemo,
+                         AccountNumber,
+                         AccountCategoryKind,
+                         CorrespondingAccountNumber,
+                         ExchangeRate,
+                         DebitAmountOC,
+                         DebitAmount,
+                         CreditAmountOC,
+                         CreditAmount,
+                         ClosingDebitAmountOC,
+                         ClosingDebitAmount,
+                         ClosingCreditAmountOC,
+                         ClosingCreditAmount,
+                         IsBold,
+                         OrderType,
+                         OrderPriority)
+                        SELECT AccountingObjectID,
+                               AccountObjectCode,
+                               AccountObjectName,
+                               AccountObjectGroupListCode,
+                               AccountObjectGroupListName,
+                               AccountObjectAddress,
+                               CompanyTaxCode,
+                               PostedDate,
+                               RefDate,
+                               RefNo,
+                               InvDate,
+                               InvNo,
+                               RefType,
+                               RefID,
+                               RefDetailID,
+                               JournalMemo,
+                               AccountNumber,
+                               AccountCategoryKind,
+                               CorrespondingAccountNumber,
+                               ExchangeRate,
+                               SUM(DebitAmountOC),
+                               SUM(DebitAmount),
+                               SUM(CreditAmountOC),
+                               SUM(CreditAmount),
+                               (CASE
+                                    WHEN AccountCategoryKind = 0
+                                        THEN SUM(ClosingDebitAmountOC)
+                                        - SUM(ClosingCreditAmountOC)
+                                    WHEN AccountCategoryKind = 1 THEN $0
+                                    ELSE CASE
+                                             WHEN (SUM(ClosingDebitAmountOC)
+                                                 - SUM(ClosingCreditAmountOC)) > 0
+                                                 THEN (SUM(ClosingDebitAmountOC)
+                                                 - SUM(ClosingCreditAmountOC))
+                                             ELSE $0
+                                        END
+                                   END) AS ClosingDebitAmountOC,
+                               (CASE
+                                    WHEN AccountCategoryKind = 0
+                                        THEN (SUM(ClosingDebitAmount)
+                                        - SUM(ClosingCreditAmount))
+                                    WHEN AccountCategoryKind = 1 THEN $0
+                                    ELSE CASE
+                                             WHEN (SUM(ClosingDebitAmount)
+                                                 - SUM(ClosingCreditAmount)) > 0
+                                                 THEN SUM(ClosingDebitAmount)
+                                                 - SUM(ClosingCreditAmount)
+                                             ELSE $0
+                                        END
+                                   END) AS ClosingDebitAmount,
+                               (CASE
+                                    WHEN AccountCategoryKind = 1
+                                        THEN (SUM(ClosingCreditAmountOC)
+                                        - SUM(ClosingDebitAmountOC))
+                                    WHEN AccountCategoryKind = 0 THEN $0
+                                    ELSE CASE
+                                             WHEN (SUM(ClosingCreditAmountOC)
+                                                 - SUM(ClosingDebitAmountOC)) > 0
+                                                 THEN (SUM(ClosingCreditAmountOC)
+                                                 - SUM(ClosingDebitAmountOC))
+                                             ELSE $0
+                                        END
+                                   END) AS ClosingCreditAmountOC,
+                               (CASE
+                                    WHEN AccountCategoryKind = 1
+                                        THEN (SUM(ClosingCreditAmount)
+                                        - SUM(ClosingDebitAmount))
+                                    WHEN AccountCategoryKind = 0 THEN $0
+                                    ELSE CASE
+                                             WHEN (SUM(ClosingCreditAmount)
+                                                 - SUM(ClosingDebitAmount)) > 0
+                                                 THEN (SUM(ClosingCreditAmount)
+                                                 - SUM(ClosingDebitAmount))
+                                             ELSE $0
+                                        END
+                                   END) AS ClosingCreditAmount,
+
+                               IsBold,
+                               OrderType,
+                               OrderPriority
+
+
+                        FROM (SELECT AOL.AccountingObjectID,
+                                     LAOI.AccountObjectCode,
+                                     LAOI.AccountObjectName,
+                                     LAOI.AccountObjectGroupListCode,
+                                     LAOI.AccountObjectGroupListName,
+                                     LAOI.AccountObjectAddress,
+                                     LAOI.CompanyTaxCode,
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN NULL
+                                         ELSE AOL.PostedDate
+                                         END AS PostedDate,
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN NULL
+                                         ELSE AOL.Date
+                                         END AS RefDate,
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN NULL
+                                         ELSE iif(@CurrentBook = 0, AOL.NoFBook, AOL.NoMBook)
+                                         END AS RefNo,
+
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN NULL
+                                         ELSE AOL.InvoiceDate
+                                         END AS InvDate,
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN NULL
+                                         ELSE AOL.InvoiceNo
+                                         END AS InvNo,
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN NULL
+                                         ELSE AOL.ReferenceID
+                                         END AS RefID,
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN NULL
+                                         ELSE AOL.TypeID
+                                         END AS RefType,
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN NULL
+                                         ELSE CAST(AOL.DetailID AS NVARCHAR(50))
+                                         END AS RefDetailID,
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN N'Số dư đầu kỳ'
+                                         ELSE ISNULL(AOL.DESCRIPTION,
+                                                     AOL.Reason)
+                                         END AS JournalMemo,
+                                     TBAN.AccountNumber,
+                                     TBAN.AccountCategoryKind,
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN NULL
+                                         ELSE AOL.AccountCorresponding
+                                         END AS CorrespondingAccountNumber,
+
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN NULL
+                                         ELSE AOL.ExchangeRate
+                                         END AS ExchangeRate,
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN $0
+                                         ELSE AOL.DebitAmountOriginal
+                                         END AS DebitAmountOC,
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN $0
+                                         ELSE AOL.DebitAmountOriginal
+                                         END AS DebitAmount,
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN $0
+                                         ELSE AOL.CreditAmountOriginal
+                                         END AS CreditAmountOC,
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN $0
+                                         ELSE AOL.CreditAmountOriginal
+                                         END AS CreditAmount,
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN AOL.DebitAmountOriginal
+                                         ELSE $0
+                                         END AS ClosingDebitAmountOC,
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN AOL.DebitAmountOriginal
+                                         ELSE $0
+                                         END AS ClosingDebitAmount,
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN AOL.CreditAmountOriginal
+                                         ELSE $0
+                                         END AS ClosingCreditAmountOC,
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN AOL.CreditAmountOriginal
+                                         ELSE $0
+                                         END AS ClosingCreditAmount,
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN 1
+                                         ELSE 0
+                                         END AS IsBold,
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN 0
+                                         ELSE 1
+                                         END AS OrderType,
+                                     CASE
+                                         WHEN AOL.PostedDate < @FromDate
+                                             THEN null
+                                         ELSE OrderPriority
+                                         END AS OrderPriority
+                              FROM GeneralLedger AS AOL /*edit by cuongpv dbo.GeneralLedger -> @tbDataGL*/
+                                       INNER JOIN #tblAccountNumber TBAN ON AOL.Account LIKE TBAN.AccountNumber
+                                  + '%'
+                                       INNER JOIN #tblListAccountObjectID
+                                  AS LAOI ON AOL.AccountingObjectID = LAOI.AccountObjectID
+                              WHERE AOL.PostedDate <= @ToDate
+                                and AOL.CompanyID in (select id from Func_getCompany (@CompanyID, @isDependent))
+                                and AOL.TypeLedger in (@currentBook, 2)
+                                AND (@CurrencyID IS NULL
+                                  OR AOL.CurrencyID = @CurrencyID
+                                  )
+                             ) AS RSNS
+                        GROUP BY RSNS.AccountingObjectID,
+                                 RSNS.AccountObjectCode,
+                                 RSNS.AccountObjectName,
+                                 AccountObjectGroupListCode,
+                                 AccountObjectGroupListName,
+                                 RSNS.AccountObjectAddress,
+                                 CompanyTaxCode,
+                                 RSNS.PostedDate,
+                                 RSNS.RefDate,
+                                 RSNS.RefNo,
+                                 RSNS.InvDate,
+                                 RSNS.InvNo,
+                                 RSNS.RefType,
+                                 RSNS.RefID,
+                                 RSNS.RefDetailID,
+                                 RSNS.JournalMemo,
+                                 RSNS.AccountNumber,
+                                 RSNS.AccountCategoryKind,
+                                 RSNS.CorrespondingAccountNumber,
+                                 RSNS.ExchangeRate,
+                                 RSNS.IsBold,
+                                 RSNS.OrderType,
+                                 RSNS.OrderPriority
+                        HAVING SUM(DebitAmountOC) <> 0
+                            OR SUM(DebitAmount) <> 0
+                            OR SUM(CreditAmountOC) <> 0
+                            OR SUM(CreditAmount) <> 0
+                            OR SUM(ClosingDebitAmountOC
+                            - ClosingCreditAmountOC) <> 0
+                            OR SUM(ClosingDebitAmount
+                            - ClosingCreditAmount) <> 0
+                        ORDER BY RSNS.AccountObjectCode,
+                                 RSNS.AccountNumber,
+                                 RSNS.OrderType,
+                                 RSNS.PostedDate,
+                                 RSNS.OrderPriority,
+                                 RSNS.RefDate,
+                                 RSNS.RefNo
+                    END
+                ELSE
+                    BEGIN
+                        INSERT INTO #tblResult
+                        (AccountObjectID,
+                         AccountObjectCode,
+                         AccountObjectName,
+                         AccountObjectGroupListCode,
+                         AccountObjectGroupListName,
+                         AccountObjectAddress,
+                         CompanyTaxCode,
+                         PostedDate,
+                         RefDate,
+                         RefNo,
+                         InvDate,
+                         InvNo,
+                         RefType,
+                         RefID,
+                         RefDetailID,
+                         JournalMemo,
+                         AccountNumber,
+                         AccountCategoryKind,
+                         CorrespondingAccountNumber,
+                         ExchangeRate,
+                         DebitAmountOC,
+                         DebitAmount,
+                         CreditAmountOC,
+                         CreditAmount,
+                         ClosingDebitAmountOC,
+                         ClosingDebitAmount,
+                         ClosingCreditAmountOC,
+                         ClosingCreditAmount,
+                         IsBold,
+                         OrderType,
+                         OrderPriority)
+                        SELECT AccountingObjectID,
+                               AccountObjectCode,
+                               AccountObjectName,
+                               AccountObjectGroupListCode,
+                               AccountObjectGroupListName,
+                               AccountObjectAddress,
+                               CompanyTaxCode,
+                               PostedDate,
+                               RefDate,
+                               RefNo,
+                               InvDate,
+                               InvNo,
+                               RefType,
+                               RefID,
+                               RefDetailID,
+                               JournalMemo,
+                               AccountNumber,
+                               AccountCategoryKind,
+                               CorrespondingAccountNumber,
+                               ExchangeRate,
+                               DebitAmountOC,
+                               DebitAmount,
+                               CreditAmountOC,
+                               CreditAmount,
+                               (CASE
+                                    WHEN AccountCategoryKind = 0
+                                        THEN (ClosingDebitAmountOC
+                                        - ClosingCreditAmountOC)
+                                    WHEN AccountCategoryKind = 1 THEN $0
+                                    ELSE CASE
+                                             WHEN (ClosingDebitAmountOC
+                                                 - ClosingCreditAmountOC) > 0
+                                                 THEN ClosingDebitAmountOC
+                                                 - ClosingCreditAmountOC
+                                             ELSE $0
+                                        END
+                                   END) AS ClosingDebitAmountOC,
+                               (CASE
+                                    WHEN AccountCategoryKind = 0
+                                        THEN (ClosingDebitAmount
+                                        - ClosingCreditAmount)
+                                    WHEN AccountCategoryKind = 1 THEN $0
+                                    ELSE CASE
+                                             WHEN (ClosingDebitAmount
+                                                 - ClosingCreditAmount) > 0
+                                                 THEN ClosingDebitAmount
+                                                 - ClosingCreditAmount
+                                             ELSE $0
+                                        END
+                                   END) AS ClosingDebitAmount,
+                               (CASE
+                                    WHEN AccountCategoryKind = 1
+                                        THEN (ClosingCreditAmountOC
+                                        - ClosingDebitAmountOC)
+                                    WHEN AccountCategoryKind = 0 THEN $0
+                                    ELSE CASE
+                                             WHEN (ClosingCreditAmountOC
+                                                 - ClosingDebitAmountOC) > 0
+                                                 THEN (ClosingCreditAmountOC
+                                                 - ClosingDebitAmountOC)
+                                             ELSE $0
+                                        END
+                                   END) AS ClosingCreditAmountOC,
+                               (CASE
+                                    WHEN AccountCategoryKind = 1
+                                        THEN (ClosingCreditAmount
+                                        - ClosingDebitAmount)
+                                    WHEN AccountCategoryKind = 0 THEN $0
+                                    ELSE CASE
+                                             WHEN (ClosingCreditAmount
+                                                 - ClosingDebitAmount) > 0
+                                                 THEN (ClosingCreditAmount
+                                                 - ClosingDebitAmount)
+                                             ELSE $0
+                                        END
+                                   END) AS ClosingCreditAmount,
+                               IsBold,
+                               OrderType,
+                               OrderPriority
+                        FROM (SELECT AD.AccountingObjectID,
+                                     AD.AccountObjectCode,
+                                     AD.AccountObjectName,
+                                     AD.AccountObjectGroupListCode,
+                                     AD.AccountObjectGroupListName,
+                                     AD.AccountObjectAddress,
+                                     CompanyTaxCode,
+                                     AD.PostedDate,
+                                     AD.RefDate,
+                                     AD.RefNo,
+                                     AD.InvDate,
+                                     AD.InvNo,
+                                     AD.RefID,
+                                     AD.RefType,
+                                     MAX(AD.RefDetailID)           AS RefDetailID,
+                                     AD.JournalMemo,
+                                     AD.AccountNumber,
+                                     AD.AccountCategoryKind,
+                                     AD.CorrespondingAccountNumber,
+                                     AD.ExchangeRate,
+                                     SUM(AD.DebitAmountOC)         AS DebitAmountOC,
+                                     SUM(AD.DebitAmount)           AS DebitAmount,
+                                     SUM(AD.CreditAmountOC)        AS CreditAmountOC,
+                                     SUM(AD.CreditAmount)          AS CreditAmount,
+                                     SUM(AD.ClosingDebitAmountOC)  AS ClosingDebitAmountOC,
+                                     SUM(AD.ClosingDebitAmount)    AS ClosingDebitAmount,
+                                     SUM(AD.ClosingCreditAmountOC) AS ClosingCreditAmountOC,
+                                     SUM(AD.ClosingCreditAmount)   AS ClosingCreditAmount,
+                                     AD.IsBold,
+                                     AD.OrderType,
+                                     AD.OrderPriority
+
+                              FROM (SELECT AOL.AccountingObjectID,
+                                           LAOI.AccountObjectCode,
+                                           LAOI.AccountObjectName,
+                                           LAOI.AccountObjectGroupListCode,
+                                           LAOI.AccountObjectGroupListName,
+                                           LAOI.AccountObjectAddress,
+                                           LAOI.CompanyTaxCode,
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN NULL
+                                               ELSE AOL.PostedDate
+                                               END AS PostedDate,
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN NULL
+                                               ELSE AOL.Date
+                                               END AS RefDate,
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN NULL
+                                               ELSE iif(@CurrentBook = 0, AOL.NoFBook, AOL.NoMBook)
+                                               END AS RefNo,
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN NULL
+                                               ELSE AOL.InvoiceDate
+                                               END AS InvDate,
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN NULL
+                                               ELSE AOL.InvoiceNo
+                                               END AS InvNo,
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN NULL
+                                               ELSE AOL.ReferenceID
+                                               END AS RefID,
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN NULL
+                                               ELSE AOL.TypeID
+                                               END AS RefType,
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN NULL
+                                               ELSE CAST(DetailID AS NVARCHAR(50))
+                                               END AS RefDetailID,
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN N'Số dư đầu kỳ'
+                                               ELSE AOL.Reason
+                                               END AS JournalMemo,
+                                           TBAN.AccountNumber,
+                                           TBAN.AccountCategoryKind,
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN NULL
+                                               ELSE AOL.AccountCorresponding
+                                               END AS CorrespondingAccountNumber,
+
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN NULL
+                                               ELSE AOL.ExchangeRate
+                                               END AS ExchangeRate,
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN $0
+                                               ELSE AOL.DebitAmountOriginal
+                                               END AS DebitAmountOC,
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN $0
+                                               ELSE AOL.DebitAmountOriginal
+                                               END AS DebitAmount,
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN $0
+                                               ELSE AOL.CreditAmountOriginal
+                                               END AS CreditAmountOC,
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN $0
+                                               ELSE AOL.CreditAmountOriginal
+                                               END AS CreditAmount,
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN AOL.DebitAmountOriginal
+                                               ELSE $0
+                                               END AS ClosingDebitAmountOC,
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN AOL.DebitAmountOriginal
+                                               ELSE $0
+                                               END AS ClosingDebitAmount,
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN AOL.CreditAmountOriginal
+                                               ELSE $0
+                                               END AS ClosingCreditAmountOC,
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN AOL.CreditAmountOriginal
+                                               ELSE $0
+                                               END AS ClosingCreditAmount,
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN 1
+                                               ELSE 0
+                                               END AS IsBold,
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN 0
+                                               ELSE 1
+                                               END AS OrderType,
+                                           CASE
+                                               WHEN AOL.PostedDate < @FromDate
+                                                   THEN 0
+                                               ELSE OrderPriority
+                                               END AS OrderPriority
+                                    FROM GeneralLedger AS AOL /*edit by cuongpv dbo.GeneralLedger -> @tbDataGL*/
+                                             INNER JOIN #tblListAccountObjectID
+                                        AS LAOI ON AOL.AccountingObjectID = LAOI.AccountObjectID
+                                             INNER JOIN #tblAccountNumber TBAN ON AOL.Account LIKE TBAN.AccountNumber
+                                        + '%'
+                                    WHERE AOL.PostedDate <= @ToDate
+                                      and AOL.CompanyID in (select id from Func_getCompany (@CompanyID, @isDependent))
+                                      and AOL.TypeLedger in (@currentBook, 2)
+                                      AND (@CurrencyID IS NULL
+                                        OR AOL.CurrencyID = @CurrencyID
+                                        )
+                                   ) AS AD
+                              GROUP BY AD.AccountingObjectID,
+                                       AD.AccountObjectCode,
+                                       AD.AccountObjectName,
+                                       AD.AccountObjectGroupListCode,
+                                       AD.AccountObjectGroupListName,
+                                       AD.AccountObjectAddress,
+                                       AD.CompanyTaxCode,
+                                       AD.PostedDate,
+                                       AD.RefDate,
+                                       AD.RefNo,
+                                       AD.InvDate,
+                                       AD.InvNo,
+                                       AD.RefID,
+                                       AD.RefType,
+                                       AD.JournalMemo,
+                                       AD.AccountNumber,
+                                       AD.AccountCategoryKind,
+                                       AD.CorrespondingAccountNumber,
+                                       AD.ExchangeRate,
+                                       AD.IsBold,
+                                       AD.OrderType,
+                                       AD.OrderPriority
+                             ) AS RSS
+                        WHERE RSS.DebitAmountOC <> 0
+                           OR RSS.CreditAmountOC <> 0
+                           OR RSS.DebitAmount <> 0
+                           OR RSS.CreditAmount <> 0
+                           OR ClosingCreditAmountOC
+                                  - ClosingDebitAmountOC <> 0
+                           OR ClosingCreditAmount - ClosingDebitAmount <> 0
+                        ORDER BY RSS.AccountObjectCode,
+                                 RSS.AccountNumber,
+                                 RSS.OrderType,
+                                 RSS.PostedDate,
+                                 RSS.OrderPriority,
+                                 RSS.RefDate,
+                                 RSS.RefNo,
+                                 RSS.InvDate,
+                                 RSS.InvNo
+                    END
+            END
+/* Tính số tồn */
+        DECLARE @CloseAmountOC AS DECIMAL(22, 8) ,
+            @CloseAmount AS DECIMAL(22, 8) ,
+            @AccountObjectCode_tmp NVARCHAR(100) ,
+            @AccountNumber_tmp NVARCHAR(20)
+        SELECT @CloseAmountOC = 0,
+               @CloseAmount = 0,
+               @AccountObjectCode_tmp = N'',
+               @AccountNumber_tmp = N''
+        UPDATE #tblResult
+        SET @CloseAmountOC         = (CASE
+                                          WHEN OrderType = 0
+                                              THEN (CASE
+                                                        WHEN ClosingDebitAmountOC = 0
+                                                            THEN ClosingCreditAmountOC
+                                                        ELSE -1
+                                                            * ClosingDebitAmountOC
+                                              END)
+                                          WHEN @AccountObjectCode_tmp <> AccountObjectCode
+                                              OR @AccountNumber_tmp <> AccountNumber
+                                              THEN CreditAmountOC - DebitAmountOC
+                                          ELSE @CloseAmountOC + CreditAmountOC
+                                              - DebitAmountOC
+            END),
+            ClosingDebitAmountOC   = (CASE
+                                          WHEN AccountCategoryKind = 0
+                                              THEN -1 * @CloseAmountOC
+                                          WHEN AccountCategoryKind = 1
+                                              THEN $0
+                                          ELSE CASE
+                                                   WHEN @CloseAmountOC < 0
+                                                       THEN -1
+                                                       * @CloseAmountOC
+                                                   ELSE $0
+                                              END
+                END),
+            ClosingCreditAmountOC  = (CASE
+                                          WHEN AccountCategoryKind = 1
+                                              THEN @CloseAmountOC
+                                          WHEN AccountCategoryKind = 0
+                                              THEN $0
+                                          ELSE CASE
+                                                   WHEN @CloseAmountOC > 0
+                                                       THEN @CloseAmountOC
+                                                   ELSE $0
+                                              END
+                END),
+            @CloseAmount           = (CASE
+                                          WHEN OrderType = 0
+                                              THEN (CASE
+                                                        WHEN ClosingDebitAmount = 0
+                                                            THEN ClosingCreditAmount
+                                                        ELSE -1 * ClosingDebitAmount
+                                              END)
+                                          WHEN @AccountObjectCode_tmp <> AccountObjectCode
+                                              OR @AccountNumber_tmp <> AccountNumber
+                                              THEN CreditAmount - DebitAmount
+                                          ELSE @CloseAmount + CreditAmount
+                                              - DebitAmount
+                END),
+            ClosingDebitAmount     = (CASE
+                                          WHEN AccountCategoryKind = 0
+                                              THEN -1 * @CloseAmount
+                                          WHEN AccountCategoryKind = 1
+                                              THEN $0
+                                          ELSE CASE
+                                                   WHEN @CloseAmount < 0
+                                                       THEN -1 * @CloseAmount
+                                                   ELSE $0
+                                              END
+                END),
+            ClosingCreditAmount    = (CASE
+                                          WHEN AccountCategoryKind = 1
+                                              THEN @CloseAmount
+                                          WHEN AccountCategoryKind = 0
+                                              THEN $0
+                                          ELSE CASE
+                                                   WHEN @CloseAmount > 0
+                                                       THEN @CloseAmount
+                                                   ELSE $0
+                                              END
+                END),
+            @AccountObjectCode_tmp = AccountObjectCode,
+            @AccountNumber_tmp     = AccountNumber
+        WHERE OrderType <> 2
+/*Lấy số liệu*/
+        SELECT RefType,
+               RefID,
+               PostedDate,
+               RefDate,
+               RefNo,
+               JournalMemo as description,
+               AccountNumber,
+               CorrespondingAccountNumber,
+               DebitAmountOC,
+               DebitAmount,
+               CreditAmountOC,
+               CreditAmount,
+               ClosingDebitAmountOC,
+               ClosingDebitAmount,
+               ClosingCreditAmountOC,
+               ClosingCreditAmount,
+               AccountObjectCode,
+               AccountObjectName,
+               AccountObjectID,
+               2           as ordercode
+        into #tg1
+        FROM #tblResult RS
+        ORDER BY AccountObjectCode
+
+        --         INSERT INTO #tg1 (RefType, PostedDate, RefDate, RefNo, description, AccountNumber,
+--                           CorrespondingAccountNumber, DebitAmountOC, DebitAmount, CreditAmountOC, CreditAmount,
+--                           ClosingDebitAmountOC, ClosingDebitAmount, ClosingCreditAmountOC, ClosingCreditAmount,
+--                           AccountObjectCode, AccountObjectName, ordercode)
+--         SELECT null,
+--                null,
+--                null,
+--                null,
+--                N'Tên khách hàng: ' + AccountObjectName,
+--                null,
+--                null,
+--                null,
+--                null,
+--                null,
+--                null,
+--                null,
+--                null,
+--                null,
+--                null,
+--                AccountObjectCode,
+--                AccountObjectName,
+--                1
+--         FROM #tblResult
+--         group by AccountObjectCode, AccountObjectName
+
+        SELECT
+        TOP 0
+        *
+        into #tg2
+        FROM #tg1
+
+        --         INSERT INTO #tg2 (RefType, PostedDate, RefDate, RefNo, description, AccountNumber,
+--                           CorrespondingAccountNumber, DebitAmountOC, DebitAmount, CreditAmountOC, CreditAmount,
+--                           ClosingDebitAmountOC, ClosingDebitAmount, ClosingCreditAmountOC, ClosingCreditAmount,
+--                           AccountObjectCode, AccountObjectName, ordercode)
+--         SELECT null,
+--                null,
+--                null,
+--                null,
+--                N'Cộng nhóm',
+--                null,
+--                null,
+--                Sum(DebitAmountOC),
+--                Sum(DebitAmount),
+--                Sum(CreditAmountOC),
+--                Sum(CreditAmount),
+--                0,
+--                0,
+--                0,
+--                0,
+--                AccountObjectCode,
+--                AccountObjectName,
+--                3
+--         FROM #tblResult
+--         group by AccountObjectCode, AccountObjectName
+
+        SELECT AccountObjectCode into #Account from #tg1
+
+        DECLARE @AccCode nvarchar(512)
+        DECLARE @COUNT INT
+        DECLARE @SODUDAUKYDebit Decimal(25, 0)
+        DECLARE @SODUDAUKYCredit Decimal(25, 0)
+        DECLARE @SODUDAUKYDebitOC Decimal(25, 4)
+        DECLARE @SODUDAUKYCreditOC Decimal(25, 4)
+        DECLARE @amount Decimal(25, 0)
+        DECLARE @amountOC Decimal(25, 4)
+
+        SET @COUNT = (SELECT COUNT(*) From #Account)
+        WHILE(@COUNT > 0)
+            BEGIN
+                SET @AccCode = (SELECT TOP 1 AccountObjectCode FROM #Account)
+                SET @SODUDAUKYDebit = ISNULL((select Sum(ClosingDebitAmount)
+                                              from #tg1
+                                              where description like N'%Số dư đầu kỳ%'
+                                                AND AccountObjectCode = @AccCode), 0)
+                SET @SODUDAUKYCredit = ISNULL((select Sum(ClosingCreditAmount)
+                                               from #tg1
+                                               where description like N'%Số dư đầu kỳ%'
+                                                 AND AccountObjectCode = @AccCode),
+                                              0)
+                SET @SODUDAUKYDebitOC = ISNULL((select Sum(ClosingDebitAmountOC)
+                                                from #tg1
+                                                where description like N'%Số dư đầu kỳ%'
+                                                  AND AccountObjectCode = @AccCode),
+                                               0)
+                SET @SODUDAUKYCreditOC = ISNULL((select Sum(ClosingCreditAmountOC)
+                                                 from #tg1
+                                                 where description like N'%Số dư đầu kỳ%'
+                                                   AND AccountObjectCode = @AccCode),
+                                                0)
+
+                SET @amount = @SODUDAUKYDebit - @SODUDAUKYCredit
+                    + ((SELECT SUM(DebitAmount) FROM #tg1 WHERE AccountObjectCode = @AccCode)
+                        - (SELECT SUM(CreditAmount) FROM #tg1 WHERE AccountObjectCode = @AccCode))
+
+                SET @amountOC = @SODUDAUKYDebitOC - @SODUDAUKYCreditOC
+                    + ((SELECT SUM(DebitAmount) FROM #tg1 WHERE AccountObjectCode = @AccCode)
+                        - (SELECT SUM(CreditAmount) FROM #tg1 WHERE AccountObjectCode = @AccCode))
+
+                if (@amount > 0)
+                    BEGIN
+                        UPDATE #tg2
+                        SET ClosingDebitAmount   = @amount,
+                            ClosingDebitAmountOC = @amountOC
+
+
+                        WHERE AccountObjectCode = @AccCode
+                        SET @COUNT = @COUNT - 1;
+                        DELETE #Account where AccountObjectCode = @AccCode
+                    END
+
+                else
+                    BEGIN
+                        UPDATE #tg2
+                        SET ClosingCreditAmount   = @amount * -1,
+                            ClosingCreditAmountOC = @amountOC * -1
+
+
+                        WHERE AccountObjectCode = @AccCode
+                        SET @COUNT = @COUNT - 1;
+                        DELETE #Account where AccountObjectCode = @AccCode
+                    END
+            END
+
+        --SELECT TOP 0 *
+        --into #tg3
+        --FROM #tg1
+
+        --INSERT INTO #tg3 (RefID,RefType,PostedDate,RefDate,RefNo,JournalMemo,AccountNumber,CorrespondingAccountNumber,DebitAmountOC,DebitAmount,CreditAmountOC,CreditAmount,ClosingDebitAmountOC,ClosingDebitAmount,ClosingCreditAmountOC,ClosingCreditAmount,AccountObjectCode,AccountObjectName,ordercode)
+        --SELECT  null,null,null,null,null,N'TỔNG CỘNG',null,null,Sum(DebitAmountOC),Sum(DebitAmount),Sum(CreditAmountOC),Sum(CreditAmount),ISNULL((select Sum(ClosingDebitAmountOC) from #tg2 where JournalMemo like N'%Cộng nhóm%'),0),ISNULL((select Sum(ClosingDebitAmount) from #tg2 where JournalMemo like N'%Cộng nhóm%'),0),ISNULL((select Sum(ClosingCreditAmountOC) from #tg2 where JournalMemo  like N'%Cộng nhóm%' ),0),ISNULL((select Sum(ClosingCreditAmount) from #tg2 where JournalMemo  like N'%Cộng nhóm%'),0),'z',null,4
+        --FROM #tblResult
+        INSERT INTO #tg1 SELECT * from #tg2
+        --INSERT INTO #tg1 SELECT * from #tg3
+        --SELECT * from #tg2
+        SELECT RefType,
+               convert(nvarchar, PostedDate, 103) as postedDate,
+               convert(nvarchar, RefDate, 103)    as refDate,
+               refID,
+               RefNo,
+               description,
+               AccountNumber,
+               CorrespondingAccountNumber,
+               DebitAmountOC,
+               DebitAmount,
+               CreditAmountOC,
+               CreditAmount,
+               ClosingDebitAmountOC,
+               ClosingDebitAmount,
+               ClosingCreditAmountOC,
+               ClosingCreditAmount,
+               AccountObjectCode,
+               AccountObjectName,
+               AccountObjectID,
+               ordercode
+        from #tg1
+        order by AccountObjectCode, ordercode
+        -- SELECT * from #tblResult order by AccountObjectCode
+    END
+go
+

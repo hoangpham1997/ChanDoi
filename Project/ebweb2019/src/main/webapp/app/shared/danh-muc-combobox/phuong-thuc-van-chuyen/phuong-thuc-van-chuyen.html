@@ -1,0 +1,101 @@
+<div class="modal-body windowClass-DanhMuc-Combobox" style="padding: 10px!important;">
+    <div class="margin-tp-5 margin-0">
+        <div class="">
+            <div class="itemw">
+                <div class="menu-tool-bar header-custom">
+                    <div class="ptitle">
+                        <span jhiTranslate="ebwebApp.transportMethod.home.title">Phương thức vận chuyển</span>
+                    </div>
+
+                    <div class="gr-toolbar">
+                        <a (click)="save()" title="{{'ebwebApp.autoPrinciple.tooltipSave' | translate}}" *ebHasAnyAuthority="['ROLE_ADMIN',transportMethod.id? ROLE_TransportMethod_Sua : ROLE_TransportMethod_Them]"><i class="mdi mdi-briefcase-download"></i>
+                            <span jhiTranslate="ebwebApp.transportMethod.save"></span>
+                        </a>
+                        <a (click)="saveAndNew()" title="{{'ebwebApp.autoPrinciple.tooltipSaveAndAdd' | translate}}" *ebHasAnyAuthority="['ROLE_ADMIN', ROLE_TransportMethod_Them]"><i *ebHasAnyAuthority="['ROLE_ADMIN', ROLE_TransportMethod_Sua]" class="mdi mdi-plus fa-plus color-green"></i>
+                            <span *ebHasAnyAuthority="['ROLE_ADMIN', ROLE_TransportMethod_Sua]" jhiTranslate="ebwebApp.transportMethod.saveandadd"></span>
+                        </a>
+                        <a [class.disable]="!transportMethod.id" (click)="delete()" title="{{'ebwebApp.autoPrinciple.tooltipDelete' | translate}}" *ebHasAnyAuthority="['ROLE_ADMIN', ROLE_TransportMethod_Xoa]"><i class="mdi mdi-plus fa-plus color-green"></i>
+                            <span jhiTranslate="ebwebApp.transportMethod.deleted"></span>
+                        </a>
+                        <a (click)="closeForm()" title="{{'ebwebApp.autoPrinciple.tooltipBack' | translate}}"><i class="mdi mdi-window-close"></i>
+                            <span jhiTranslate="ebwebApp.transportMethod.close"></span>
+                        </a>
+                    </div>
+                </div>
+                <div class="frm-main">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <fieldset>
+                                <legend style="font-size: 19px; color: #f26f21;font-weight: bold;" jhiTranslate="ebwebApp.autoPrinciple.information">
+                                    Thông tin chung
+                                </legend>
+                                <form style="border: none;">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="form-group row">
+                                                <label class="col-sm-2 col-form-label paddinglabel"
+                                                       jhiTranslate="ebwebApp.transportMethod.methodCode">Mã phương thức</label>
+                                                <div class="col-sm-2 pd-l-0 pd-r-10 paddinginput">
+                                                    <input type="text" [(ngModel)]="transportMethod.transportMethodCode" class="form-control" name="methodcode"
+                                                           id="field_accountNumber" required maxlength="25" [tabindex]="1" [disabled]="!roleSua && transportMethod.id"/>
+                                                </div>
+                                                <label class="col-sm-2 col-form-label paddinglabel"
+                                                       jhiTranslate="ebwebApp.transportMethod.methodName">Tên phương thức(*)</label>
+                                                <div class="col-sm-2 pd-l-0 pd-r-10 paddinginput">
+                                                    <input type="text" [(ngModel)]="transportMethod.transportMethodName" class="form-control" name="methodName"
+                                                           id="field_accountName"
+                                                           required
+                                                           maxlength="512" [tabindex]="2" [disabled]="!roleSua && transportMethod.id"/>
+                                                </div>
+                                                <label class="col-sm-auto col-form-label set-width"
+                                                       jhiTranslate="ebwebApp.transportMethod.des">Mô tả</label>
+                                                <div class="col-sm-3 pd-l-0 pd-r-10 paddinginput">
+                                                    <input [(ngModel)]="transportMethod.description" type="text" class="form-control" name="transportmethodDes"
+                                                           id="field_accountNameGlobal"
+                                                           maxlength="512" [tabindex]="3" [disabled]="!roleSua && transportMethod.id"/>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </form>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="transportMethod.id" class="col-lg-12">
+                    <div class="form-group row">
+                        <div class="col-sm-3 pd-l-0 pd-r-10">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox"  name="isActive"
+                                       class="custom-control-input"
+                                       id="isActive" [(ngModel)]="transportMethod.isActive">
+                                <label class="custom-control-label" for="isActive"
+                                       jhiTranslate="ebwebApp.transportMethod.isActive">Theo dõi</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<eb-context-menu [contextMenu]="content" [eventHandlingHere]="true"></eb-context-menu>
+<ng-template #content let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.saBill.saveMessage">Dữ liệu đã bị thay đổi, Bạn có muốn lưu lại?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="save()" jhiTranslate="entity.action.save">Save
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="close()" jhiTranslate="entity.action.noSave">close
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="closeContent()" jhiTranslate="entity.action.close">
+            close
+        </button>
+    </div>
+</ng-template>

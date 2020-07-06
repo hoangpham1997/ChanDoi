@@ -1,0 +1,112 @@
+<div class="container-fluid">
+    <div class="margin-tp-5 margin-0">
+        <div class="">
+            <div class="itemw" style="color: #FFFFFF">
+                <div class="menu-tool-bar he">
+                    <div class="ptitle">
+                        <span jhiTranslate="ebwebApp.autoPrinciple.category"></span>
+                    </div>
+                    <div class="gr-toolbar">
+                        <a *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_DinhKhoanTuDong_Them]"
+                           title="{{'ebwebApp.autoPrinciple.tooltipAdd' | translate}}" (click)="addNew($event)"><i class="mdi mdi-plus"></i><span jhiTranslate="ebwebApp.autoPrinciple.created">Thêm</span></a>
+                        <a *ebHasAnyAuthority="['ROLE_ADMIN', ROLE_DanhMucDinhKhoanTuDong_Sua]"
+                           title="{{'ebwebApp.autoPrinciple.tooltipEdit' | translate}}" [class.disable]="!selectedRow" (click)="edit()"><i
+                            class="mdi mdi-pen"></i><span jhiTranslate="ebwebApp.autoPrinciple.updated"></span></a>
+                        <a *ebHasAnyAuthority="['ROLE_ADMIN', ROLE_DanhMucDinhKhoanTuDong_Xoa]"
+                           title="{{'ebwebApp.autoPrinciple.tooltipDelete' | translate}}" [class.disable]="!selectedRow" (click)="delete()"
+                        ><i class="mdi mdi-delete"></i><span jhiTranslate="ebwebApp.autoPrinciple.deleted"></span></a>
+                    </div>
+                </div>
+            </div>
+            <div class="frm-main frm-mains nobg" style="background: #cbdcf0; margin-top: 5px">
+                <div id="table-scroll0" class="table-scroll voucher-table" style="max-height: 700px !important;">
+                    <table id="main-table0" class="main-table">
+                        <thead class="header-table">
+                        <tr>
+                            <th scope="col" jhiTranslate="ebwebApp.autoPrinciple.typeId"></th>
+                            <th scope="col" jhiTranslate="ebwebApp.autoPrinciple.autoPrincipleName"> </th>
+                            <th scope="col" jhiTranslate="ebwebApp.autoPrinciple.debitAccount"></th>
+                            <th scope="col" jhiTranslate="ebwebApp.autoPrinciple.creditAccount"> </th>
+                            <th scope="col" jhiTranslate="ebwebApp.autoPrinciple.description"></th>
+                            <th scope="col" jhiTranslate="ebwebApp.autoPrinciple.isActive"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let autoPrinciple of autoPrinciples ;trackBy: trackId"
+                            [class.row-selected]="this.selectedRows.indexOf(autoPrinciple) !== -1"
+                            (click)="selectMultiRow(autoPrinciple, $event, autoPrinciples)"
+                            (dblclick)="edit()"
+                            [class.selected]="autoPrinciple === selectedRow">
+                            <td title="{{getTypeByTypeID(autoPrinciple.typeId)}}"
+                                class="jsgrid-cell jsgrid-align-left"
+                                style="width: 150px; max-height: 28px !important;">{{getTypeByTypeID(autoPrinciple.typeId)}}</td>
+                            <td title="{{autoPrinciple.autoPrincipleName}}" class="jsgrid-cell jsgrid-align-left"
+                                style="width: 150px; max-height: 28px !important;">{{autoPrinciple.autoPrincipleName}}</td>
+                            <td title="{{autoPrinciple.debitAccount}}" class="jsgrid-cell jsgrid-align-center"
+
+
+                                style="width: 150px; max-height: 28px !important;">{{autoPrinciple.debitAccount}}</td>
+                            <td title="{{autoPrinciple.creditAccount}}" class="jsgrid-cell jsgrid-align-center"
+                                style="width: 150px; max-height: 28px !important;">{{autoPrinciple.creditAccount}}</td>
+                            <td title="{{autoPrinciple.description}}" class="jsgrid-cell jsgrid-align-left"
+                                style="width: 150px; max-height: 28px !important;">{{autoPrinciple.description}}</td>
+                            <td class="jsgrid-cell jsgrid-align-center"
+                                style="width: 150px; max-height: 28px !important;"><input type="checkbox"
+                                                            class=" jsgrid-align-center"
+                                                            name="isactive" id="field_isactive"
+                                                            [(ngModel)]="autoPrinciple.isActive" disabled/></td>
+                        </tr>
+                        <tr *ngFor="let row of newArr(20 - autoPrinciples?.length)">
+                            <td class="jsgrid-cell ">&nbsp;</td>
+                            <td class="jsgrid-cell ">&nbsp;</td>
+                            <td class="jsgrid-cell ">&nbsp;</td>
+                            <td class="jsgrid-cell ">&nbsp;</td>
+                            <td class="jsgrid-cell ">&nbsp;</td>
+                            <td class="jsgrid-cell ">&nbsp;</td>
+                        </tr>
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <td class="cell-Table" colspan="6" style="padding: 0px"><input type="text" readonly
+                                                                                           class="countRow input-Cell"
+                                                                                           value="{{'ebwebApp.mBDeposit.countLine'| translate}} : {{autoPrinciples?.length}}">
+                            </td>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+<!--            <div *ngIf="autoPrinciples && autoPrinciples?.length"-->
+<!--                 style="padding-right: 16px">-->
+<!--                <div class="row justify-content-end" style="height:32px">-->
+<!--                    <div class="col-lg-2">-->
+<!--                        <div class="form-group row">-->
+<!--                            <label class="col-sm-7 col-form-label" for="itemsPerPage"-->
+<!--                                   style="padding-right: 0px;text-align: right;"><span-->
+<!--                                jhiTranslate="ebwebApp.mBDeposit.totalPage"></span>: {{totalItems}}</label>-->
+<!--                            <div class="col-sm-5 pd-l-0">-->
+<!--                                <select class="form-control form-control-sm" name="itemsPerPage"-->
+<!--                                        id="itemsPerPage"-->
+<!--                                        style="background-color: #f5f7fa;"-->
+<!--                                        [(ngModel)]="itemsPerPage"-->
+<!--                                        (ngModelChange)="selectedItemPerPage()"-->
+<!--                                >-->
+<!--                                    <option [value]="20">20</option>-->
+<!--                                    <option [value]="30">30</option>-->
+<!--                                    <option [value]="40">40</option>-->
+<!--                                </select>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="justify-content-end">-->
+<!--                        <ngb-pagination [size]="'sm'" [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage"-->
+<!--                                        [maxSize]="5" [rotate]="true" [boundaryLinks]="true"-->
+<!--                                        (pageChange)="loadPage(page)"></ngb-pagination>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+        </div>
+    </div>
+</div>
+<footer>
+</footer>

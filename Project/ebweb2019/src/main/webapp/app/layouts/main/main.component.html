@@ -1,0 +1,29 @@
+<div [ngClass]="{'nb-collapsed': isNavbarCollapsed, 'nb-expand': !isNavbarCollapsed}"
+     (keydown.enter)="moveEnter($event)"
+     (keydown.arrowRight)="moveNext($event)" (keydown.arrowLeft)="movePrevious($event)"
+     [class.disable-user-select]="disableUserSelect">
+    <div class="container-scroller">
+        <router-outlet name="navbar" *ngIf="!this.router.url.includes('/admin')"></router-outlet>
+        <router-outlet name="admin-navbar" *ngIf="this.router.url.includes('/admin')"></router-outlet>
+        <div class="container-fluid"
+             [ngClass]="{'page-body-wrapper': (this.router.url !== '/login' && this.router.url !== '/admin/login'),
+                         'page-body-wrapper-100': (this.router.url === '/login' || this.router.url === '/admin/login')}">
+            <nav class="sidebar sidebar-offcanvas" id="sidebar"
+                 [hidden]="(this.router.url === '/login' || this.router.url === '/admin/login')">
+                <router-outlet name="sidebar" *ngIf="!this.router.url.includes('/admin')"></router-outlet>
+                <router-outlet name="admin-sidebar" *ngIf="this.router.url.includes('/admin')"></router-outlet>
+            </nav>
+            <div
+                [ngClass]="{'main-panel': (this.router.url !== '/login' && this.router.url !== '/admin/login'),
+                            'main-panel-100': (this.router.url === '/login' || this.router.url === '/admin/login')}">
+                <div [ngClass]="{'content-wrapper': (this.router.url !== '/login' && this.router.url !== '/admin/login'),
+                                 'content-wrapper-homeChart': (this.router.url === '/')
+                                 }"
+                >
+                    <router-outlet></router-outlet>
+                </div>
+            </div>
+            <router-outlet name="popup"></router-outlet>
+        </div>
+    </div>
+</div>

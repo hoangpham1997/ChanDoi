@@ -1,0 +1,294 @@
+
+    <eb-alert></eb-alert>
+    <div class="container-fluid">
+        <div class="margin-tp-5 margin-0">
+            <div class="">
+                <div class="itemw">
+                    <div class="menu-tool-bar he">
+                        <div class="ptitle">
+                            <span>Tài sản cố định</span>
+                        </div>
+                        <div class="gr-toolbar">
+                            <a [routerLink]="['/fixed-asset/new']"><i class="fas fa-plus"></i> Thêm</a>
+                            <a *ngIf="selectedRow" [routerLink]="['/fixed-asset', selectedRow.id, 'edit']"><i class="fas fa-trash-alt"></i> Sửa</a>
+                            <a *ngIf="selectedRow" [routerLink]="['/', { outlets: { popup: 'fixed-asset/'+ selectedRow.id + '/delete'} }]"
+                               replaceUrl="true"
+                               queryParamsHandling="merge"><i class="fas fa-pen"></i>Xoá</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="frm-main">
+                    <div class="dt-result">
+                        <div class="tbl-header">
+                            <table cellpadding="0" cellspacing="0" border="0">
+                                <thead>
+                                <tr>
+                                    <th>Mã TSCĐ</th>
+                                    <th>Tên TSCĐ</th>
+                                    <th>Loại TSCĐ</th>
+                                    <th>Nguyên giá</th>
+                                    <th>Phòng ban</th>
+                                    <th>TK khấu hao</th>
+                                    <th>Ngày sử dụng</th>
+                                    <th>Ngày khấu hao</th>
+                                </tr>
+                                </thead>
+                            </table>
+                        </div>
+                        <div class="tbl-content">
+                            <table cellpadding="0" cellspacing="0" border="0" class="easy-table">
+                                <tbody >
+                                <tr  *ngFor="let fixedAsset of fixedAssets ;trackBy: trackByFixedAsset"
+                                    [class.selected] = "fixedAsset === selectedRow"
+                                    (click)="onSelect(fixedAsset)">
+                                    <td>{{fixedAsset.fixedAssetCode}}</td>
+                                    <td>{{fixedAsset.fixedAssetName}}</td>
+                                    <td>{{fixedAsset.fixedAssetCategoryID.fixedAssetCategoryName}}</td>
+                                    <td>{{fixedAsset.originalPriceAccount}}</td>
+                                    <td>{{fixedAsset.organizationUnitID.organizationUnitName}}</td>
+                                    <td>{{fixedAsset.depreciationAccount}}</td>
+                                    <td>{{fixedAsset.usedDate}}</td>
+                                    <td>{{fixedAsset.depreciationDate}}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div *ngIf="fixedAssets && fixedAssets.length">
+                            <div class="row justify-content-center">
+                                <jhi-item-count [page]="page" [total]="queryCount" [maxSize]="5" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+                            </div>
+                            <div class="row justify-content-center">
+                                <ngb-pagination [size]="'sm'" [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage" [maxSize]="5" [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage(page)"></ngb-pagination>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <ngb-tabset class="tool-navbar">
+                <ngb-tab title="Thiết lập phần bổ">
+                    <ng-template ngbTabContent >
+                        <div class="dt-result">
+                            <div class="tbl-header">
+                                <table cellpadding="0" cellspacing="0" border="0">
+                                    <thead>
+                                    <tr>
+                                        <th>Đối tượng phân bổ</th>
+                                        <th>Tỉ lệ phân bổ</th>
+                                        <th>Tài khoản chi phí</th>
+                                        <th>Khoản mục chi phí</th>
+
+                                    </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                            <div class="tbl-content">
+                                <table cellpadding="0" cellspacing="0" border="0" class="easy-table">
+                                    <tbody>
+                                    <tr *ngFor="let fixedAssetAllocation of fixedAssetAllocations ; let i = index; trackBy: trackByFixedAssetAllocation">
+                                        <td>{{fixedAssetAllocation.objectID.costSetName}}</td>
+                                        <td>{{fixedAssetAllocation.rate}}</td>
+                                        <td>{{fixedAssetAllocation.costAccount.accountNumber}}</td>
+                                        <td>{{fixedAssetAllocation.expenseItem.expenseItemName}}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab>
+                    <ng-template ngbTabTitle><b>Chứng từ phát sinh</b></ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="dt-result">
+                            <div class="tbl-header">
+                                <table cellpadding="0" cellspacing="0" border="0">
+                                    <thead>
+                                    <tr>
+                                        <th>Đối tượng phân bổ</th>
+                                        <th>Tỉ lệ phân bổ</th>
+                                        <th>Tài khoản chi phí</th>
+                                        <th>Khoản mục chi phí</th>
+                                    </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                            <div class="tbl-content">
+                                <table cellpadding="0" cellspacing="0" border="0"
+                                       class="easy-table">
+                                    <tbody>
+
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+            </ngb-tabset>
+        </div>
+    </div>
+    <footer>
+    </footer>
+
+
+
+
+
+
+
+<!--<div>-->
+<!--    <h2 id="page-heading">-->
+<!--        <span jhiTranslate="ebwebApp.fixedAsset.home.title">Fixed Assets</span>-->
+<!--        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-fixed-asset" [routerLink]="['/fixed-asset/new']">-->
+<!--            <fa-icon [icon]="'plus'"></fa-icon>-->
+<!--            <span  jhiTranslate="ebwebApp.fixedAsset.home.createLabel">-->
+<!--            Create new Fixed Asset-->
+<!--            </span>-->
+<!--        </button>-->
+<!--    </h2>-->
+<!--    <eb-alert></eb-alert>-->
+<!--    <br/>-->
+<!--    <div class="table-responsive" *ngIf="fixedAssets">-->
+<!--        <table class="table table-striped">-->
+<!--            <thead>-->
+<!--            <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">-->
+<!--            <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+<!--            <th jhiSortBy="fixedAssetCode"><span jhiTranslate="ebwebApp.fixedAsset.fixedAssetCode">Fixed Asset Code</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+<!--            <th jhiSortBy="fixedAssetName"><span jhiTranslate="ebwebApp.fixedAsset.fixedAssetName">Fixed Asset Name</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+<!--            <th jhiSortBy="description"><span jhiTranslate="ebwebApp.fixedAsset.description">Description</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+<!--            <th jhiSortBy="productionYear"><span jhiTranslate="ebwebApp.fixedAsset.productionYear">Production Year</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+<!--            <th jhiSortBy="madeIn"><span jhiTranslate="ebwebApp.fixedAsset.madeIn">Made In</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+<!--            <th jhiSortBy="serialNumber"><span jhiTranslate="ebwebApp.fixedAsset.serialNumber">Serial Number</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+<!--            <th jhiSortBy="accountingObjectName"><span jhiTranslate="ebwebApp.fixedAsset.accountingObjectName">Accounting Object Name</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+<!--            <th jhiSortBy="warranty"><span jhiTranslate="ebwebApp.fixedAsset.warranty">Warranty</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+<!--            <th jhiSortBy="guaranteeCodition"><span jhiTranslate="ebwebApp.fixedAsset.guaranteeCodition">Guarantee Codition</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+<!--            <th jhiSortBy="isSecondHand"><span jhiTranslate="ebwebApp.fixedAsset.isSecondHand">Is Second Hand</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+<!--            <th jhiSortBy="currentState"><span jhiTranslate="ebwebApp.fixedAsset.currentState">Current State</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+<!--            <th jhiSortBy="deliveryRecordNo"><span jhiTranslate="ebwebApp.fixedAsset.deliveryRecordNo">Delivery Record No</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+<!--            <th jhiSortBy="deliveryRecordDate"><span jhiTranslate="ebwebApp.fixedAsset.deliveryRecordDate">Delivery Record Date</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+<!--            <th jhiSortBy="purchasedDate"><span jhiTranslate="ebwebApp.fixedAsset.purchasedDate">Purchased Date</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+<!--            <th jhiSortBy="incrementDate"><span jhiTranslate="ebwebApp.fixedAsset.incrementDate">Increment Date</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+<!--            <th jhiSortBy="depreciationDate"><span jhiTranslate="ebwebApp.fixedAsset.depreciationDate">Depreciation Date</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+<!--            <th jhiSortBy="usedDate"><span jhiTranslate="ebwebApp.fixedAsset.usedDate">Used Date</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+<!--            <th jhiSortBy="purchasePrice"><span jhiTranslate="ebwebApp.fixedAsset.purchasePrice">Purchase Price</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+<!--            <th jhiSortBy="originalPrice"><span jhiTranslate="ebwebApp.fixedAsset.originalPrice">Original Price</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+<!--            <th jhiSortBy="depreciationMethod"><span jhiTranslate="ebwebApp.fixedAsset.depreciationMethod">Depreciation Method</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+<!--            <th jhiSortBy="usedTime"><span jhiTranslate="ebwebApp.fixedAsset.usedTime">Used Time</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+<!--            <th jhiSortBy="displayMonthYear"><span jhiTranslate="ebwebApp.fixedAsset.displayMonthYear">Display Month Year</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+<!--            <th jhiSortBy="periodDepreciationAmount"><span jhiTranslate="ebwebApp.fixedAsset.periodDepreciationAmount">Period Depreciation Amount</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+<!--            <th jhiSortBy="depreciationRate"><span jhiTranslate="ebwebApp.fixedAsset.depreciationRate">Depreciation Rate</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+<!--            <th jhiSortBy="monthDepreciationRate"><span jhiTranslate="ebwebApp.fixedAsset.monthDepreciationRate">Month Depreciation Rate</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+<!--            <th jhiSortBy="monthPeriodDepreciationAmount"><span jhiTranslate="ebwebApp.fixedAsset.monthPeriodDepreciationAmount">Month Period Depreciation Amount</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+<!--            <th jhiSortBy="isActive"><span jhiTranslate="ebwebApp.fixedAsset.isActive">Is Active</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+<!--            <th jhiSortBy="fixedAssetCategoryID.id"><span jhiTranslate="ebwebApp.fixedAsset.fixedAssetCategoryID">Fixed Asset Category ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+<!--            <th jhiSortBy="branchID.branchID"><span jhiTranslate="ebwebApp.fixedAsset.branchID">Branch ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+<!--            <th jhiSortBy="organizationUnitID.id"><span jhiTranslate="ebwebApp.fixedAsset.organizationUnitID">Organization Unit ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+<!--            <th jhiSortBy="accountingObjectID.id"><span jhiTranslate="ebwebApp.fixedAsset.accountingObjectID">Accounting Object ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+<!--            <th jhiSortBy="depreciationAccount.accountNumber"><span jhiTranslate="ebwebApp.fixedAsset.depreciationAccount">Depreciation Account</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+<!--            <th jhiSortBy="originalPriceAccount.accountNumber"><span jhiTranslate="ebwebApp.fixedAsset.originalPriceAccount">Original Price Account</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+<!--            <th jhiSortBy="expenditureAccount.accountNumber"><span jhiTranslate="ebwebApp.fixedAsset.expenditureAccount">Expenditure Account</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+<!--            <th></th>-->
+<!--            </tr>-->
+<!--            </thead>-->
+<!--            <tbody>-->
+<!--            <tr *ngFor="let fixedAsset of fixedAssets ;trackBy: trackId">-->
+<!--                <td><a [routerLink]="['/fixed-asset', fixedAsset.id, 'view' ]">{{fixedAsset.id}}</a></td>-->
+<!--                <td>{{fixedAsset.fixedAssetCode}}</td>-->
+<!--                <td>{{fixedAsset.fixedAssetName}}</td>-->
+<!--                <td>{{fixedAsset.description}}</td>-->
+<!--                <td>{{fixedAsset.productionYear}}</td>-->
+<!--                <td>{{fixedAsset.madeIn}}</td>-->
+<!--                <td>{{fixedAsset.serialNumber}}</td>-->
+<!--                <td>{{fixedAsset.accountingObjectName}}</td>-->
+<!--                <td>{{fixedAsset.warranty}}</td>-->
+<!--                <td>{{fixedAsset.guaranteeCodition}}</td>-->
+<!--                <td>{{fixedAsset.isSecondHand}}</td>-->
+<!--                <td>{{fixedAsset.currentState}}</td>-->
+<!--                <td>{{fixedAsset.deliveryRecordNo}}</td>-->
+<!--                <td>{{fixedAsset.deliveryRecordDate | date:'mediumDate'}}</td>-->
+<!--                <td>{{fixedAsset.purchasedDate | date:'mediumDate'}}</td>-->
+<!--                <td>{{fixedAsset.incrementDate | date:'mediumDate'}}</td>-->
+<!--                <td>{{fixedAsset.depreciationDate | date:'mediumDate'}}</td>-->
+<!--                <td>{{fixedAsset.usedDate | date:'mediumDate'}}</td>-->
+<!--                <td>{{fixedAsset.purchasePrice}}</td>-->
+<!--                <td>{{fixedAsset.originalPrice}}</td>-->
+<!--                <td>{{fixedAsset.depreciationMethod}}</td>-->
+<!--                <td>{{fixedAsset.usedTime}}</td>-->
+<!--                <td>{{fixedAsset.displayMonthYear}}</td>-->
+<!--                <td>{{fixedAsset.periodDepreciationAmount}}</td>-->
+<!--                <td>{{fixedAsset.depreciationRate}}</td>-->
+<!--                <td>{{fixedAsset.monthDepreciationRate}}</td>-->
+<!--                <td>{{fixedAsset.monthPeriodDepreciationAmount}}</td>-->
+<!--                <td>{{fixedAsset.isActive}}</td>-->
+<!--                <td>-->
+<!--                    <div *ngIf="fixedAsset.fixedAssetCategoryID">-->
+<!--                        <a [routerLink]="['../fixed-asset-category', fixedAsset.fixedAssetCategoryID?.id, 'view' ]" >{{fixedAsset.fixedAssetCategoryID?.id}}</a>-->
+<!--                    </div>-->
+<!--                </td>-->
+<!--                <td>-->
+<!--                    <div *ngIf="fixedAsset.branchID">-->
+<!--                        <a [routerLink]="['../organization-unit', fixedAsset.branchID?.id, 'view' ]" >{{fixedAsset.branchID?.branchID}}</a>-->
+<!--                    </div>-->
+<!--                </td>-->
+<!--                <td>-->
+<!--                    <div *ngIf="fixedAsset.organizationUnitID">-->
+<!--                        <a [routerLink]="['../organization-unit', fixedAsset.organizationUnitID?.id, 'view' ]" >{{fixedAsset.organizationUnitID?.id}}</a>-->
+<!--                    </div>-->
+<!--                </td>-->
+<!--                <td>-->
+<!--                    <div *ngIf="fixedAsset.accountingObjectID">-->
+<!--                        <a [routerLink]="['../accounting-object', fixedAsset.accountingObjectID?.id, 'view' ]" >{{fixedAsset.accountingObjectID?.id}}</a>-->
+<!--                    </div>-->
+<!--                </td>-->
+<!--                <td>-->
+<!--                    <div *ngIf="fixedAsset.depreciationAccount">-->
+<!--                        <a [routerLink]="['../account-list', fixedAsset.depreciationAccount?.id, 'view' ]" >{{fixedAsset.depreciationAccount?.accountNumber}}</a>-->
+<!--                    </div>-->
+<!--                </td>-->
+<!--                <td>-->
+<!--                    <div *ngIf="fixedAsset.originalPriceAccount">-->
+<!--                        <a [routerLink]="['../account-list', fixedAsset.originalPriceAccount?.id, 'view' ]" >{{fixedAsset.originalPriceAccount?.accountNumber}}</a>-->
+<!--                    </div>-->
+<!--                </td>-->
+<!--                <td>-->
+<!--                    <div *ngIf="fixedAsset.expenditureAccount">-->
+<!--                        <a [routerLink]="['../account-list', fixedAsset.expenditureAccount?.id, 'view' ]" >{{fixedAsset.expenditureAccount?.accountNumber}}</a>-->
+<!--                    </div>-->
+<!--                </td>-->
+<!--                <td class="text-right">-->
+<!--                    <div class="btn-group flex-btn-group-container">-->
+<!--                        <button Type="submit"-->
+<!--                                [routerLink]="['/fixed-asset', fixedAsset.id, 'view' ]"-->
+<!--                                class="btn btn-info btn-sm">-->
+<!--                            <fa-icon [icon]="'eye'"></fa-icon>-->
+<!--                            <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>-->
+<!--                        </button>-->
+<!--                        <button Type="submit"-->
+<!--                                [routerLink]="['/fixed-asset', fixedAsset.id, 'edit']"-->
+<!--                                class="btn btn-primary btn-sm">-->
+<!--                            <fa-icon [icon]="'pencil-alt'"></fa-icon>-->
+<!--                            <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>-->
+<!--                        </button>-->
+<!--                        <button Type="submit"-->
+<!--                                [routerLink]="['/', { outlets: { popup: 'fixed-asset/'+ fixedAsset.id + '/delete'} }]"-->
+<!--                                replaceUrl="true"-->
+<!--                                queryParamsHandling="merge"-->
+<!--                                class="btn btn-danger btn-sm">-->
+<!--                            <fa-icon [icon]="'times'"></fa-icon>-->
+<!--                            <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>-->
+<!--                        </button>-->
+<!--                    </div>-->
+<!--                </td>-->
+<!--            </tr>-->
+<!--            </tbody>-->
+<!--        </table>-->
+<!--    </div>-->
+<!--    <div *ngIf="fixedAssets && fixedAssets.length">-->
+<!--        <div class="row justify-content-center">-->
+<!--            <jhi-item-count [page]="page" [total]="queryCount" [maxSize]="5" [itemsPerPage]="itemsPerPage"></jhi-item-count>-->
+<!--        </div>-->
+<!--        <div class="row justify-content-center">-->
+<!--            <ngb-pagination [size]="'sm'" [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage" [maxSize]="5" [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage(page)"></ngb-pagination>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->

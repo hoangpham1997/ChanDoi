@@ -1,0 +1,172 @@
+<div style="padding: 0px!important;">
+    <div class="margin-tp-5 margin-0">
+        <div class="">
+            <div class="itemw">
+                <div class="menu-tool-bar he">
+                    <div class="ptitle">
+                        <span jhiTranslate="ebwebApp.expenseItem.home.title">khoan muc chi phi</span>
+                    </div>
+                    <div class="gr-toolbar">
+                        <a (click)="save()"
+                           *ebHasSomeAuthorityOrCondition=
+                               "[[ROLE_IExpenseItem_Them, !isEditUrl], ROLE_IExpenseItem_Sua,'ROLE_ADMIN']"
+                           title="{{'ebwebApp.autoPrinciple.tooltipSave' | translate}}"><i
+                            class="mdi mdi-briefcase-download"></i>
+                            <span jhiTranslate="ebwebApp.mCReceipt.home.save">Lưu</span>
+                        </a>
+                        <a (click)="saveAndNew()"
+                           *ebHasSomeAuthorityOrCondition=
+                               "[[ROLE_IExpenseItem_Them , ROLE_IExpenseItem_Sua], 'ROLE_ADMIN', [ROLE_IExpenseItem_Them, isNew]]"
+                           title="{{'ebwebApp.autoPrinciple.tooltipSaveAndAdd' | translate}}"><i
+                            class="mdi mdi-plus fa-plus color-green"></i>
+                            <span jhiTranslate="ebwebApp.mCReceipt.home.saveAndAddNew">Lưu và thêm mới</span>
+                        </a>
+                        <a [class.disable]="false" [class.disable]="!expenseItem.id" (click)="delete()"
+                           *ebHasAnyAuthority="['ROLE_ADMIN', ROLE_IExpenseItem_Xoa]"
+                           title="{{'ebwebApp.autoPrinciple.tooltipDelete' | translate}}"><i
+                            class="mdi mdi-delete-forever"></i>
+                            <span jhiTranslate="ebwebApp.mCReceipt.home.delete">Xóa</span>
+                        </a>
+                        <a (click)="closeForm()" title="{{'ebwebApp.autoPrinciple.tooltipBack' | translate}}"><i
+                            class="mdi mdi-window-close"></i>
+                            <span jhiTranslate="ebwebApp.mCReceipt.home.close">Đóng</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="frm-main">
+                    <div class="row">
+                        <div class="col-lg-12">
+                                <span style="font-size: 19px; color: #f26f21;font-weight: bold;"
+                                        jhiTranslate="ebwebApp.expenseItem.generalInformation">Thông Tin Chung
+                                </span>
+                                <form style="border: none;">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="form-group row">
+                                                <label class="col-sm-2 col-form-label paddinglabel"
+                                                       jhiTranslate="ebwebApp.expenseItem.code">Mã(*)</label>
+                                                <div class="col-sm-2 pd-l-0 pd-r-10 paddinginput">
+                                                    <input type="text" class="form-control" name="code"
+                                                           id="field_accountNumber"
+                                                           [(ngModel)]="expenseItem.expenseItemCode" required
+                                                           maxlength="25"
+                                                           [tabindex]="1"
+                                                           [disabled]="expenseItem.id || (!roleSua && isEditUrl) || (!roleThem && isNew)"/>
+                                                </div>
+                                                <label class="col-sm-2 col-form-label paddinglabel"
+                                                       jhiTranslate="ebwebApp.expenseItem.name">Tên(*)</label>
+                                                <div class="col-sm-2 pd-l-0 pd-r-10 paddinginput">
+                                                    <input type="text" class="form-control" name="name"
+                                                           id="field_accountName"
+                                                           [(ngModel)]="expenseItem.expenseItemName" required
+                                                           maxlength="512"
+                                                           [tabindex]="2"
+                                                           [disabled]="(!roleSua && isEditUrl) || (!roleThem && isNew)"/>
+                                                </div>
+                                                <label class="col-sm-2 col-form-label paddinglabel"
+                                                       jhiTranslate="ebwebApp.expenseItem.expenseType">Loại chi
+                                                    phí</label>
+                                                <div
+                                                    class="col-sm-2 pd-l-0 pd-r-10 paddinginput">
+                                                    <combo-box style="" id="field_parentAccountID"
+                                                               name="expenseType"
+                                                               [dataList]="dataList"
+                                                               [isObject]="false"
+                                                               [isOutTable]="true"
+                                                               [showIconPlus]="false"
+                                                               [listColumns]="utilsService.listColumnsGroupExpenseItemCode"
+                                                               displayMember="name"
+                                                               valueName="value"
+                                                               [headerColumns]="utilsService.listHeaderColumnsGroupExpenseItem"
+                                                               [(ngModel)]="expenseItem.expenseType"
+                                                               [tabindex]="3"
+                                                               [isReadOnly]="(!roleSua && isEditUrl) || (!roleThem && isNew)">
+                                                        <!--                                                        luu gia tri-->
+                                                    </combo-box>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <div class="form-group row">
+                                                <label class="col-sm-2 col-form-label paddinglabel"
+                                                       jhiTranslate="ebwebApp.expenseItem.group">thuộc
+                                                    nhóm</label>
+                                                <div
+                                                    class="col-sm-2 pd-l-0 pd-r-10 paddinginput">
+                                                    <combo-box name="expenseItems"
+                                                               [dataList]="expenseItems"
+                                                               [listColumns]="utilsService.listColumnsExpenseItem"
+                                                               displayMember="expenseItemCode"
+                                                               name="parentID"
+                                                               valueName="id"
+                                                               [headerColumns]="utilsService.listHeaderColumnsExpenseItem"
+                                                               [isObject]="false"
+                                                               [(ngModel)]="expenseItem.parentID"
+                                                               (ngModelChange)="changeExpense()"
+                                                               [tabindex]="4"
+                                                               [isReadOnly]="(!roleSua && isEditUrl) || (!roleThem && isNew)"
+                                                    >
+                                                    </combo-box>
+                                                </div>
+                                                <label class="col-sm-2 col-form-label paddinglabel"
+                                                       jhiTranslate="ebwebApp.expenseItem.explain">Diễn giải</label>
+                                                <div class="col-sm-6 paddinginput">
+                                                    <input type="text" class="form-control" name="explain"
+                                                           id="field_description"
+                                                           [(ngModel)]="expenseItem.description" maxlength="512"
+                                                           [tabindex]="5"
+                                                           [disabled]="(!roleSua && isEditUrl) || (!roleThem && isNew)"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <div class="form-group row no-gutters">
+                                                <img style="margin-top: 0px;margin-left: 25px; margin-right: 5px;"
+                                                     src="../../../content/images/warning.png"
+                                                     height="25px" width="25px">
+                                                <label style="margin-top: 2px;"
+                                                       jhiTranslate="ebwebApp.expenseItem.warning"></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="expenseItem.id" class="form-group row">
+                    <div class="col-sm-3 pd-l-0 pd-r-10">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" [(ngModel)]="expenseItem.isActive" name="isActive"
+                                   class="custom-control-input"
+                                   [disabled]="(!roleSua && isEditUrl) || (!roleThem && isNew)"
+                                   id="isActive">
+                            <label class="custom-control-label" for="isActive"
+                                   jhiTranslate="ebwebApp.expenseItem.isActive">Theo dõi</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #content let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.saBill.saveMessage">Dữ liệu đã bị thay đổi, Bạn có muốn lưu lại?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="saveContent()" jhiTranslate="entity.action.save">
+            Save
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="close()" jhiTranslate="entity.action.noSave">No save
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="closeContent()" jhiTranslate="entity.action.close">
+            close
+        </button>
+    </div>
+</ng-template>
+
+

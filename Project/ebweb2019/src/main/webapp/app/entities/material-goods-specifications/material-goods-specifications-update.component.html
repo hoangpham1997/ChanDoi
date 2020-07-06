@@ -1,0 +1,69 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
+            <h2 id="eb-material-goods-specifications-heading" jhiTranslate="ebwebApp.materialGoodsSpecifications.home.createOrEditLabel">Create or edit a Material Goods Specifications</h2>
+            <div>
+                <eb-alert-error></eb-alert-error>
+                <div class="form-group" [hidden]="!materialGoodsSpecifications.id">
+                    <label for="id" jhiTranslate="global.field.id">ID</label>
+                    <input type="text" class="form-control" id="id" name="id"
+                        [(ngModel)]="materialGoodsSpecifications.id" readonly />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.materialGoodsSpecifications.isFollow" for="field_isFollow">Is Follow</label>
+                    <input type="checkbox" class="form-control" name="isFollow" id="field_isFollow"
+                        [(ngModel)]="materialGoodsSpecifications.isFollow" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.materialGoodsSpecifications.materialGoodsSpecificationsCode" for="field_materialGoodsSpecificationsCode">Material Goods Specifications Code</label>
+                    <input type="text" class="form-control" name="materialGoodsSpecificationsCode" id="field_materialGoodsSpecificationsCode"
+                        [(ngModel)]="materialGoodsSpecifications.materialGoodsSpecificationsCode" maxlength="25"/>
+                    <div [hidden]="!(editForm.controls.materialGoodsSpecificationsCode?.dirty && editForm.controls.materialGoodsSpecificationsCode?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.materialGoodsSpecificationsCode?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 25 }">
+                        This field cannot be longer than 25 characters.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.materialGoodsSpecifications.materialGoodsSpecificationsName" for="field_materialGoodsSpecificationsName">Material Goods Specifications Name</label>
+                    <input type="text" class="form-control" name="materialGoodsSpecificationsName" id="field_materialGoodsSpecificationsName"
+                        [(ngModel)]="materialGoodsSpecifications.materialGoodsSpecificationsName" maxlength="512"/>
+                    <div [hidden]="!(editForm.controls.materialGoodsSpecificationsName?.dirty && editForm.controls.materialGoodsSpecificationsName?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.materialGoodsSpecificationsName?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 512 }">
+                        This field cannot be longer than 512 characters.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.materialGoodsSpecifications.description" for="field_description">Description</label>
+                    <input type="text" class="form-control" name="description" id="field_description"
+                        [(ngModel)]="materialGoodsSpecifications.description" maxlength="512"/>
+                    <div [hidden]="!(editForm.controls.description?.dirty && editForm.controls.description?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.description?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 512 }">
+                        This field cannot be longer than 512 characters.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.materialGoodsSpecifications.materialGoods" for="field_materialGoods">Material Goods</label>
+                    <select class="form-control" id="field_materialGoods" name="materialGoods" [(ngModel)]="materialGoodsSpecifications.materialGoods" >
+                        <option [ngValue]="null"></option>
+                        <option [ngValue]="materialGoodsOption.id === materialGoodsSpecifications.materialGoods?.id ? materialGoodsSpecifications.materialGoods : materialGoodsOption" *ngFor="let materialGoodsOption of materialgoods; trackBy: trackMaterialGoodsById">{{materialGoodsOption.id}}</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <button type="button" id="cancel-save" class="btn btn-secondary"  (click)="previousState()">
+                    <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+                </button>
+                <button type="submit" id="save-entity" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">
+                    <fa-icon [icon]="'save'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

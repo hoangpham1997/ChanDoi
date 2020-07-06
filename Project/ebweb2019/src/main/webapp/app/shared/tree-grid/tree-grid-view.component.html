@@ -1,0 +1,46 @@
+<div [ngClass]="checkClassScroll()">
+    <div style="margin-right: -0.5px !important; margin-left:  0px !important;" class="row">
+        <div class="label-head" *ngFor="let head of listTHead; let i = index" [style.width]="setWidth(head)">
+            <label *ngIf="head !== 'checked'" class="col-sm-12" jhiTranslate="{{head}}"></label>
+            <div class="custom-control custom-checkbox text-center" *ngIf="head === 'checked'" style="max-height: 26px !important;">
+                <input type="checkbox" class="custom-control-input" id="checked{{nameSearch}}" [(ngModel)]="isCheckAll" (change)="selectAll()">
+                <label class="custom-control-label" for="checked{{nameSearch}}"></label>
+            </div>
+        </div>
+    </div>
+    <div style="margin-right: -0.5px !important; margin-left:  0px !important;" class="row">
+        <div class="label-head" style="background: #ffffff !important;border-bottom: 0.1px solid #adc8e6!important;"
+             *ngFor="let keySearch of keySearchs; let i = index" [style.width]="setWidth(keySearch)">
+            <input *ngIf="keySearch !== 'isActive' && keySearch !== nameSearch"
+                   type="text" placeholder="{{'ebwebApp.accountDefault.searchHere' | translate}}"
+                   class="input-Cell" style="max-height: 26px !important;"
+                   [(ngModel)]="listSearch[keySearch]"
+                   name="{{keySearch}}" (ngModelChange)="changeListSearch()">
+            <div class="custom-control custom-checkbox text-center" *ngIf="keySearch === 'isActive' " style="max-height: 26px !important;">
+                <input type="checkbox" class="custom-control-input" id="customCheck1" [(ngModel)]="listSearch[keySearch]" name="{{keySearch}}" (ngModelChange)="changeListSearch()">
+                <label class="custom-control-label" for="customCheck1"></label>
+            </div>
+            <input *ngIf="keySearch === nameSearch"
+                   name="checked{{nameSearch}}"
+                   type="text"
+                   class="input-Cell" style="max-height: 26px !important;"
+                   [disabled]="true">
+        </div>
+    </div>
+</div>
+<div id="table-scroll0" class="table-scroll voucher-table" [style.height]="!isPopup ? (height?height +'px': '700px') : (height?height +'px': '130px')" style="max-height: 700px; overflow-x: hidden">
+    <eb-tree-grid-item #child [tree]="_tree" [navigateForm]="navigateForm" [account]="account" [listKey]="listKey"
+                       [generalWidth]="generalWidth" [nameWidth]="nameWidth" [isHome]="isHome" [isPopup]="isPopup" [checkWidth]="checkWidth" [nameSearch]="nameSearch"></eb-tree-grid-item>
+    <div *ngFor="let arr of newArr((!isPopup ? 21 : 7) - count)" style="margin-left: 0px !important; margin-right: -0.5px !important;" class="row" >
+        <div class="input-body" *ngFor="let key of listKey; let j = index" [style.width]="setWidth(key.key)">
+            <div class="text-left" style="width: 100%;">&nbsp;</div>
+        </div>
+    </div>
+</div>
+<div *ngIf="!isPopup" style="background: #7db5dd;margin-bottom: 0">
+    <div class="row">
+        <label style="padding-left: 15px"><span
+            jhiTranslate="ebwebApp.mBDeposit.countLine"></span>: {{count}}
+        </label>
+    </div>
+</div>

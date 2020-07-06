@@ -1,0 +1,76 @@
+<div>
+    <h2 id="page-heading">
+        <span jhiTranslate="ebwebApp.costSetMaterialGood.home.title">Cost Set Material Goods</span>
+        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-cost-set-material-good" [routerLink]="['/cost-set-material-good/new']">
+            <fa-icon [icon]="'plus'"></fa-icon>
+            <span  jhiTranslate="ebwebApp.costSetMaterialGood.home.createLabel">
+            Create new Cost Set Material Good
+            </span>
+        </button>
+    </h2>
+    <eb-alert></eb-alert>
+    <br/>
+    <div class="table-responsive" *ngIf="costSetMaterialGoods">
+        <table class="table table-striped">
+            <thead>
+            <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
+            <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="deScription"><span jhiTranslate="ebwebApp.costSetMaterialGood.deScription">De Scription</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="orderPriority"><span jhiTranslate="ebwebApp.costSetMaterialGood.orderPriority">Order Priority</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="costSet.id"><span jhiTranslate="ebwebApp.costSetMaterialGood.costSet">Cost Set</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="materialGoods.id"><span jhiTranslate="ebwebApp.costSetMaterialGood.materialGoods">Material Goods</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let costSetMaterialGood of costSetMaterialGoods ;trackBy: trackId">
+                <td><a [routerLink]="['/cost-set-material-good', costSetMaterialGood.id, 'view' ]">{{costSetMaterialGood.id}}</a></td>
+                <td>{{costSetMaterialGood.deScription}}</td>
+                <td>{{costSetMaterialGood.orderPriority}}</td>
+                <td>
+                    <div *ngIf="costSetMaterialGood.costSet">
+                        <a [routerLink]="['../cost-set', costSetMaterialGood.costSet?.id, 'view' ]" >{{costSetMaterialGood.costSet?.costSetCode}}</a>
+                    </div>
+                </td>
+                <td>
+                    <div *ngIf="costSetMaterialGood.materialGoods">
+                        <a [routerLink]="['../material-goods', costSetMaterialGood.materialGoods?.id, 'view' ]" >{{costSetMaterialGood.materialGoods?.materialGoodsCode}}</a>
+                    </div>
+                </td>
+                <td class="text-right">
+                    <div class="btn-group flex-btn-group-container">
+                        <button type="submit"
+                                [routerLink]="['/cost-set-material-good', costSetMaterialGood.id, 'view' ]"
+                                class="btn btn-info btn-sm">
+                            <fa-icon [icon]="'eye'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/cost-set-material-good', costSetMaterialGood.id, 'edit']"
+                                class="btn btn-primary btn-sm">
+                            <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/', { outlets: { popup: 'cost-set-material-good/'+ costSetMaterialGood.id + '/delete'} }]"
+                                replaceUrl="true"
+                                queryParamsHandling="merge"
+                                class="btn btn-danger btn-sm">
+                            <fa-icon [icon]="'times'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div *ngIf="costSetMaterialGoods && costSetMaterialGoods.length">
+        <div class="row justify-content-center">
+            <jhi-item-count [page]="page" [total]="queryCount" [maxSize]="5" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+        </div>
+        <div class="row justify-content-center">
+            <ngb-pagination [size]="'sm'" [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage" [maxSize]="5" [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage(page)"></ngb-pagination>
+        </div>
+    </div>
+</div>

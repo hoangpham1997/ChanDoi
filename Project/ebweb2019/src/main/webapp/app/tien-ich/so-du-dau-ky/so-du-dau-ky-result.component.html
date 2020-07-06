@@ -1,0 +1,382 @@
+<div class="row" (click)="$event.preventDefault()">
+    <div class="col-md-12">
+        <div class="menu-tool-bar he">
+            <div class="ptitle">
+                <span class="text-uppercase edit-color" jhiTranslate="ebwebApp.tienIch.soDuDauKy.title"></span>
+            </div>
+            <div class='gr-toolbar'>
+                <a href='javascript:void(0);' (click)="importFromExcel(uploadOPModel)" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE.SoDuDauKy_NhapTuExcel]">
+                    <i class="mdi mdi-file-export"></i>
+                    <span jhiTranslate="ebwebApp.tienIch.soDuDauKy.fileExcelImport"></span>
+                </a>
+
+                <a href="javascript:void(0);" (click)="exportExcel()" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE.SoDuDauKy_KetXuat]">
+                    <i class="mdi mdi-file-import"></i>
+                    <span jhiTranslate='ebwebApp.tienIch.soDuDauKy.fileExcelExport'></span>
+
+                </a>
+            </div>
+        </div>
+        <div class="frm-main frm-tables frm-padding" style="background: #cbdcf0;">
+            <div id="table-scroll0">
+                <div #scrollHeader id="main-table_header" style="overflow-x: hidden;
+                                overflow-y: hidden; padding-right: 5px; height: auto !important;" class="border-right-blue width-1-p">
+                    <table class="table-scroll main-table" >
+                    <thead>
+                    <tr>
+                        <th scope="col" jhiTranslate="ebwebApp.tienIch.soDuDauKy.accountNumber"></th>
+                        <th scope="col" jhiTranslate="ebwebApp.tienIch.soDuDauKy.accountName"></th>
+                        <th scope="col" jhiTranslate="ebwebApp.tienIch.soDuDauKy.debitBalance"></th>
+                        <th scope="col" jhiTranslate="ebwebApp.tienIch.soDuDauKy.creditBalance"></th>
+                    </tr>
+                    <tr>
+                        <td class="border-right-blue" style="background: #f7f7f7 !important;width: 1% !important; max-width: 150px;">
+                            <input type="text" style="background: inherit"
+                                   placeholder="{{'ebwebApp.accountDefault.searchHere' | translate}}"
+                                   class="input-Cell" [(ngModel)]="searchAccountNumber" (ngModelChange)="onChangeSearchAN()">
+                        </td>
+                        <td class="border-right-blue" style="background: #f7f7f7 !important;width: 1% !important;max-width: 150px;" >
+                            <input type="text" style="background: inherit"
+                                   placeholder="{{'ebwebApp.accountDefault.searchHere' | translate}}"
+                                   class="input-Cell"
+                                   [(ngModel)]="searchAccountName" (ngModelChange)="onChangeSearchAN()">
+                        </td>
+                        <td class="border-right-blue" style="background: #f7f7f7 !important;width: 1% !important;max-width: 150px;"></td>
+                        <td class="border-right-blue" style="background: #f7f7f7 !important;width: 1% !important;max-width: 150px;"></td>
+                    </tr>
+                    </thead>
+                    </table>
+                </div>
+                <table id="" class="table-scroll main-table virtualScroller-result" #tableResult>
+
+                    <tbody *ngIf="!isLoading" ebVirtualScroller
+                           #scroll [items]="accountList" [parentScroll]="tableResult" style="height: 400px">
+                    <tr *ngFor="let result of scroll.viewPortItems; trackBy: trackIdentity; let i = index"
+                        [class.selected]="result === openingBalance"
+                        (click)="onSelect(result)"
+                        (dblclick)="onSelect(result, true)"
+                        [class.isParentNode-result]="result.parentNode">
+                        <td [title]="result?.accountNumber || ''" class="jsgrid-cell jsgrid-align-center">
+                        <span>{{result?.accountNumber}}</span>
+                        </td>
+                        <td [title]="result?.accountName || ''" class="jsgrid-cell jsgrid-align-left">
+                        <span>{{result?.accountName}}</span>
+                        </td>
+                        <td [title]="result?.debitAmountOriginal |ebcurrency:7: account|| ''" class="jsgrid-cell jsgrid-align-right">
+                        <span>{{result?.debitAmountOriginal | ebcurrency:7: account}}</span>
+                        </td>
+                        <td [title]="result?.creditAmountOriginal |ebcurrency:7: account|| ''" class="jsgrid-cell jsgrid-align-right">
+                        <span>{{result?.creditAmountOriginal | ebcurrency:7: account}}</span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div (scroll)="tableResult.scrollLeft = scrollOne.scrollLeft; scrollHeader.scrollLeft = scrollOne.scrollLeft" #scrollOne id="main-table0" style="overflow-x: scroll;
+                                overflow-y: visible; padding-right: 5px; height: auto !important;" class="border-right-blue width-1-p">
+                    <tr class="disable">
+                        <td scope="col" class="cell-Table color-tfoot jsgrid-cell" >
+                            <span jhiTranslate='ebwebApp.tienIch.soDuDauKy.totalOpeningBalance' style="padding-left: 10px; border-right: none !important;"></span>
+                        </td>
+                        <td scope="col" class="cell-Table color-tfoot jsgrid-cell">
+                        </td>
+                        <td scope="col" class="cell-Table color-tfoot jsgrid-cell jsgrid-align-right border-white-1">
+                            {{totalDebitAmount|ebcurrency:7:account}}
+                        </td>
+                        <td scope="col" class="cell-Table color-tfoot jsgrid-cell jsgrid-align-right border-white-1">
+                            {{totalCreditAmount|ebcurrency:7:account}}
+                        </td>
+                    </tr>
+                </div>
+            </div>
+        </div>
+
+        <ngb-tabset class="tool-navbar" *ngIf="accountingType">
+            <ngb-tab>
+                <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.purchaseOrder.detail"></span></ng-template>
+                <ng-template ngbTabContent>
+                    <div class="tab-content">
+                        <div class="frm-main frm-padding tab-pane fade in active show" id="home-detail"
+                             style="background: #cbdcf0">
+                            <div id="table-scroll-detail" class="table-scroll" style="height: 410px">
+                                <table id="main-table-detail" class="main-table">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col" jhiTranslate="ebwebApp.tienIch.soDuDauKy.accountNumber"  *ngIf="!accountingType.includes(ACCOUNTING_TYPE.AO) && !accountingType.includes(ACCOUNTING_TYPE.MT)"></th>
+                                        <th scope="col" jhiTranslate="ebwebApp.tienIch.soDuDauKy.accountName"  *ngIf="!accountingType.includes(ACCOUNTING_TYPE.AO) && !accountingType.includes(ACCOUNTING_TYPE.MT)"></th>
+                                        <th scope="col" jhiTranslate="ebwebApp.tienIch.soDuDauKy.accountingObjectCode" *ngIf="accountingType.includes(ACCOUNTING_TYPE.AO)"></th>
+                                        <th scope="col" jhiTranslate="ebwebApp.tienIch.soDuDauKy.accountingObjectName" *ngIf="accountingType.includes(ACCOUNTING_TYPE.AO)"></th>
+                                        <th scope="col" jhiTranslate="ebwebApp.tienIch.soDuDauKy.exchangeRate" *ngIf="isForeignCurrency"></th>
+                                        <th scope="col" jhiTranslate="ebwebApp.tienIch.soDuDauKy.debitBalance" *ngIf="!accountingType.includes(ACCOUNTING_TYPE.MT) && !isForeignCurrency"></th>
+                                        <th scope="col" jhiTranslate="ebwebApp.tienIch.soDuDauKy.debitBalanceOriginal" *ngIf="!accountingType.includes(ACCOUNTING_TYPE.MT) && isForeignCurrency"></th>
+                                        <th scope="col" jhiTranslate="ebwebApp.tienIch.soDuDauKy.debitBalance" *ngIf="!accountingType.includes(ACCOUNTING_TYPE.MT) && isForeignCurrency"></th>
+                                        <th scope="col" jhiTranslate="ebwebApp.tienIch.soDuDauKy.creditBalance" *ngIf="!accountingType.includes(ACCOUNTING_TYPE.MT) && !isForeignCurrency"></th>
+                                        <th scope="col" jhiTranslate="ebwebApp.tienIch.soDuDauKy.creditBalanceOriginal" *ngIf="!accountingType.includes(ACCOUNTING_TYPE.MT) && isForeignCurrency"></th>
+                                        <th scope="col" jhiTranslate="ebwebApp.tienIch.soDuDauKy.creditBalance" *ngIf="!accountingType.includes(ACCOUNTING_TYPE.MT) && isForeignCurrency"></th>
+                                        <th scope="col" jhiTranslate="ebwebApp.tienIch.soDuDauKy.materialGoodCode" *ngIf="accountingType.includes(ACCOUNTING_TYPE.MT)"></th>
+                                        <th scope="col" jhiTranslate="ebwebApp.tienIch.soDuDauKy.materialGoodName" *ngIf="accountingType.includes(ACCOUNTING_TYPE.MT)"></th>
+                                        <th scope="col" jhiTranslate="ebwebApp.tienIch.soDuDauKy.unit" *ngIf="accountingType.includes(ACCOUNTING_TYPE.MT)"></th>
+                                        <th scope="col" jhiTranslate="ebwebApp.tienIch.soDuDauKy.quantity" *ngIf="accountingType.includes(ACCOUNTING_TYPE.MT)"></th>
+                                        <th scope="col" jhiTranslate="ebwebApp.tienIch.soDuDauKy.unitPrice" *ngIf="accountingType.includes(ACCOUNTING_TYPE.MT)"></th>
+                                        <th scope="col" jhiTranslate="ebwebApp.tienIch.soDuDauKy.amountOriginal" *ngIf="accountingType.includes(ACCOUNTING_TYPE.MT)"></th>
+                                        <th scope="col" jhiTranslate="ebwebApp.tienIch.soDuDauKy.lotNo" *ngIf="accountingType.includes(ACCOUNTING_TYPE.MT)"></th>
+                                        <th scope="col" jhiTranslate="ebwebApp.tienIch.soDuDauKy.expiredDate" *ngIf="accountingType.includes(ACCOUNTING_TYPE.MT)"></th>
+                                        <th scope="col" jhiTranslate="ebwebApp.tienIch.soDuDauKy.bankAccountDetails"></th>
+                                        <th scope="col" jhiTranslate="ebwebApp.tienIch.soDuDauKy.expenseItemName"></th>
+                                        <th scope="col" jhiTranslate="ebwebApp.tienIch.soDuDauKy.costSetName"></th>
+<!--                                        <th scope="col" jhiTranslate="ebwebApp.tienIch.soDuDauKy.EMContractName"></th>-->
+                                        <th scope="col" jhiTranslate="ebwebApp.tienIch.soDuDauKy.budgetItemName"></th>
+                                        <th scope="col" jhiTranslate="ebwebApp.tienIch.soDuDauKy.departmentName"></th>
+                                        <th scope="col" jhiTranslate="ebwebApp.tienIch.soDuDauKy.statisticsCode"></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr *ngFor="let detail of openingBalanceDetails; trackBy: trackIdentity; let i = index">
+                                        <td class="jsgrid-cell jsgrid-align-left accountNumber" title="{{detail?.accountNumber || ''}}" *ngIf="!accountingType.includes(ACCOUNTING_TYPE.AO) && !accountingType.includes(ACCOUNTING_TYPE.MT)">
+                                            {{detail?.accountNumber || ''}}
+                                        </td>
+                                        <td class="jsgrid-cell jsgrid-align-left accountName"  title="{{detail?.accountName || ''}}" *ngIf="!accountingType.includes(ACCOUNTING_TYPE.AO) && !accountingType.includes(ACCOUNTING_TYPE.MT)">
+                                            {{detail?.accountName || ''}}
+                                        </td>
+                                        <td class="jsgrid-cell jsgrid-align-left accountingObjectCode"  title="{{detail?.accountingObjectCode || ''}}" *ngIf="accountingType.includes(ACCOUNTING_TYPE.AO)">
+                                            {{detail?.accountingObjectCode || ''}}
+                                        </td>
+                                        <td class="jsgrid-cell jsgrid-align-left accountingObjectName"  title="{{detail?.accountingObjectName || ''}}" *ngIf="accountingType.includes(ACCOUNTING_TYPE.AO)">
+                                            {{detail?.accountingObjectName || ''}}
+                                        </td>
+                                        <td class="jsgrid-cell"  title="{{detail.exchangeRate | ebcurrency:4:account || ''}}" *ngIf="isForeignCurrency">
+                                            {{detail.exchangeRate |ebcurrency:4:account}}
+                                        </td>
+                                        <td class="jsgrid-cell jsgrid-align-right"  title="{{detail?.debitAmountOriginal | ebcurrency:isVNDFormat ? 7 : 8: account || ''}}" *ngIf="!accountingType.includes(ACCOUNTING_TYPE.MT)">
+                                            {{detail?.debitAmountOriginal |ebcurrency:isVNDFormat ? 7 : 8: account || ''}}
+                                        </td>
+                                        <td class="jsgrid-cell jsgrid-align-right" title="{{detail.debitAmount | ebcurrency:isVNDFormat ? 7 : 8: account || ''}}" *ngIf="!accountingType.includes(ACCOUNTING_TYPE.MT) && isForeignCurrency">
+                                            {{detail.debitAmount | ebcurrency:7: account || ''}}
+                                        </td>
+                                        <td class="jsgrid-cell jsgrid-align-right" title="{{detail.creditAmountOriginal | ebcurrency:isVNDFormat ? 7 : 8: account || ''}}" *ngIf="!accountingType.includes(ACCOUNTING_TYPE.MT)">
+                                            {{detail.creditAmountOriginal | ebcurrency:isVNDFormat ? 7 : 8: account || ''}}
+                                        </td>
+                                        <td class="jsgrid-cell jsgrid-align-right" title="{{detail.creditAmount | ebcurrency:isVNDFormat ? 7 : 8: account || ''}}" *ngIf="!accountingType.includes(ACCOUNTING_TYPE.MT) && isForeignCurrency">
+                                            {{detail.creditAmount | ebcurrency:7: account || ''}}
+                                        </td>
+                                        <td class="jsgrid-cell" title="{{detail?.materialGoodsCode || ''}}" *ngIf="accountingType.includes(ACCOUNTING_TYPE.MT)">
+                                            {{detail?.materialGoodsCode || ''}}
+                                        </td>
+                                        <td class="jsgrid-cell" title="{{detail?.materialGoodsName || ''}}" *ngIf="accountingType.includes(ACCOUNTING_TYPE.MT)">
+                                            {{detail?.materialGoodsName || ''}}
+                                        </td>
+                                        <td class="jsgrid-cell" title="{{detail?.unitName || ''}}" *ngIf="accountingType.includes(ACCOUNTING_TYPE.MT)">
+                                            {{detail?.unitName || ''}}
+                                        </td>
+                                        <td class="jsgrid-cell jsgrid-align-right" title="{{detail.quantity|ebcurrency:3: account || ''}}" *ngIf="accountingType.includes(ACCOUNTING_TYPE.MT)">
+                                            {{detail.quantity |ebcurrency:3: account || ''}}
+                                        </td>
+                                        <td class="jsgrid-cell jsgrid-align-right" title="{{detail?.unitPriceOriginal | ebcurrency:1: account || ''}}" *ngIf="accountingType.includes(ACCOUNTING_TYPE.MT)">
+                                            {{detail?.unitPriceOriginal | ebcurrency:1: account || ''}}
+                                        </td>
+                                        <td class="jsgrid-cell jsgrid-align-right" title="{{detail?.amount| ebcurrency:isVNDFormat ? 7 : 8: account || ''}}" *ngIf="accountingType.includes(ACCOUNTING_TYPE.MT)">
+                                            {{detail?.amount| ebcurrency:isVNDFormat ? 7 : 8: account || ''}}
+                                        </td>
+                                        <td class="jsgrid-cell" title="{{detail?.lotNo || ''}}" *ngIf="accountingType.includes(ACCOUNTING_TYPE.MT)">
+                                            {{detail?.lotNo || ''}}
+                                        </td>
+                                        <td class="jsgrid-cell" title="{{detail.expiryDateStr || ''}}" *ngIf="accountingType.includes(ACCOUNTING_TYPE.MT)">
+                                            {{detail.expiryDateStr || ''}}
+                                        </td>
+                                        <td class="jsgrid-cell jsgrid-align-left" title="{{detail?.bankAccount || ''}}">
+                                            {{detail?.bankAccount || ''}}
+                                        </td>
+                                        <td [title]="detail?.expenseItemCode || ''" class="jsgrid-cell jsgrid-align-left"> {{detail?.expenseItemCode}}</td>
+                                        <td [title]="detail?.costSetCode || ''" class="jsgrid-cell jsgrid-align-left"> {{detail?.costSetCode}}</td>
+<!--                                        <td [title]="detail?.noBookContract || ''" class="jsgrid-cell jsgrid-align-left"> {{detail?.noBookContract}}</td>-->
+                                        <td [title]="detail?.budgetItemCode || ''" class="jsgrid-cell jsgrid-align-left"> {{detail?.budgetItemCode}}</td>
+                                        <td [title]="detail?.organizationUnitCode || ''" class="jsgrid-cell jsgrid-align-left"> {{detail?.organizationUnitCode}}</td>
+                                        <td [title]="detail?.statisticsCode || ''" class="jsgrid-cell jsgrid-align-left"> {{detail?.statisticsCode}}</td>
+                                    </tr>
+                                    <tr *ngFor="let some of getEmptyRow(); trackBy: trackIdentity; let i = index" style="    height: 35px;">
+                                        <td class="jsgrid-cell jsgrid-align-left accountNumber" *ngIf="!accountingType.includes(ACCOUNTING_TYPE.AO) && !accountingType.includes(ACCOUNTING_TYPE.MT)">
+                                        </td>
+                                        <td class="jsgrid-cell jsgrid-align-left accountName" *ngIf="!accountingType.includes(ACCOUNTING_TYPE.AO) && !accountingType.includes(ACCOUNTING_TYPE.MT)">
+                                        </td>
+                                        <td class="jsgrid-cell jsgrid-align-left accountingObjectCode" *ngIf="accountingType.includes(ACCOUNTING_TYPE.AO)">
+                                        </td>
+                                        <td class="jsgrid-cell jsgrid-align-left accountingObjectName" *ngIf="accountingType.includes(ACCOUNTING_TYPE.AO)">
+                                        </td>
+                                        <td class="jsgrid-cell" *ngIf="isForeignCurrency">
+                                        </td>
+                                        <td class="jsgrid-cell jsgrid-align-right" *ngIf="!accountingType.includes(ACCOUNTING_TYPE.MT)">
+                                        </td>
+                                        <td class="jsgrid-cell jsgrid-align-right" *ngIf="!accountingType.includes(ACCOUNTING_TYPE.MT) && isForeignCurrency">
+                                        </td>
+                                        <td class="jsgrid-cell jsgrid-align-right" *ngIf="!accountingType.includes(ACCOUNTING_TYPE.MT)">
+                                        </td>
+                                        <td class="jsgrid-cell jsgrid-align-right" *ngIf="!accountingType.includes(ACCOUNTING_TYPE.MT) && isForeignCurrency">
+                                        </td>
+                                        <td class="jsgrid-cell" *ngIf="accountingType.includes(ACCOUNTING_TYPE.MT)">
+                                        </td>
+                                        <td class="jsgrid-cell" *ngIf="accountingType.includes(ACCOUNTING_TYPE.MT)">
+                                        </td>
+                                        <td class="jsgrid-cell" *ngIf="accountingType.includes(ACCOUNTING_TYPE.MT)">
+                                        </td>
+                                        <td class="jsgrid-cell jsgrid-align-right" *ngIf="accountingType.includes(ACCOUNTING_TYPE.MT)">
+                                        </td>
+                                        <td class="jsgrid-cell jsgrid-align-right" *ngIf="accountingType.includes(ACCOUNTING_TYPE.MT)">
+                                        </td>
+                                        <td class="jsgrid-cell jsgrid-align-right" *ngIf="accountingType.includes(ACCOUNTING_TYPE.MT)">
+                                        </td>
+                                        <td class="jsgrid-cell" *ngIf="accountingType.includes(ACCOUNTING_TYPE.MT)">
+                                        </td>
+                                        <td class="jsgrid-cell" *ngIf="accountingType.includes(ACCOUNTING_TYPE.MT)">
+                                        </td>
+                                        <td class="jsgrid-cell jsgrid-align-left">
+                                        </td>
+                                        <td class="jsgrid-cell jsgrid-align-left"> </td>
+                                        <td class="jsgrid-cell jsgrid-align-left"> </td>
+                                        <!--                                        <td [title]="detail?.noBookContract || ''" class="jsgrid-cell jsgrid-align-left"> {{detail?.noBookContract}}</td>-->
+                                        <td class="jsgrid-cell jsgrid-align-left"> </td>
+                                        <td class="jsgrid-cell jsgrid-align-left"> </td>
+                                        <td class="jsgrid-cell jsgrid-align-left"> </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </ngb-tab>
+        </ngb-tabset>
+    </div>
+</div>
+<ng-template #uploadOPModel let-d="dismiss">
+    <div id="ModalCustom">
+        <div class="modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" style="padding: 15px 10px 10px 10px;">
+                    <div class="d-flex flex-wrap col-md-11">
+                        <h3 class="modal-title-detail"><span
+                                class="text-uppercase" jhiTranslate="ebwebApp.tienIch.soDuDauKy.balanceTitle"></span></h3>
+                    </div>
+                    <a class="close-modal" data-dismiss="modal" (click)="d('Close')"
+                       aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </a>
+                </div>
+                <div>
+                    <div class="modal-body" style="background: #cbdcf0;">
+                        <div class="row">
+                            <div class="col-lg-7">
+                                <div class="form-group row">
+                                    <label class="col-lg-5" style="font-weight: inherit !important;" for="combobox-balance-type-select"
+                                           jhiTranslate="ebwebApp.tienIch.soDuDauKy.balanceType"></label>
+                                    <div class="col-sm-7 pd-l-0">
+                                        <combo-box id="combobox-balance-type-select"
+                                                   [dataList]="getDataBalanceType()"
+                                                   [listColumns]="['typeName']"
+                                                   displayMember="typeName"
+                                                   valueName="value"
+                                                   name="combo-box-balance-receipt-type"
+                                                   [valueIsNumber]="true"
+                                                   [headerColumns]="utilsService.getListHeaderValueNumber()"
+                                                   [(ngModel)]="balanceType">
+                                        </combo-box>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-5" *ngIf="balanceType">
+                                <span jhiTranslate="ebwebApp.saBill.fileTemplate" style="line-height: 2;">Tải về mẫu file: </span>
+                                <a style="color: #007bff;" ><span (click)="downloadTem()">Tải xuống</span></a>
+                            </div>
+                        </div>
+                        <div class="row" *ngIf="balanceType">
+                            <div class="col-md-10" style="line-height: 2;">
+                                <label><span  jhiTranslate="ebwebApp.saBill.uploadFile">Tải lên file dữ liệu</span></label>
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" id="customFile" (change)="changeFile($event)" style="z-index: 0">
+                                    <label class="custom-file-label" for="customFile" style="z-index: 0">{{file?.name}}</label>
+                                </div>
+                            </div>
+                            <div class="col-md-2 text-right">
+                                <label>&nbsp;</label>
+                                <div>
+                                    <button class="btn btn-success" (click)="upload(downFile, validModal)" jhiTranslate="entity.action.upload">Upload</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<ng-template #validModal let-d="dismiss">
+    <div class="modal-header" style="padding: 15px 10px 10px 10px;">
+        <div class="d-flex flex-wrap col-md-11">
+            <h3 class="modal-title-detail"><span
+                class="text-uppercase" jhiTranslate="ebwebApp.tienIch.soDuDauKy.acceptOverRideTitle"></span></h3>
+        </div>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.tienIch.soDuDauKy.acceptOverRideContent"></label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-primary" (click)="acceptedData(); d('Close')" jhiTranslate="entity.action.ok">ok</button>
+        <button type="button" class="btn btn-outline-dark" (click)="d('Close')" jhiTranslate="entity.action.cancel">cancel</button>
+    </div>
+</ng-template>
+<ng-template #downFile let-d="dismiss">
+    <div id="ModalCustom2">
+        <div class="modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" style="padding: 15px 10px 10px 10px;">
+                    <div class="d-flex flex-wrap col-md-11">
+                        <h3 class="modal-title-detail"><span
+                                class="text-uppercase" jhiTranslate="ebwebApp.saBill.upload.title">Upload hóa đơn</span></h3>
+                    </div>
+                    <a class="close-modal" data-dismiss="modal" (click)="d('Close')"
+                       aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </a>
+                </div>
+                <div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <span jhiTranslate="ebwebApp.saBill.error.fileError">Dữ liệu không chính xác, bạn có muốn tải về file lỗi?</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 text-right">
+                                <label></label>
+                                <div>
+                                    <button class="btn btn-default" (click)="d('Close')" jhiTranslate="entity.action.close">close</button>
+                                    <button class="btn btn-success" (click)="download(); d('Close')" jhiTranslate="entity.action.download">download</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<ng-template #chooseSheetModal let-d="dismiss">
+    <div class="modal-header" style="padding: 15px 10px 10px 10px;">
+        <div class="d-flex flex-wrap col-md-11">
+            <h3 class="modal-title-detail"><span
+                class="text-uppercase" jhiTranslate="ebwebApp.tienIch.soDuDauKy.chooseSheetName"></span></h3>
+        </div>
+    </div>
+    <div class="modal-body">
+        <ul class="list-group list-group-flush ct-hover-selected">
+            <li class="list-group-item" *ngFor="let name of sheetNames" (click)="chooseSheet(name, downFile, validModal)">
+                {{name}}
+            </li>
+        </ul>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="d('Close')" jhiTranslate="entity.action.cancel">cancel</button>
+    </div>
+</ng-template>

@@ -1,0 +1,627 @@
+alter PROCEDURE [dbo].[Proc_Tong_Hop_Cong_No_Phai_Thu] @FromDate DATETIME,
+                                                        @ToDate DATETIME,
+                                                        @CompanyID UNIQUEIDENTIFIER,
+                                                        @AccountNumber NVARCHAR(25),
+                                                        @AccountObjectID AS NVARCHAR(MAX),
+                                                        @CurrencyID NVARCHAR(3),
+                                                        @IsShowInPeriodOnly BIT,
+                                                        @CurrentBook nvarchar(3),
+                                                        @isDependent BIT = 0
+AS
+BEGIN
+
+    /*Add by cuongpv de sua cach lam tron*/
+-- 		DECLARE @tbDataGL TABLE(
+-- 			ID uniqueidentifier,
+-- 			BranchID uniqueidentifier,
+-- 			ReferenceID uniqueidentifier,
+-- 			TypeID int,
+-- 			Date datetime,
+-- 			PostedDate datetime,
+-- 			No nvarchar(25),
+-- 			InvoiceDate datetime,
+-- 			InvoiceNo nvarchar(25),
+-- 			Account nvarchar(25),
+-- 			AccountCorresponding nvarchar(25),
+-- 			BankAccountDetailID uniqueidentifier,
+-- 			CurrencyID nvarchar(3),
+-- 			ExchangeRate decimal(25, 10),
+-- 			DebitAmount decimal(25,0),
+-- 			DebitAmountOriginal decimal(25,2),
+-- 			CreditAmount decimal(25,0),
+-- 			CreditAmountOriginal decimal(25,2),
+-- 			Reason nvarchar(512),
+-- 			Description nvarchar(512),
+-- 			VATDescription nvarchar(512),
+-- 			AccountingObjectID uniqueidentifier,
+-- 			EmployeeID uniqueidentifier,
+-- 			BudgetItemID uniqueidentifier,
+-- 			CostSetID uniqueidentifier,
+-- 			ContractID uniqueidentifier,
+-- 			StatisticsCodeID uniqueidentifier,
+-- 			InvoiceSeries nvarchar(25),
+-- 			ContactName nvarchar(512),
+-- 			DetailID uniqueidentifier,
+-- 			RefNo nvarchar(25),
+-- 			RefDate datetime,
+-- 			DepartmentID uniqueidentifier,
+-- 			ExpenseItemID uniqueidentifier,
+-- 			OrderPriority int,
+-- 			IsIrrationalCost bit
+-- 		)
+--
+-- 		INSERT INTO @tbDataGL
+-- 		SELECT GL.* FROM dbo.GeneralLedger GL WHERE GL.PostedDate <= @ToDate
+    /*end add by cuongpv*/
+
+    DECLARE @tblListAccountObjectID TABLE
+                                    (
+                                        AccountObjectID            UNIQUEIDENTIFIER,
+                                        AccountObjectGroupListCode NVARCHAR(MAX),
+                                        AccountObjectCategoryName  NVARCHAR(MAX)
+                                    )
+
+    INSERT INTO @tblListAccountObjectID
+    SELECT AO.ID,
+           AO.AccountObjectGroupID,
+           null
+    FROM AccountingObject AS AO
+             LEFT JOIN dbo.Func_ConvertStringIntoTable_Nvarchar(@AccountObjectID,
+                                                                ',') AS TLAO ON AO.ID = TLAO.Value
+
+    WHERE (@AccountObjectID IS NULL
+        OR TLAO.Value IS NOT NULL
+              )
+
+    DECLARE @tblAccountNumber TABLE
+                              (
+                                  AccountNumber        NVARCHAR(255) PRIMARY KEY,
+                                  AccountName          NVARCHAR(255),
+                                  AccountNumberPercent NVARCHAR(255),
+                                  AccountCategoryKind  INT
+                              )
+    IF @AccountNumber IS NOT NULL
+        BEGIN
+            INSERT INTO @tblAccountNumber
+            select b.AccountNumber,
+                   b.AccountName,
+                   b.AccountNumberPercent,
+                   b.AccountCategoryKind
+            from (SELECT ROW_NUMBER() OVER (PARTITION BY A.AccountNumber order by A.AccountNumber asc) rn,
+                         A.AccountNumber                                                               AccountNumber,
+                         A.AccountName                                                                 AccountName,
+                         A.AccountNumber + '%' as                                                      AccountNumberPercent,
+                         A.AccountGroupKind                                                            AccountCategoryKind
+                  FROM dbo.AccountList AS A
+                  WHERE AccountNumber = @AccountNumber
+                    and CompanyID in (select id from Func_getCompany(@CompanyID, @isDependent))) b
+            where b.rn = 1
+            ORDER BY b.AccountNumber,
+                     b.AccountName
+
+        END
+    ELSE
+        BEGIN
+            INSERT INTO @tblAccountNumber
+            select b.AccountNumber,
+                   b.AccountName,
+                   b.AccountNumberPercent,
+                   b.AccountCategoryKind
+            from (SELECT ROW_NUMBER() OVER (PARTITION BY A.AccountNumber order by A.AccountNumber asc) rn,
+                         A.AccountNumber                                                               AccountNumber,
+                         A.AccountName                                                                 AccountName,
+                         A.AccountNumber + '%' as                                                      AccountNumberPercent,
+                         A.AccountGroupKind                                                            AccountCategoryKind
+                  FROM dbo.AccountList AS A
+                  WHERE DetailType = '1'
+                    AND Grade = 1
+                    AND IsParentNode = 0
+                    and CompanyID in (select id from Func_getCompany(@CompanyID, @isDependent))) b
+            where b.rn = 0
+            ORDER BY b.AccountNumber,
+                     b.AccountName
+        END
+
+    DECLARE @FirstDateOfYear AS DATETIME
+    SET @FirstDateOfYear = '1/1/' + CAST(Year(@FromDate) AS NVARCHAR(4))
+    IF (@CurrencyID = 'VND')
+        BEGIN
+            SELECT ROW_NUMBER() OVER ( ORDER BY AccountingObjectCode ) AS RowNum,
+                   AccountingObjectID,
+                   AccountingObjectCode,
+                   AccountingObjectName,
+                   AccountObjectAddress,
+                   AccountObjectTaxCode,
+                   AccountNumber,
+                   AccountCategoryKind,
+                   (CASE
+                        WHEN AccountCategoryKind = 0
+                            THEN SUM(OpenningDebitAmountOC)
+                            - SUM(OpenningCreditAmountOC)
+                        WHEN AccountCategoryKind = 1 THEN $0
+                        ELSE CASE
+                                 WHEN (SUM(OpenningDebitAmountOC
+                                     - OpenningCreditAmountOC)) > 0
+                                     THEN (SUM(OpenningDebitAmountOC
+                                     - OpenningCreditAmountOC))
+                                 ELSE $0
+                            END
+                       END)                                            AS OpenningDebitAmountOC,
+                   (CASE
+                        WHEN AccountCategoryKind = 0
+                            THEN (SUM(OpenningDebitAmount - OpenningCreditAmount))
+                        WHEN AccountCategoryKind = 1 THEN $0
+                        ELSE CASE
+                                 WHEN (SUM(OpenningDebitAmount
+                                     - OpenningCreditAmount)) > 0
+                                     THEN SUM(OpenningDebitAmount
+                                     - OpenningCreditAmount)
+                                 ELSE $0
+                            END
+                       END)                                            AS OpenningDebitAmount,
+                   (CASE
+                        WHEN AccountCategoryKind = 1
+                            THEN (SUM(OpenningCreditAmountOC
+                            - OpenningDebitAmountOC))
+                        WHEN AccountCategoryKind = 0 THEN $0
+                        ELSE CASE
+                                 WHEN (SUM(OpenningCreditAmountOC
+                                     - OpenningDebitAmountOC)) > 0
+                                     THEN (SUM(OpenningCreditAmountOC
+                                     - OpenningDebitAmountOC))
+                                 ELSE $0
+                            END
+                       END)                                            AS OpenningCreditAmountOC,
+                   (CASE
+                        WHEN AccountCategoryKind = 1
+                            THEN (SUM(OpenningCreditAmount - OpenningDebitAmount))
+                        WHEN AccountCategoryKind = 0 THEN $0
+                        ELSE CASE
+                                 WHEN (SUM(OpenningCreditAmount
+                                     - OpenningDebitAmount)) > 0
+                                     THEN (SUM(OpenningCreditAmount
+                                     - OpenningDebitAmount))
+                                 ELSE $0
+                            END
+                       END)                                            AS OpenningCreditAmount,
+                   SUM(DebitAmountOC)                                  AS DebitAmountOC,
+                   SUM(DebitAmount)                                    AS DebitAmount,
+                   SUM(CreditAmountOC)                                 AS CreditAmountOC,
+                   SUM(CreditAmount)                                   AS CreditAmount,
+                   SUM(AccumDebitAmountOC)                             AS AccumDebitAmountOC,
+                   SUM(AccumDebitAmount)                               AS AccumDebitAmount,
+                   SUM(AccumCreditAmountOC)                            AS AccumCreditAmountOC,
+                   SUM(AccumCreditAmount)                              AS AccumCreditAmount,
+
+                /* Số dư cuối kỳ = Dư Có đầu kỳ - Dư Nợ đầu kỳ + Phát sinh Có – Phát sinh Nợ
+                Nếu Số dư cuối kỳ >0 thì hiển bên cột Dư Có cuối kỳ
+                Nếu số dư cuối kỳ <0 thì hiển thị bên cột Dư Nợ cuối kỳ */
+                   (CASE
+                        WHEN AccountCategoryKind = 0
+                            THEN SUM(OpenningDebitAmountOC - OpenningCreditAmountOC
+                                         + DebitAmountOC - CreditAmountOC)
+                        WHEN AccountCategoryKind = 1 THEN $0
+                        ELSE CASE
+                                 WHEN SUM(OpenningDebitAmountOC
+                                              - OpenningCreditAmountOC
+                                              + DebitAmountOC - CreditAmountOC) > 0
+                                     THEN SUM(OpenningDebitAmountOC
+                                                  - OpenningCreditAmountOC
+                                                  + DebitAmountOC - CreditAmountOC)
+                                 ELSE $0
+                            END
+                       END)                                            AS CloseDebitAmountOC,
+                   (CASE
+                        WHEN AccountCategoryKind = 1
+                            THEN SUM(OpenningCreditAmountOC - OpenningDebitAmountOC
+                                         - DebitAmountOC + CreditAmountOC)
+                        WHEN AccountCategoryKind = 0 THEN $0
+                        ELSE CASE
+                                 WHEN (SUM(OpenningCreditAmountOC
+                                               - OpenningDebitAmountOC
+                                               - DebitAmountOC + CreditAmountOC)) > 0
+                                     THEN SUM(OpenningCreditAmountOC
+                                                  - OpenningDebitAmountOC
+                                                  - DebitAmountOC + CreditAmountOC)
+                                 ELSE $0
+                            END
+                       END)                                            AS CloseCreditAmountOC,
+                   (CASE
+                        WHEN AccountCategoryKind = 0
+                            THEN SUM(OpenningDebitAmount - OpenningCreditAmount
+                                         + DebitAmount - CreditAmount)
+                        WHEN AccountCategoryKind = 1 THEN $0
+                        ELSE CASE
+                                 WHEN SUM(OpenningDebitAmount
+                                              - OpenningCreditAmount
+                                              - CreditAmount + DebitAmount) > 0
+                                     THEN SUM(OpenningDebitAmount
+                                                  - OpenningCreditAmount
+                                                  - CreditAmount + DebitAmount)
+                                 ELSE $0
+                            END
+                       END)                                            AS CloseDebitAmount,
+                   (CASE
+                        WHEN AccountCategoryKind = 1
+                            THEN SUM(OpenningCreditAmount - OpenningDebitAmount
+                                         + CreditAmount - DebitAmount)
+                        WHEN AccountCategoryKind = 0 THEN $0
+                        ELSE CASE
+                                 WHEN (SUM(OpenningCreditAmount
+                                               - OpenningDebitAmount
+                                               + CreditAmount - DebitAmount)) > 0
+                                     THEN SUM(OpenningCreditAmount
+                                                  - OpenningDebitAmount + CreditAmount
+                                     - DebitAmount)
+                                 ELSE $0
+                            END
+                       END)                                            AS CloseCreditAmount,
+                   AccountObjectGroupListCode,
+                   AccountObjectCategoryName
+            FROM (SELECT AO.ID                      as AccountingObjectID,
+                         AO.AccountingObjectCode,
+                         AO.AccountingObjectName,
+                         AO.AccountingObjectAddress AS AccountObjectAddress,
+                         AO.TaxCode                 AS AccountObjectTaxCode,
+                         TBAN.AccountNumber,
+                         TBAN.AccountCategoryKind,
+                         CASE
+                             WHEN GL.PostedDate < @FromDate
+                                 THEN GL.DebitAmountOriginal
+                             ELSE $0
+                             END                    AS OpenningDebitAmountOC,
+                         CASE
+                             WHEN GL.PostedDate < @FromDate
+                                 THEN GL.DebitAmount
+                             ELSE $0
+                             END                    AS OpenningDebitAmount,
+                         CASE
+                             WHEN GL.PostedDate < @FromDate
+                                 THEN GL.CreditAmountOriginal
+                             ELSE $0
+                             END                    AS OpenningCreditAmountOC,
+                         CASE
+                             WHEN GL.PostedDate < @FromDate
+                                 THEN GL.CreditAmount
+                             ELSE $0
+                             END                    AS OpenningCreditAmount,
+                         CASE
+                             WHEN GL.PostedDate BETWEEN @FromDate AND @ToDate
+                                 THEN GL.DebitAmountOriginal
+                             ELSE 0
+                             END                    AS DebitAmountOC,
+                         CASE
+                             WHEN GL.PostedDate BETWEEN @FromDate AND @ToDate
+                                 THEN GL.DebitAmount
+                             ELSE 0
+                             END                    AS DebitAmount,
+                         CASE
+                             WHEN GL.PostedDate BETWEEN @FromDate AND @ToDate
+                                 THEN GL.CreditAmountOriginal
+                             ELSE 0
+                             END                    AS CreditAmountOC,
+                         CASE
+                             WHEN GL.PostedDate BETWEEN @FromDate AND @ToDate
+                                 THEN GL.CreditAmount
+                             ELSE 0
+                             END                    AS CreditAmount,
+                         CASE
+                             WHEN GL.PostedDate BETWEEN @FirstDateOfYear AND @ToDate
+                                 THEN GL.DebitAmountOriginal
+                             ELSE 0
+                             END                    AS AccumDebitAmountOC,
+                         CASE
+                             WHEN GL.PostedDate BETWEEN @FirstDateOfYear AND @ToDate
+                                 THEN GL.DebitAmount
+                             ELSE 0
+                             END                    AS AccumDebitAmount,
+                         CASE
+                             WHEN GL.PostedDate BETWEEN @FirstDateOfYear AND @ToDate
+                                 THEN GL.CreditAmountOriginal
+                             ELSE 0
+                             END                    AS AccumCreditAmountOC,
+                         CASE
+                             WHEN GL.PostedDate BETWEEN @FirstDateOfYear AND @ToDate
+                                 THEN GL.CreditAmount
+                             ELSE 0
+                             END                    AS AccumCreditAmount,
+                         LAOI.AccountObjectGroupListCode,
+                         LAOI.AccountObjectCategoryName
+                  FROM GeneralLedger AS GL /*edit by cuongpv dbo.GeneralLedger -> @tbDataGL*/
+                           INNER JOIN dbo.AccountingObject AO ON AO.ID = GL.AccountingObjectID
+                           INNER JOIN @tblAccountNumber TBAN ON GL.Account LIKE TBAN.AccountNumberPercent
+                           INNER JOIN dbo.AccountList AS AN ON GL.Account = AN.AccountNumber
+                           INNER JOIN @tblListAccountObjectID AS LAOI
+                                      ON GL.AccountingObjectID = LAOI.AccountObjectID
+                  WHERE GL.PostedDate <= @ToDate
+                    and GL.CompanyID in (select id from Func_getCompany(@CompanyID, @isDependent))
+                    and GL.TypeLedger in (@CurrentBook, 2)
+
+                    AND AN.DetailType = '1'
+                  group by AO.ID,
+                           AO.AccountingObjectCode,
+                           AO.AccountingObjectName,
+                           AO.AccountingObjectAddress,
+                           AO.TaxCode,
+                           TBAN.AccountNumber,
+                           TBAN.AccountCategoryKind, Gl.PostedDate, Gl.Date, Gl.CreditAmountOriginal,
+                           Gl.CreditAmount, Gl.DebitAmount, Gl.DebitAmountOriginal, Gl.Description,
+                           Gl.AccountCorresponding, LAOI.AccountObjectGroupListCode,
+                           LAOI.AccountObjectCategoryName
+                 ) AS RSNS
+            GROUP BY RSNS.AccountingObjectID,
+                     RSNS.AccountingObjectCode,
+                     RSNS.AccountingObjectName,
+                     RSNS.AccountObjectAddress,
+                     RSNS.AccountObjectTaxCode,
+                     RSNS.AccountNumber,
+                     RSNS.AccountCategoryKind,
+                     RSNS.AccountObjectGroupListCode,
+                     RSNS.AccountObjectCategoryName
+            HAVING SUM(DebitAmountOC) <> 0
+                OR SUM(DebitAmount) <> 0
+                OR SUM(CreditAmountOC) <> 0
+                OR SUM(CreditAmount) <> 0
+                OR SUM(OpenningDebitAmountOC - OpenningCreditAmountOC) <> 0
+                OR SUM(OpenningDebitAmount - OpenningCreditAmount) <> 0
+                OR (@IsShowInPeriodOnly = 0 AND (
+                    SUM(AccumDebitAmountOC) <> 0
+                    OR SUM(AccumDebitAmount) <> 0
+                    OR SUM(AccumCreditAmountOC) <> 0
+                    OR SUM(AccumCreditAmount) <> 0))
+            ORDER BY RSNS.AccountingObjectCode
+            OPTION (RECOMPILE)
+        END
+    ELSE
+        BEGIN
+            SELECT ROW_NUMBER() OVER ( ORDER BY AccountingObjectCode ) AS RowNum,
+                   AccountingObjectID,
+                   AccountingObjectCode,
+                   AccountingObjectName,
+                   AccountObjectAddress,
+                   AccountObjectTaxCode,
+                   AccountNumber,
+                   AccountCategoryKind,
+                   (CASE
+                        WHEN AccountCategoryKind = 0
+                            THEN SUM(OpenningDebitAmountOC)
+                            - SUM(OpenningCreditAmountOC)
+                        WHEN AccountCategoryKind = 1 THEN $0
+                        ELSE CASE
+                                 WHEN (SUM(OpenningDebitAmountOC
+                                     - OpenningCreditAmountOC)) > 0
+                                     THEN (SUM(OpenningDebitAmountOC
+                                     - OpenningCreditAmountOC))
+                                 ELSE $0
+                            END
+                       END)                                            AS OpenningDebitAmountOC,
+                   (CASE
+                        WHEN AccountCategoryKind = 0
+                            THEN (SUM(OpenningDebitAmount - OpenningCreditAmount))
+                        WHEN AccountCategoryKind = 1 THEN $0
+                        ELSE CASE
+                                 WHEN (SUM(OpenningDebitAmount
+                                     - OpenningCreditAmount)) > 0
+                                     THEN SUM(OpenningDebitAmount
+                                     - OpenningCreditAmount)
+                                 ELSE $0
+                            END
+                       END)                                            AS OpenningDebitAmount,
+                   (CASE
+                        WHEN AccountCategoryKind = 1
+                            THEN (SUM(OpenningCreditAmountOC
+                            - OpenningDebitAmountOC))
+                        WHEN AccountCategoryKind = 0 THEN $0
+                        ELSE CASE
+                                 WHEN (SUM(OpenningCreditAmountOC
+                                     - OpenningDebitAmountOC)) > 0
+                                     THEN (SUM(OpenningCreditAmountOC
+                                     - OpenningDebitAmountOC))
+                                 ELSE $0
+                            END
+                       END)                                            AS OpenningCreditAmountOC,
+                   (CASE
+                        WHEN AccountCategoryKind = 1
+                            THEN (SUM(OpenningCreditAmount - OpenningDebitAmount))
+                        WHEN AccountCategoryKind = 0 THEN $0
+                        ELSE CASE
+                                 WHEN (SUM(OpenningCreditAmount
+                                     - OpenningDebitAmount)) > 0
+                                     THEN (SUM(OpenningCreditAmount
+                                     - OpenningDebitAmount))
+                                 ELSE $0
+                            END
+                       END)                                            AS OpenningCreditAmount,
+                   SUM(DebitAmountOC)                                  AS DebitAmountOC,
+                   SUM(DebitAmount)                                    AS DebitAmount,
+                   SUM(CreditAmountOC)                                 AS CreditAmountOC,
+                   SUM(CreditAmount)                                   AS CreditAmount,
+                   SUM(AccumDebitAmountOC)                             AS AccumDebitAmountOC,
+                   SUM(AccumDebitAmount)                               AS AccumDebitAmount,
+                   SUM(AccumCreditAmountOC)                            AS AccumCreditAmountOC,
+                   SUM(AccumCreditAmount)                              AS AccumCreditAmount,
+
+                /* Số dư cuối kỳ = Dư Có đầu kỳ - Dư Nợ đầu kỳ + Phát sinh Có – Phát sinh Nợ
+                Nếu Số dư cuối kỳ >0 thì hiển bên cột Dư Có cuối kỳ
+                Nếu số dư cuối kỳ <0 thì hiển thị bên cột Dư Nợ cuối kỳ */
+                   (CASE
+                        WHEN AccountCategoryKind = 0
+                            THEN SUM(OpenningDebitAmountOC - OpenningCreditAmountOC
+                                         + DebitAmountOC - CreditAmountOC)
+                        WHEN AccountCategoryKind = 1 THEN $0
+                        ELSE CASE
+                                 WHEN SUM(OpenningDebitAmountOC
+                                              - OpenningCreditAmountOC
+                                              + DebitAmountOC - CreditAmountOC) > 0
+                                     THEN SUM(OpenningDebitAmountOC
+                                                  - OpenningCreditAmountOC
+                                                  + DebitAmountOC - CreditAmountOC)
+                                 ELSE $0
+                            END
+                       END)                                            AS CloseDebitAmountOC,
+                   (CASE
+                        WHEN AccountCategoryKind = 1
+                            THEN SUM(OpenningCreditAmountOC - OpenningDebitAmountOC
+                                         - DebitAmountOC + CreditAmountOC)
+                        WHEN AccountCategoryKind = 0 THEN $0
+                        ELSE CASE
+                                 WHEN (SUM(OpenningCreditAmountOC
+                                               - OpenningDebitAmountOC
+                                               - DebitAmountOC + CreditAmountOC)) > 0
+                                     THEN SUM(OpenningCreditAmountOC
+                                                  - OpenningDebitAmountOC
+                                                  - DebitAmountOC + CreditAmountOC)
+                                 ELSE $0
+                            END
+                       END)                                            AS CloseCreditAmountOC,
+                   (CASE
+                        WHEN AccountCategoryKind = 0
+                            THEN SUM(OpenningDebitAmount - OpenningCreditAmount
+                                         + DebitAmount - CreditAmount)
+                        WHEN AccountCategoryKind = 1 THEN $0
+                        ELSE CASE
+                                 WHEN SUM(OpenningDebitAmount
+                                              - OpenningCreditAmount
+                                              - CreditAmount + DebitAmount) > 0
+                                     THEN SUM(OpenningDebitAmount
+                                                  - OpenningCreditAmount
+                                                  - CreditAmount + DebitAmount)
+                                 ELSE $0
+                            END
+                       END)                                            AS CloseDebitAmount,
+                   (CASE
+                        WHEN AccountCategoryKind = 1
+                            THEN SUM(OpenningCreditAmount - OpenningDebitAmount
+                                         + CreditAmount - DebitAmount)
+                        WHEN AccountCategoryKind = 0 THEN $0
+                        ELSE CASE
+                                 WHEN (SUM(OpenningCreditAmount
+                                               - OpenningDebitAmount
+                                               + CreditAmount - DebitAmount)) > 0
+                                     THEN SUM(OpenningCreditAmount
+                                                  - OpenningDebitAmount + CreditAmount
+                                     - DebitAmount)
+                                 ELSE $0
+                            END
+                       END)                                            AS CloseCreditAmount,
+                   AccountObjectGroupListCode,
+                   AccountObjectCategoryName
+            FROM (SELECT AO.ID                      as AccountingObjectID,
+                         AO.AccountingObjectCode,
+                         AO.AccountingObjectName,
+                         AO.AccountingObjectAddress AS AccountObjectAddress,
+                         AO.TaxCode                 AS AccountObjectTaxCode,
+                         TBAN.AccountNumber,
+                         TBAN.AccountCategoryKind,
+                         CASE
+                             WHEN GL.PostedDate < @FromDate
+                                 THEN GL.DebitAmountOriginal
+                             ELSE $0
+                             END                    AS OpenningDebitAmountOC,
+                         CASE
+                             WHEN GL.PostedDate < @FromDate
+                                 THEN GL.DebitAmount
+                             ELSE $0
+                             END                    AS OpenningDebitAmount,
+                         CASE
+                             WHEN GL.PostedDate < @FromDate
+                                 THEN GL.CreditAmountOriginal
+                             ELSE $0
+                             END                    AS OpenningCreditAmountOC,
+                         CASE
+                             WHEN GL.PostedDate < @FromDate
+                                 THEN GL.CreditAmount
+                             ELSE $0
+                             END                    AS OpenningCreditAmount,
+                         CASE
+                             WHEN GL.PostedDate BETWEEN @FromDate AND @ToDate
+                                 THEN GL.DebitAmountOriginal
+                             ELSE 0
+                             END                    AS DebitAmountOC,
+                         CASE
+                             WHEN GL.PostedDate BETWEEN @FromDate AND @ToDate
+                                 THEN GL.DebitAmount
+                             ELSE 0
+                             END                    AS DebitAmount,
+                         CASE
+                             WHEN GL.PostedDate BETWEEN @FromDate AND @ToDate
+                                 THEN GL.CreditAmountOriginal
+                             ELSE 0
+                             END                    AS CreditAmountOC,
+                         CASE
+                             WHEN GL.PostedDate BETWEEN @FromDate AND @ToDate
+                                 THEN GL.CreditAmount
+                             ELSE 0
+                             END                    AS CreditAmount,
+                         CASE
+                             WHEN GL.PostedDate BETWEEN @FirstDateOfYear AND @ToDate
+                                 THEN GL.DebitAmountOriginal
+                             ELSE 0
+                             END                    AS AccumDebitAmountOC,
+                         CASE
+                             WHEN GL.PostedDate BETWEEN @FirstDateOfYear AND @ToDate
+                                 THEN GL.DebitAmount
+                             ELSE 0
+                             END                    AS AccumDebitAmount,
+                         CASE
+                             WHEN GL.PostedDate BETWEEN @FirstDateOfYear AND @ToDate
+                                 THEN GL.CreditAmountOriginal
+                             ELSE 0
+                             END                    AS AccumCreditAmountOC,
+                         CASE
+                             WHEN GL.PostedDate BETWEEN @FirstDateOfYear AND @ToDate
+                                 THEN GL.CreditAmount
+                             ELSE 0
+                             END                    AS AccumCreditAmount,
+                         LAOI.AccountObjectGroupListCode,
+                         LAOI.AccountObjectCategoryName
+                  FROM GeneralLedger AS GL /*edit by cuongpv dbo.GeneralLedger -> @tbDataGL*/
+                           INNER JOIN dbo.AccountingObject AO ON AO.ID = GL.AccountingObjectID
+                           INNER JOIN @tblAccountNumber TBAN ON GL.Account LIKE TBAN.AccountNumberPercent
+                           INNER JOIN dbo.AccountList AS AN ON GL.Account = AN.AccountNumber
+                           INNER JOIN @tblListAccountObjectID AS LAOI
+                                      ON GL.AccountingObjectID = LAOI.AccountObjectID
+                  WHERE GL.PostedDate <= @ToDate
+                    AND (@CurrencyID IS NULL
+                      OR GL.CurrencyID = @CurrencyID
+                      )
+                    AND AN.DetailType = '1'
+                    and GL.CompanyID in (select id from Func_getCompany(@CompanyID, @isDependent))
+                    and GL.TypeLedger in (@CurrentBook, 2)
+                  group by AO.ID,
+                           AO.AccountingObjectCode,
+                           AO.AccountingObjectName,
+                           AO.AccountingObjectAddress,
+                           AO.TaxCode,
+                           TBAN.AccountNumber,
+                           TBAN.AccountCategoryKind, Gl.PostedDate, Gl.Date, Gl.CreditAmountOriginal,
+                           Gl.CreditAmount, Gl.DebitAmount, Gl.DebitAmountOriginal, Gl.Description,
+                           Gl.AccountCorresponding, LAOI.AccountObjectGroupListCode,
+                           LAOI.AccountObjectCategoryName
+                 ) AS RSNS
+            GROUP BY RSNS.AccountingObjectID,
+                     RSNS.AccountingObjectCode,
+                     RSNS.AccountingObjectName,
+                     RSNS.AccountObjectAddress,
+                     RSNS.AccountObjectTaxCode,
+                     RSNS.AccountNumber,
+                     RSNS.AccountCategoryKind,
+                     RSNS.AccountObjectGroupListCode,
+                     RSNS.AccountObjectCategoryName
+            HAVING SUM(DebitAmountOC) <> 0
+                OR SUM(DebitAmount) <> 0
+                OR SUM(CreditAmountOC) <> 0
+                OR SUM(CreditAmount) <> 0
+                OR SUM(OpenningDebitAmountOC - OpenningCreditAmountOC) <> 0
+                OR SUM(OpenningDebitAmount - OpenningCreditAmount) <> 0
+                OR (@IsShowInPeriodOnly = 0 AND (
+                    SUM(AccumDebitAmountOC) <> 0
+                    OR SUM(AccumDebitAmount) <> 0
+                    OR SUM(AccumCreditAmountOC) <> 0
+                    OR SUM(AccumCreditAmount) <> 0))
+            ORDER BY RSNS.AccountingObjectCode
+            OPTION (RECOMPILE)
+        END
+END
+go
+

@@ -1,0 +1,92 @@
+<div *ngFor="let d of tree; let i = index">
+    <div *ngIf="!isPopup" style="margin-left: 0px !important; margin-right: -1px !important;" class="row"
+         (click)="onSelect(d,$event)"
+         (dblclick)="edit()"
+         [class.selected]="d.check">
+        <div [ngClass]="{'background-tab-odd' : (d.index%2=== 0),'background-tab-even': (d.index%2 === 1)}"
+             class="input-body" *ngFor="let key of listKey; let j = index"
+             [style.width]="(key.key.includes('organizationUnitName')|| (isHome && key.key.includes('accountName'))) ? nameWidth : generalWidth">
+            <div style="width: 100%;" *ngIf="j===0" [style.padding-left.px]="d.parent.grade * 15">
+                <i (click)="changeSelect(i)" *ngIf="d.parent.isParentNode && !d.select"
+                   class="mdi mdi-chevron-down"></i>
+                <i (click)="changeSelect(i)" *ngIf="d.parent.isParentNode && d.select"
+                   class="mdi mdi-chevron-right"></i>
+                <span class="text-left" title="{{d.parent[listKey[j].key]}}"
+                      [class.bold-isParentNode]="d.parent.isParentNode">{{d.parent[listKey[j].key]}}</span>
+            </div>
+            <div class="text-left" style="width: 100%;"
+                 *ngIf="j>0 && listKey[j].key !== 'isActive' && listKey[j].key !== 'closingDebitAmount' && listKey[j].key !== 'closingCreditAmount' && listKey[j].type === 1">
+                        <span class="text-left" title="{{d.parent[listKey[j].key]}}"
+                              [class.bold-isParentNode]="d.parent.isParentNode">{{d.parent[listKey[j].key]}}</span>
+            </div>
+            <div class="text-center" style="width: 100%"
+                 *ngIf="j>0 && listKey[j].key !== 'isActive' && listKey[j].key !== 'closingDebitAmount' && listKey[j].key !== 'closingCreditAmount' && listKey[j].type === 2">
+                        <span class="text-center" title="{{d.parent[listKey[j].key]}}"
+                              [class.bold-isParentNode]="d.parent.isParentNode">{{d.parent[listKey[j].key]}}</span>
+            </div>
+            <div class="text-right" style="width: 100%"
+                 *ngIf="j>0 && listKey[j].key !== 'isActive' && listKey[j].key !== 'closingDebitAmount' && listKey[j].key !== 'closingCreditAmount' && listKey[j].type === 3">
+                        <span class="text-center" title="{{d.parent[listKey[j].key]}}"
+                              [class.bold-isParentNode]="d.parent.isParentNode">{{d.parent[listKey[j].key]}}</span>
+            </div>
+            <div class="custom-control custom-checkbox text-center" *ngIf="listKey[j].key === 'isActive'">
+                <input type="checkbox" class="custom-control-input" id="customCheck1"
+                       [(ngModel)]="d.parent[listKey[j].key]" [disabled]="true">
+                <label class="custom-control-label" for="customCheck1"></label>
+            </div>
+            <div *ngIf="listKey[j].key === 'closingDebitAmount' && d.parent[listKey[j].key]">
+                <input class="input-Cell" id="customAmount1"
+                       name="closingDebitAmount"
+                       ebCurrencyMask
+                       [systemOptions]="account?.systemOption"
+                       [type]="7"
+                       [(ngModel)]="d.parent[listKey[j].key]" [disabled]="true">
+            </div>
+            <div *ngIf="listKey[j].key === 'closingCreditAmount' && d.parent[listKey[j].key]">
+                <input class="input-Cell" id="customAmount2"
+                       name="closingCreditAmount"
+                       ebCurrencyMask
+                       [systemOptions]="account?.systemOption"
+                       [type]="7"
+                       [(ngModel)]="d.parent[listKey[j].key]" [disabled]="true">
+            </div>
+        </div>
+    </div>
+    <div *ngIf="isPopup" style="margin-left: 0px !important; margin-right: -1px !important;" class="row">
+        <div [ngClass]="{'background-tab-odd' : (d.index%2=== 0),'background-tab-even': (d.index%2 === 1)}"
+             class="input-body-pop-up" *ngFor="let key of listKey; let j = index" [style.width]="setWidth(key.key)">
+            <div class="custom-control custom-checkbox jsgrid-align-center" *ngIf="j === 0">
+                <input type="checkbox" class="custom-control-input" id="checked{{nameSearch}}{{d.index}}"
+                       [(ngModel)]="d.parent[listKey[j].key]">
+                <label class="custom-control-label" for="checked{{nameSearch}}{{d.index}}"></label>
+            </div>
+            <div style="width: 100%;" *ngIf="j===1" [style.padding-left.px]="d.parent.grade * 10">
+                <i (click)="changeSelect(i)" *ngIf="d.parent.isParentNode && !d.select"
+                   class="mdi mdi-chevron-down"></i>
+                <i (click)="changeSelect(i)" *ngIf="d.parent.isParentNode && d.select"
+                   class="mdi mdi-chevron-right"></i>
+                <span class="text-left" title="{{d.parent[listKey[j].key]}}"
+                      [class.bold-isParentNode]="d.parent.isParentNode">{{d.parent[listKey[j].key]}}</span>
+            </div>
+            <div class="text-left" style="width: 100%; padding-left: 5px"
+                 *ngIf="j>1 && listKey[j].key !== nameSearch && listKey[j].type === 1">
+                        <span class="text-left" title="{{d.parent[listKey[j].key]}}"
+                              [class.bold-isParentNode]="d.parent.isParentNode">{{d.parent[listKey[j].key]}}</span>
+            </div>
+            <!--            <div  class="text-center" style="width: 100%"-->
+            <!--                 *ngIf="j>0 && listKey[j].key !== 'checked' && listKey[j].key !== 'closingDebitAmount' && listKey[j].key !== 'closingCreditAmount' && listKey[j].type === 2">-->
+            <!--                        <span class="text-center" title="{{d.parent[listKey[j].key]}}"-->
+            <!--                              [class.bold-isParentNode]="d.parent.isParentNode">{{d.parent[listKey[j].key]}}</span>-->
+            <!--            </div>-->
+            <!--            <div  class="text-right" style="width: 100%"-->
+            <!--                 *ngIf="j>0 && listKey[j].key !== 'checked' && listKey[j].key !== 'closingDebitAmount' && listKey[j].key !== 'closingCreditAmount' && listKey[j].type === 3">-->
+            <!--                        <span class="text-center" title="{{d.parent[listKey[j].key]}}"-->
+            <!--                              [class.bold-isParentNode]="d.parent.isParentNode">{{d.parent[listKey[j].key]}}</span>-->
+            <!--            </div>-->
+        </div>
+    </div>
+    <eb-tree-grid-item [account]="account" [hidden]="d.select" [navigateForm]="navigateForm"
+                       *ngIf="d.children && d.children.length"
+                       [tree]="d.children" [listKey]="listKey" [generalWidth]="generalWidth" [nameWidth]="nameWidth" [nameSearch]="nameSearch"
+                       [isHome]="isHome" [isPopup]="isPopup" [checkWidth]="checkWidth"></eb-tree-grid-item>
+</div>

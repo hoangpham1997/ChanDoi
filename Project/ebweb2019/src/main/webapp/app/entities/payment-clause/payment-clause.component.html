@@ -1,0 +1,76 @@
+<div>
+    <h2 id="page-heading">
+        <span jhiTranslate="ebwebApp.paymentClause.home.title">Payment Clauses</span>
+        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-payment-clause" [routerLink]="['/payment-clause/new']">
+            <fa-icon [icon]="'plus'"></fa-icon>
+            <span  jhiTranslate="ebwebApp.paymentClause.home.createLabel">
+            Create new Payment Clause
+            </span>
+        </button>
+    </h2>
+    <eb-alert></eb-alert>
+    <br/>
+    <div class="table-responsive" *ngIf="paymentClauses">
+        <table class="table-bordered table table-striped">
+            <thead>
+            <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
+            <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="paymentclausecode"><span jhiTranslate="ebwebApp.paymentClause.paymentclausecode">Paymentclausecode</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="paymentclausename"><span jhiTranslate="ebwebApp.paymentClause.paymentclausename">Paymentclausename</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="duedate"><span jhiTranslate="ebwebApp.paymentClause.duedate">Duedate</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="discountdate"><span jhiTranslate="ebwebApp.paymentClause.discountdate">Discountdate</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="discountpercent"><span jhiTranslate="ebwebApp.paymentClause.discountpercent">Discountpercent</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="overdueinterestpercent"><span jhiTranslate="ebwebApp.paymentClause.overdueinterestpercent">Overdueinterestpercent</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="isactive"><span jhiTranslate="ebwebApp.paymentClause.isactive">Isactive</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="issecurity"><span jhiTranslate="ebwebApp.paymentClause.issecurity">Issecurity</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let paymentClause of paymentClauses ;trackBy: trackId">
+                <td><a [routerLink]="['/payment-clause', paymentClause.id, 'view' ]">{{paymentClause.id}}</a></td>
+                <td>{{paymentClause.paymentClauseCode}}</td>
+                <td>{{paymentClause.paymentClauseName}}</td>
+                <td>{{paymentClause.dueDate}}</td>
+                <td>{{paymentClause.discountDate}}</td>
+                <td>{{paymentClause.discountPercent}}</td>
+                <td>{{paymentClause.overDueInterestPercent}}</td>
+                <td>{{paymentClause.isActive}}</td>
+                <td>{{paymentClause.isSecurity}}</td>
+                <td class="text-right">
+                    <div class="btn-group flex-btn-group-container">
+                        <button type="submit"
+                                [routerLink]="['/payment-clause', paymentClause.id, 'view' ]"
+                                class="btn btn-info btn-sm">
+                            <fa-icon [icon]="'eye'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/payment-clause', paymentClause.id, 'edit']"
+                                class="btn btn-primary btn-sm">
+                            <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/', { outlets: { popup: 'payment-clause/'+ paymentClause.id + '/delete'} }]"
+                                replaceUrl="true"
+                                queryParamsHandling="merge"
+                                class="btn btn-danger btn-sm">
+                            <fa-icon [icon]="'times'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div *ngIf="paymentClauses && paymentClauses.length">
+        <div class="row justify-content-center">
+            <jhi-item-count [page]="page" [total]="queryCount" [maxSize]="5" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+        </div>
+        <div class="row justify-content-center">
+            <ngb-pagination [size]="'sm'" [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage" [maxSize]="5" [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage(page)"></ngb-pagination>
+        </div>
+    </div>
+</div>

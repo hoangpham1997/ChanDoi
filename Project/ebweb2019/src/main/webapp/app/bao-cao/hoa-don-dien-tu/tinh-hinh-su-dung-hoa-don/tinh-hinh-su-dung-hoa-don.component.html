@@ -1,0 +1,64 @@
+<div class="body">
+    <div class="modal-header">
+        <h4 class="modal-title" jhiTranslate="ebwebApp.baoCao.nhatKyChungPopup.title"></h4>
+    </div>
+    <div class="modal-body">
+        <div style="padding-left: 6rem !important;">
+            <div *ngIf="treeOrganizationUnits?.length > 0 && treeOrganizationUnits && treeOrganizationUnits[0].children && treeOrganizationUnits[0].children.length>0" class="form-group row">
+                <label jhiTranslate="ebwebApp.baoCao.canDoiKeToan.organization" class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-8">
+                    <eb-tree-combo-box [tree]="treeOrganizationUnits" [(ngModel)]="organizationUnit"></eb-tree-combo-box>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label jhiTranslate="ebwebApp.baoCao.canDoiKeToan.period" class="col-sm-2 col-form-label">Chọn thời gian</label>
+                <div class="col-sm-8">
+                    <combo-box style=""
+                               name="timeLine"
+                               [dataList]="listTimeLine"
+                               [listColumns]="utilsService.listColumnsTimeLine"
+                               [isOutTable]="true"
+                               displayMember="display"
+                               valueName="value"
+                               [headerColumns]="utilsService.listHeaderColumnsTimeLine"
+                               [isObject]="false"
+                               [(ngModel)]="timeLineVoucher"
+                               (ngModelChange)="selectChangeBeginDateAndEndDate(timeLineVoucher)"
+                    ></combo-box>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label jhiTranslate="ebwebApp.saBill.invoice.fromDate" class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-3">
+                    <eb-date-picker [(ngModel)]="fromDate" name="fromdate" format="YYYYMMDD"></eb-date-picker>
+                </div>
+                <label jhiTranslate="ebwebApp.saBill.invoice.toDate" class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-3">
+                    <eb-date-picker [(ngModel)]="toDate" name="toDate" format="YYYYMMDD"></eb-date-picker>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-8">
+                    <label for="checkbox1"><input id="checkbox1" type="checkbox" name="checkbox1" [(ngModel)]="groupTheSameItem"></label>
+                    <label for="checkbox1" jhiTranslate="ebwebApp.baoCao.nhatKyChungPopup.option1"></label>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-8">
+                    <label for="checkbox2"><input id="checkbox2" type="checkbox" name="checkbox2" [(ngModel)]="showAccumAmount"></label>
+                    <label for="checkbox2" jhiTranslate="ebwebApp.baoCao.nhatKyChungPopup.option2"></label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button id="save" (click)="accept()" class="btn btn-success">
+            <span jhiTranslate="entity.action.ok"></span>
+        </button>
+        <button type="button" class="btn btn-dark" (click)="activeModal.dismiss('closed')" data-dismiss="modal">
+            <span jhiTranslate="entity.action.close"></span>
+        </button>
+    </div>
+</div>

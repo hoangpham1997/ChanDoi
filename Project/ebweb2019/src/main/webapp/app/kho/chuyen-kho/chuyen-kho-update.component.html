@@ -1,0 +1,1122 @@
+<div class="container-fluid" (click)="closeContextMenu()">
+    <div class="row margin-tp-5 margin-0">
+        <div class="col-lg-12 pd-0">
+            <div class="itemw">
+                <div class="menu-tool-bar he">
+                    <div class="gr-tool-bar2">
+                        <button (click)="move(1)" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_XEM]"
+                                [disabled]="rowNum === totalItems || isEdit || isViewFromRef" class="button-navigation">
+                            <i class="mdi mdi-arrow-left"></i>
+                        </button>
+                        <button (click)="move(-1)" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_XEM]"
+                                [disabled]="rowNum === 1 || isEdit || isViewFromRef" class="button-navigation">
+                            <i class="mdi mdi-arrow-right"></i>
+                        </button>
+                        <button [disabled]="isEdit" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_THEM]"
+                                (click)="addNew($event)" title="{{'ebwebApp.outWard.tooltipAdd' | translate}}"
+                                class="button-navigation">
+                            <i class="mdi mdi-plus"></i> <span jhiTranslate="entity.action.add">Thêm</span>
+                        </button>
+                        <button [disabled]="isEdit || rsTransfer.recorded || checkCloseBook(account, rsTransfer.postedDate)"
+                                *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_SUA]"
+                                (click)="edit()" title="{{'ebwebApp.outWard.tooltipEdit' | translate}}"
+                                class="button-navigation">
+                            <i class="mdi mdi-rename-box"></i>
+                            <span jhiTranslate="entity.action.edit">Sửa</span>
+                        </button>
+                        <button (click)="save(false)" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_SUA, ROLE_THEM]"
+                                [disabled]="isSaving || !isEdit"
+                                title="{{'ebwebApp.outWard.tooltipSave' | translate}}" class="button-navigation">
+                            <i class="mdi mdi-briefcase-download"></i> <span
+                            jhiTranslate="entity.action.save">Lưu</span></button>
+                        <button (click)="save(true)" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_THEM]"
+                                [disabled]="isSaving || !isEdit" title="{{'ebwebApp.outWard.tooltipSaveAndAdd' | translate}}"
+                                class="button-navigation">
+                            <i class="mdi mdi-plus"></i>
+                            <span jhiTranslate="entity.action.saveAndAddNew">Lưu & thêm</span>
+                        </button>
+                        <button (click)="record()" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_GHI_SO]"
+                                [disabled]="isEdit || isLoading || checkCloseBook(account, rsTransfer.postedDate)"
+                                [hidden]="rsTransfer.recorded" class="button-navigation">
+                            <i class="mdi mdi-border-color"></i>
+                            <span jhiTranslate="entity.action.record" title="{{'ebwebApp.outWard.tooltipRecord' | translate}}">Ghi sổ</span>
+                        </button>
+                        <button (click)="unrecord()" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_GHI_SO]"
+                                [disabled]="isEdit || isLoading || checkCloseBook(account, rsTransfer.postedDate)"
+                                [hidden]="!rsTransfer.recorded" class="button-navigation">
+                            <i class="mdi mdi-border-color"></i>
+                            <span jhiTranslate="entity.action.unrecord" title="{{'ebwebApp.outWard.tooltipUnRecord' | translate}}">Bỏ ghi sổ</span>
+                        </button>
+                        <button [disabled]="isEdit" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_THEM]"
+                                (click)="copyAndNew()"
+                                title="{{'ebwebApp.outWard.tooltipCopy&Add' | translate}}"
+                                class="button-navigation">
+                            <i class="mdi mdi-plus"></i>
+                            <span jhiTranslate="entity.action.copyAndAddNew">Sao chép & thêm</span>
+                        </button>
+                        <button (click)="openModel(deleteItem)" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_XOA]"
+                                [disabled]="!(rsTransfer && rsTransfer.id) || isEdit || rsTransfer.recorded || checkCloseBook(account, rsTransfer.postedDate)" class="button-navigation"
+                                title="{{'ebwebApp.outWard.tooltipDrop' | translate}}">
+                            <i class="mdi mdi-delete-forever"></i>
+                            <span jhiTranslate="entity.action.delete">Xóa</span>
+                        </button>
+                        <button *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_IN]"
+                                [disabled]="isEdit" class="dropdown-toggle button-navigation" data-toggle="dropdown"
+                                role="button" title="{{'ebwebApp.outWard.tooltipPrint' | translate}}"><i class="mdi mdi-printer"></i> In</button>
+                        <div class="dropdown-menu" id="printer-menu">
+                            <div class="dropdown-item">
+                                <a (click)="printOutWard(false, RSTRANSFER_TYPE.TYPE_REPORT_ChungTuKeToan)">
+                                    <span jhiTranslate="ebwebApp.mBTellerPaper.accountingledger">Chứng từ kế toán</span>
+                                </a>
+                            </div>
+                            <div class="dropdown-item">
+                                <a (click)="printOutWard(false, RSTRANSFER_TYPE.TYPE_REPORT_XUAT_KHO)">
+                                    <span jhiTranslate="ebwebApp.outWard.billOutWrad">Phiếu xuất kho</span>
+                                </a>
+                            </div>
+                            <div class="dropdown-item">
+                                <a (click)="printOutWard(false, RSTRANSFER_TYPE.TYPE_REPORT_XUAT_KHO_A5)">
+                                    <span jhiTranslate="ebwebApp.outWard.billOutWrad_A5">Phiếu xuất kho A5</span>
+                                </a>
+                            </div>
+                            <div class="dropdown-item">
+                                <a (click)="printOutWard(false, RSTRANSFER_TYPE.TYPE_REPORT_PhieuNhapKho)">
+                                    <span jhiTranslate="ebwebApp.pPInvoice.phieuNhapKho">Phiếu nhập kho</span>
+                                </a>
+                            </div>
+                            <div class="dropdown-item">
+                                <a (click)="printOutWard(false, RSTRANSFER_TYPE.TYPE_REPORT_PhieuNhapKhoA5)">
+                                    <span jhiTranslate="ebwebApp.pPInvoice.phieuNhapKhoA5">Phiếu nhập kho A5</span>
+                                </a>
+                            </div>
+                        </div>
+                        <div ngbDropdown class="d-inline-block" style="margin-right: 10px">
+                            <button [class.disable]="isLoading"
+                                    id="dropdownM" ngbDropdownToggle class="pl-0"
+                                    style="background: transparent;border: none; color: #f0f0f0"><i
+                                class="mdi mdi-plus-circle"></i><span
+                                jhiTranslate="ebwebApp.saReturn.form">Mẫu</span>
+                            </button>
+                            <div
+                                ngbDropdownMenu aria-labelledby="dropdownM" style="padding: 0 !important;">
+                                <span class="btn-dr-i hover-dr" [class.active]="!isMoreForm" (click)="isMoreForm = false"><span
+                                    jhiTranslate="ebwebApp.saReturn.basicForm">Mẫu cơ bản</span></span>
+                                <span class="btn-dr-i hover-dr" [class.active]="isMoreForm" (click)="isMoreForm = true"><span
+                                    jhiTranslate="ebwebApp.saReturn.moreForm">Mẫu nhiều đơn vị tính</span></span>
+                            </div>
+                        </div>
+                        <button (click)="closeForm()" class="button-navigation isPdingLeft"
+                                title="{{'ebwebApp.outWard.tooltipBack' | translate}}">
+                            <i class="mdi mdi-window-close"></i>
+                            <span jhiTranslate="entity.action.close"></span>
+                        </button>
+
+                    </div>
+                </div>
+                <div class="tool-navbar" style="margin-bottom: 0px">
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <div class="line-btn" style="margin-bottom: 0px">
+                                <div class="lbtn-action">
+                                    <ul class="nav nav-tabs">
+                                        <li style="margin-top: 4px">
+                                            <a class="active text-white"><span
+                                                jhiTranslate="ebwebApp.warehouseTransfer.home.title">CHuyển kho</span></a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-9" >
+                            <div class="form-inline padding-all-5" style="justify-content: flex-end;">
+                                <label class="form-check-label common-label" for="field_book"
+                                       jhiTranslate="ebwebApp.warehouseTransfer.stockType">Loại xuất chuyển kho</label>
+                                <div class="fix-pd-stockType">
+                                    <select [(ngModel)]="stockType" (ngModelChange)="onChangeStockType()" name="book" id="field_book" class="form-control form-control-sm common-select">
+                                        <option [ngValue]="0" jhiTranslate="ebwebApp.warehouseTransfer.internalWarehous">Xuất kho kiêm vận chuyển nội bộ</option>
+                                        <option [ngValue]="1" jhiTranslate="ebwebApp.warehouseTransfer.exportAgent">Xuất gửi đại lý</option>
+                                        <option [ngValue]="2" jhiTranslate="ebwebApp.warehouseTransfer.internalExport">Xuất chuyển nội bộ</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="row no-gutters">
+                        <div class="col-lg-9 pd-r-0 form-main-new">
+                            <form>
+                                <h3 jhiTranslate="ebwebApp.common.generalInformation">Thông tin chung</h3>
+                                <div class="row no-gutters">
+                                    <div class="col-lg-12">
+                                        <div class="form-group row no-gutters">
+                                            <label  *ngIf="stockType === 0" class="col-sm-auto col-form-label oneline"
+                                                    jhiTranslate="ebwebApp.warehouseTransfer.digitalDispatchOrder">Lệnh điều động số</label>
+                                            <label  *ngIf="stockType === 1" class="col-sm-auto col-form-label oneline"
+                                                    jhiTranslate="ebwebApp.warehouseTransfer.contractNumber">Hợp đồng KT số</label>
+                                            <div *ngIf="stockType === 0 || stockType === 1" class="col-sm-3 pd-l-0  ">
+                                                <input type="text" class="form-control form-control-sm" name="taxCode"
+                                                       [(ngModel)]="rsTransfer.mobilizationOrderNo">
+                                            </div>
+                                            <label *ngIf="stockType === 0 || stockType === 1" class="col-sm-auto col-form-label"
+                                                   jhiTranslate="ebwebApp.warehouseTransfer.of">Của</label>
+                                            <div *ngIf="stockType === 0 || stockType === 1" class="col-sm-6 pd-l-0 last-div-2-1">
+                                                <input type="text" class="form-control form-control-sm"
+                                                       [(ngModel)]="rsTransfer.mobilizationOrderOf"
+                                                       name="accountingObjectName"/>
+                                            </div>
+                                        </div>
+                                        <div *ngIf="stockType === 0 || stockType === 1" class="form-group row no-gutters">
+                                            <label class="col-sm-auto col-form-label"
+                                                   jhiTranslate="ebwebApp.saBill.date">Ngày</label>
+                                            <div *ngIf="stockType === 0 || stockType === 1" class="col-sm-3 pd-l-0">
+                                                <eb-date-picker style="display: block" name="date" id="date"
+                                                                [(ngModel)]="rsTransfer.mobilizationOrderDate"></eb-date-picker>
+                                            </div>
+                                            <label *ngIf="stockType === 0" class="col-sm-auto col-form-label"
+                                                   jhiTranslate="ebwebApp.warehouseTransfer.work"
+                                                   for="field_work">Về việc</label>
+                                            <div *ngIf="stockType === 0" class="col-sm-6 pd-l-0 last-div-2-1">
+                                                <input type="text" class="form-control form-control-sm"
+                                                       name="accountingObjectAddress"
+                                                       id="field_work"
+                                                       [(ngModel)]="rsTransfer.mobilizationOrderFor">
+                                            </div>
+                                            <label *ngIf="stockType == 1" class="col-sm-auto col-form-label"
+                                                   jhiTranslate="ebwebApp.warehouseTransfer.with"
+                                                   for="field_with">Với</label>
+                                            <div *ngIf="stockType == 1" class="col-sm-auto set-width pd-l-0 pd-r-10">
+                                                <combo-box id="field_with"
+                                                           name="comboboxaccountingObject"
+                                                           [dataList]="accountingObjects"
+                                                           [isRemoveValue]="true"
+                                                           [isOutTable]="true"
+                                                           [headerColumns]="utilsService.listHeaderColumnsAccountingObjectsSearch"
+                                                           [listColumns]="utilsService.listColumnsAccountingObjectsSearch"
+                                                           displayMember="accountingObjectCode"
+                                                           valueName="id"
+                                                           [nameCategory]="utilsService.KHACH_HANG"
+                                                           [showIconPlus]="true"
+                                                           [isObject]="true"
+                                                           [(ngModel)]="rsTransfer.accountingObject"
+                                                           (ngModelChange)="selectAccountingObjects()"
+                                                           (click)="saveParent()"
+                                                ></combo-box>
+                                            </div>
+                                            <div *ngIf="stockType == 1" class="col-sm-auto pd-l-0 last-div-2-2">
+                                                <input type="text" class="form-control form-control-sm noSetDisable" name="istCommonNameInventory"
+                                                       maxlength="512"
+                                                       [(ngModel)]="rsTransfer.accountingObjectName"/>
+                                            </div>
+                                        </div>
+                                        <div *ngIf="stockType === 2" class="form-group row no-gutters">
+                                            <label class="col-sm-auto col-form-label"
+                                                   jhiTranslate="ebwebApp.saBill.reason">Diễn giải</label>
+                                            <div class="col-sm-auto reason-css">
+                                                <input type="text" class="form-control form-control-sm" name="payers"
+                                                       [(ngModel)]="rsTransfer.reason"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row no-gutters">
+                                            <label class="col-sm-auto col-form-label oneline"
+                                                   jhiTranslate="ebwebApp.warehouseTransfer.peopleMove"
+                                                   for="field_peopleMove">Người vận chuyển</label>
+                                            <div class="col-sm-3 pd-l-0 pd-r-10">
+                                                <combo-box id="field_peopleMove"
+                                                           name="field_employee"
+                                                           [isReadOnly]="false"
+                                                           [isRemoveValue]="true"
+                                                           [dataList]="employees"
+                                                           [isOutTable]="true"
+                                                           [headerColumns]="utilsService.listHeaderColumnsAccountingObject"
+                                                           [listColumns]="utilsService.listColumnsAccountingObjects"
+                                                           displayMember="accountingObjectCode"
+                                                           valueName="id"
+                                                           [isObject]="true"
+                                                           [nameCategory]="utilsService.NHAN_VIEN"
+                                                           [showIconPlus]="true"
+                                                           [(ngModel)]="rsTransfer.accountingObjectEmployee"
+                                                           (ngModelChange)="selectEmployee()"
+                                                           (click)="saveParent()"
+                                                ></combo-box>
+                                            </div>
+                                            <div class="col-sm-7 pd-l-0 last-div-1-1">
+                                                <input type="text" class="form-control form-control-sm" name="employeeName"
+                                                       [(ngModel)]="rsTransfer.employeeName"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row no-gutters">
+                                            <label class="col-sm-auto col-form-label oneline"
+                                                   jhiTranslate="ebwebApp.warehouseTransfer.methodMOve"
+                                                   for="field_methodMOve">Phương thức vận chuyển</label>
+                                            <div class="col-sm-3 pd-l-0">
+                                                <combo-box id="field_methodMOve"
+                                                           name="comboboxaccountingObject"
+                                                           [isOutTable]="true"
+                                                           [dataList]="transportMethods"
+                                                           [isRemoveValue]="true"
+                                                           [headerColumns]="utilsService.listHeaderColumnsMethods"
+                                                           [listColumns]="utilsService.listColumnsMethods"
+                                                           displayMember="transportMethodName"
+                                                           valueName="id"
+                                                           [isObject]="false"
+                                                           [nameCategory]="utilsService.PHUONG_THUC_VAN_CHUYEN"
+                                                           [showIconPlus]="true"
+                                                           [(ngModel)]="rsTransfer.transportMethodID"
+                                                           (click)="saveParent()"
+                                                ></combo-box>
+                                            </div>
+                                            <label *ngIf="stockType === 0 || stockType === 1" class="col-sm-auto col-form-label"
+                                                   jhiTranslate="ebwebApp.saBill.reason"
+                                                   for="field_reason">Diễn giải </label>
+                                            <div *ngIf="stockType === 0 || stockType === 1" class="col-sm-6 pd-l-0 last-div-2-1">
+                                                <input type="text" class="form-control form-control-sm" name="reason"
+                                                       id="field_reason" maxlength="512"
+                                                       [(ngModel)]="rsTransfer.reason"/>
+                                            </div>
+                                        </div>
+                                        <div  class="form-group row no-gutters">
+                                            <label *ngIf="stockType === 0 || stockType === 1" class="col-sm-auto col-form-label"
+                                                   jhiTranslate="ebwebApp.warehouseTransfer.formNumber"
+                                                   for="field_template">Mẫu số</label>
+                                            <div *ngIf="stockType === 0 || stockType === 1" class="col-sm-3 pd-l-0">
+                                                <combo-box id="field_template"
+                                                           name="template"
+                                                           [dataList]="templates"
+                                                           [isOutTable]="true"
+                                                           [listColumns]="['invoiceFormName', 'invoiceTemplate', 'invoiceSeries']"
+                                                           displayMember="invoiceTemplate"
+                                                           valueName="invoiceTypeID"
+                                                           [headerColumns]="['Hình thức HĐ','Mẫu số HĐ', 'Ký hiệu HĐ']"
+                                                           [isObject]="true"
+                                                           [(ngModel)]="template"
+                                                           (ngModelChange)="selectTemplate()"
+                                                ></combo-box>
+                                            </div>
+                                            <label *ngIf="stockType === 0 || stockType === 1" class="col-sm-auto col-form-label"
+                                                   jhiTranslate="ebwebApp.warehouseTransfer.symbol">Ký hiệu</label>
+                                            <div *ngIf="stockType === 0 || stockType === 1" class="col-sm-auto pd-l-0 pd-r-10 set-widths">
+                                                <input type="text" class="form-control form-control-sm" name="invoiceSeries"
+                                                       [(ngModel)]="rsTransfer.invoiceSeries" disabled>
+                                            </div>
+                                            <label *ngIf="stockType === 0 || stockType === 1" class="col-sm-auto col-form-label text-center"
+                                                   jhiTranslate="ebwebApp.saBill.typeSearch.invoiceNo">Số hóa đơn</label>
+                                            <div *ngIf="stockType === 0 || stockType === 1" class="col-sm-auto pd-l-0 last-div-3-2">
+                                                <input type="text" [(ngModel)]="rsTransfer.invoiceNo" ebNumeric [class.eb-read-only]="disableInvoiceNo()"
+                                                       class="form-control form-control-sm" name="invoiceNo" maxlength="7"
+                                                       autocomplete="off"
+                                                       (blur)="checkInvoiceNo()"
+                                                       [required]="checkAddNew">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-lg-4 pd-only-l-10 form-main-new" style="border: none;">
+                            <form action="" style="padding-bottom: 55px; border: none;">
+                                <h3 jhiTranslate="ebwebApp.purchaseOrder.vouchers">Chứng từ</h3>
+                                <div class="row no-gutters">
+                                    <div class="col-lg-12">
+                                        <div class="form-group row no-gutters">
+                                            <label class="col-sm-auto col-form-label" style="max-width: 90px !important;"
+                                                   jhiTranslate="ebwebApp.purchaseOrder.numberVouchers">Số chứng từ</label>
+                                            <div class="col-sm-8 pd-l-0 last-div-1-0">
+                                                <input type="text"
+                                                       [(ngModel)]="noBookVoucher"
+                                                       class="form-control form-control-sm" name="No" required/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row no-gutters">
+                                            <label class="col-sm-auto col-form-label" for="field_date" style="max-width: 90px !important;"
+                                                   jhiTranslate="ebwebApp.purchaseOrder.dayVouchers">Ngày chứng từ</label>
+                                            <div class="col-sm-8 last-div-1-0 dayVouchers">
+                                                <eb-date-picker style="display: block" id="field_date"
+                                                                [(ngModel)]="rsTransfer.date"
+                                                                (ngModelChange)="onChangeDate()"
+                                                                name="dateOder" required ></eb-date-picker>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row no-gutters">
+                                            <label class="col-sm-auto col-form-label" for="field_date" style="max-width: 90px !important;"
+                                                   jhiTranslate="ebwebApp.purchaseOrder.accountingDate">Ngày hạch toán</label>
+                                            <div class="col-sm-8 accountDate last-div-1-0">
+                                                <eb-date-picker style="display: block" id="htDate"
+                                                                [(ngModel)]="rsTransfer.postedDate"
+                                                                name="htDate" required></eb-date-picker>
+                                            </div>
+                                        </div>
+                                        <div *ngIf="stockType != 2" class="form-group row no-gutters">
+                                            <label class="col-sm-auto col-form-label" style="max-width: 90px !important;"
+                                                   jhiTranslate="ebwebApp.saBill.invoice.date">Ngày HĐ</label>
+                                            <div class="col-sm-8 accountDate last-div-1-0">
+                                                <eb-date-picker style="display: block" id="invoiceDate"
+                                                                [(ngModel)]="rsTransfer.invoiceDate"
+                                                                name="invoiceDate"></eb-date-picker>
+                                            </div>
+                                        </div>
+                                        <div *ngIf="!checkUseMoreNoMBook" class="form-group row no-gutters">
+                                            <label class="col-sm-auto col-form-label" style="max-width: 90px !important;"
+                                                   jhiTranslate="ebwebApp.mBDeposit.typeLedger">Vào sổ</label>
+                                            <div class="col-sm-8 pd-l-0 last-div-1-0">
+                                                <select name="book2" id="field_book2" class="form-control form-control-sm"
+                                                        [(ngModel)]="rsTransfer.typeLedger"
+                                                        [class.disable]="!isEdit">
+                                                    <option [ngValue]="0" *ngIf="isSoTaiChinh" jhiTranslate="global.book.finance">Sổ tài chính</option>
+                                                    <option [ngValue]="1" *ngIf="!isSoTaiChinh" jhiTranslate="global.book.admin">Sổ quản trị</option>
+                                                    <option [ngValue]="2" selected jhiTranslate="global.book.both">Sổ tài chính và sổ quản trị</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <ngb-tabset class="tool-navbar" (tabChange)="beforeChange($event)">
+                    <ngb-tab id="tab1">
+                        <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.saBill.tab1"></span></ng-template>
+                        <ng-template ngbTabContent>
+                            <div class="tab-content">
+                                <div class="frm-main frm-padding tab-pane fade in active show" id="home-tax"
+                                     style="background: #cbdcf0">
+                                    <div id="table-scroll-detail" class="table-scroll">
+                                        <table id="main-table-detail" class="main-table">
+                                            <thead>
+                                            <tr>
+                                                <th scope="col" jhiTranslate="ebwebApp.purchaseOrder.productCode">Mã hàng</th>
+                                                <th scope="col" jhiTranslate="ebwebApp.purchaseOrder.productName">Tên hàng</th>
+                                                <th scope="col" jhiTranslate="ebwebApp.warehouseTransfer.fromStock">Từ kho</th>
+                                                <th scope="col" jhiTranslate="ebwebApp.warehouseTransfer.toStock">Đến kho</th>
+                                                <th scope="col" jhiTranslate="ebwebApp.saReturn.debitAccount">TK nợ</th>
+                                                <th scope="col" jhiTranslate="ebwebApp.accountDefault.creditAccount">TK có</th>
+                                                <th scope="col" jhiTranslate="ebwebApp.purchaseOrder.unit">ĐVT</th>
+                                                <th scope="col" jhiTranslate="ebwebApp.purchaseOrder.amount">Số lượng</th>
+                                                <th *ngIf="stockType === 0 || stockType === 1" scope="col" jhiTranslate="ebwebApp.materialGoods.unitPriceOfSale">Đơn giá bán</th>
+                                                <th *ngIf="isMoreForm" scope="col" jhiTranslate="ebwebApp.purchaseOrder.mainUnit">ĐVT chính</th>
+                                                <th *ngIf="isMoreForm" scope="col" jhiTranslate="ebwebApp.purchaseOrder.mainConvertRate">Tỷ lệ chuyển đổi</th>
+                                                <th *ngIf="isMoreForm" scope="col" jhiTranslate="ebwebApp.purchaseOrder.formula">Phép tính</th>
+                                                <th *ngIf="isMoreForm" scope="col" jhiTranslate="ebwebApp.purchaseOrder.mainQuantity">Số lượng theo ĐVC</th>
+                                                <th *ngIf="isMoreForm" scope="col" jhiTranslate="ebwebApp.purchaseOrder.mainUnitPrice">Đơn giá theo ĐVC</th>
+                                                <th *ngIf="stockType === 0 || stockType === 1" scope="col" jhiTranslate="ebwebApp.purchaseOrder.totalAmount">Thành tiền</th>
+                                                <th scope="col" jhiTranslate="ebwebApp.sAInvoiceDetails.oWPrice">Đơn giá vốn</th>
+                                                <th scope="col" jhiTranslate="ebwebApp.saReturn.owAmount">Tiền vốn</th>
+                                                <th scope="col" jhiTranslate="ebwebApp.rSInwardOutward.lotNo">Số lô</th>
+                                                <th scope="col" jhiTranslate="ebwebApp.pPInvoiceDetails.expiryDate">Hạn dùng</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr *ngFor="let detail of rsTransferDetails; let i = index;"
+                                                oncontextmenu="return false;"
+                                                (contextmenu)="onRightClick($event, rsTransferDetails, detail,true, true, true)"
+                                                (keydown.control.insert)="keyPress(detail,'ctr + insert')"
+                                                (keydown.control.c)="keyPress(detail,'ctr + c')"
+                                                (keydown.control.delete)="keyPress(detail, 'ctr + delete')"
+                                            >
+                                                <!--Mã hàng-->
+                                                <td class="cell-Table">
+                                                    <combo-box name="productCode{{i}}" id="productCode{{i}}"
+                                                               [dataList]="materialGoodsInStock"
+                                                               [hideRequiredWhenValueTrue]="true"
+                                                               [listColumns]="utilsService.danhSachCotMaHang"
+                                                               [headerColumns]="utilsService.danhSachTieuDeMaHang"
+                                                               displayMember="materialGoodsCode"
+                                                               valueName="id"
+                                                               [isObject]="true"
+                                                               [isRequired]="true"
+                                                               [(ngModel)]="detail.materialGood"
+                                                               [account]="account"
+                                                               [nameCategory]="utilsService.VAT_TU_HANG_HOA"
+                                                               [showIconPlus]="true"
+                                                               (ngModelChange)="selectedMaterialGoods(i)"
+                                                               (click)="saveDetails(i)"
+                                                    ></combo-box>
+                                                </td>
+                                                <!--Tên hàng-->
+                                                <td class="cell-Table fix-pd-input">
+                                                    <input type="text" [(ngModel)]="detail.description"
+                                                           class="input-Cell" name="productName{{i}}"
+                                                           id="productName{{i}}"/>
+                                                </td>
+                                                <!--Từ kho-->
+                                                <td class="cell-Table">
+                                                    <combo-box name="fromRepository{{i}}" id="fromRepository{{i}}"
+                                                               [dataList]="repositories"
+                                                               [listColumns]="['repositoryCode', 'repositoryName']"
+                                                               [headerColumns]="['Mã kho', 'Tên kho']"
+                                                               displayMember="repositoryCode"
+                                                               valueName="id"
+                                                               [isRequired]="true"
+                                                               [(ngModel)]="detail.fromRepositoryID"
+                                                               (ngModelChange)="onChangeFromRepository(i)"
+                                                               [nameCategory]="utilsService.KHO"
+                                                               [showIconPlus]="true"
+                                                               (click)="saveDetails(i)"
+                                                    ></combo-box>
+                                                </td>
+                                                <!--Đến kho-->
+                                                <td class="cell-Table">
+                                                    <combo-box  name="toRepository{{i}}" id="toRepository{{i}}"
+                                                                [dataList]="repositories"
+                                                                [listColumns]="['repositoryCode', 'repositoryName']"
+                                                                [headerColumns]="['Mã kho', 'Tên kho']"
+                                                                displayMember="repositoryCode"
+                                                                valueName="id"
+                                                                [isRequired]="true"
+                                                                [nameCategory]="utilsService.KHO"
+                                                                [showIconPlus]="true"
+                                                                [(ngModel)]="detail.toRepositoryID"
+                                                                (ngModelChange)="onChangeToRepository(i)"
+                                                                (click)="saveDetails(i)"
+                                                    ></combo-box>
+                                                </td>
+                                                <!--TK nợ-->
+                                                <td class="cell-Table jsgrid-align-center">
+                                                    <combo-box  id="debitAccountList{{i}}"
+                                                                name="debitAccountList{{i}}"
+                                                                [dataList]="debitAccountList"
+                                                                [listColumns]="utilsService.listColumnsAccountList"
+                                                                displayMember="accountNumber"
+                                                                valueName="accountNumber"
+                                                                [headerColumns]="utilsService.listHeaderColumnsAccountList"
+                                                                [isObject]="false"
+                                                                [isRequired]="true"
+                                                                [(ngModel)]="detail.debitAccount"
+                                                    >
+                                                    </combo-box>
+                                                </td>
+                                                <!--TK có-->
+                                                <td class="cell-Table jsgrid-align-center">
+                                                    <combo-box id="creditAccount"
+                                                               name="creditAccount"
+                                                               [dataList]="creditAccountList"
+                                                               [listColumns]="utilsService.listColumnsAccountList"
+                                                               displayMember="accountNumber"
+                                                               valueName="accountNumber"
+                                                               [headerColumns]="utilsService.listHeaderColumnsAccountList"
+                                                               [isObject]="false"
+                                                               [isRequired]="true"
+                                                               [(ngModel)]="detail.creditAccount"
+                                                    >
+                                                    </combo-box>
+                                                </td>
+                                                <!--ĐVT-->
+                                                <td class="cell-Table">
+                                                    <combo-box  name="unit{{i}}" id="unit{{i}}"
+                                                                [dataList]="detail.convertRates"
+                                                                [listColumns]="['unitName']"
+                                                                [headerColumns]="['Đơn vị tính']"
+                                                                displayMember="unitName"
+                                                                valueName="id"
+                                                                [isObject]="true"
+                                                                [(ngModel)]="detail.unit"
+                                                                (ngModelChange)="onUnitChange(i)"
+                                                    ></combo-box>
+                                                </td>
+                                                <!--Số lượng-->
+                                                <td class="cell-Table fix-pd-input">
+                                                    <input type="number" class="input-Cell jsgrid-align-right" style=" margin: fill;
+                                                    width: 100%; height: 100%; border: none" maxlength="225"
+                                                           [(ngModel)]="detail.quantity" (ngModelChange)="changeQuantity(i)"
+                                                           [allowNegative]="false"
+                                                           [systemOptions]="account?.systemOption" [type]="3"
+                                                           ebCurrencyMask />
+                                                </td>
+                                                <!--Đơn giá bán-->
+                                                <td *ngIf="stockType === 0 || stockType === 1" class="cell-Table">
+                                                    <combo-box
+                                                        [listColumns]="['unitPriceOriginal']"
+                                                        [isRemoveValue]="true"
+                                                        displayMember="unitPriceOriginal"
+                                                        valueName="unitPriceOriginal"
+                                                        [dataList]="detail.unitPrices"
+                                                        [headerColumns]="['Dữ liệu']"
+                                                        [isObject]="false"
+                                                        [isOutTable]="false"
+                                                        [(ngModel)]="detail.unitPriceOriginal"
+                                                        nameIp="unitPrice{{i}}" idIp="unitPrice{{i}}"
+                                                        (ngModelChange)="selectUnitPriceOriginal(i)"
+                                                        [systemOptions]="account?.systemOption"
+                                                        [type]="priceOriginalType"
+                                                        [allowNegative]="false"
+                                                        [valueIsNumber]="true"
+                                                        [getValueDisplay] ="true"
+                                                        [account]="account"
+                                                    ></combo-box>
+                                                </td>
+                                                <!--ĐVT chính-->
+                                                <td *ngIf="isMoreForm" class="cell-Table cell-div fix-pd-input">
+                                                    {{detail.mainUnit?.unitName}}
+                                                </td>
+                                                <!--Tỷ lệ chuyển đổi-->
+                                                <td *ngIf="isMoreForm" class="cell-Table cell-div fix-pd-input">
+                                                    <input [(ngModel)]="detail.mainConvertRate"
+                                                           [systemOptions]="account?.systemOption"
+                                                           [type]="5" class="input-Cell jsgrid-align-right"
+                                                           ebCurrencyMask type="text" (ngModelChange)="convertRateChange(i)">
+                                                </td>
+                                                <!--Phép tính-->
+                                                <td *ngIf="isMoreForm" class="cell-Table cell-div fix-pd-input">
+                                                    {{detail.formula}}
+                                                </td>
+                                                <!--Số lượng theo ĐVC-->
+                                                <td *ngIf="isMoreForm" class="cell-Table cell-div fix-pd-input">
+                                                    <input [(ngModel)]="detail.mainQuantity"
+                                                           [systemOptions]="account?.systemOption"
+                                                           [type]="5" class="input-Cell jsgrid-align-right"
+                                                           ebCurrencyMask type="text" (ngModelChange)="mainQuantityChange(i)">
+                                                </td>
+                                                <!--Đơn giá theo ĐVC-->
+                                                <td *ngIf="isMoreForm" class="cell-Table cell-div fix-pd-input">
+                                                    <input [(ngModel)]="detail.mainUnitPrice"
+                                                           [systemOptions]="account?.systemOption"
+                                                           [type]="5" class="input-Cell jsgrid-align-right"
+                                                           ebCurrencyMask type="text" (ngModelChange)="mainUnitPriceChange(i)">
+                                                </td>
+                                                <!--Thành tiền-->
+                                                <td *ngIf="stockType === 0 || stockType === 1" class="cell-Table cell-div fix-pd-input">
+                                                    <input [(ngModel)]="detail.amount"
+                                                           [systemOptions]="account?.systemOption"
+                                                           [type]="getOriginalType()" class="input-Cell jsgrid-align-right noSetDisable"
+                                                           ebCurrencyMask type="text" (ngModelChange)="onAmountChange(i)">
+                                                </td>
+                                                <!--Đơn giá vốn-->
+                                                <td class="cell-Table jsgrid-align-center">
+                                                    <input type="number" class="input-Cell jsgrid-align-right noSetDisable" style=" margin: fill;
+                                                    width: 100%; height: 100%; border: none"  maxlength="225"
+                                                           [(ngModel)]="detail.oWPrice"
+                                                           (ngModelChange)="onChangeOWPrice(i)"
+                                                           [allowNegative]="false"
+                                                           [disabled]="checkNDGVBT"
+                                                           [systemOptions]="account?.systemOption" [type]="1"
+                                                           ebCurrencyMask/>
+                                                </td>
+                                                <!--Tiền vốn-->
+                                                <td class="cell-Table jsgrid-align-center">
+                                                    <input type="number" class="input-Cell jsgrid-align-right noSetDisable" style=" margin: fill;
+                                                    width: 100%; height: 100%; border: none"  maxlength="225"
+                                                           [(ngModel)]="detail.oWAmount"
+                                                           (ngModelChange)="onChangeOWAmount(i)"
+                                                           [allowNegative]="false" [type]="getOriginalType()"
+                                                           [systemOptions]="account?.systemOption"
+                                                           [disabled]="checkNDGVBT"
+                                                           ebCurrencyMask/>
+                                                </td>
+                                                <!--Số lô-->
+                                                <td class="cell-Table cell-div fix-pd-input pr-0 pl-0 text-left">
+                                                    <combo-box name="lotNo{{i}}" id="lotNo{{i}}"
+                                                               [dataList]="detail.lotNoArray"
+                                                               [listColumns]="['lotNo','expiryDate']"
+                                                               [headerColumns]="['Số lô','Hạn dùng']"
+                                                               displayMember="lotNo"
+                                                               class="jsgrid-align-right"
+                                                               [isObject]="false"
+                                                               [(ngModel)]="detail.lotNo"
+                                                               [getValueDisplay] ="true"
+                                                               (ngModelChange)="changeLotNo(detail)"
+                                                    ></combo-box>
+                                                </td>
+                                                <!--Hạn dùng-->
+                                                <td class="cell-Table jsgrid-align-center">
+                                                    <eb-date-picker [(ngModel)]="detail.expiryDate" [isInTable]="true"
+                                                                    id="expiryDate{{i}}"
+                                                                    name="expiryDate{{i}}"
+                                                    ></eb-date-picker>
+                                                </td>
+                                            </tr>
+                                            <tr *ngIf="isEdit" class="addNewRow" (click)="addNewRow(0)">
+                                                <td class="cell-Table"><input readonly name="productCode"
+                                                                              id="productCode" type="text"
+                                                                              class="input-Cell"
+                                                                              value="{{'ebwebApp.purchaseOrder.addNewLine' | translate}}">
+                                                </td>
+                                                <td class="cell-Table"><input readonly name="productName"
+                                                                              id="productName" type="text"
+                                                                              class="input-Cell"></td>
+                                                <td class="cell-Table"><input readonly name="unit" id="unit"
+                                                                              type="text"
+                                                                              class="input-Cell"></td>
+                                                <td class="cell-Table"><input readonly name="amount" id="amount"
+                                                                              type="number" class="input-Cell"></td>
+                                                <td class="cell-Table"><input readonly name="amountReceived"
+                                                                              id="amountReceived" type="number"
+                                                                              class="input-Cell"></td>
+                                                <td class="cell-Table"><input readonly name="unitPrice"
+                                                                              id="unitPrice"
+                                                                              type="text" class="input-Cell"></td>
+                                                <td class="cell-Table"><input readonly name="totalAmount"
+                                                                              id="totalAmount" type="text"
+                                                                              class="input-Cell"></td>
+                                                <td class="cell-Table"><input readonly type="text"
+                                                                              class="input-Cell">
+                                                </td>
+                                                <td *ngIf="stockType === 0 || stockType === 1" class="cell-Table"><input readonly type="text"
+                                                                                                                         class="input-Cell">
+                                                </td>
+                                                <td *ngIf="isMoreForm" class="cell-Table"><input readonly type="text"
+                                                                                                 class="input-Cell">
+                                                </td>
+                                                <td *ngIf="isMoreForm" class="cell-Table"><input readonly type="text"
+                                                                                                 class="input-Cell">
+                                                </td>
+                                                <td *ngIf="isMoreForm" class="cell-Table"><input readonly type="text"
+                                                                                                 class="input-Cell">
+                                                </td>
+                                                <td *ngIf="isMoreForm" class="cell-Table"><input readonly type="text"
+                                                                                                 class="input-Cell">
+                                                </td>
+                                                <td *ngIf="isMoreForm" class="cell-Table"><input readonly type="text"
+                                                                                                 class="input-Cell">
+                                                </td>
+                                                <td *ngIf="stockType === 0 || stockType === 1" class="cell-Table"><input readonly type="text"
+                                                                                                                         class="input-Cell">
+                                                </td>
+                                                <td class="cell-Table"><input readonly type="text"
+                                                                              class="input-Cell">
+                                                </td>
+                                                <td class="cell-Table"><input readonly type="text"
+                                                                              class="input-Cell">
+                                                </td>
+                                                <td class="cell-Table"><input readonly type="text"
+                                                                              class="input-Cell">
+                                                </td>
+                                                <td class="cell-Table"><input readonly type="text"
+                                                                              class="input-Cell">
+                                                </td>
+                                            </tr>
+                                            <tr *ngFor="let l of newArr(8 - rsTransferDetails.length)">
+                                                <td class="cell-Table"><input readonly type="text"
+                                                                              class="input-Cell">
+                                                </td>
+                                                <td class="cell-Table"><input readonly type="text"
+                                                                              class="input-Cell">
+                                                </td>
+                                                <td class="cell-Table"><input readonly type="text"
+                                                                              class="input-Cell">
+                                                </td>
+                                                <td class="cell-Table"><input readonly type="text"
+                                                                              class="input-Cell">
+                                                </td>
+                                                <td class="cell-Table"><input readonly type="text"
+                                                                              class="input-Cell">
+                                                </td>
+                                                <td class="cell-Table"><input readonly type="text"
+                                                                              class="input-Cell">
+                                                </td>
+                                                <td class="cell-Table"><input readonly type="text"
+                                                                              class="input-Cell">
+                                                </td>
+                                                <td class="cell-Table"><input readonly type="text"
+                                                                              class="input-Cell">
+                                                </td>
+                                                <td *ngIf="stockType === 0 || stockType === 1" class="cell-Table"><input readonly type="text"
+                                                                                                                         class="input-Cell">
+                                                </td>
+                                                <td *ngIf="isMoreForm" class="cell-Table"><input readonly type="text"
+                                                                                                 class="input-Cell">
+                                                </td>
+                                                <td *ngIf="isMoreForm" class="cell-Table"><input readonly type="text"
+                                                                                                 class="input-Cell">
+                                                </td>
+                                                <td *ngIf="isMoreForm" class="cell-Table"><input readonly type="text"
+                                                                                                 class="input-Cell">
+                                                </td>
+                                                <td *ngIf="isMoreForm" class="cell-Table"><input readonly type="text"
+                                                                                                 class="input-Cell">
+                                                </td>
+                                                <td *ngIf="isMoreForm" class="cell-Table"><input readonly type="text"
+                                                                                                 class="input-Cell">
+                                                </td>
+                                                <td *ngIf="stockType === 0 || stockType === 1" class="cell-Table"><input readonly type="text"
+                                                                                                                         class="input-Cell">
+                                                </td>
+                                                <td class="cell-Table"><input readonly type="text"
+                                                                              class="input-Cell">
+                                                </td>
+                                                <td class="cell-Table"><input readonly type="text"
+                                                                              class="input-Cell">
+                                                </td>
+                                                <td class="cell-Table"><input readonly type="text"
+                                                                              class="input-Cell">
+                                                </td>
+                                                <td class="cell-Table"><input readonly type="text"
+                                                                              class="input-Cell">
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                            <tfoot>
+                                            <tr>
+                                                <td class="cell-Table color-tfoot" colspan="7"><input type="text"
+                                                                                                      readonly
+                                                                                                      class="color-tfoot input-Cell"
+                                                                                                      value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{rsTransferDetails.length}}">
+                                                </td>
+                                                <td class="cell-Table">
+                                                    <input [(ngModel)]="quantitySum" [allowNegative]="false"
+                                                           [systemOptions]="account?.systemOption" [type]="3"
+                                                           class="color-tfoot input-Cell text-right noSetDisable"
+                                                           ebCurrencyMask name="quantitySum" disabled type="text">
+                                                </td>
+                                                <td *ngIf="isMoreForm" class="cell-Table" colspan="4"><input type="text" class="color-tfoot input-Cell noSetDisable" disabled></td>
+                                                <td *ngIf="isMoreForm" class="cell-Table">
+                                                    <input [(ngModel)]="mainQuantitySum" [allowNegative]="false"
+                                                           [systemOptions]="account?.systemOption" [type]="3"
+                                                           class="color-tfoot input-Cell text-right noSetDisable"
+                                                           ebCurrencyMask name="mainQuantitySum" disabled type="text">
+                                                </td>
+                                                <td *ngIf="stockType === 0 || stockType === 1" class="cell-Table"><input type="text" class="color-tfoot input-Cell noSetDisable" disabled></td>
+                                                <td *ngIf="stockType === 0 || stockType === 1" class="cell-Table">
+                                                    <input [(ngModel)]="rsTransfer.totalAmount" [allowNegative]="false"
+                                                           [systemOptions]="account?.systemOption" [type]="7"
+                                                           class="color-tfoot input-Cell text-right noSetDisable"
+                                                           ebCurrencyMask name="totalAmountSum" disabled type="text">
+                                                </td>
+                                                <td class="cell-Table color-tfoot"></td>
+                                                <td class="cell-Table">
+                                                    <input [(ngModel)]="rsTransfer.totalOWAmount" [allowNegative]="false"
+                                                           [systemOptions]="account?.systemOption" [type]="7"
+                                                           class="color-tfoot input-Cell text-right noSetDisable"
+                                                           ebCurrencyMask name="totalAmountSum" disabled type="text">
+                                                </td>
+                                                <td class="cell-Table color-tfoot" colspan="2"></td>
+                                            </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </ngb-tab>
+                    <ngb-tab>
+                        <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.common.statistical">Thống kê</span>
+                        </ng-template>
+                        <ng-template ngbTabContent>
+                            <div class="tab-content">
+                                <div class="frm-main frm-padding tab-pane fade in active show" id="home-report"
+                                     style="background: #cbdcf0">
+                                    <div id="table-scroll-report" class="table-scroll">
+                                        <table id="main-table-report" class="main-table">
+                                            <thead>
+                                            <tr>
+                                                <th scope="col" jhiTranslate="ebwebApp.saBill.materialGoodsID">Mã hàng</th>
+                                                <th scope="col" jhiTranslate="ebwebApp.saBill.materialGoodsName">Tên hàng</th>
+                                                <th scope="col" jhiTranslate="ebwebApp.saReturn.expenseItem">Khoản mục CP</th>
+                                                <th scope="col" jhiTranslate="ebwebApp.saReturn.costSet">Đối tượng THCP</th>
+                                                <th hidden scope="col" jhiTranslate="ebwebApp.saReturn.contract">Hợp đồng</th>
+                                                <th scope="col" jhiTranslate="ebwebApp.saReturn.budgetItem">Mục thu/chi</th>
+                                                <th scope="col" jhiTranslate="ebwebApp.saReturn.department">Phòng ban</th>
+                                                <th scope="col" jhiTranslate="ebwebApp.saReturn.statisticCode">Mã thống kê</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr *ngFor="let detail of rsTransferDetails; let i = index"
+                                                oncontextmenu="return false;"
+                                                (contextmenu)="onRightClick($event, rsTransferDetails, detail, true, true, true)"
+                                                (keydown.control.insert)="keyPress(detail,'ctr + insert')"
+                                                (keydown.control.c)="keyPress(detail,'ctr + c')"
+                                                (keydown.control.delete)="keyPress(detail, 'ctr + delete')">
+                                                <!--Mã hàng-->
+                                                <td class="cell-Table">
+                                                    <combo-box name="productCode{{i}}"
+                                                               [dataList]="materialGoodsInStock"
+                                                               [hideRequiredWhenValueTrue]="true"
+                                                               [listColumns]="utilsService.danhSachCotMaHang"
+                                                               [headerColumns]="utilsService.danhSachTieuDeMaHang"
+                                                               displayMember="materialGoodsCode"
+                                                               valueName="id"
+                                                               [isObject]="true"
+                                                               [isRequired]="true"
+                                                               [(ngModel)]="detail.materialGood"
+                                                               [account]="account"
+                                                               [nameCategory]="utilsService.VAT_TU_HANG_HOA"
+                                                               [showIconPlus]="true"
+                                                               (ngModelChange)="selectedMaterialGoods(i)"
+                                                               [tabindex]="12 + (19 * i) + 1"
+                                                               (click)="saveDetails(i)"
+                                                    ></combo-box>
+                                                </td>
+                                                <!--Tên hàng-->
+                                                <td class="cell-Table">
+                                                    <input type="text" [(ngModel)]="detail.description"
+                                                           class="input-Cell" name="productName{{i}}"
+                                                           [tabindex]="12 + (19 * i) + 2"/>
+                                                </td>
+                                                <!--Khoản mục CP-->
+                                                <td class="cell-Table">
+                                                    <combo-box name="expenseItems"
+                                                               [dataList]="expenseItems"
+                                                               [isRemoveValue]="true"
+                                                               [listColumns]="utilsService.listColumnsExpenseItem"
+                                                               displayMember="expenseItemCode"
+                                                               valueName="id"
+                                                               [headerColumns]="utilsService.listHeaderColumnsExpenseItem"
+                                                               [isObject]="true"
+                                                               [nameCategory]="utilsService.KHOAN_MUC_CHI_PHI"
+                                                               [showIconPlus]="true"
+                                                               [(ngModel)]="detail.expenseItem"
+                                                               (click)="saveDetails(i)"
+                                                    ></combo-box>
+                                                </td>
+                                                <!--Đối tượng THCP-->
+                                                <td class="cell-Table">
+                                                    <combo-box name="costSet"
+                                                               [dataList]="costSets"
+                                                               [isRemoveValue]="true"
+                                                               [listColumns]="utilsService.listColumnsCostSet"
+                                                               displayMember="costSetCode"
+                                                               valueName="id"
+                                                               [headerColumns]="utilsService.listHeaderColumnsCostSet"
+                                                               [isObject]="true"
+                                                               [nameCategory]="utilsService.DOI_TUONG_TAP_HOP_CHI_PHI"
+                                                               [showIconPlus]="true"
+                                                               [(ngModel)]="detail.costSet"
+                                                               (click)="saveDetails(i)"
+                                                    ></combo-box>
+                                                </td>
+                                                <!--Hợp đồng-->
+                                                <td class="cell-Table" hidden>
+                                                    <!--                                                    <combo-box-->
+                                                    <!--                                                        nameIp="contract"-->
+                                                    <!--                                                        [dataList]="eMContracts"-->
+                                                    <!--                                                        [isRemoveValue]="true"-->
+                                                    <!--                                                        [listColumns]="rsInwardOutward.typeLedger === 0 || this.isSoTaiChinh-->
+                                                    <!--                                                            ? utilsService.listColumnsEMContract1 : utilsService.listColumnsEMContract"-->
+                                                    <!--                                                        displayMember="{{rsInwardOutward.typeLedger === 0 || this.isSoTaiChinh ? 'noFBook' : 'noMbook'}}"-->
+                                                    <!--                                                        valueName="id"-->
+                                                    <!--                                                        [headerColumns]="utilsService.listHeaderColumnsEMContract"-->
+                                                    <!--                                                        [isObject]="true"-->
+                                                    <!--                                                        [nameCategory]="utilsService.HOP_DONG"-->
+                                                    <!--                                                        [showIconPlus]="true"-->
+                                                    <!--                                                        (click)="saveDetails(i)"-->
+                                                    <!--                                                        [(ngModel)]="detail.contract">-->
+                                                    <!--                                                    </combo-box>-->
+                                                </td>
+                                                <!--Mục thu/chi-->
+                                                <td class="cell-Table">
+                                                    <combo-box name="budgetItem"
+                                                               [dataList]="budgetItems"
+                                                               [listColumns]="utilsService.listColumnsBudgetItem"
+                                                               displayMember="budgetItemCode"
+                                                               [isRemoveValue]="true"
+                                                               valueName="id"
+                                                               [headerColumns]="utilsService.listHeaderColumnsBudgetItem"
+                                                               [isObject]="true"
+                                                               [nameCategory]="utilsService.MUC_THU_CHI"
+                                                               [showIconPlus]="true"
+                                                               (click)="saveDetails(i)"
+                                                               [(ngModel)]="detail.budgetItem">
+                                                    </combo-box>
+                                                </td>
+                                                <!--Phòng ban-->
+                                                <td class="cell-Table">
+                                                    <combo-box name="department"
+                                                               [dataList]="organizationUnits"
+                                                               [isRemoveValue]="true"
+                                                               [listColumns]="utilsService.listColumnsOrganizationUnit"
+                                                               displayMember="organizationUnitCode"
+                                                               valueName="id"
+                                                               [headerColumns]="utilsService.listHeaderColumnsOrganizationUnit"
+                                                               [isObject]="true"
+                                                               [nameCategory]="utilsService.PHONG_BAN"
+                                                               [showIconPlus]="true"
+                                                               (click)="saveDetails(i)"
+                                                               [(ngModel)]="detail.department"
+                                                    ></combo-box>
+                                                </td>
+                                                <!--Mã thống kê-->
+                                                <td class="cell-Table">
+                                                    <combo-box name="statisticsCodes"
+                                                               [dataList]="statisticCodes"
+                                                               [isRemoveValue]="true"
+                                                               [listColumns]="['statisticsCode', 'statisticsCodeName']"
+                                                               displayMember="statisticsCode"
+                                                               valueName="id"
+                                                               [headerColumns]="['Mã thống kê', 'Tên mã thống kê']"
+                                                               [isObject]="true"
+                                                               [nameCategory]="utilsService.MA_THONG_KE"
+                                                               [showIconPlus]="true"
+                                                               (click)="saveDetails(i)"
+                                                               [(ngModel)]="detail.statisticCode"
+                                                    ></combo-box>
+                                                </td>
+                                            </tr>
+                                            <tr *ngIf="isEdit"
+                                                (contextmenu)="onRightClick($event, rsTransferDetails, null, true, false, true)"
+                                            >
+                                                <td class="cell-Table" (click)="addNewRow(0)">
+                                                    <input type="text" class="input-Cell" value="Thêm dòng mới ...." readonly>
+                                                </td>
+                                                <td class="cell-Table"><input type="text" class="input-Cell" readonly></td>
+                                                <td class="cell-Table"><input type="text" class="input-Cell" readonly></td>
+                                                <td class="cell-Table"><input type="text" class="input-Cell" readonly></td>
+                                                <td hidden class="cell-Table"><input type="text" class="input-Cell" readonly></td>
+                                                <td class="cell-Table"><input type="text" class="input-Cell" readonly></td>
+                                                <td class="cell-Table"><input type="text" class="input-Cell" readonly></td>
+                                                <td class="cell-Table"><input type="text" class="input-Cell" readonly></td>
+                                            </tr>
+                                            <tr *ngFor="let bill of newArr(10 - rsTransferDetails.length); let i = index">
+                                                <td class="cell-Table"><input type="text" class="input-Cell" readonly></td>
+                                                <td class="cell-Table"><input type="text" class="input-Cell" readonly></td>
+                                                <td class="cell-Table"><input type="text" class="input-Cell" readonly></td>
+                                                <td class="cell-Table"><input type="text" class="input-Cell" readonly></td>
+                                                <td hidden class="cell-Table"><input type="text" class="input-Cell" readonly></td>
+                                                <td class="cell-Table"><input type="text" class="input-Cell" readonly></td>
+                                                <td class="cell-Table"><input type="text" class="input-Cell" readonly></td>
+                                                <td class="cell-Table"><input type="text" class="input-Cell" readonly></td>
+                                            </tr>
+                                            </tbody>
+                                            <tfoot>
+                                            <tr>
+                                                <td class="cell-Table color-tfoot text-right" colspan="3">
+                                                    <input type="text" readonly
+                                                           class="color-tfoot input-Cell"
+                                                           value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{rsTransferDetails.length}}"></td>
+
+                                                <td class="cell-Table color-tfoot text-right"></td>
+                                                <td hidden class="cell-Table color-tfoot text-right"></td>
+                                                <td class="cell-Table color-tfoot text-right"></td>
+                                                <td class="cell-Table color-tfoot text-right"></td>
+                                                <td class="cell-Table color-tfoot text-right"></td>
+                                            </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </ngb-tab>
+                    <ngb-tab id="refdoc">
+                        <ng-template ngbTabTitle><span
+                            jhiTranslate="ebwebApp.saBill.refDoc">Chứng từ tham chiếu</span></ng-template>
+                        <ng-template ngbTabContent>
+                            <div class="tab-content">
+                                <div class="frm-main frm-padding tab-pane fade in active show" id="home-ref2"
+                                     style="background: #cbdcf0">
+                                    <div id="table-scroll-ref2" class="table-scroll">
+                                        <table id="main-table-ref2" class="main-table">
+                                            <thead>
+                                            <tr>
+                                                <th scope="col" jhiTranslate="ebwebApp.saBill.vDate">Ngày chứng từ
+                                                </th>
+                                                <th scope="col" jhiTranslate="ebwebApp.saBill.postedDate">Ngày hạch
+                                                    toán
+                                                </th>
+                                                <th scope="col" jhiTranslate="ebwebApp.saBill.noFBook">Số chứng từ
+                                                </th>
+                                                <th scope="col" jhiTranslate="ebwebApp.saBill.reason">Diễn giải</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr *ngFor="let viewVoucher of viewVouchersSelected; let i = index"
+                                                oncontextmenu="return false;"
+                                                (contextmenu)="onRightClick($event, viewVouchersSelected, viewVoucher,false, true, false)"
+                                                (keydown.control.delete)="keyPress(viewVoucher, 'ctr + delete')"
+                                            >
+                                                <td class="jsgrid-cell jsgrid-align-center">{{viewVoucher.date}}</td>
+                                                <td class="jsgrid-cell jsgrid-align-center">{{viewVoucher.postedDate}}</td>
+                                                <td class="jsgrid-cell" (click)="utilsService.viewRefVoucher(viewVoucher)" style="color:blue; text-decoration: underline;">{{viewVoucher.no}}</td>
+                                                <td class="jsgrid-cell">{{viewVoucher.reason}}</td>
+                                            </tr>
+                                            <tr *ngFor="let l of newArr(10 - viewVouchersSelected?.length)">
+                                                <td class="cell-Table"><input type="text" class="input-Cell" readonly></td>
+                                                <td class="cell-Table"><input type="text" class="input-Cell" readonly></td>
+                                                <td class="cell-Table"><input type="text" class="input-Cell" readonly></td>
+                                                <td class="cell-Table"><input type="text" class="input-Cell" readonly></td>
+                                            </tr>
+                                            </tbody>
+                                            <tfoot>
+                                            <tr>
+                                                <td class="cell-Table color-tfoot" colspan="4">
+                                                    <input type="text" readonly
+                                                           class="color-tfoot input-Cell"
+                                                           value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{viewVouchersSelected.length}}"></td>
+                                            </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </ngb-tab>
+                    <ngb-tab x-placement="right" id="reference">
+                        <ng-template ngbTabTitle>
+                            <span jhiTranslate="ebwebApp.mBDeposit.reference">Tham Chiếu</span>
+                        </ng-template>
+                    </ngb-tab>
+                </ngb-tabset>
+            </div>
+        </div>
+    </div>
+</div>
+<eb-context-menu [contextMenu]="contextMenu" [useCopyRow]="true"></eb-context-menu>
+
+<ng-template #content let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.saBill.saveMessage">Dữ liệu đã bị thay đổi, Bạn có muốn lưu
+                    lại?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="save(false)"
+                jhiTranslate="entity.action.save">Save
+        </button>
+        <button type="button" class="btn btn-outline-danger" (click)="close()" jhiTranslate="entity.action.noSave">
+            No Save
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="modalRef.close()"
+                jhiTranslate="entity.action.close">close
+        </button>
+    </div>
+</ng-template>
+
+<!--xóa-->
+<ng-template #deleteItem let-d="dismiss">
+    <form name="deleteForm">
+        <div class="modal-header">
+            <h4 class="modal-title" jhiTranslate="ebwebApp.pPInvoice.deleteTitle">Confirm delete operation</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                    (click)="d('Close')">&times;
+            </button>
+        </div>
+        <div class="modal-body">
+            <p id="eb-delete-pporder-heading" jhiTranslate="ebwebApp.pPInvoice.deletePPInvoice"
+            >Are you sure you want to delete this Pporder?</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="d('Close')">
+                <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+            </button>
+            <button id="eb-confirm-delete-pPDiscountReturn" type="submit" class="btn btn-danger" (click)="delete()">
+                <fa-icon [icon]="'times'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.delete">Delete</span>
+            </button>
+        </div>
+    </form>
+</ng-template>
+<ng-template #contentSave let-quantityExists="dismiss">
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label *ngIf="checkOpenSave"
+                       jhiTranslate="ebwebApp.pPDiscountReturnDetails.error.quantityExistsErrorSave"
+                       translateValues="{textCode: '{{this.materialGoodsInStockTextCode.quantityExists}}'}">Vật tư
+                    hàng hóa + Mã VTHH</label>
+                <label *ngIf="!checkOpenSave"
+                       jhiTranslate="ebwebApp.pPDiscountReturnDetails.error.minimumStockExistsErrorSave"
+                       translateValues="{textCode: '{{this.materialGoodsInStockTextCode.minimumStock}}'}">Vật tư
+                    hàng hóa + Mã VTHH</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="openModelSave();quantityExists('Close')"
+                jhiTranslate="entity.action.save">Save
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="changeStatusCheckSave();quantityExists('Close')"
+                jhiTranslate="entity.action.close">close
+        </button>
+    </div>
+</ng-template>

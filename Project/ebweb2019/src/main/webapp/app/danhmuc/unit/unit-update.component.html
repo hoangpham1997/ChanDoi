@@ -1,0 +1,104 @@
+<div class="margin-tp-5 margin-0">
+    <div class="">
+        <div class="itemw">
+            <div class="menu-tool-bar header-custom">
+                <div class="ptitle">
+                    <span jhiTranslate="ebwebApp.unit.home.title"></span>
+                </div>
+                <div class="gr-toolbar">
+                    <a (click)="save()" *ebHasSomeAuthorityOrCondition=
+                        "[[ROLE_DanhMucDonViTinh_Them, !isEditUrl], ROLE_DanhMucDonViTinh_Sua,'ROLE_ADMIN']"
+                       title="{{'ebwebApp.autoPrinciple.tooltipSave' | translate}}">
+                        <i class="mdi mdi-briefcase-download"></i>
+                        <span jhiTranslate="ebwebApp.mCReceipt.home.save"></span>
+                    </a>
+                    <a (click)="saveAndNew()"
+                       *ebHasSomeAuthorityOrCondition=
+                           "[[ROLE_DanhMucDonViTinh_Them , ROLE_DanhMucDonViTinh_Sua], 'ROLE_ADMIN', [ROLE_DanhMucDonViTinh_Them, isCreateUrl]]"
+                       title="{{'ebwebApp.autoPrinciple.tooltipSaveAndAdd' | translate}}">
+                        <i class="mdi mdi-plus fa-plus color-green"></i>
+                        <span jhiTranslate="ebwebApp.mCReceipt.home.saveAndAddNew"></span>
+                    </a>
+                    <a (click)="delete()" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_DanhMucDonViTinh_Xoa]"
+                       title="{{'ebwebApp.autoPrinciple.tooltipDelete' | translate}}"
+                       [class.disable]="!unit.id"><i class="mdi mdi-delete-forever"></i> <span
+                        jhiTranslate="ebwebApp.unit.deleted"
+                    ></span>
+                    </a>
+                    <a *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_DanhMucDonViTinh_Xem]" (click)="closeForm()"
+                       title="{{'ebwebApp.autoPrinciple.tooltipBack' | translate}}"><i
+                        class="mdi mdi-window-close"></i> <span
+                        jhiTranslate="ebwebApp.bank.closed"></span></a>
+                </div>
+            </div>
+            <div class="frm-main">
+                <div class="row no-gutters">
+                    <div class="col-lg-12">
+                        <fieldset>
+                            <legend style="font-size: 19px; color: #f26f21;font-weight: bold;"
+                                    jhiTranslate="ebwebApp.unit.detail.title">
+                                Thông tin chung
+                            </legend>
+                            <form style="border: none;">
+                                <div class="row no-gutters">
+                                    <div class="col-lg-12">
+                                        <div class="form-group row no-gutters">
+                                            <label class="col-sm-2 my-col-form-label" style="padding-right: 0px"
+                                                   jhiTranslate="ebwebApp.unit.unit1"></label>
+                                            <div class="col-sm-3 pd-l-0 pd-r-10">
+                                                <input type="text" class="form-control" name="unitName"
+                                                       id="field_unitName"
+                                                       [(ngModel)]="unit.unitName" required maxlength="25"
+                                                       [disabled]="unit.id"
+                                                       [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                       [tabindex]="1"/>
+                                            </div>
+                                            <label class="col-sm-2 my-col-form-label" style="padding-left: 38px"
+                                                   jhiTranslate="ebwebApp.unit.unitDescription"></label>
+                                            <div class="col-sm-7 pd-l-0 pd-r-10 my-last-div-unit-2-1">
+                                                <input type="text" class="form-control" name="unitDescription"
+                                                       id="field_unitDescription"
+                                                       [(ngModel)]="unit.unitDescription" maxlength="512"
+                                                       [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                       [tabindex]="2"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-12">
+                <div class="form-group row">
+                    <div *ngIf="unit.id" class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="customCheck1"
+                               [(ngModel)]="unit.isActive"
+                               [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)">
+                        <label class="custom-control-label" for="customCheck1"
+                               jhiTranslate="ebwebApp.unit.isActive"></label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #content let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.saBill.saveMessage">Dữ liệu đã bị thay đổi, Bạn có muốn lưu lại?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="save()" jhiTranslate="entity.action.save">Save
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="close()" jhiTranslate="entity.action.noSave">close
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="closeContent()" jhiTranslate="entity.action.close">
+            close
+        </button>
+    </div>
+</ng-template>

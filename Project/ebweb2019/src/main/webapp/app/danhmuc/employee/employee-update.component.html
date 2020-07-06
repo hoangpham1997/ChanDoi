@@ -1,0 +1,510 @@
+<div class="margin-tp-5 margin-0" (click)="closeContextMenu()">
+    <div class="">
+        <div class="itemw">
+            <div class="menu-tool-bar header-custom he">
+                <div class="ptitle">
+                    <span jhiTranslate="ebwebApp.accountingObject.home.employee">NHÂN VIÊN</span>
+                </div>
+                <div class="gr-toolbar">
+                    <a (click)="save()" *ebHasSomeAuthorityOrCondition=
+                        "[[ROLE_DanhMucNhanVien_Them, !isEditUrl], ROLE_DanhMucNhanVien_Sua,'ROLE_ADMIN']"
+                       title="{{'ebwebApp.autoPrinciple.tooltipSave' | translate}}"><i
+                        class="mdi mdi-briefcase-download"></i>
+                        <span jhiTranslate="ebwebApp.mCReceipt.home.save"></span>
+                    </a>
+                    <a (click)="saveAndNew()"
+                       *ebHasSomeAuthorityOrCondition=
+                           "[[ROLE_DanhMucNhanVien_Them , ROLE_DanhMucNhanVien_Sua], 'ROLE_ADMIN', [ROLE_DanhMucNhanVien_Them, isCreateUrl]]"
+                       title="{{'ebwebApp.autoPrinciple.tooltipSaveAndAdd' | translate}}"><i
+                        class="mdi mdi-plus fa-plus color-green"></i>
+                        <span jhiTranslate="ebwebApp.mCReceipt.home.saveAndAddNew"></span>
+                    </a>
+                    <a (click)="delete()" [class.disable]="!accountingObject.id"
+                       *ebHasAnyAuthority="['ROLE_ADMIN', ROLE_DanhMucNhanVien_Xoa]"
+                       title="{{'ebwebApp.autoPrinciple.tooltipDelete' | translate}}"><i
+                        class="mdi mdi-delete-forever"></i> <span
+                        jhiTranslate="ebwebApp.accountingObject.delete.deleted"
+                    ></span>
+                    </a>
+                    <a *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_DanhMucNhanVien_Xem]" (click)="closeForm()"
+                       title="{{'ebwebApp.autoPrinciple.tooltipBack' | translate}}"><i
+                        class="mdi mdi-window-close"></i>
+                        <span jhiTranslate="ebwebApp.mCReceipt.home.close"></span>
+                    </a>
+                </div>
+            </div>
+            <!--                <eb-alert></eb-alert>-->
+            <div class="tool-navbar">
+            </div>
+            <div class="frm-main">
+                <div class="row no-gutters">
+                    <div class="col-lg-12">
+                        <fieldset>
+                            <legend style="font-size: 19px; color: #f26f21;font-weight: bold;"
+                                    jhiTranslate="ebwebApp.accountingObject.detail.title">
+                                Thông tin chung
+                            </legend>
+                            <form style="border: none;">
+                                <div class="row no-gutters">
+                                    <div class="col-lg-12">
+                                        <div class="form-group row no-gutters">
+                                            <label class="col-sm-2 my-col-form-label"
+                                                   for="field_accountingobjectcode"
+                                                   jhiTranslate="ebwebApp.accountingObject.employeeCoded">Mã nhân
+                                                viên (*)</label>
+                                            <div class="col-sm-3 pd-l-0 pd-r-10">
+                                                <input required type="text" class="form-control form-control-sm"
+                                                       name="accountingobjectcode" id="field_accountingobjectcode"
+                                                       [(ngModel)]="accountingObject.accountingObjectCode"
+                                                       maxlength="25"
+                                                       [disabled]="accountingObject.id"
+                                                       [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                       [tabindex]="1"
+                                                />
+                                            </div>
+                                            <label class="col-sm-2 my-col-form-label"
+                                                   for="field_accountingobjectname"
+                                                   jhiTranslate="ebwebApp.accountingObject.employeeNamed">Tên nhân
+                                                viên (*)</label>
+                                            <div class="col-sm-5 pd-l-0 my-last-div-2-1">
+                                                <input required type="text" class="form-control form-control-sm"
+                                                       name="accountingobjectname" id="field_accountingobjectname"
+                                                       [(ngModel)]="accountingObject.accountingObjectName"
+                                                       maxlength="512"
+                                                       [tabindex]="2"
+                                                       [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div class="form-group row no-gutters">
+                                            <label class="col-sm-2 my-col-form-label" for="field_contactTitle"
+                                                   jhiTranslate="ebwebApp.accountingObject.contactTitle">Chức
+                                                vụ</label>
+                                            <div class="col-sm-3 pd-l-0 pd-r-10">
+                                                <input type="text" class="form-control form-control-sm"
+                                                       name="contactTile" id="field_contactTitle"
+                                                       [(ngModel)]="accountingObject.contactTitle" maxlength="512"
+                                                       [tabindex]="3"
+                                                       [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                />
+                                            </div>
+                                            <label class="col-sm-2 my-col-form-label" for="field_departmentId"
+                                                   jhiTranslate="ebwebApp.accountingObject.organizationUnits">Phòng
+                                                ban (*)</label>
+                                            <div class="col-sm-2 pd-l-0">
+                                                <combo-box id="field_departmentId"
+                                                           name="{{'comboboxorganizationUnit_DT'}}"
+                                                           [dataList]="organizationunits"
+                                                           [listColumns]="utilsService.listColumnsOrganizationUnit"
+                                                           displayMember="organizationUnitCode"
+                                                           valueName="id"
+                                                           [headerColumns]="utilsService.listHeaderColumnsOrganizationUnit"
+                                                           [isObject]="false"
+                                                           [isOutTable]="true"
+                                                           [isRequired]="true"
+                                                           [(ngModel)]="accountingObject.departmentId"
+                                                           [tabindex]="4"
+                                                           [isReadOnly]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                ></combo-box>
+                                            </div>
+                                            <label class="col-sm-2 my-col-form-label" for="field_employeeBirthday"
+                                                   jhiTranslate="ebwebApp.accountingObject.employeeBirthday">Ngày
+                                                sinh</label>
+                                            <div class="col-sm-2 pd-l-0 my-last-div-3-2">
+                                                <eb-date-picker id="field_employeeBirthday"
+                                                                [(ngModel)]="accountingObject.employeeBirthday"
+                                                                name="employeeBirthday" format="YYYY-MM-DD"
+                                                                [isInTable]="true"
+                                                                [tabindex]="5"
+                                                                [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)">
+
+                                                </eb-date-picker>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row no-gutters">
+                                            <label class="col-sm-2 my-col-form-label" for="field_contactsex"
+                                                   jhiTranslate="ebwebApp.accountingObject.contactSex">Giới
+                                                tính</label>
+                                            <div class="col-sm-3 pd-l-0 pd-r-10">
+                                                <select name="contactsex" id="field_contactsex"
+                                                        class="form-control form-control-sm"
+                                                        [(ngModel)]="accountingObject.contactSex"
+                                                        [tabindex]="6"
+                                                        [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                >
+                                                    <option value="0" selected
+                                                            jhiTranslate="ebwebApp.accountingObject.girl">Nữ
+                                                    </option>
+                                                    <option value="1" jhiTranslate="ebwebApp.accountingObject.boy">
+                                                        Nam
+                                                    </option>
+                                                </select>
+                                            </div>
+                                            <label class="col-sm-2 my-col-form-label" for="field_taxcode"
+                                                   jhiTranslate="ebwebApp.accountingObject.taxCode">Mã số
+                                                thuế</label>
+                                            <div class="col-sm-2 pd-l-0">
+                                                <input type="text" class="form-control form-control-sm"
+                                                       name="taxcode" id="field_taxcode"
+                                                       [(ngModel)]="accountingObject.taxCode"
+                                                       [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                       [tabindex]="7"
+                                                />
+                                            </div>
+                                            <label class="col-sm-2 my-col-form-label" for="field_numberOfDependent"
+                                                   jhiTranslate="ebwebApp.accountingObject.numberOfDependent">Số
+                                                người phụ thuộc</label>
+                                            <div class="col-sm-2 pd-l-0 my-last-div-3-2">
+                                                <input type="number" class="form-control form-control-sm"
+                                                       name="numberOfDependent" id="field_numberOfDependent"
+                                                       [(ngModel)]="accountingObject.numberOfDependent"
+                                                       ebCurrencyMask
+                                                       [allowNegative]="true"
+                                                       [systemOptions]="currentAccount?.systemOption" [type]="7"
+                                                       [tabindex]="8"
+                                                       [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row no-gutters">
+                                            <label class="col-sm-2 my-col-form-label" for="field_identificationNo"
+                                                   jhiTranslate="ebwebApp.accountingObject.identificationNo">Số
+                                                CMTND</label>
+                                            <div class="col-sm-3 pd-l-0 pd-r-10">
+                                                <input type="text" class="form-control form-control-sm"
+                                                       name="identificationNo" id="field_identificationNo"
+                                                       [(ngModel)]="accountingObject.identificationNo"
+                                                       maxlength="25"
+                                                       [tabindex]="9"
+                                                       [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"/>
+                                            </div>
+                                            <label class="col-sm-2 my-col-form-label"
+                                                   jhiTranslate="ebwebApp.accountingObject.issueDate">Ngày
+                                                cấp</label>
+                                            <div class="col-sm-2 pd-l-0">
+                                                <eb-date-picker [(ngModel)]="accountingObject.issueDate"
+                                                                name="issueDate"
+                                                                format="YYYY-MM-DD"
+                                                                [tabindex]="10"
+                                                                [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"></eb-date-picker>
+                                            </div>
+                                            <label class="col-sm-2 my-col-form-label" for="field_issueBy"
+                                                   jhiTranslate="ebwebApp.accountingObject.issueBy">Nơi cấp</label>
+                                            <div class="col-sm-2 pd-l-0 my-last-div-3-2">
+                                                <input type="text" class="form-control form-control-sm"
+                                                       name="issueBy" id="field_issueBy"
+                                                       [(ngModel)]="accountingObject.issueBy"
+                                                       maxlength="512" [tabindex]="11"
+                                                       [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row no-gutters">
+                                            <label class="col-sm-2 my-col-form-label" for="field_agreementSalary"
+                                                   jhiTranslate="ebwebApp.accountingObject.agreementSalary">Lương
+                                                thỏa thuận</label>
+                                            <div class="col-sm-3 pd-l-0 pd-r-10">
+                                                <input type="number" class="form-control form-control-sm"
+                                                       [minlength]="1"
+                                                       name="agreementSalary" id="field_agreementSalary"
+                                                       [(ngModel)]="accountingObject.agreementSalary"
+                                                       ebCurrencyMask
+                                                       [allowNegative]="true"
+                                                       [systemOptions]="currentAccount?.systemOption" [type]="7"
+                                                       [tabindex]="12"
+                                                       [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"/>
+                                            </div>
+                                            <label class="col-sm-2 my-col-form-label" for="field_insuranceSalary"
+                                                   jhiTranslate="ebwebApp.accountingObject.insuranceSalary">Lương
+                                                đóng bảo hiểm</label>
+                                            <div class="col-sm-2 pd-l-0">
+                                                <input type="number" class="form-control form-control-sm"
+                                                       [minlength]="1"
+                                                       name="insuranceSalary" id="field_insuranceSalary"
+                                                       [(ngModel)]="accountingObject.insuranceSalary"
+                                                       ebCurrencyMask
+                                                       [allowNegative]="true"
+                                                       [systemOptions]="currentAccount?.systemOption" [type]="7"
+                                                       [tabindex]="13"
+                                                       [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"/>
+                                            </div>
+                                            <label class="col-sm-2 my-col-form-label" for="field_salarycoEfficient"
+                                                   jhiTranslate="ebwebApp.accountingObject.salaryCoefficient">Hệ số
+                                                lương</label>
+                                            <div class="col-sm-2 pd-l-0 my-last-div-3-2">
+                                                <input type="number" class="form-control form-control-sm"
+                                                       name="salarycoEfficient" id="field_salarycoEfficient"
+                                                       [(ngModel)]="accountingObject.salarycoEfficient"
+                                                       ebCurrencyMask
+                                                       [allowNegative]="false"
+                                                       [systemOptions]="currentAccount?.systemOption" [type]="5"
+                                                       [tabindex]="14"
+                                                       [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row no-gutters">
+                                            <label class="col-sm-2 my-col-form-label" for="field_objecttype"
+                                                   jhiTranslate="ebwebApp.accountingObject.objectTypes">Loại đối
+                                                tượng (*)</label>
+                                            <div class="col-sm-3 pd-l-0 ">
+                                                <select name="objecttype" id="field_objecttype"
+                                                        class="form-control form-control-sm"
+                                                        [(ngModel)]="accountingObject.objectType"
+                                                        [tabindex]="15"
+                                                        [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                >
+                                                    <option value="0"
+                                                            jhiTranslate="ebwebApp.accountingObject.home.supplier">
+                                                        Nhà cung cấp
+                                                    </option>
+                                                    <option value="1"
+                                                            jhiTranslate="ebwebApp.accountingObject.home.customer">
+                                                        Khách hàng
+                                                    </option>
+                                                    <option value="2"
+                                                            jhiTranslate="ebwebApp.accountingObject.home.customerAndSupplier">
+                                                        Khách hàng/Nhà cung cấp
+                                                    </option>
+                                                    <option value="3"
+                                                            jhiTranslate="ebwebApp.accountingObject.home.other">Khác
+                                                    </option>
+                                                </select>
+                                            </div>
+                                            <div class="col-sm-3 pd-l-0 pd-r-10" style="text-align: end">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" class="custom-control-input"
+                                                           id="field_isUnofficialStaff"
+                                                           [(ngModel)]="accountingObject.isUnOfficialStaff"
+                                                           [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                           name="isUnOfficialStaff">
+                                                    <label class="custom-control-label"
+                                                           for="field_isUnofficialStaff"
+                                                           jhiTranslate="ebwebApp.accountingObject.isUnOfficialStaff">Là
+                                                        nhân viên không chính thức</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2 pd-l-0 pd-r-10" style="text-align: end">
+                                                <div *ngIf="accountingObject.id"
+                                                     class="custom-control custom-checkbox">
+                                                    <input type="checkbox" class="custom-control-input"
+                                                           id="customCheck1" [(ngModel)]="accountingObject.isActive"
+                                                           [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                           name="isActive">
+                                                    <label class="custom-control-label" for="customCheck1"
+                                                           jhiTranslate="ebwebApp.accountingObject.isActive"> Theo
+                                                        dõi</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+            <div class="frm-main">
+                <div class="row no-gutters">
+                    <div class="col-lg-12">
+                        <fieldset>
+                            <legend style="font-size: 19px; color: #f26f21;font-weight: bold;"
+                                    jhiTranslate="ebwebApp.accountingObject.detail.contactInformation1">Thông tin
+                                liên lạc
+                            </legend>
+                            <form style="border: none;">
+                                <div class="row no-gutters">
+                                    <div class="col-lg-12">
+                                        <div class="form-group row no-gutters">
+                                            <label class="col-sm-2 my-col-form-label"
+                                                   for="field_accountingObjectAddress"
+                                                   jhiTranslate="ebwebApp.accountingObject.accountingObjectAddress">Địa
+                                                chỉ</label>
+                                            <div class="col-sm-7 pd-l-0 pd-r-10 my-col-form-label-41">
+                                                <input type="text" class="form-control form-control-sm"
+                                                       name="contactaddress" id="field_accountingObjectAddress"
+                                                       [(ngModel)]="accountingObject.accountingObjectAddress"
+                                                       maxlength="512"
+                                                       [tabindex]="16"
+                                                       [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                />
+                                            </div>
+                                            <label class="col-sm-2 my-col-form-label" for="field_contactHomeTel"
+                                                   jhiTranslate="ebwebApp.accountingObject.contactHomeTel">Điện
+                                                thoại nhà riêng</label>
+                                            <div class="col-sm-2 pd-l-0 my-last-div-3-2">
+                                                <input type="text" class="form-control form-control-sm"
+                                                       name="contactmobile" id="field_contactHomeTel"
+                                                       [(ngModel)]="accountingObject.contactHomeTel" maxlength="25"
+                                                       [tabindex]="17"
+                                                       [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div class="form-group row no-gutters">
+                                            <label class="col-sm-2 my-col-form-label" for="field_tel"
+                                                   jhiTranslate="ebwebApp.accountingObject.contactMobile">Điện thoại
+                                                di động</label>
+                                            <div class="col-sm-3 pd-l-0 pd-r-10 my-col-form-label-25">
+                                                <input type="text" class="form-control form-control-sm"
+                                                       name="contactemail" id="field_tel"
+                                                       [(ngModel)]="accountingObject.tel" maxlength="25"
+                                                       [tabindex]="18"
+                                                       [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                />
+                                            </div>
+                                            <label class="col-sm-2 my-col-form-label" for="field_email"
+                                                   jhiTranslate="ebwebApp.accountingObject.addressEmail">Địa chỉ
+                                                Email</label>
+                                            <div class="col-sm-2 pd-l-0">
+                                                <input type="text" class="form-control form-control-sm"
+                                                       name="contacthometel" id="field_email"
+                                                       [(ngModel)]="accountingObject.email"
+                                                       [tabindex]="19"
+                                                       [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <ngb-tabset class="tool-navbar">
+                    <ngb-tab>
+                        <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.accountingObject.detail.bankAccount">Tài khoản ngân hàng</span>
+                        </ng-template>
+                        <ng-template ngbTabContent>
+                            <div class="tab-content">
+                                <div class="frm-main frm-padding tab-pane fade in active show" id="home-tax"
+                                     style="background: #cbdcf0">
+                                    <div id="table-scroll-tax" class="table-scroll">
+                                        <table id="main-table-tax" class="main-table"
+                                               (keydown.arrowDown)="moveArrowDown($event,4)"
+                                               (keydown.arrowUp)="moveArrowUp($event,4)">
+                                            <thead>
+                                            <tr>
+                                                <th scope="col"
+                                                    jhiTranslate="ebwebApp.accountingObject.bankAccountNumber">Số
+                                                    tài khoản
+                                                </th>
+                                                <th scope="col" jhiTranslate="ebwebApp.accountingObject.bankName">
+                                                    Tên ngân hàng
+                                                </th>
+                                                <th scope="col"
+                                                    jhiTranslate="ebwebApp.accountingObject.bankBranchName">Tên chi
+                                                    nhánh
+                                                </th>
+                                                <th scope="col"
+                                                    jhiTranslate="ebwebApp.accountingObject.accountHolderName">Tên
+                                                    chủ tài khoản
+                                                </th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr oncontextmenu="return false;"
+                                                (contextmenu)="onRightClick($event, accountingobjectbankaccounts, detail, true, true, 0)"
+                                                *ngFor="let detail of accountingobjectbankaccounts; let i = index"
+                                                (keydown.control.delete)="KeyPress(detail, 'ctr + delete',0)"
+                                                (keydown.control.c)="KeyPress(detail,'ctr + c', 0)"
+                                                (keydown.control.insert)="KeyPress(detail,'ctr + insert', 0)"
+                                                (keydown.arrowDown)="moveArrowDown($event, 19)"
+                                                (keydown.arrowUp)="moveArrowUp($event,19)"
+                                                (keydown.enter)="doubleClickRow($event, i)"
+                                            >
+                                                <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                              name="{{'bankAccount'+i}}"
+                                                                              id="{{'bankAccount'+i}}"
+                                                                              [(ngModel)]="detail.bankAccount"
+                                                                              [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                                              (focus)="actionFocus(0, i)"
+                                                                              [tabindex]="19+(4*i)+1"></td>
+                                                <td class="cell-Table">
+                                                    <combo-box nameIp="{{'bankName'+i}}"
+                                                               idIp="{{'bankName'+i}}"
+                                                               [hideRequiredWhenValueTrue]="true"
+                                                               [dataList]="bank"
+                                                               [listColumns]="utilsService.listColumnsBanks"
+                                                               displayMember="bankName"
+                                                               valueName="bankName"
+                                                               [headerColumns]="utilsService.listHeaderColumnsBanks"
+                                                               [isObject]="false"
+                                                               [(ngModel)]="detail.bankName"
+                                                               [isReadOnly]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                               (focusInput)="actionFocus(1, i)"
+                                                               [tabindex]="19+(4*i)+2"
+                                                    >
+                                                    </combo-box>
+                                                </td>
+                                                <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                              name="{{'bankBranchName'+i}}"
+                                                                              id="{{'bankBranchName'+i}}"
+                                                                              [(ngModel)]="detail.bankBranchName"
+                                                                              [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                                              (focus)="actionFocus(2, i)"
+                                                                              [tabindex]="19+(4*i)+3">
+                                                </td>
+                                                <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                              name="{{'accountHolderName'+i}}"
+                                                                              id="{{'accountHolderName'+i}}"
+                                                                              [(ngModel)]="detail.accountHolderName"
+                                                                              [disabled]="(!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                                              (focus)="actionFocus(3, i)"
+                                                                              [tabindex]="19+(4*i)+4"
+                                                                              (keydown.tab)="addIfLastInput()">
+                                                </td>
+                                            </tr>
+                                            <tr (click)="addRowToInsert()">
+                                                <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                              [title]="translate.instant('ebwebApp.purchaseOrder.addNewLine')"
+                                                                              [disabled]="accountingObject.id && (!isRoleSua && isEditUrl) || (!isRoleThem && isCreateUrl)"
+                                                                              value="{{'ebwebApp.purchaseOrder.addNewLine' | translate}}"
+                                                                              readonly></td>
+                                                <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                              readonly></td>
+                                                <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                              readonly></td>
+                                                <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                              readonly></td>
+                                            </tr>
+                                            <tr *ngFor="let l of newArr(8 - accountingobjectbankaccounts?.length)">
+                                                <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                              readonly></td>
+                                                <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                              readonly></td>
+                                                <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                              readonly></td>
+                                                <td class="cell-Table"><input type="text" class="input-Cell"
+                                                                              readonly></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </ngb-tab>
+                </ngb-tabset>
+            </div>
+        </div>
+    </div>
+</div>
+<eb-context-menu [contextMenu]="contextMenu" [eventHandlingHere]="true" [useCopyRow]="true"></eb-context-menu>
+<ng-template #content let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.saBill.saveMessage">Dữ liệu đã bị thay đổi, Bạn có muốn lưu lại?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="save()" jhiTranslate="entity.action.save">Save
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="close()" jhiTranslate="entity.action.noSave">close
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="closeContent()" jhiTranslate="entity.action.close">
+            close
+        </button>
+    </div>
+</ng-template>

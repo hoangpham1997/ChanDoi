@@ -1,0 +1,304 @@
+
+-- auto-generated definition
+create table FAInit
+(
+    ID                            uniqueidentifier not null
+        primary key,
+    CompanyID                     uniqueidentifier,
+    BranchID                      uniqueidentifier,
+    TypeID                        int,
+    PostedDate                    datetime,
+    TypeLedger                    int,
+    FixedAssetID                  uniqueidentifier,
+    DepartmentID                  uniqueidentifier,
+    IncrementDate                 datetime,
+    FixedAssetCategoryID          uniqueidentifier,
+    DepreciationDate              datetime,
+    UsedTime                      decimal(18),
+    UsedTimeRemain                decimal(18),
+    IsMonthUsedTime               bit,
+    IsMonthUsedTimeRemain         bit,
+    OriginalPrice                 money,
+    PurchasePrice                 money,
+    AcDepreciationAmount          money,
+    RemainingAmount               money,
+    MonthPeriodDepreciationAmount money,
+    OriginalPriceAccount          nvarchar(25),
+    ExpenditureAccount            nvarchar(25),
+    DepreciationAccount           nvarchar(25),
+    BudgetItemID                  uniqueidentifier,
+    CostSetID                     uniqueidentifier,
+    FixedAssetName                nvarchar(128),
+    FixedAssetCode                nvarchar(128),
+    StatisticsCodeID              uniqueidentifier
+)
+go
+
+-- auto-generated definition
+create table FAInitDetail
+(
+    ID               uniqueidentifier not null
+        primary key,
+    FAInitID         uniqueidentifier not null,
+    ObjectID         uniqueidentifier,
+    ObjectType       int,
+    Rate             decimal(25, 10),
+    CostAccount      nvarchar(25),
+    ExpenseItemID    uniqueidentifier,
+    StatisticsCodeID uniqueidentifier,
+    OrderPriority    int
+)
+go
+
+-- auto-generated definition
+create table FAIncrement
+(
+    ID          uniqueidentifier not null
+        primary key,
+    CompanyID   uniqueidentifier,
+    BranchID    uniqueidentifier,
+    TypeID      int              not null,
+    Date        datetime         not null,
+    TypeLedger  int,
+    NoFBook     nvarchar(25),
+    NoMBook     nvarchar(25),
+    Reason      nvarchar(512),
+    TotalAmount money            not null,
+    TemplateID  uniqueidentifier,
+    Recorded    bit              not null
+)
+go
+
+-- auto-generated definition
+create table FAIncrementDetail
+(
+    ID                 uniqueidentifier not null
+        primary key,
+    FAIncrementID      uniqueidentifier not null,
+    FixedAssetID       uniqueidentifier not null,
+    Description        nvarchar(512),
+    Amount             money            not null,
+    AccountingObjectID uniqueidentifier,
+    BudgetItemID       uniqueidentifier,
+    CostSetID          uniqueidentifier,
+    ContractID         uniqueidentifier,
+    StatisticCodeID    uniqueidentifier,
+    DepartmentID       uniqueidentifier,
+    ExpenseItemID      uniqueidentifier,
+    OrderPriority      int
+)
+go
+
+-- auto-generated definition
+create table FAIncrementDetailRefVoucher
+(
+    ID            uniqueidentifier not null
+        primary key,
+    FAIncrementID uniqueidentifier not null,
+    RefVoucherID  uniqueidentifier,
+    OrderPriority int
+)
+go
+
+-- auto-generated definition
+create table FADecrement
+(
+    ID          uniqueidentifier not null
+        primary key,
+    CompanyID   uniqueidentifier,
+    BranchID    uniqueidentifier,
+    TypeID      int              not null,
+    Date        datetime         not null,
+    PostedDate  datetime         not null,
+    TypeLedger  int,
+    NoFBook     nvarchar(25),
+    NoMBook     nvarchar(25),
+    Reason      nvarchar(512),
+    TotalAmount money            not null,
+    Recorded    bit              not null,
+    TemplateID  uniqueidentifier
+)
+go
+
+-- auto-generated definition
+create table FADecrementDetail
+(
+    ID                   uniqueidentifier not null
+        primary key,
+    FADecrementID        uniqueidentifier not null,
+    FixedAssetID         uniqueidentifier not null,
+    DepartmentID         uniqueidentifier not null,
+    OriginalPrice        money,
+    DepreciationAmount   money,
+    AcDepreciationAmount money,
+    RemainingAmount      money,
+    OriginalPriceAccount nvarchar(25),
+    DepreciationAccount  nvarchar(25),
+    ExpenditureAccount   nvarchar(25),
+    RemainingAccount     nvarchar(25),
+    OrderPriority        int
+)
+go
+
+-- auto-generated definition
+create table FADecrementDetailPost
+(
+    ID                  uniqueidentifier not null
+        primary key,
+    FADecrementDetailID uniqueidentifier not null,
+    Description         nvarchar(512),
+    DebitAccount        nvarchar(25),
+    CreditAccount       nvarchar(25),
+    Amount              money            not null,
+    BudgetItemID        uniqueidentifier,
+    CostSetID           uniqueidentifier,
+    ContractID          uniqueidentifier,
+    AccountingObjectID  uniqueidentifier,
+    EmployeeID          uniqueidentifier,
+    StatisticsCodeID    uniqueidentifier,
+    ExpenseItemID       uniqueidentifier,
+    OrderPriority       int
+)
+go
+
+-- auto-generated definition
+create table FAAdjustment
+(
+    ID         uniqueidentifier not null
+        primary key,
+    CompanyID  uniqueidentifier,
+    BranchID   uniqueidentifier,
+    TypeID     int              not null,
+    PostedDate datetime         not null,
+    Date       datetime         not null,
+    TypeLedger int,
+    NoFBook    nvarchar(25),
+    NoMBook    nvarchar(25),
+    Reason     nvarchar(512),
+    TemplateID uniqueidentifier,
+    Recorded   bit              not null,
+    ReportNo   nvarchar(25),
+    ReportDate datetime
+)
+go
+
+-- auto-generated definition
+create table FAAdjustmentDetail
+(
+    ID                           uniqueidentifier not null
+        primary key,
+    FAAdjustmentID               uniqueidentifier not null,
+    Description                  nvarchar(512),
+    OrderPriority                int,
+    FixAssetID                   uniqueidentifier,
+    OldRemainingAmountOriginal   money,
+    NewRemainingAmount           money,
+    DifferRemainingAmount        money,
+    OldUsedTime                  decimal(25, 10),
+    NewUsedTime                  decimal(25, 10),
+    DifferUsedTime               decimal(25, 10),
+    OldAcDepreciationAmount      money,
+    NewAcDepreciationAmount      money,
+    DifferAcDepreciationAmount   money,
+    OldDepreciationAmount        money,
+    NewDepreciationAmount        money,
+    DifferDepreciationAmount     money,
+    CostAccount                  nvarchar(25),
+    AdjustAccount                nvarchar(25),
+    NewMonthlyDepreciationAmount money
+)
+go
+
+
+-- auto-generated definition
+create table FAAuditMemberDetail
+(
+    ID                    uniqueidentifier not null
+        primary key,
+    FAAuditID             uniqueidentifier not null,
+    AccountObjectName     nvarchar(128),
+    AccountingObjectTitle nvarchar(128),
+    Role                  nvarchar(255),
+    DepartmentID          uniqueidentifier,
+    AccountingObjectID    uniqueidentifier,
+    OrderPriority         int
+)
+go
+
+-- auto-generated definition
+create table FADepreciation
+(
+    ID                  uniqueidentifier not null
+        primary key,
+    CompanyID           uniqueidentifier,
+    BranchID            uniqueidentifier,
+    TypeID              int              not null,
+    PostedDate          datetime         not null,
+    Date                datetime         not null,
+    TypeLedger          int,
+    NoFBook             nvarchar(25),
+    NoMBook             nvarchar(25),
+    Reason              nvarchar(512),
+    TotalAmount         money            not null,
+    TotalAmountOriginal money            not null,
+    TemplateID          uniqueidentifier,
+    Recorded            bit              not null,
+    Month               int,
+    Year                int
+)
+go
+
+
+-- auto-generated definition
+create table FADepreciationDetail
+(
+    ID               uniqueidentifier not null
+        primary key,
+    FADepreciationID uniqueidentifier not null,
+    FixAssetID       uniqueidentifier not null,
+    Amount           money            not null,
+    OrderPriority    int
+)
+go
+
+-- auto-generated definition
+create table FADepreciationAllocation
+(
+    ID               uniqueidentifier not null
+        primary key,
+    FADepreciationID uniqueidentifier not null,
+    FixAssetID       uniqueidentifier not null,
+    Description      nvarchar(512),
+    ObjectID         uniqueidentifier,
+    ObjectType       int,
+    Rate             decimal(25, 10),
+    AllocationAmount money,
+    CostAccount      nvarchar(25),
+    CostSetID        uniqueidentifier,
+    ExpenseItemID    uniqueidentifier,
+    OrderPriority    int
+)
+go
+
+-- auto-generated definition
+create table FADepreciationPost
+(
+    ID               uniqueidentifier not null
+        primary key,
+    FADepreciationID uniqueidentifier not null,
+    Description      nvarchar(512),
+    DebitAccount     nvarchar(25),
+    CreditAccount    nvarchar(25),
+    Amount           money            not null,
+    DepartmentID     uniqueidentifier,
+    CostSetID        uniqueidentifier,
+    ExpenseItemID    uniqueidentifier,
+    BudgetItemID     uniqueidentifier,
+    StatisticCodeID  uniqueidentifier,
+    OrderPriority    int
+)
+go
+
+
+
+

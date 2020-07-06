@@ -1,0 +1,303 @@
+<div class="menu-tool-bar he">
+    <div class="ptitle">
+        <span jhiTranslate="ebwebApp.dataBackup.title">Quản lý dữ liệu</span>
+    </div>
+    <div class="gr-toolbar" style="padding-bottom: 5px;">
+        <button *ebHasSomeAuthority="['ROLE_ADMIN', ROLE.QLDuLieu_SaoLuuDuLieu]" class="button-navigation"  [disabled]="selectT === 1" (click)="backupData()"><i class="mdi mdi-database-export"></i> <span
+            jhiTranslate="ebwebApp.dataBackup.backup">Sao lưu dữ liệu</span></button>
+        <!--        <a><i class="mdi mdi-window-restore"></i><span>Khôi phục dữ liệu</span></a>-->
+        <button *ebHasSomeAuthority="['ROLE_ADMIN', ROLE.QLDuLieu_KhoiPhucDuLieu]" [disabled]="selectedRows.length !== 1 || selectT === 1" class="button-navigation" (click)="restoreData()"><i
+            class="mdi mdi-database-import"></i><span
+            jhiTranslate="ebwebApp.dataBackup.restore">Khôi phục dữ liệu</span></button>
+        <!--        <a><i class="mdi mdi-download"></i> <span jhiTranslate="ebwebApp.dataBackup.download">Tải xuống</span></a>-->
+        <button *ebHasSomeAuthority="['ROLE_ADMIN', ROLE.QLDuLieu_Xoa]" [disabled]="selectedRows.length === 0 || selectT === 1" class="button-navigation" (click)="delete()"><i
+            class="mdi mdi-delete"></i> <span jhiTranslate="ebwebApp.dataBackup.delete">Xóa</span></button>
+        <button class="button-navigation" (click)="closeForm()"><i class="mdi mdi-window-close"></i> <span
+            jhiTranslate="ebwebApp.dataBackup.close">Đóng</span></button>
+    </div>
+</div>
+<div class="frm-main frm-tables frm-padding" style="background: #cbdcf0; margin-top: 2px">
+    <ngb-tabset class="tool-navbar" (tabChange)="selectTab($event)">
+        <ngb-tab id="tab0">
+            <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.dataBackup.tab"> Lịch sử sao lưu</span></ng-template>
+            <ng-template ngbTabContent>
+                <div class="tab-content" style="margin-bottom: 15px">
+                    <div class="table-scroll voucher-table" id="table-scroll0_backup" style="height: 450px">
+                        <table class="main-table" style="min-width: auto;" id="main-table0_backup">
+                            <thead>
+                            <tr>
+                                <th jhiTranslate="ebwebApp.dataBackup.dateCreate" scope="col"></th>
+                                <th jhiTranslate="ebwebApp.dataBackup.name" scope="col"></th>
+                                <th jhiTranslate="ebwebApp.dataBackup.size" scope="col"></th>
+                                <th jhiTranslate="ebwebApp.dataBackup.note" scope="col"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr *ngFor="let data of datas ;trackBy: trackId"
+                                [class.selected]="selectedRows.indexOf(data) !== -1"
+                                (click)="selectMultiRow(data, $event, datas)">
+                                <td class="jsgrid-cell jsgrid-align-center"
+                                    title="{{data.dateBackup| date:'dd/MM/yyyy HH:mm:ss'}}">{{data.dateBackup| date:'dd/MM/yyyy HH:mm:ss'}}</td>
+                                <td class="jsgrid-cell jsgrid-align-left"
+                                    title="{{data.name}}">{{data.name}}</td>
+                                <td class="jsgrid-cell jsgrid-align-left"
+                                    title="{{data.size}}">{{round(data.size / 1024)}} {{ ' KB'}}</td>
+                                <td class="jsgrid-cell jsgrid-align-left"
+                                    title="{{data.note}}">{{data.note}}</td>
+
+                            </tr>
+                            <tr *ngFor="let l of newArr(11 - datas?.length)">
+                                <td class="jsgrid-cell jsgrid-align-left"><input type="text" class="input-Cell"
+                                                                                 readonly></td>
+                                <td class="jsgrid-cell jsgrid-align-left"><input type="text" class="input-Cell"
+                                                                                 readonly></td>
+                                <td class="jsgrid-cell jsgrid-align-left"><input type="text" class="input-Cell"
+                                                                                 readonly></td>
+                                <td class="jsgrid-cell jsgrid-align-left"><input type="text" class="input-Cell"
+                                                                                 readonly></td>
+                            </tr>
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <td class="cell-Table color-tfoot jsgrid-align-left" colspan="4"><input type="text"
+                                                                                                        readonly
+                                                                                                        class="input-Cell"
+                                                                                                        value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{datas?.length}}">
+                                </td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                <!--        phân trang-->
+                <div *ngIf="datas && datas.length"
+                     style="padding-right: 16px">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="row justify-content-end" style="height:32px">
+                                <div class="col-lg-4">
+                                    <div class="form-group row">
+                                        <label class="col-sm-10 col-form-label" for="itemsPerPage"
+                                               style="padding-right: 0px;text-align: right;"><span
+                                            jhiTranslate="ebwebApp.mBDeposit.totalItems"></span>: {{totalItemsBackup}}</label>
+                                        <div class="col-sm-2 pd-l-0" style="padding-right: 5px;padding-left: 5px;">
+                                            <select class="form-control form-control-sm" name="itemsPerPage"
+                                                    id="itemsPerPage"
+                                                    style="background-color: #f5f7fa;"
+                                                    [(ngModel)]="itemsPerPageBackup"
+                                                    (ngModelChange)="selectedItemPerPageBackup()"
+                                            >
+                                                <option [value]="10">10</option>
+                                                <option [value]="20">20</option>
+                                                <option [value]="30">30</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="justify-content-end">
+                                    <ngb-pagination [size]="'sm'" [collectionSize]="totalItemsBackup" [(page)]="pageBackup" [pageSize]="itemsPerPageBackup"
+                                                    [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
+                                                    (pageChange)="loadPageBackup(pageBackup)"></ngb-pagination>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--        end of phan trang-->
+            </ng-template>
+        </ngb-tab>
+        <ngb-tab id="tab1">
+            <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.restoreData.tab"> Lịch sử khôi phục</span></ng-template>
+            <ng-template ngbTabContent>
+                <div class="tab-content" style="margin-bottom: 15px">
+                    <div class="table-scroll voucher-table" id="table-scroll0_restore" style="height: 450px">
+                        <table class="main-table" style="min-width: auto;" id="main-table0_restore">
+                            <thead>
+                            <tr>
+                                <th jhiTranslate="ebwebApp.restoreData.dateCreate" scope="col"></th>
+                                <th jhiTranslate="ebwebApp.restoreData.name" scope="col"></th>
+                                <th jhiTranslate="ebwebApp.restoreData.size" scope="col"></th>
+                                <th jhiTranslate="ebwebApp.restoreData.note" scope="col"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr *ngFor="let data of datasRestore ;"
+                                >
+                                <td class="jsgrid-cell jsgrid-align-center"
+                                    title="{{data.timeRestore| date:'dd/MM/yyyy HH:mm:ss'}}">{{data.timeRestore| date:'dd/MM/yyyy HH:mm:ss'}}</td>
+                                <td class="jsgrid-cell jsgrid-align-left"
+                                    title="{{data.name}}">{{data.name}}</td>
+                                <td class="jsgrid-cell jsgrid-align-left"
+                                    title="{{data.size}}">{{round(data.size / 1024)}} {{ ' KB'}}</td>
+                                <td class="jsgrid-cell jsgrid-align-left"
+                                    title="{{getStatus(data.status)}}">{{getStatus(data.status)}}</td>
+
+                            </tr>
+                            <tr *ngFor="let l of newArr(11 - datasRestore?.length)">
+                                <td class="jsgrid-cell jsgrid-align-left"><input type="text" class="input-Cell"
+                                                                                 readonly></td>
+                                <td class="jsgrid-cell jsgrid-align-left"><input type="text" class="input-Cell"
+                                                                                 readonly></td>
+                                <td class="jsgrid-cell jsgrid-align-left"><input type="text" class="input-Cell"
+                                                                                 readonly></td>
+                                <td class="jsgrid-cell jsgrid-align-left"><input type="text" class="input-Cell"
+                                                                                 readonly></td>
+                            </tr>
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <td class="cell-Table color-tfoot jsgrid-align-left" colspan="4"><input type="text"
+                                                                                                        readonly
+                                                                                                        class="input-Cell"
+                                                                                                        value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{datasRestore?.length}}">
+                                </td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                <!--        phân trang-->
+                <div *ngIf="datas && datas.length"
+                     style="padding-right: 16px">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="row justify-content-end" style="height:32px">
+                                <div class="col-lg-4">
+                                    <div class="form-group row">
+                                        <label class="col-sm-10 col-form-label" for="itemsPerPage"
+                                               style="padding-right: 0px;text-align: right;"><span
+                                            jhiTranslate="ebwebApp.mBDeposit.totalItems"></span>: {{totalItemsRestore}}</label>
+                                        <div class="col-sm-2 pd-l-0" style="padding-right: 5px;padding-left: 5px;">
+                                            <select class="form-control form-control-sm" name="itemsPerPage"
+                                                    id="itemsPerPageRestore"
+                                                    style="background-color: #f5f7fa;"
+                                                    [(ngModel)]="itemsPerPageRestore"
+                                                    (ngModelChange)="selectedItemPerPageRestore()"
+                                            >
+                                                <option [value]="10">10</option>
+                                                <option [value]="20">20</option>
+                                                <option [value]="30">30</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="justify-content-end">
+                                    <ngb-pagination [size]="'sm'" [collectionSize]="totalItemsRestore" [(page)]="pageRestore" [pageSize]="itemsPerPageRestore"
+                                                    [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
+                                                    (pageChange)="loadPageRestore(pageRestore)"></ngb-pagination>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--        end of phan trang-->
+            </ng-template>
+        </ngb-tab>
+    </ngb-tabset>
+</div>
+<ng-template #uploadInvoiceModel let-d="dismiss">
+    <div id="ModalCustom">
+        <div class="modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" style="padding: 15px 10px 10px 10px;">
+                    <div class="d-flex flex-wrap col-md-11">
+                        <h3 class="modal-title-detail"><span
+                            class="text-uppercase" jhiTranslate="ebwebApp.dataBackup.restore">Khôi phục dữ liệu</span>
+                        </h3>
+                    </div>
+                    <a class="close-modal" data-dismiss="modal" (click)="d('Close')"
+                       aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </a>
+                </div>
+                <div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-10">
+                                <label><span jhiTranslate="ebwebApp.saBill.uploadFile">Dữ liệu khôi phục</span></label>
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" id="customFile"
+                                           (change)="changeFile($event)">
+                                    <label class="custom-file-label" for="customFile">{{file?.name}}</label>
+                                </div>
+                            </div>
+                            <div class="col-md-2 text-right">
+                                <label>&nbsp;</label>
+                                <div>
+                                    <button class="btn btn-success" (click)="upload(downFile)"
+                                            jhiTranslate="entity.action.upload">Upload
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #downFile let-d="dismiss">
+    <div id="ModalCustom2">
+        <div class="modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" style="padding: 15px 10px 10px 10px;">
+                    <div class="d-flex flex-wrap col-md-11">
+                        <h3 class="modal-title-detail"><span
+                            class="text-uppercase" jhiTranslate="ebwebApp.dataBackup.restore">Khôi phục dữ liệu</span>
+                        </h3>
+                    </div>
+                    <a class="close-modal" data-dismiss="modal" (click)="d('Close')"
+                       aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </a>
+                </div>
+                <div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <span jhiTranslate="ebwebApp.saBill.error.fileError">Dữ liệu không chính xác, bạn có muốn tải về file lỗi?</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 text-right">
+                                <label></label>
+                                <div>
+                                    <button class="btn btn-default" (click)="d('Close')"
+                                            jhiTranslate="entity.action.close">close
+                                    </button>
+                                    <button class="btn btn-success" (click)="download()"
+                                            jhiTranslate="entity.action.download">download
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<ng-template #content let-q="dismiss">
+    <div class="modal-body">
+        <form>
+            <div *ngIf="question === 'backup'" class="form-group">
+                <label jhiTranslate="ebwebApp.dataBackup.question.backup"></label>
+            </div>
+            <div *ngIf="question === 'delete'" class="form-group">
+                <label jhiTranslate="ebwebApp.dataBackup.question.delete"></label>
+            </div>
+            <div *ngIf="question === 'restore'" class="form-group">
+                <label jhiTranslate="ebwebApp.dataBackup.question.restore"></label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="accept()" jhiTranslate="entity.action.ok">Đồng
+            ý
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="modalRefClose()"
+                jhiTranslate="entity.action.close">Đóng
+        </button>
+    </div>
+</ng-template>

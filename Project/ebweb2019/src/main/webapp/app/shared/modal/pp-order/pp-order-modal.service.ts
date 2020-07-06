@@ -1,0 +1,31 @@
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpResponse } from '@angular/common/http';
+import { IPPOrderDto } from 'app/shared/modal/pp-order/pp-order-dto.model';
+import { SERVER_API_URL } from 'app/app.constants';
+import { Observable } from 'rxjs';
+import { createRequestOption } from 'app/shared';
+
+type EntityArrayResponseType = HttpResponse<IPPOrderDto[]>;
+
+@Injectable({ providedIn: 'root' })
+export class PPOrderModalService {
+    private resourceUrl = SERVER_API_URL + 'api/pporders';
+    private itemHadUnSelected: any[] = [];
+    constructor(private http: HttpClient) {}
+
+    getItemHadUnSelected() {
+        return this.itemHadUnSelected;
+    }
+
+    setItemUnSelected(value: any[]) {
+        this.itemHadUnSelected = value;
+    }
+
+    cleanData() {
+        this.setItemUnSelected([]);
+    }
+    find(req?: any): Observable<HttpResponse<any>> {
+        const options = createRequestOption(req);
+        return this.http.get<any[]>(`${this.resourceUrl}/search-all-dto`, { params: options, observe: 'response' });
+    }
+}

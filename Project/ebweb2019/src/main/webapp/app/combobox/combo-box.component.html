@@ -1,0 +1,108 @@
+<div class="dropdown" [class.margin-1]="isOutTable" style="background: transparent" (focusout)="outFocus()" (mouseover)="mouseOverTable()"
+     (click)="clickInside()"
+     (keydown.tab)="tab()"
+     (keydown.arrowRight)="tab()"
+     (keydown.control.insert)="tab()"
+     (keydown.control.c)="tab()"
+     (keydown.arrowLeft)="tab()"
+     (keydown.enter)="tab()"
+     (mouseleave)="mouseLeaveTable()"
+     [class.required]="(isRequired ? (value === null || value === undefined || (isCheckEmpty && value === '')) ? true: false :false) || required"
+     [class.requiredTrue]="(isRequired?!required && (value !== null && value !== undefined):false) && !hideRequiredWhenValueTrue"
+     [class.disable]="isReadOnly">
+	<span [class.disable]="isReadOnly && !showAsInput"
+          class="custom-control-inline form-control form-control-sm margin-0"
+          [class.background-inherit]="backgroundInherit"
+          [class.boderNone]="!hasBoder"
+          [ngClass]="{'input-out-table' : isOutTable, 'input-in-table': !isOutTable}"
+          style="padding: 0 5px 0 10px;" [class.background-tranparent]="isOutTable === false">
+        <input *ngIf="!(getValueDisplay && valueIsNumber)" type="text" [class.disable]="isReadOnly && !showAsInput"
+               autocomplete="off"
+               #nameOfInputCombobox
+               [name]="nameIp"
+               [id]="idIp"
+               [class.stypeForHome]="stypeForHome"
+               [class.noEdit]="noEdit"
+               [style.width]="inPutCurrency?inPutCurrency:''"
+               class="input-control bg-transparent setInput"
+               [(ngModel)]="textToSort"
+               [title]="textToSort?textToSort:''"
+               (ngModelChange)="textChange($event)"
+               (keyup)="onKeyDownAction($event)"
+               (focus)="onFocusEventAction($event)"
+               (click)=focusText($event)
+               [disabled]="isReadOnly"
+               tabindex="{{tabindex}}"/>
+        <input *ngIf="getValueDisplay && valueIsNumber && !isRateType" type="number"
+               [class.disable]="isReadOnly && !showAsInput"
+               [style.width]="inPutCurrency?inPutCurrency:''"
+               autocomplete="off"
+               #nameOfInputComboboxNumber
+               [name]="nameIp"
+               [id]="idIp"
+               [class.noEdit]="noEdit"
+               class="input-control bg-transparent setInput"
+               [(ngModel)]="textToSort"
+               [title]="textToSort?textToSort:''"
+               (ngModelChange)="textChange($event)"
+               (keyup)="onKeyDownAction($event)"
+               (focus)="onFocusEventAction($event)"
+               (click)=focusText($event)
+               ebCurrencyMask
+               [systemOptions]="systemOptions"
+               [allowNegative]="allowNegative"
+               [type]="type"
+               [disabled]="isReadOnly"
+               tabindex="{{tabindex}}"/>
+        <input *ngIf="getValueDisplay && valueIsNumber && isRateType" type="number"
+               [class.disable]="isReadOnly && !showAsInput"
+               [style.width]="inPutCurrency?inPutCurrency:''"
+               autocomplete="off"
+               [class.noEdit]="noEdit"
+               #nameOfInputComboboxNumberIsRateType
+               [name]="nameIp"
+               [id]="idIp"
+               class="input-control bg-transparent setInput"
+               [(ngModel)]="textToSort"
+               [title]="textToSort?textToSort:''"
+               (ngModelChange)="textChange($event)"
+               (keyup)="onKeyDownAction($event)"
+               (focus)="onFocusEventAction($event)"
+               (click)=focusText($event)
+               [disabled]="isReadOnly"
+               tabindex="{{tabindex}}"/>
+
+        <button type="button" class="addIcon" *ngIf="nameCategory && showIconPlus" (click)="Add()" tabindex="-1"><i
+            class="mdi mdi-plus"></i></button>
+        <button style="padding-left: 0px" [class.noEdit]="noEdit" type="button" [class.background-inherit]="backgroundInherit"
+                class="drop-down-button" (click)="toogleDropDown($event)"
+                [class.disable]="isReadOnly && !showAsInput"><i
+            class="mdi mdi-chevron-down" *ngIf="!showAsInput" tabindex="-1"></i></button>
+    </span>
+    <div class="dropdown-content dropdown-element" [class.with-for-home]="stypeForHome" [class.overBottomPage]="isOverBottomPage" [class.hiddenOver]="overFlow"
+         [class.bottom-100]="bottom100"
+         [class.intable]="isOutTable === false"
+         *ngIf="showDropDown" [class.outTable]="isOutTable || zindexForDropdown">
+        <table class="table-bordered table-hover customers tableCustom" >
+            <tr style="width: 10px">
+                <th *ngFor="let headerColumn of headerColumns; let i = index;">{{headerColumn}}
+                    <a [title]="headerColumn" class="iconPlus" *ngIf="nameCategory && i === 0 && !showIconPlus" (click)="Add()"><i
+                        class="mdi mdi-plus"></i></a>
+                </th>
+            </tr>
+            <tr *ngFor="let data of dummyDataList; let i = index" class="data-list"
+                (click)="updateTextBox(data)" [ngClass]="{highlight:checkHighlight(i)}"
+                style="border: #6ec7e6">
+                <td [class.selected]="data === selectRow || ((data[valueName] === value || data === value) && value !== null)"
+                    [class.stypeForHome]="stypeForHome"
+                    [class.isParentNode]="data.isParentNode"
+                    [title]="(nameColumn.includes('materialGoodsInStock') || nameColumn.includes('unitPriceOriginal')) ? (data[nameColumn] |
+                    ebcurrency:(nameColumn.includes('unitPriceOriginal') ? type : 3):account) : getData(nameColumn, data)"
+                    *ngFor="let nameColumn of listColumns"
+                    class="jsgrid-align-left cssTd">{{(nameColumn.includes('materialGoodsInStock') || nameColumn.includes('unitPriceOriginal')) ? (data[nameColumn] |
+                    ebcurrency:(nameColumn.includes('unitPriceOriginal') ? type : 3):account) : getData(nameColumn, data)}}
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>

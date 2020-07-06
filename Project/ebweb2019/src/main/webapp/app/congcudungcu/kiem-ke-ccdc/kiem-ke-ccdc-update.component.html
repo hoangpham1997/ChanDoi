@@ -1,0 +1,833 @@
+<div class="row" (click)="closeContextMenu()">
+    <div class="col-md-12">
+        <div class="menu-tool-bar he" style="line-height: 16px;">
+            <div class="gr-tool-bar2">
+                <a class="aprev" (click)="move(1)" [hidden]="isGOtherVoucher"
+                   [class.disable]="rowNum === totalItems  || !rowNum || isEdit"><i
+                    class="mdi mdi-arrow-left"></i>
+                </a>
+                <a class="anext disable" (click)="move(-1)" [hidden]="isGOtherVoucher"
+                   [class.disable]="rowNum === 1 || !rowNum|| isEdit"><i
+                    class="mdi mdi-arrow-right"></i>
+                </a>
+                <a class="aprev" (click)="previousEdit()" [hidden]="!isGOtherVoucher"
+                   [class.disable]="rowNum === count || count == 1 || isEdit"><i
+                    class="mdi mdi-arrow-left"></i>
+                </a>
+                <a class="anext disable" (click)="nextEdit()" [hidden]="!isGOtherVoucher"
+                   [class.disable]="rowNum === 1 || count == 1 || !isEdit"><i
+                    class="mdi mdi-arrow-right"></i>
+                </a>
+                <a *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_Them]" title="{{'ebwebApp.outWard.tooltipAdd' | translate}}"
+                   (click)="addNew($event)" [class.disable]="isEdit"><i
+                    class="mdi mdi-plus"></i><span jhiTranslate="ebwebApp.mBCreditCard.home.add"
+                                                   [class.disable]="isEdit"></span>
+                </a>
+                <a *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_Sua]"
+                   title="{{'ebwebApp.outWard.tooltipEdit' | translate}}" (click)="edit()"
+                   [class.disable]="isEdit  || this.checkCloseBook(currentAccount, itiAudit.date)"><i
+                    class="mdi mdi-file-document-edit"></i><span jhiTranslate="ebwebApp.mBCreditCard.home.edit"
+                                                                 [class.disable]="isEdit"
+                ></span>
+                </a>
+                <a  *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_Sua, ROLE_Them]"
+                   title="{{'ebwebApp.outWard.tooltipSave' | translate}}" (click)="save()" [class.disable]="!isEdit"><i
+                    class="mdi mdi-briefcase-download"></i>
+                    <span jhiTranslate="ebwebApp.mBCreditCard.home.save" [class.disable]="!isEdit"></span>
+                </a>
+                <a *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_Them]"
+                   title="{{'ebwebApp.outWard.tooltipSaveAndAdd' | translate}}" [class.disable]="!isEdit"
+                   (click)="saveAndNew()"><i *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_Them]"
+                    class="mdi mdi-plus" [class.disable]="!isEdit"></i><span
+                    jhiTranslate="ebwebApp.mBCreditCard.home.saveAndCreate"></span></a>
+<!--                <a *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_GhiSo]"-->
+<!--                   title="{{'ebwebApp.outWard.tooltipRecord' | translate}}"-->
+<!--                   [class.disable]="isEdit || checkCloseBook(currentAccount, itiAudit.date)"-->
+<!--                    (click)="record()"-->
+<!--                ><i-->
+<!--                    class="mdi mdi-border-color"></i><span jhiTranslate="ebwebApp.mBCreditCard.home.record"></span>-->
+<!--                </a>-->
+<!--                <a *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_GhiSo]"-->
+<!--                   [class.disable]="isEdit || checkCloseBook(currentAccount, itiAudit.date)"-->
+<!--                   title="{{'ebwebApp.outWard.tooltipUnRecord' | translate}}"-->
+<!--                   (click)="unrecord()"><i-->
+<!--                    class="mdi mdi-border-color"></i><span jhiTranslate="ebwebApp.mBCreditCard.home.unrecord"-->
+<!--                                                           ></span>-->
+<!--                </a>-->
+                <a *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_Xoa]"
+                   title="{{'ebwebApp.outWard.tooltipDrop' | translate}}" (click)="delete()" [class.disable]="isEdit"><i
+                    class="mdi mdi-delete-forever"></i> <span jhiTranslate="ebwebApp.mBCreditCard.home.delete"
+                                                              [class.disable]="isEdit"></span>
+                </a>
+                <div ngbDropdown class="d-inline-block" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_In]">
+                    <button id="dropdownPrint" ngbDropdownToggle
+                            style="background: transparent;border: none"
+                            [ngStyle]="{'color': !isEdit ? '#fff' : '#959ea9', 'pointer-events': !isEdit ? 'all' : 'none'}"
+                    ><i class="mdi mdi-printer"></i><span
+                        jhiTranslate="ebwebApp.mBTellerPaper.print"></span>
+                    </button>
+                    <div ngbDropdownMenu aria-labelledby="dropdownPrint" style="padding: 0 !important;">
+                        <button class="btn-dr-i hover-dr" style="border: none"
+                                (click)="CTKTExportPDF(false, REPORT.BienBanKiemKeCCDC)"><span
+                            jhiTranslate="global.reportName.bienBanKiemKeCCDC"></span></button>
+                    </div>
+                </div>
+                <a (click)="closeForm()" title="{{'ebwebApp.outWard.tooltipBack' | translate}}"><i
+                    class="mdi mdi-window-close"></i> <span
+                    jhiTranslate="ebwebApp.mBCreditCard.home.exit"></span>
+                </a>
+            </div>
+        </div>
+        <div class="tool-navbar">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="line-btn" style="margin-bottom: 4px">
+                        <div class="lbtn-action">
+                            <ul class="nav nav-tabs">
+                                <li class="active"><a class="active" style="text-decoration: none" data-toggle="tab"
+                                                      href="#home0"><span
+                                    jhiTranslate="ebwebApp.tIAudit.home.title"></span></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="row" style="justify-content: flex-end;">
+                        <label class="col-sm-3 form-check-label" style="font-size: 14px; padding-left: 5px;
+                                            font-weight: 600; text-align: center; line-height: 35px;"></label>
+                        <div class="col-lg-3" style="padding-right: 0px">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="frm-main tab-pane fade in active show" id="home0" style="padding-bottom: 10px"
+        >
+            <div class="row">
+                <div class="col-lg-8 pd-r-0">
+                    <form [class.myreadonlytrue]="!isEdit">
+                        <h3 jhiTranslate="ebwebApp.mBCreditCard.generalInformation"></h3>
+                        <div class="row no-gutters">
+<!--                            <div class="col-lg-6">-->
+<!--                                <div class="form-group row no-gutters">-->
+<!--                                    <label class="col-sm-4 col-form-label"-->
+<!--                                           jhiTranslate="ebwebApp.tITransfer.transferor"></label>-->
+<!--                                    <div class="col-sm-8 pd-l-0 last-div-1-0">-->
+<!--                                        <input type="text" class="form-control form-control-sm"-->
+<!--                                               [(ngModel)]="itiAudit.transferor" [tabindex]="3" name="transferor">-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <div class="col-lg-6">-->
+<!--                                <div class="form-group row no-gutters">-->
+<!--                                    <label class="col-sm-4 col-form-label"-->
+<!--                                           jhiTranslate="ebwebApp.tITransfer.receiver"></label>-->
+<!--                                    <div class="col-sm-8 pd-l-0 last-div-1-0">-->
+<!--                                        <input type="text" class="form-control form-control-sm"-->
+<!--                                               [(ngModel)]="itiAudit.receiver" [tabindex]="3" name="receiver">-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+                            <div class="col-lg-12">
+                                <div class="form-group row no-gutters">
+                                    <label class="col-sm-2 col-form-label"
+                                           for="field_reason"
+                                           jhiTranslate="ebwebApp.saBill.reason">Diễn giải</label>
+                                    <div class="col-sm-10 pd-l-0 last-div-1-0">
+                                        <input type="text" class="form-control form-control-sm" name="reason"
+                                               id="field_reason"
+                                               [(ngModel)]="itiAudit.description"
+                                               (blur)="changeReason(itiAudit.description)" [tabindex]="2"
+                                               maxlength="512"/>
+                                    </div>
+                                </div>
+                            </div><div class="col-lg-12">
+                                <div class="form-group row no-gutters">
+                                    <label class="col-sm-2 col-form-label"
+                                           for="summary"
+                                           jhiTranslate="ebwebApp.mCAudit.summary">Kết quả kiể kê</label>
+                                    <div class="col-sm-10 pd-l-0 last-div-1-0">
+                                        <input type="text" class="form-control form-control-sm" name="summary"
+                                               id="summary"
+                                               [(ngModel)]="itiAudit.summary"
+                                               [tabindex]="2"
+                                               maxlength="512"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-lg-4 pd-only-l-10">
+                    <form style="padding-bottom: 8px" [class.myreadonlytrue]="!isEdit">
+                        <h3>Chứng từ</h3>
+                        <div class="row no-gutters">
+                            <div class="col-lg-12">
+                                <div class="form-group row no-gutters">
+                                    <label class="col-sm-4 col-form-label"
+                                           jhiTranslate="ebwebApp.mBCreditCard.voucherNumber"></label>
+                                    <div class="col-sm-8 pd-l-0 last-div-1-0">
+                                        <input type="text" class="form-control form-control-sm"
+                                               [(ngModel)]="no" [tabindex]="3" name="noMBook" required>
+                                    </div>
+                                </div>
+                                <div class="form-group row no-gutters">
+                                    <label class="col-sm-4 col-form-label"
+                                           jhiTranslate="ebwebApp.mBCreditCard.date"></label>
+                                    <div class="col-sm-8 pd-l-0 last-div-1-0" style="padding-right: 15px;">
+                                        <eb-date-picker style="display: block" [(ngModel)]="itiAudit.date" (ngModelChange)="getPrepaidExpenseAllocation()"
+                                                     name="date" [tabindex]="4"></eb-date-picker>
+                                    </div>
+                                </div>
+<!--                                <div class="form-group row no-gutters">-->
+<!--                                    <label class="col-sm-4 col-form-label"-->
+<!--                                           jhiTranslate="ebwebApp.mBCreditCard.postedDate"></label>-->
+<!--&lt;!&ndash;                                    <div class="col-sm-8 pd-l-0 last-div-1-0" style="padding-right: 15px;">&ndash;&gt;-->
+<!--&lt;!&ndash;                                        <eb-date-picker style="display: block" [(ngModel)]=""&ndash;&gt;-->
+<!--&lt;!&ndash;                                                        name="postedDate" [tabindex]="5"></eb-date-picker>&ndash;&gt;-->
+<!--&lt;!&ndash;                                    </div>&ndash;&gt;-->
+<!--                                </div>-->
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div>
+            <ngb-tabset class="tool-navbar" (tabChange)="beforeChange($event)">
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.common.statistical"></span>
+                    </ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content">
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="home-detail"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-detail" class="table-scroll">
+                                    <table id="main-table-detail" class="main-table"
+                                           (keydown.arrowDown)="moveArrowDown($event,5)"
+                                           (keydown.arrowUp)="moveArrowUp($event,5)">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.tIAllocationDetails.toolsID"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.tIAllocationDetails.toolsName"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.saBill.unit">Đơn vị tính</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.saReturn.department">Phòng ban</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.tIAuditDetails.quantityOnBook">SL trên sổ kế toán</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.tIAuditDetails.quantityInventory">SL kiểm kê</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.tIAuditDetails.diffQuantity">Chênh lệch</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.tIAuditDetails.executeQuantity">SL xử lý</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.tIAuditDetails.recommendation">Hình thức xử lý</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.tIAuditDetails.note">Ghi chú</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody [class.myreadonlytrue]="!isEdit">
+                                        <tr oncontextmenu="return false;"
+                                            *ngFor="let detail of utilService.getSortArray(itiAuditDetail);let i=index;"
+                                            (contextmenu)="onRightClick($event, itiAuditDetail, detail, true, true, true, 1, true)"
+                                            (keydown.control.delete)="keyPress(i,0, 'CTRL + DELETE')"
+                                        >
+                                            <td class="cell-Table jsgrid-align-left" [class.myreadonlytrue]="true">
+                                                <combo-box nameIp="toolsItem{{i}}" idIp="toolsItem{{i}}"
+                                                           [dataList]="listTools"
+                                                           [listColumns]="utilService.listColumnsTools"
+                                                           displayMember="toolsCode"
+                                                           valueName="id"
+                                                           (focusInput)="actionFocus(5, i)"
+                                                           [headerColumns]="utilService.listHeaderColumnsTools"
+                                                           [isObject]="true"
+                                                           [(ngModel)]="detail.toolsItem"
+                                                           [isRequired]="true"
+                                                           [hideRequiredWhenValueTrue]="true"
+                                                           (ngModelChange)="changeTools(detail)"
+                                                           [tabindex]="7 + 1 + (8 *  i)">
+                                                </combo-box>
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-left description" [class.myreadonlytrue]="true">
+                                                <input type="text"
+                                                       class="input-Cell text-left"
+                                                       name="toolsName{{i}}"
+                                                       id="toolsName{{i}}"
+                                                       (focus)="actionFocus(6, i)"
+                                                       [(ngModel)]="detail.toolsName"
+                                                       [tabindex]="7 + 2 + (8 *  i)">
+                                            </td>
+                                            <!--  đơn vị tính -->
+                                            <td class="cell-Table" [class.myreadonlytrue]="true">
+                                                <combo-box style=""
+                                                           name="{{'unitID_DT'+i}}"
+                                                           [dataList]="units"
+                                                           [listColumns]="utilsService.listColumnsUnit"
+                                                           displayMember="unitName"
+                                                           valueName="id"
+                                                           [headerColumns]="utilsService.listHeaderColumnsUnit"
+                                                           [isObject]="false"
+                                                           [(ngModel)]="detail.unitID"
+                                                           [tabindex]="3 + (6 * i) + 3"
+                                                ></combo-box>
+                                            </td>
+                                            <!-- Phòng ban -->
+                                            <td class=" cell-Table" [class.myreadonlytrue]="true">
+                                                <combo-box idIp="{{'departmentID' + i}}"
+                                                           nameIp="{{'departmentID' + i}}"
+                                                           [dataList]="organizationUnits"
+                                                           [nameCategory]="utilsService.PHONG_BAN"
+                                                           [showIconPlus]="true"
+                                                           (focusInput)="actionFocus(36, i)"
+                                                           [listColumns]="utilService.listColumnsOrganizationUnit"
+                                                           displayMember="organizationUnitCode"
+                                                           valueName="id"
+                                                           [headerColumns]="utilService.listHeaderColumnsOrganizationUnit"
+                                                           [isObject]="false"
+                                                           [isOutTable]="true"
+                                                           [isRequired]="true"
+                                                           [(ngModel)]="detail.departmentID"
+                                                           (click)="saveDetails(i)"
+                                                           [tabindex]="61 + (9 * i) + 8">
+                                                </combo-box>
+                                            </td>
+                                            <!--    SL trên sổ kế toán -->
+                                            <td class="cell-Table jsgrid-align-right" [class.myreadonlytrue]="true">
+                                                <input type="text"
+                                                       class="input-Cell text-right"
+                                                       name="quantityOnBook{{i}}"
+                                                       id="quantityOnBook{{i}}"
+                                                       (focus)="actionFocus(2, i)"
+                                                       [(ngModel)]="detail.quantityOnBook"
+                                                       (ngModelChange)="changeQuantity(detail)"
+                                                       ebCurrencyMask [systemOptions]="currentAccount?.systemOption"
+                                                       [type]="3"
+                                                       [tabindex]="6 + 3 + (5 *  i)">
+                                            </td>
+<!--                                            SL kiểm kê -->
+                                            <td class="cell-Table jsgrid-align-right">
+                                                <input type="text"
+                                                       class="input-Cell text-right"
+                                                       name="quantityInventory{{i}}"
+                                                       id="quantityInventory{{i}}"
+                                                       (focus)="actionFocus(2, i)"
+                                                       [(ngModel)]="detail.quantityInventory"
+                                                       (ngModelChange)="changeQuantity(detail)"
+                                                       ebCurrencyMask [systemOptions]="currentAccount?.systemOption"
+                                                       [type]="3"
+                                                       [tabindex]="6 + 3 + (5 *  i)">
+                                            </td>
+<!--                                            Chênh lệch-->
+                                            <td class="cell-Table jsgrid-align-right" [class.myreadonlytrue]="true">
+                                                <input type="text"
+                                                       class="input-Cell text-right"
+                                                       name="diffQuantity{{i}}"
+                                                       id="diffQuantity{{i}}"
+                                                       (focus)="actionFocus(2, i)"
+                                                       [(ngModel)]="detail.diffQuantity"
+                                                       (ngModelChange)="changeDiffQuantity(detail)"
+                                                       ebCurrencyMask [systemOptions]="currentAccount?.systemOption"
+                                                       [type]="3"
+                                                       [tabindex]="6 + 3 + (5 *  i)">
+                                            </td>
+<!--                                           SL xử lý-->
+                                            <td class="cell-Table jsgrid-align-right">
+                                                <input type="text"
+                                                       class="input-Cell text-right"
+                                                       name="executeQuantity{{i}}"
+                                                       id="executeQuantity{{i}}"
+                                                       (focus)="actionFocus(2, i)"
+                                                       [(ngModel)]="detail.executeQuantity"
+                                                       (ngModelChange)="changeDiffQuantity(detail)"
+                                                       ebCurrencyMask [systemOptions]="currentAccount?.systemOption"
+                                                       [type]="3"
+                                                       [tabindex]="6 + 3 + (5 *  i)">
+                                            </td>
+<!--                                           Hình thức xử lý-->
+                                            <td class="cell-Table jsgrid-align-left" [class.myreadonlytrue]="true">
+                                                <combo-box style=""
+                                                           name="{{'unitID_DT'+i}}"
+                                                           [dataList]="recommendationList"
+                                                           [listColumns]="['name']"
+                                                           displayMember="name"
+                                                           valueName="id"
+                                                           [headerColumns]="['Hình thức']"
+                                                           [isObject]="false"
+                                                           [(ngModel)]="detail.recommendation"
+                                                           [tabindex]="3 + (6 * i) + 3"
+                                                ></combo-box>
+                                            </td>
+<!--                                            Ghi chú-->
+                                            <td class="cell-Table jsgrid-align-right">
+                                                <input type="text"
+                                                       class="input-Cell text-right"
+                                                       name="note{{i}}"
+                                                       id="note{{i}}"
+                                                       (focus)="actionFocus(2, i)"
+                                                       [(ngModel)]="detail.note"
+                                                       [tabindex]="6 + 3 + (5 *  i)" (ngModelChange)="sumAllList()">
+                                            </td>
+                                        </tr>
+                                        <tr *ngFor="let l of newArr(10 - (itiAuditDetail && itiAuditDetail?.length > 0 ? itiAuditDetail.length : 0))">
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input
+                                                type="text" class="input-Cell" readonly></td>
+                                            <td class="cell-Table"><input
+                                                type="text" class="input-Cell" readonly></td>
+                                            <td class="cell-Table"><input
+                                                type="text" class="input-Cell" readonly></td>
+                                            <td class="cell-Table"><input
+                                                type="text" class="input-Cell" readonly></td>
+                                            <td class="cell-Table"><input
+                                                type="text" class="input-Cell" readonly></td>
+                                            <td class="cell-Table"><input
+                                                type="text" class="input-Cell" readonly></td>
+<!--                                            <td class="cell-Table"><input-->
+<!--                                                type="text" class="input-Cell" readonly></td>-->
+                                        </tr>
+                                        </tbody>
+                                        <tfoot>
+                                        <tr>
+                                            <td class="cell-Table totalRow" colspan="4"><span class="color-tfoot"
+                                                                                              jhiTranslate="ebwebApp.pPInvoice.totalRow"
+                                                                                              translateValues="{total: '{{ itiAuditDetail && itiAuditDetail.length > 0 ? itiAuditDetail.length : 0 }}'}"></span>
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-right color-tfoot" [class.myreadonlytrue]="true">
+                                                <input type="text"
+                                                       class="input-Cell pt-0 text-right"
+                                                       name="sumAmount"
+                                                       id="sumAmount"
+                                                       [(ngModel)]="sumQuantityOnBook"
+                                                       ebCurrencyMask [systemOptions]="currentAccount?.systemOption"
+                                                       [type]="3">
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-right color-tfoot" [class.myreadonlytrue]="true">
+                                                <input type="text"
+                                                       class="input-Cell pt-0 text-right"
+                                                       name="sumRemainingAmount"
+                                                       id="sumRemainingAmount"
+                                                       [(ngModel)]="sumQuantityInventory"
+                                                       ebCurrencyMask [systemOptions]="currentAccount?.systemOption"
+                                                       [type]="3">
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-right color-tfoot" [class.myreadonlytrue]="true">
+                                                <input type="text"
+                                                       class="input-Cell pt-0 text-right"
+                                                       name="sumAllocationAmount"
+                                                       id="sumAllocationAmount"
+                                                       [(ngModel)]="sumDiffQuantity"
+                                                       ebCurrencyMask [systemOptions]="currentAccount?.systemOption"
+                                                       [type]="3">
+                                            </td>
+                                            <td class="cell-Table jsgrid-align-right color-tfoot" [class.myreadonlytrue]="true">
+                                                <input type="text"
+                                                       class="input-Cell pt-0 text-right"
+                                                       name="sumExecuteQuantity"
+                                                       id="sumExecuteQuantity"
+                                                       [(ngModel)]="sumExecuteQuantity"
+                                                       ebCurrencyMask [systemOptions]="currentAccount?.systemOption"
+                                                       [type]="3">
+                                            </td>
+                                            <td class="cell-Table color-tfoot"><input
+                                                type="text" class="input-Cell" readonly></td>
+                                            <td class="cell-Table color-tfoot"><input
+                                                type="text" class="input-Cell" readonly></td>
+<!--                                            <td class="cell-Table color-tfoot"><input-->
+<!--                                                type="text" class="input-Cell" readonly></td>-->
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span
+                        jhiTranslate="ebwebApp.mCAudit.home.member"></span></ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content">
+                            <div class="frm-main frm-padding tab-pane fade in active show"
+                                 id="home-tax"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-tax" class="table-scroll">
+                                    <table id="main-table-tax" class="main-table"
+                                           (keydown.arrowDown)="moveArrowDown($event,5)"
+                                           (keydown.arrowUp)="moveArrowUp($event,5)">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.mCAuditDetailMember.accountingObjectID">
+                                                Mã nhân viên
+                                            </th>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.mCAuditDetailMember.accountingObjectName">
+                                                Họ tên
+                                            </th>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.mCAuditDetailMember.accountingObjectTitle">
+                                                Chức vụ
+                                            </th>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.mCAuditDetailMember.role">
+                                            </th>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.mCAuditDetailMember.organizationUnitID">
+                                                Phòng ban
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody >
+                                        <tr oncontextmenu="return false;"
+                                            (contextmenu)="onRightClick($event, newArr(1), false, false, false, false, 2, true)"
+                                            *ngFor="let detail of tiAuditMemberDetails; let i = index"
+                                            (keydown.control.delete)="keyPress(i,1, 'CTRL + DELETE')"
+                                            (keydown.control.insert)="addNewRow($event, 1)"
+                                            (keydown.control.c)="keyPress(i, 1, 'CTRL + C')">
+                                            <td class="cell-Table">
+                                                <combo-box style=""
+                                                           class="jsgrid-align-left"
+                                                           nameIp="accountingObjectID{{i}}"
+                                                           idIp="accountingObjectID{{i}}"
+                                                           [dataList]="employees"
+                                                           [listColumns]="utilsService.listColumnsAccountingObjects"
+                                                           displayMember="accountingObjectCode"
+                                                           valueName="id"
+                                                           [headerColumns]="utilsService.listHeaderColumnsAccountingObject"
+                                                           [isObject]="true"
+                                                           [(ngModel)]="detail.accountingObject"
+                                                           (ngModelChange)="selectEmployeeMC(detail)"
+                                                           [nameCategory]="utilsService.NHAN_VIEN"
+                                                           [showIconPlus]="true"
+                                                           (click)="saveDetails(i)"
+                                                           (focusInput)="actionFocus(0, i)"
+                                                           [tabindex]="12 + (5 * i * 2) + 1"
+                                                ></combo-box>
+                                            </td>
+                                            <td class="cell-Table"><input type="text"
+                                                                          class="input-Cell jsgrid-align-left"
+                                                                          name="accountingObjectName{{i}}"
+                                                                          id="accountingObjectName{{i}}"
+                                                                          [(ngModel)]="detail.accountObjectName"
+                                                                          (focus)="actionFocus(1, i)"
+                                                                          [tabindex]="12 + (5 * i * 2) + 2"/>
+                                            </td>
+                                            <td class="cell-Table"><input type="text"
+                                                                          class="input-Cell jsgrid-align-left"
+                                                                          name="accountingObjectTitle{{i}}"
+                                                                          id="accountingObjectTitle{{i}}"
+                                                                          [(ngModel)]="detail.accountingObjectTitle"
+                                                                          (focus)="actionFocus(1, i)"
+                                                                          [tabindex]="12 + (5 * i * 2) + 3"/>
+                                            </td>
+                                            <td class="cell-Table"><input type="text"
+                                                                          class="input-Cell jsgrid-align-left"
+                                                                          name="role{{i}}"
+                                                                          id="role{{i}}"
+                                                                          [(ngModel)]="detail.role"
+                                                                          (focus)="actionFocus(1, i)"
+                                                                          [tabindex]="12 + (5 * i * 2) + 4"/>
+                                            </td>
+                                            <td class="cell-Table" [class.myreadonlytrue]="true">
+                                                <combo-box style=""
+                                                           idIp="branchID{{i}}"
+                                                           nameIp="branchID{{i}}"
+                                                           class="jsgrid-align-left"
+                                                           [dataList]="organizationUnits"
+                                                           [listColumns]="utilsService.listColumnsOrganizationUnit"
+                                                           displayMember="organizationUnitCode"
+                                                           valueName="id"
+                                                           [headerColumns]="utilsService.listHeaderColumnsOrganizationUnit"
+                                                           [isObject]="false"
+                                                           [(ngModel)]="detail.departmentID"
+                                                           (focusInput)="actionFocus(0, i)"
+                                                           [tabindex]="12 + (5 * i * 2) + 5"
+                                                           (keydown.tab)="addIfLastInput(i)"
+                                                ></combo-box>
+                                            </td>
+                                        </tr>
+                                        <tr *ngIf="isEdit" class="addNewRow"
+                                            (click)="addNewRow($event, 1)">
+                                            <td class="cell-Table"><input type="text"
+                                                                          class="input-Cell"
+                                                                          name="accountingObjectID"
+                                                                          id="accountingObjectID"
+                                                                          value="Thêm dòng mới ....">
+                                            </td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" id="accountingObjectName"></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" id="accountingObjectTitle"></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" id="role"></td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" id="branchID"></td>
+                                        </tr>
+                                        <tr *ngFor="let l of newArr(9 - tiAuditMemberDetails?.length)">
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot>
+                                        <tr>
+                                            <td class="cell-Table"><input type="text" readonly
+                                                                          class="countRow input-Cell"
+                                                                          value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{tiAuditMemberDetails?.length}}">
+                                            </td>
+                                            <td class="cell-Table"><input type="text"
+                                                                          class="countRow input-Cell"
+                                                                          readonly></td>
+                                            <td class="cell-Table"><input type="text"
+                                                                          class="countRow input-Cell"
+                                                                          readonly></td>
+                                            <td class="cell-Table"><input type="text"
+                                                                          class="countRow input-Cell"
+                                                                          readonly></td>
+                                            <td class="cell-Table"><input type="text"
+                                                                          class="countRow input-Cell"
+                                                                          readonly></td>
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab id="refdoc">
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.saBill.refDoc"></span></ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content">
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="home-ref2"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-ref2" class="table-scroll" style="z-index: 0">
+                                    <table id="main-table-ref2" class="main-table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col" jhiTranslate="ebwebApp.saBill.vDate">Ngày chứng từ</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.saBill.postedDate">Ngày hạch toán
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.saBill.noFBook">Số chứng từ</th>
+                                            <th scope="col" jhiTranslate="ebwebApp.saBill.reason">Diễn giải</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let viewVoucher of viewVouchersSelected; let i = index"
+                                            oncontextmenu="return false;"
+                                            (contextmenu)="onRightClick($event, viewVouchersSelected, null, false, true, true, 0, false)"
+                                            (keydown.control.delete)="keyPress(i, 0, 'CTRL + DELETE')">
+                                            <td class="jsgrid-cell jsgrid-align-center" [class.myreadonlytrue]="true" >{{viewVoucher.date}}</td>
+                                            <td class="jsgrid-cell jsgrid-align-center" [class.myreadonlytrue]="true" >{{viewVoucher.postedDate}}</td>
+                                            <td class="jsgrid-cell jsgrid-align-left" (click)="utilsService.viewRefVoucher(viewVoucher)" style="color:blue; text-decoration: underline;" >{{viewVoucher.no}}</td>
+                                            <td class="jsgrid-cell jsgrid-align-left" [class.myreadonlytrue]="true" >{{viewVoucher.reason}}</td>
+                                        </tr>
+                                        <tr
+                                            *ngFor="let l of newArr(9 - ((viewVouchersSelected && viewVouchersSelected.length) > 0 ? viewVouchersSelected.length : 0))">
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot>
+                                        <tr>
+                                            <td class="cell-Table" colspan="4"><input type="text" readonly
+                                                                          class="countRow input-Cell"
+                                                                          value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{viewVouchersSelected?.length}}">
+                                            </td>
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <!--                <ngb-tab>-->
+                <!--                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.mBCreditCard.referenceVoucher"></span>-->
+                <!--                    </ng-template>-->
+                <!--                    <ng-template ngbTabContent>-->
+                <!--                        <div class="tab-content">-->
+                <!--                            <div class="frm-main frm-padding tab-pane fade in active show" id="home-ref"-->
+                <!--                                 style="background: #cbdcf0">-->
+                <!--                                <div id="table-scroll-ref" class="table-scroll">-->
+                <!--                                </div>-->
+                <!--                            </div>-->
+                <!--                        </div>-->
+                <!--                    </ng-template>-->
+                <!--                </ngb-tab>-->
+                <ngb-tab x-placement="right" id="reference">
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.mBCreditCard.reference"></span>
+                    </ng-template>
+                </ngb-tab>
+            </ngb-tabset>
+            <div class="row justify-content-end" style="padding-top: 10px;">
+                <div class="col-lg-3 pd-l-0">
+                    <div class="form-group row justify-content-end">
+                        <!--                        <label class="col-sm-3 col-form-label pd-r-0"-->
+                        <!--                               style="padding-left: 0px;padding-right: 0px;text-align: right;"-->
+                        <!--                               for="field_totalAmountOriginal" jhiTranslate="ebwebApp.mBCreditCard.totalAmountOriginal">Tổng-->
+                        <!--                            tiền TT</label>-->
+                        <!--                        <div class="col-sm-4 pd-l-0 pd-r-5" style="padding-right: 0px;margin-right: 5px;">-->
+                        <!--                            <input type="number" class="form-control form-control-sm text-right"-->
+                        <!--                                   name="totalAmountOriginal" id="field_totalAmountOriginal"-->
+                        <!--                                   [(ngModel)]="gOtherVoucher.totalAmountOriginal" ebCurrencyMask-->
+                        <!--                                   [systemOptions]="currentAccount?.systemOption"-->
+                        <!--                                   [type]="typeDDSO_TienVND"/>-->
+                        <!--                        </div>-->
+                        <!--                        <div class="col-sm-4 pd-l-0" style="padding-left: 0px;">-->
+                        <!--                            <input type="number" class="form-control form-control-sm text-right"-->
+                        <!--                                   name="totalAmount" id="field_totalAmount"-->
+                        <!--                                   [(ngModel)]="gOtherVoucher.totalAmount" ebCurrencyMask-->
+                        <!--                                   [systemOptions]="currentAccount?.systemOption"-->
+                        <!--                                   [type]="typeDDSO_NgoaiTe"-->
+                        <!--                                   readonly/>-->
+                        <!--                        </div>-->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!--display when right click mbdetail-->
+</div>
+<eb-context-menu [contextMenu]="contextMenu" [useCopyRow]="true"></eb-context-menu>
+<ng-template #content let-dismissClose="dismiss">
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.saBill.saveMessage">Dữ liệu đã bị thay đổi, Bạn có muốn lưu lại?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="save();dismissClose('Close')"
+                jhiTranslate="entity.action.save">
+            Save
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="closeAll();dismissClose('Close')"
+                jhiTranslate="ebwebApp.mBDeposit.dontSave">
+            close
+        </button>
+        <button type="button" class="btn btn-outline-danger" jhiTranslate="entity.action.close"
+                (click)="dismissClose('Close')">close
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #test let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.mBDeposit.totalAmountNotEqualVatAmount"
+                       translateValues="{param: '{{no}}'}"></label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success"
+                jhiTranslate="entity.action.save">
+            Save
+        </button>
+        <button type="button" class="btn btn-outline-danger" jhiTranslate="entity.action.close">close
+        </button>
+    </div>
+</ng-template>
+<ng-template #checkAmount let-dismissq="dismiss">
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.prepaidExpense.error.sumAmount">Tổng số tiền chi phí không bằng Tổng số
+                    tiền trên chứng từ nguồn gốc hình thành. Bạn có muốn lưu lại?</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="saveAfter(checkSaveBoolean);dismissq('Close')"
+                jhiTranslate="entity.action.save">
+            Save
+        </button>
+        <button type="button" class="btn btn-outline-danger" (click)="dismissq('Close')"
+                jhiTranslate="entity.action.close">close
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #deleteModal let-dismissDelete="dismiss">
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.mBDeposit.delete.question">Xóa</label>
+<!--                <label jhiTranslate="ebwebApp.tIAudit.delete.questionRecommendation" *ngIf="checkRecommendation">Xóa</label>-->
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="deleteAfter()"
+                jhiTranslate="entity.action.delete">
+            Save
+        </button>
+        <button type="button" class="btn btn-outline-danger" (click)="dismissDelete('Close')"
+                jhiTranslate="entity.action.cancel">close
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #deleteModalRelationShip let-dismissDeleteRelationShip="dismiss">
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.tIAudit.delete.questionRecommendation">Xóa</label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" *ngIf="checkRecommendation" (click)="deleteAfter()"
+                jhiTranslate="entity.action.delete">
+            Save
+        </button> <button type="button" class="btn btn-outline-success" *ngIf="!checkRecommendation" (click)="deleteRelationShip()"
+                jhiTranslate="entity.action.delete">
+            Save
+        </button>
+        <button type="button" class="btn btn-outline-danger" (click)="dismissDeleteRelationShip('Close')"
+                jhiTranslate="entity.action.cancel">close
+        </button>
+    </div>
+</ng-template>
+<!--Sau khi lưu xong nếu phát sinh chứng từ ghi tăng hoặc ghi giảm-->
+<ng-template #afterSave let-dismissDelete="dismiss">
+    <div class="modal-header">
+        <h5 class="modal-title" jhiTranslate="ebwebApp.gOtherVoucher.message">Thông báo</h5>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.tIAudit.warning.showSave" class="d-inline"></label>
+                <span *ngIf="objectAfterSave.tiIncrementID" style="color:blue; text-decoration: underline;"
+                      (click)="afterSaveClick(true)"
+                      jhiTranslate="ebwebApp.tIAudit.warning.itemShow1"
+                      translateValues="{noBook: '{{objectAfterSave.noBookIncrement}}'}">  </span>
+                <span *ngIf="objectAfterSave.tiIncrementID && objectAfterSave.tiDecrementID"
+                      style="color:blue; text-decoration: underline;">, </span>
+                <span *ngIf="objectAfterSave.tiDecrementID" style="color:blue; text-decoration: underline;"
+                      (click)="afterSaveClick(false)"
+                      jhiTranslate="ebwebApp.tIAudit.warning.itemShow1"
+                      translateValues="{noBook: '{{objectAfterSave.noBookIncrement}}'}">
+                </span>
+                <label jhiTranslate="ebwebApp.tIAudit.warning.showSave2"></label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-danger" (click)="closeAll();dismissDelete('Close')"
+                jhiTranslate="entity.action.ok">oki
+        </button>
+    </div>
+</ng-template>
+

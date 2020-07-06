@@ -1,0 +1,662 @@
+<div class="body" [class.eb-read-only-tr]="isUploading">
+    <div class="modal-header">
+        <h4 class="modal-title" *ngIf="typeDanhMuc === DanhMucType.KH" jhiTranslate="global.commonInfo.importExcel.titleKH"></h4>
+        <h4 class="modal-title" *ngIf="typeDanhMuc === DanhMucType.NCC" jhiTranslate="global.commonInfo.importExcel.titleNCC"></h4>
+        <h4 class="modal-title" *ngIf="typeDanhMuc === DanhMucType.NV" jhiTranslate="global.commonInfo.importExcel.titleNV"></h4>
+        <h4 class="modal-title" *ngIf="typeDanhMuc === DanhMucType.VTHH" jhiTranslate="global.commonInfo.importExcel.titleVTHH"></h4>
+    </div>
+    <div class="modal-body">
+        <div class="frm-main frm-mains nobg" style="margin-bottom: 0px">
+            <div class="row">
+                <div class="col-8" style="line-height: 2;">
+                    <label class="custom-file-ct-2 col-form-label"><span jhiTranslate="ebwebApp.saBill.uploadFile">Tải lên file dữ liệu</span></label>
+                    <div class="custom-file custom-file-ct">
+                        <input type="file" class="custom-file-input" id="customFile" (change)="changeFile($event)" style="z-index: 0">
+                        <label class="custom-file-label" for="customFile" style="z-index: 0">{{file?.name}}</label>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <label class="custom-file-ct-2 col-form-label" for="combobox-receipt-type-select"
+                           jhiTranslate="ebwebApp.saBill.chooseSheet"> Sheet</label>
+                    <div class="custom-file custom-file-ct">
+                        <combo-box id="combobox-receipt-type-select"
+                                   [dataList]="sheetNames"
+                                   [isSelectDummyList]="true"
+                                   [listColumns]="['name']"
+                                   displayMember="name"
+                                   valueName="name"
+                                   name="combo-box-select-sheet-name"
+                                   [isOutTable]="true"
+                                   [isObject]="true"
+                                   [hiddenHeader]="true"
+                                   [(ngModel)]="sheetName"
+                        (ngModelChange)="onChangeSheetName()">
+                        </combo-box>
+                    </div>
+                </div>
+                <div class="col-8">
+                    <label class="custom-file-ct-2 col-form-label" for="combobox-receipt-type-select"
+                           jhiTranslate="global.commonInfo.importType.title">
+                        Hình thức import</label>
+                    <div class="custom-file custom-file-ct">
+                        <combo-box id="combobox-receipt-type"
+                                   [dataList]="importTypes"
+                                   [isSelectDummyList]="true"
+                                   [listColumns]="['name']"
+                                   displayMember="name"
+                                   valueName="value"
+                                   name="combo-box-select-sheet-name"
+                                   [isOutTable]="true"
+                                   [hiddenHeader]="true"
+                                   [(ngModel)]="importType"
+                        (ngModelChange)="onChangeImportType()">
+                        </combo-box>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <span class="custom-form-label col-form-label" jhiTranslate="ebwebApp.saBill.fileTemplate" style="line-height: 2;">File mẫu: </span>
+                    <a style="color: #007bff; padding-left: 5px" ><span (click)="downloadTem()">Tải xuống</span></a>
+                </div>
+
+            </div>
+        </div>
+        <div class="frm-main frm-tables frm-padding" style="" >
+            <ngb-tabset style="padding-top: 15px" class="tool-navbar border-li-none"  *ngIf="typeDanhMuc === DanhMucType.VTHH">
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.materialGoods.informationMaterialGoods">Thông tin VTHH</span></ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content" >
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="tab-info-vthh" style="background: #cbdcf0">
+                                <div class="table-scroll">
+                                    <table id="info-vthh-table" class="main-table">
+                                        <thead class="header-table">
+                                        <tr>
+                                            <th scope="col"  jhiTranslate="global.commonInfo.importExcel.requiredField">
+                                            </th>
+                                            <th scope="col" jhiTranslate="global.commonInfo.importExcel.systemField">
+                                            </th>
+                                            <th scope="col" jhiTranslate="global.commonInfo.importExcel.excelField">
+                                            </th>
+                                            <th scope="col" jhiTranslate="global.commonInfo.importExcel.description">
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let data of systemFieldsMaterialGoods.INFO_VTHH, let i = index">
+                                            <td class="text-center" style="width: 10%">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" class="custom-control-input" name="{{'checkbox' + i}}"
+                                                           id="{{'checkbox-vthh-' + i}}" [(ngModel)]="data.required" >
+                                                    <label class="custom-control-label" for="{{'checkbox' + i}}"></label>
+                                                </div>
+                                            </td>
+                                            <td class="jsgrid-align-left" style="width: 25%">
+                                                {{data.systemField}}
+                                            </td>
+                                            <td class="jsgrid-align-left" style="width: 25%">
+                                                <combo-box id="combobox-field-info-vthh-{{i}}"
+                                                           [dataList]="excelFields"
+                                                           [isSelectDummyList]="true"
+                                                           [listColumns]="['name']"
+                                                           displayMember="name"
+                                                           valueName="name"
+                                                           [idIp]="'combobox-select-sheet-name-info-' + i"
+                                                           name="combo-box-select-sheet-name"
+                                                           [backgroundInherit]="true"
+                                                           [hiddenHeader]="true"
+                                                           [(ngModel)]="data.excelField"
+                                                           (ngModelChange)="checkDuplicateColumn(systemFieldsMaterialGoods.INFO_VTHH, data.excelField)">
+                                                </combo-box>
+                                            </td>
+                                            <td class="jsgrid-align-left" style="width: 40%">
+                                                {{data.description}}
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span jhiTranslate="global.menu.entities.materialGoodsAssembly"> VTHH lắp ráp</span></ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content" >
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="assembly-tab" style="background: #cbdcf0">
+                                <div class="table-scroll">
+                                    <table id="assembly-table" class="main-table">
+                                        <thead class="header-table">
+                                        <tr>
+                                            <th scope="col"  jhiTranslate="global.commonInfo.importExcel.requiredField">
+                                            </th>
+                                            <th scope="col" jhiTranslate="global.commonInfo.importExcel.systemField">
+                                            </th>
+                                            <th scope="col" jhiTranslate="global.commonInfo.importExcel.excelField">
+                                            </th>
+                                            <th scope="col" jhiTranslate="global.commonInfo.importExcel.description">
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let data of systemFieldsMaterialGoods.ASSEMBLY, let i = index">
+                                            <td class="text-center" style="width: 10%">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" class="custom-control-input" name="{{'checkbox' + i}}"
+                                                           id="{{'checkbox-assembly-' + i}}" [(ngModel)]="data.required" >
+                                                    <label class="custom-control-label" for="{{'checkbox' + i}}"></label>
+                                                </div>
+                                            </td>
+                                            <td class="jsgrid-align-left" style="width: 25%">
+                                                {{data.systemField}}
+                                            </td>
+                                            <td class="jsgrid-align-left" style="width: 25%">
+                                                <combo-box id="combobox-field-assembly-{{i}}"
+                                                           [dataList]="excelFields"
+                                                           [isSelectDummyList]="true"
+                                                           [listColumns]="['name']"
+                                                           displayMember="name"
+                                                           valueName="name"
+                                                           [idIp]="'combobox-select-sheet-name-assembly-' + i"
+                                                           name="combo-box-select-sheet-name"
+                                                           [backgroundInherit]="true"
+                                                           [hiddenHeader]="true"
+                                                           [(ngModel)]="data.excelField"
+                                                           (ngModelChange)="checkDuplicateColumn(systemFieldsMaterialGoods.ASSEMBLY, data.excelField)">
+                                                </combo-box>
+                                            </td>
+                                            <td class="jsgrid-align-left" style="width: 40%">
+                                                {{data.description}}
+                                            </td>
+                                        </tr>
+                                        <tr *ngFor="let l of newArr(12 - systemFieldsMaterialGoods.ASSEMBLY?.length)">
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.materialGoods.discountSales">Chiết khấu bán hàng</span></ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content" >
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="tab-discount" style="background: #cbdcf0">
+                                <div class="table-scroll">
+                                    <table id="discount-table" class="main-table">
+                                        <thead class="header-table">
+                                        <tr>
+                                            <th scope="col"  jhiTranslate="global.commonInfo.importExcel.requiredField">
+                                            </th>
+                                            <th scope="col" jhiTranslate="global.commonInfo.importExcel.systemField">
+                                            </th>
+                                            <th scope="col" jhiTranslate="global.commonInfo.importExcel.excelField">
+                                            </th>
+                                            <th scope="col" jhiTranslate="global.commonInfo.importExcel.description">
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let data of systemFieldsMaterialGoods.DISCOUNT, let i = index">
+                                            <td class="text-center" style="width: 10%">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" class="custom-control-input" name="{{'checkbox' + i}}"
+                                                           id="{{'checkbox-discount-' + i}}" [(ngModel)]="data.required" >
+                                                    <label class="custom-control-label" for="{{'checkbox' + i}}"></label>
+                                                </div>
+                                            </td>
+                                            <td class="jsgrid-align-left" style="width: 25%">
+                                                {{data.systemField}}
+                                            </td>
+                                            <td class="jsgrid-align-left" style="width: 25%">
+                                                <combo-box id="combobox-field-discount-{{i}}"
+                                                           [dataList]="excelFields"
+                                                           [listColumns]="['name']"
+                                                           [isSelectDummyList]="true"
+                                                           displayMember="name"
+                                                           valueName="name"
+                                                           [idIp]="'combobox-select-sheet-name-d-' + i"
+                                                           name="combo-box-select-sheet-name"
+                                                           [backgroundInherit]="true"
+                                                           [hiddenHeader]="true"
+                                                           [(ngModel)]="data.excelField"
+                                                           (ngModelChange)="checkDuplicateColumn(systemFieldsMaterialGoods.DISCOUNT, data.excelField)"
+                                                >
+                                                </combo-box>
+                                            </td>
+                                            <td class="jsgrid-align-left" style="width: 40%">
+                                                {{data.description}}
+                                            </td>
+                                        </tr>
+                                        <tr *ngFor="let l of newArr(12 - systemFieldsMaterialGoods.DISCOUNT?.length)">
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.materialGoods.applicationPurchase">Đơn giá mua</span></ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content" >
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="tab-unit-price" style="background: #cbdcf0">
+                                <div class="table-scroll">
+                                    <table id="unit-price-table" class="main-table">
+                                        <thead class="header-table">
+                                        <tr>
+                                            <th scope="col"  jhiTranslate="global.commonInfo.importExcel.requiredField">
+                                            </th>
+                                            <th scope="col" jhiTranslate="global.commonInfo.importExcel.systemField">
+                                            </th>
+                                            <th scope="col" jhiTranslate="global.commonInfo.importExcel.excelField">
+                                            </th>
+                                            <th scope="col" jhiTranslate="global.commonInfo.importExcel.description">
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let data of systemFieldsMaterialGoods.P_PRICE, let i = index">
+                                            <td class="text-center" style="width: 10%">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" class="custom-control-input" name="{{'checkbox' + i}}"
+                                                           id="{{'checkbox-unit-price' + i}}" [(ngModel)]="data.required" >
+                                                    <label class="custom-control-label" for="{{'checkbox' + i}}"></label>
+                                                </div>
+                                            </td>
+                                            <td class="jsgrid-align-left" style="width: 25%">
+                                                {{data.systemField}}
+                                            </td>
+                                            <td class="jsgrid-align-left" style="width: 25%">
+                                                <combo-box id="combobox-field-unit-price-{{i}}"
+                                                           [dataList]="excelFields"
+                                                           [isSelectDummyList]="true"
+                                                           [listColumns]="['name']"
+                                                           displayMember="name"
+                                                           valueName="name"
+                                                           [idIp]="'combobox-select-sheet-name-up-' + i"
+                                                           name="combo-box-select-sheet-name"
+                                                           [backgroundInherit]="true"
+                                                           [hiddenHeader]="true"
+                                                           [(ngModel)]="data.excelField"
+                                                           (ngModelChange)="checkDuplicateColumn(systemFieldsMaterialGoods.P_PRICE, data.excelField)">
+                                                </combo-box>
+                                            </td>
+                                            <td class="jsgrid-align-left" style="width: 40%">
+                                                {{data.description}}
+                                            </td>
+                                        </tr>
+                                        <tr *ngFor="let l of newArr(12 - systemFieldsMaterialGoods.P_PRICE?.length)">
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.materialGoods.unitPriceOfSale">Đơn giá bán</span></ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content" >
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="tab-price" style="background: #cbdcf0">
+                                <div class="table-scroll">
+                                    <table id="price-table" class="main-table">
+                                        <thead class="header-table">
+                                        <tr>
+                                            <th scope="col"  jhiTranslate="global.commonInfo.importExcel.requiredField">
+                                            </th>
+                                            <th scope="col" jhiTranslate="global.commonInfo.importExcel.systemField">
+                                            </th>
+                                            <th scope="col" jhiTranslate="global.commonInfo.importExcel.excelField">
+                                            </th>
+                                            <th scope="col" jhiTranslate="global.commonInfo.importExcel.description">
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let data of systemFieldsMaterialGoods.S_PRICE, let i = index">
+                                            <td class="text-center" style="width: 10%">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" class="custom-control-input" name="{{'checkbox' + i}}"
+                                                           id="{{'checkbox-price' + i}}" [(ngModel)]="data.required" >
+                                                    <label class="custom-control-label" for="{{'checkbox' + i}}"></label>
+                                                </div>
+                                            </td>
+                                            <td class="jsgrid-align-left" style="width: 25%">
+                                                {{data.systemField}}
+                                            </td>
+                                            <td class="jsgrid-align-left" style="width: 25%">
+                                                <combo-box id="combobox-field-price-{{i}}"
+                                                           [dataList]="excelFields"
+                                                           [listColumns]="['name']"
+                                                           [isSelectDummyList]="true"
+                                                           displayMember="name"
+                                                           valueName="name"
+                                                           [idIp]="'combobox-select-sheet-name-p-' + i"
+                                                           name="combo-box-select-sheet-name"
+                                                           [backgroundInherit]="true"
+                                                           [hiddenHeader]="true"
+                                                           [(ngModel)]="data.excelField"
+                                                           (ngModelChange)="checkDuplicateColumn(systemFieldsMaterialGoods.S_PRICE, data.excelField)">
+                                                </combo-box>
+                                            </td>
+                                            <td class="jsgrid-align-left"  style="width: 40%">
+                                                {{data.description}}
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                        <tr *ngFor="let l of newArr(12 - systemFieldsMaterialGoods.S_PRICE?.length)">
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab>
+                    <ng-template ngbTabTitle>
+                        <span jhiTranslate="ebwebApp.materialGoods.unitOfConversion">
+                            Đơn vị tính chuyển đổi</span></ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content" >
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="unit-convert-tab" style="background: #cbdcf0">
+                                <div class="table-scroll">
+                                    <table id="unit-convert-table" class="main-table">
+                                        <thead class="header-table">
+                                        <tr>
+                                            <th scope="col"  jhiTranslate="global.commonInfo.importExcel.requiredField">
+                                            </th>
+                                            <th scope="col" jhiTranslate="global.commonInfo.importExcel.systemField">
+                                            </th>
+                                            <th scope="col" jhiTranslate="global.commonInfo.importExcel.excelField">
+                                            </th>
+                                            <th scope="col" jhiTranslate="global.commonInfo.importExcel.description">
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let data of systemFieldsMaterialGoods.UNIT_CONVERT, let i = index">
+                                            <td class="text-center" style="width: 10%">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" class="custom-control-input" name="{{'checkbox' + i}}"
+                                                           id="{{'checkbox-unit-convert' + i}}" [(ngModel)]="data.required" >
+                                                    <label class="custom-control-label" for="{{'checkbox' + i}}"></label>
+                                                </div>
+                                            </td>
+                                            <td class="jsgrid-align-left" style="width: 25%">
+                                                {{data.systemField}}
+                                            </td>
+                                            <td class="jsgrid-align-left" style="width: 25%">
+                                                <combo-box id="combobox-field-unit-convert-{{i}}"
+                                                           [dataList]="excelFields"
+                                                           [listColumns]="['name']"
+                                                           displayMember="name"
+                                                           valueName="name"
+                                                           [idIp]="'combobox-select-sheet-name-uc-' + i"
+                                                           name="combo-box-select-sheet-name"
+                                                           [backgroundInherit]="true"
+                                                           [isSelectDummyList]="true"
+                                                           [hiddenHeader]="true"
+                                                           [(ngModel)]="data.excelField"
+                                                           (ngModelChange)="checkDuplicateColumn(systemFieldsMaterialGoods.UNIT_CONVERT, data.excelField)">
+                                                </combo-box>
+                                            </td>
+                                            <td class="jsgrid-align-left" style="width: 40%">
+                                                {{data.description}}
+                                            </td>
+                                        </tr>
+                                        <tr *ngFor="let l of newArr(12 - systemFieldsMaterialGoods.UNIT_CONVERT?.length)">
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+            </ngb-tabset>
+            <div id="table-scroll0" class="table-scroll voucher-table" *ngIf="typeDanhMuc !== DanhMucType.VTHH">
+                <table id="tabl-is-not-vthh" class="main-table">
+                    <thead class="header-table">
+                    <tr>
+                        <th scope="col" style="max-width: 50px;width: 50px;" jhiTranslate="global.commonInfo.importExcel.requiredField">
+                        </th>
+                        <th scope="col" jhiTranslate="global.commonInfo.importExcel.systemField">
+                        </th>
+                        <th scope="col" jhiTranslate="global.commonInfo.importExcel.excelField">
+                        </th>
+                        <th scope="col" jhiTranslate="global.commonInfo.importExcel.description">
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let data of systemFields, let i = index">
+                            <td class="text-center eb-read-only-tr" style="width: 10%">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" name="{{'checkbox' + i}}"
+                                           id="{{'checkbox' + i}}" [(ngModel)]="data.required">
+                                    <label class="custom-control-label" for="{{'checkbox' + i}}"></label>
+                                </div>
+                            </td>
+                            <td class="jsgrid-align-left" style="width: 25%">
+                                {{data.systemField}}
+                            </td>
+                            <td class="jsgrid-align-left" style="width: 25%">
+                                <combo-box id="combobox-field-select-{{i}}"
+                                           [dataList]="excelFields"
+                                           [listColumns]="['name']"
+                                           displayMember="name"
+                                           valueName="name"
+                                           [idIp]="'combobox-select-sheet-name-' + i"
+                                           name="combo-box-select-sheet-name"
+                                           [hiddenHeader]="true"
+                                           [isRequired]="false"
+                                           [isSelectDummyList]="true"
+                                           [isOutTable]="true"
+                                           [backgroundInherit]="true"
+                                           [(ngModel)]="data.excelField"
+                                           (ngModelChange)="checkDuplicateColumn(systemFields, data.excelField)">
+                                </combo-box>
+                            </td>
+                            <td class="jsgrid-align-left">
+                                {{data.description}}
+                            </td>
+                        </tr>
+                        <tr *ngFor="let l of newArr(12 - systemFields?.length)">
+                            <td class="jsgrid-cell">&nbsp;</td>
+                            <td class="jsgrid-cell">&nbsp;</td>
+                            <td class="jsgrid-cell">&nbsp;</td>
+                            <td class="jsgrid-cell">&nbsp;</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button id="save" class="btn btn-success" (click)="apply(validModal)"
+            [disabled]="!isValid">
+                <span jhiTranslate="ebwebApp.pPPayVendor.home.submit"></span>
+            </button>
+            <button type="button" class="btn btn-dark" (click)="close()" data-dismiss="modal">
+                <span jhiTranslate="entity.action.close"></span>
+            </button>
+        </div>
+    </div>
+</div>
+<ng-template #validModal let-d="dismiss">
+    <div class="modal-header" style="padding: 15px 10px 10px 10px;background-color: #fff !important;">
+        <div class="d-flex flex-wrap col-md-11">
+            <h3 class="modal-title-detail"><span
+                    class="text-uppercase" jhiTranslate="global.commonInfo.importExcel.acceptImport"></span></h3>
+        </div>
+    </div>
+    <div class="modal-body" style="background-color: #fff !important;" [class.eb-read-only-tr]="isUploading">
+        <form>
+            <div class="form-group">
+                <label *ngIf="importType === importTypes[0].value" jhiTranslate="global.commonInfo.importExcel.newImportMess"></label>
+                <label *ngIf="importType === importTypes[1].value" jhiTranslate="global.commonInfo.importExcel.updateImportMess"></label>
+                <label *ngIf="importType === importTypes[2].value" jhiTranslate="global.commonInfo.importExcel.overrideImportMess"></label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer" [class.eb-read-only-tr]="isUploading">
+        <button type="button" class="btn btn-outline-primary" (click)="accept(errorModal, modalReference, acceptDataModal); d('Close'); closePopup()" jhiTranslate="entity.action.ok">ok</button>
+        <button type="button" class="btn btn-outline-dark" (click)="d('Close'); closePopup()" jhiTranslate="entity.action.cancel">cancel</button>
+    </div>
+</ng-template>
+<ng-template #errorModal let-d="dismiss">
+    <div id="modal-ustom-error" [class.eb-read-only-tr]="isUploading">
+        <div class="modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" style="padding: 15px 10px 10px 10px;background-color: #fff !important;">
+                    <div class="d-flex flex-wrap col-md-11">
+                        <h3 class="modal-title-detail"><span
+                                class="text-uppercase" jhiTranslate="ebwebApp.saBill.upload.title">Upload hóa đơn</span></h3>
+                    </div>
+                    <a class="close-modal" data-dismiss="modal" (click)="d('Close'); closePopup()"
+                       aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </a>
+                </div>
+                <div>
+                    <div class="modal-body" style="background-color: #fff !important;">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <span jhiTranslate="ebwebApp.saBill.error.fileError">Dữ liệu không chính xác, bạn có muốn tải về file lỗi?</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 text-right">
+                                <label></label>
+                                <div>
+                                    <button class="btn btn-default" (click)="d('Close'); closePopup()" jhiTranslate="entity.action.close">close</button>
+                                    <button class="btn btn-success" (click)="download(); d('Close'); closePopup()" jhiTranslate="entity.action.download">download</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<ng-template #modalReference let-d="dismiss">
+    <div class="modal-header" style="padding: 15px 10px 10px 10px;">
+        <div class="d-flex flex-wrap col-md-11">
+            <h3 class="modal-title-detail"><span
+                    class="text-uppercase" jhiTranslate="global.commonInfo.importExcel.hasReference"></span></h3>
+        </div>
+    </div>
+    <div class="modal-body" [class.eb-read-only-tr]="isUploading">
+        <form>
+            <div class="form-group">
+                <div class="frm-main frm-tables" style="background: #cbdcf0; margin-top: 5px"
+                     [class.myreadonlytrue]="true">
+                    <div id="table-scroll-v" class="table-scroll">
+                        <table id="main-table0" class="main-table" style="min-width: unset;">
+                            <thead>
+                            <tr>
+                                <th scope="col" jhiTranslate="ebwebApp.accountingObject.code"></th>
+                                <th scope="col"
+                                    style="min-width: 400px" jhiTranslate="ebwebApp.mBDeposit.nguyenNhan"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr *ngFor="let fail of listFail ; let i = index">
+
+                                <td title="{{fail}}" class="jsgrid-cell jsgrid-align-left">{{fail}}</td>
+                                <td class="jsgrid-cell jsgrid-align-left"
+                                    title="{{'ebwebApp.sAOrder.delete.deleteFail' | translate}}"
+                                     jhiTranslate="ebwebApp.sAOrder.delete.deleteFail">
+                                </td>
+                            </tr>
+                            <tr *ngFor="let l of newArr(9 - listFail?.length)">
+                                <td class="jsgrid-cell">&nbsp;</td>
+                                <td class="cell-Table jsgrid-align-center">&nbsp;
+                                </td>
+                            </tr>
+                            </tbody>
+                            <tfoot [class.myreadonlytrue]="true">
+                            <tr>
+                                <td class="cell-Table countRow color-tfoot" colspan="2">
+                                    <input type="text"
+                                        readonly
+                                        class="countRow input-Cell"
+                                        value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{listFail?.length}}">
+                                </td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer" style="background: #adc7e6 !important;">
+        <button type="button" class="btn btn-outline-dark" (click)="d('Close'); closePopup()" jhiTranslate="entity.action.close">cancel</button>
+    </div>
+</ng-template>
+<ng-template #acceptDataModal let-d="dismiss">
+    <div id="modal-accept-data" [class.eb-read-only-tr]="isUploading">
+        <div class="modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" style="padding: 15px 10px 10px 10px;background-color: #fff !important;">
+                    <div class="d-flex flex-wrap col-md-11">
+                        <h3 class="modal-title-detail"><span
+                                class="text-uppercase" jhiTranslate="global.commonInfo.importExcel.errorTaxCalculationMethod.title">Upload hóa đơn</span></h3>
+                    </div>
+                </div>
+                <div>
+                    <div class="modal-body" style="background-color: #fff !important;">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <span jhiTranslate="global.commonInfo.importExcel.errorTaxCalculationMethod.methodDirect"
+                                *ngIf="errorTaxCalculationMethod === METHOD_DIRECT">
+                                    Bạn không cần nhập trường Thuế suất GTGT mà nên nhập trường Nhóm ngành nghề tính thuế GTGT</span>
+                                <span jhiTranslate="global.commonInfo.importExcel.errorTaxCalculationMethod.methodAbatement"
+                                      *ngIf="errorTaxCalculationMethod === METHOD_ABATEMENT">
+                                    Bạn không cần nhập trường Nhóm ngành nghề tính thuế GTGT</span>
+                                <span jhiTranslate="global.commonInfo.importExcel.errorTaxCalculationMethod.skipDialog">
+                                    Nếu bỏ qua cảnh báo này, chương trình sẽ lược bỏ những trường không cần thiết đó đi,
+                                    hoặc bạn có thể ấn Đóng để tự điều chỉnh lại file dữ liệu!</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 text-right">
+                                <label></label>
+                                <div>
+                                    <button class="btn btn-outline-primary" (click)="acceptData()" jhiTranslate="entity.action.skipDialog">close</button>
+                                    <button class="btn btn-outline-dark" (click)="d('Close'); closePopup()" jhiTranslate="entity.action.close">close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>

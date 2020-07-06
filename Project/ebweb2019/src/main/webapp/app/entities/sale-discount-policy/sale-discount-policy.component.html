@@ -1,0 +1,74 @@
+<div>
+    <h2 id="page-heading">
+        <span jhiTranslate="ebwebApp.saleDiscountPolicy.home.title">Sale Discount Policies</span>
+        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-sale-discount-policy" [routerLink]="['/sale-discount-policy/new']">
+            <fa-icon [icon]="'plus'"></fa-icon>
+            <span  jhiTranslate="ebwebApp.saleDiscountPolicy.home.createLabel">
+            Create new Sale Discount Policy
+            </span>
+        </button>
+    </h2>
+    <eb-alert></eb-alert>
+    <br/>
+    <div class="table-responsive" *ngIf="saleDiscountPolicies">
+        <table class="table table-striped">
+            <thead>
+            <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
+            <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="quantityFrom"><span jhiTranslate="ebwebApp.saleDiscountPolicy.quantityFrom">Quantity From</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="quantityTo"><span jhiTranslate="ebwebApp.saleDiscountPolicy.quantityTo">Quantity To</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="discountType"><span jhiTranslate="ebwebApp.saleDiscountPolicy.discountType">Discount Type</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="discountResult"><span jhiTranslate="ebwebApp.saleDiscountPolicy.discountResult">Discount Result</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="materialGoods.id"><span jhiTranslate="ebwebApp.saleDiscountPolicy.materialGoods">Material Goods</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let saleDiscountPolicy of saleDiscountPolicies ;trackBy: trackId">
+                <td><a [routerLink]="['/sale-discount-policy', saleDiscountPolicy.id, 'view' ]">{{saleDiscountPolicy.id}}</a></td>
+                <td>{{saleDiscountPolicy.quantityFrom}}</td>
+                <td>{{saleDiscountPolicy.quantityTo}}</td>
+                <td>{{saleDiscountPolicy.discountType}}</td>
+                <td>{{saleDiscountPolicy.discountResult}}</td>
+                <td>
+                    <div *ngIf="saleDiscountPolicy.materialGoods">
+                        <a [routerLink]="['../material-goods', saleDiscountPolicy.materialGoods?.id, 'view' ]" >{{saleDiscountPolicy.materialGoods?.id}}</a>
+                    </div>
+                </td>
+                <td class="text-right">
+                    <div class="btn-group flex-btn-group-container">
+                        <button type="submit"
+                                [routerLink]="['/sale-discount-policy', saleDiscountPolicy.id, 'view' ]"
+                                class="btn btn-info btn-sm">
+                            <fa-icon [icon]="'eye'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/sale-discount-policy', saleDiscountPolicy.id, 'edit']"
+                                class="btn btn-primary btn-sm">
+                            <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/', { outlets: { popup: 'sale-discount-policy/'+ saleDiscountPolicy.id + '/delete'} }]"
+                                replaceUrl="true"
+                                queryParamsHandling="merge"
+                                class="btn btn-danger btn-sm">
+                            <fa-icon [icon]="'times'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div *ngIf="saleDiscountPolicies && saleDiscountPolicies.length">
+        <div class="row justify-content-center">
+            <jhi-item-count [page]="page" [total]="queryCount" [maxSize]="5" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+        </div>
+        <div class="row justify-content-center">
+            <ngb-pagination [size]="'sm'" [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage" [maxSize]="5" [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage(page)"></ngb-pagination>
+        </div>
+    </div>
+</div>

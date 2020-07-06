@@ -1,0 +1,2023 @@
+<div class="container-fluid" >
+    <div class="margin-tp-5 margin-0">
+        <div class="">
+            <div class="itemw" *ngIf="ppService">
+                <div class="menu-tool-bar he" style="line-height: 14px;">
+                    <div class="gr-tool-bar2">
+                        <!--Phiếu chi add by Hautv-->
+                        <a *ngIf="fromMCPayment" (click)="previousEditMCPayment()" class="aprev" [class.disable]="!isReadOnly || rowNum===count || count == 1">
+                            <i class="mdi mdi-arrow-left" ></i>
+                        </a>
+                        <a *ngIf="fromMCPayment" (click)="nextEditMCPayment()" class="anext " [class.disable]="!isReadOnly || rowNum===1 || count == 1"><i
+                            class="mdi mdi-arrow-right"  ></i></a>
+                        <!--Phiếu chi-->
+                        <!--Thẻ tín dụng add by namnh-->
+                        <a *ngIf="fromMBCreditCard" (click)="previousEditMBCreditCard()" class="aprev" [class.disable]="!isReadOnly || rowNum===count || count == 1">
+                            <i class="mdi mdi-arrow-left" ></i>
+                        </a>
+                        <a *ngIf="fromMBCreditCard" (click)="nextEditMBCreditCard()" class="anext " [class.disable]="!isReadOnly || rowNum===1 || count == 1"><i
+                            class="mdi mdi-arrow-right"  ></i></a>
+                        <!--Thẻ tín dụng add by namnh-->
+                        <!--Bao No add by anmt-->
+                        <a *ngIf="fromMBTellerPaper" (click)="previousEditMBTellerPaper()" class="aprev" [class.disable]="!isReadOnly ||
+                              rowNumberMBTellerPaper === countMBTellerPaper || countMBTellerPaper === 1">
+                            <i class="mdi mdi-arrow-left"></i>
+                        </a>
+                        <a *ngIf="fromMBTellerPaper" (click)="nextEditMBTellerPaper()" class="anext " [class.disable]="!isReadOnly ||
+                              rowNumberMBTellerPaper === 1 || countMBTellerPaper === 1"><i
+                            class="mdi mdi-arrow-right" ></i></a>
+                        <!--Bao No-->
+                        <a *ngIf="!fromMCPayment && !fromMBTellerPaper && !fromMBCreditCard" (click)="previousEdit()" class="aprev" [class.disable]="!isReadOnly || isLastItemSelected || isFromOtherScene">
+                            <i class="mdi mdi-arrow-left" ></i>
+                        </a>
+                        <a *ngIf="!fromMCPayment && !fromMBTellerPaper && !fromMBCreditCard" (click)="nextEdit()" class="anext " [class.disable]="!isReadOnly || isFistItemSelected || isFromOtherScene"><i
+                                class="mdi mdi-arrow-right"  ></i></a>
+                        <a title="{{TOOLTIPS.ADD | translate}}" (click)="addNew()" [class.disable]="!isReadOnly || isLoading" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE.MuaDichVu_Them]"><i
+                                class="mdi mdi-plus" ></i>
+                            <span jhiTranslate='ebwebApp.muaHang.muaDichVu.title.new'></span>
+                        </a>
+                        <a title="{{TOOLTIPS.EDIT | translate}}" (click)="edit()"  [class.disable]="!isReadOnly || (ppService && ppService.recorded)  || isLoading || checkCloseBook(account, ppService.postedDate)" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE.MuaDichVu_Sua]">
+                            <i class="mdi mdi-rename-box"></i>
+                            <span jhiTranslate='ebwebApp.muaHang.muaDichVu.title.edit'></span>
+                        </a>
+                        <a title="{{TOOLTIPS.SAVE | translate}}" (click)="save(null, quantityLargerModal)" [class.disable]="isReadOnly  || isLoading" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE.MuaDichVu_Sua, ROLE.MuaDichVu_Them]">
+                            <i class="mdi mdi-briefcase-download"></i>
+                            <span jhiTranslate='ebwebApp.muaHang.muaDichVu.title.save'></span>
+                        </a>
+                        <a title="{{TOOLTIPS.SAVE_AND_NEW | translate}}" (click)="saveAndNew()" [class.disable]="isReadOnly  || isLoading" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE.MuaDichVu_Them]">
+                            <i class="mdi mdi-briefcase-download"></i>
+                            <span jhiTranslate='ebwebApp.muaHang.muaDichVu.title.saveAndAddNew'></span>
+                        </a>
+                        <a title="{{TOOLTIPS.RECORD | translate}}" (click)="record()" [class.disable]="isRecording || !isReadOnly  || isLoading" *ebHasSomeAuthorityAndCondition="[['ROLE_ADMIN', ROLE.MuaDichVu_GhiSo], ppService && !ppService.recorded]">
+                            <i class="mdi mdi-border-color" ></i>
+                            <span jhiTranslate='ebwebApp.muaHang.muaDichVu.title.record'></span>
+                        </a>
+                        <a title="{{TOOLTIPS.UNRECORD | translate}}" (click)="unRecord()" *ebHasSomeAuthorityAndCondition="[['ROLE_ADMIN', ROLE.MuaDichVu_GhiSo], ppService && ppService.recorded]"  [class.disable]="isRecording || !isReadOnly || checkCloseBook(account, ppService.postedDate)">
+                            <i class="mdi mdi-pencil-off"></i>
+                            <span jhiTranslate='ebwebApp.muaHang.muaDichVu.title.unrecord'></span>
+                        </a>
+                        <a title="{{TOOLTIPS.COPY_AND_NEW | translate}}" (click)="copyAndNew()" [class.disable]="!isReadOnly || isLoading" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE.MuaDichVu_Them]"><i class="mdi mdi-plus "></i>
+                            <span jhiTranslate='ebwebApp.muaHang.muaDichVu.title.copyAndAddNew' ></span>
+                        </a>
+                        <a title="{{TOOLTIPS.DELETE | translate}}" (click)="removePPService()" *ebHasSomeAuthority="['ROLE_ADMIN', ROLE.MuaDichVu_Xoa]" [class.disable]="!isReadOnly || (ppService && ppService.recorded) || isLoading || checkCloseBook(account, ppService.postedDate)">
+                            <i class="mdi mdi-delete-forever"></i>
+                            <span jhiTranslate='ebwebApp.muaHang.muaDichVu.title.delete'></span>
+                        </a>
+                        <a *ebHasSomeAuthority="['ROLE_ADMIN', ROLE.MuaDichVu_In]" [class.disable]="!ppService.id || isLoading" class="dropdown-toggle" data-toggle="dropdown"
+                           role="button"><i class="mdi mdi-printer"></i> In</a>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-item" *ngIf="ppService.id">
+                                <a (click)="exportPdf(false, REPORT.ChungTuKeToan)">
+                                    <span jhiTranslate="ebwebApp.mBTellerPaper.accountingledger"></span>
+                                </a>
+                            </div>
+                            <div class="dropdown-item" *ngIf="ppService.id && ppService.currencyID !== account.organizationUnit.currencyID">
+                                <a (click)="exportPdf(false, REPORT.ChungTuKeToanQuyDoi)">
+                                    <span jhiTranslate="ebwebApp.mBTellerPaper.accountingledgerOriginal"></span>
+                                </a>
+                            </div>
+                            <div class="dropdown-item" *ngIf="ppService.id && ppService.typeId === PP_SERVICE_TYPE.PP_SERVICE_CASH_NUM">
+                                <a (click)="exportPdf(false, REPORT.PhieuChi)">
+                                    <span jhiTranslate="ebwebApp.mCPayment.print.mCPayment"></span>
+                                </a>
+                            </div>
+                            <div class="dropdown-item" *ngIf="ppService.id && ppService.typeId === PP_SERVICE_TYPE.PP_SERVICE_CASH_NUM">
+                                <a (click)="exportPdf(false,REPORT.PhieuChiTT2Lien)">
+                                    <span jhiTranslate="ebwebApp.mCPayment.print.mCPayment2"></span>
+                                </a>
+                            </div>
+                            <div class="dropdown-item" *ngIf="ppService.id && ppService.typeId === PP_SERVICE_TYPE.PP_SERVICE_CASH_NUM">
+                                <a (click)="exportPdf(false,REPORT.PhieuChiA5)">
+                                    <span jhiTranslate="ebwebApp.mCPayment.print.mCPaymentA5"></span>
+                                </a>
+                            </div>
+                            <div class="dropdown-item" *ngIf="ppService.id && PP_SERVICE_TYPE.PP_SERVICE_UNPAID_NUM !== ppService.typeId && PP_SERVICE_TYPE.PP_SERVICE_CASH_NUM !== ppService.typeId
+                                                                && PP_SERVICE_TYPE.PP_SERVICE_CREDIT_CARD_NUM !== ppService.typeId">
+                                <a (click)="exportPdf(false, REPORT.GiayBaoNo)">
+                                    <span jhiTranslate="ebwebApp.mBTellerPaper.mBTellerPaperNote"></span>
+                                </a>
+                            </div>
+                        </div>
+                        <a title="{{TOOLTIPS.CLOSE_FORM | translate}}" (click)="onUpdateViewType(content)" [class.disable]="isLoading">
+                            <i class="mdi mdi-window-close "></i>
+                            <span jhiTranslate='ebwebApp.muaHang.muaDichVu.title.close'></span>
+                        </a>
+                    </div>
+                </div>
+                <div class="tool-navbar" style="margin-bottom: -3px;">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="line-btn" style="margin-bottom: 4px">
+                                <div class="lbtn-action" >
+                                    <ul class="nav nav-tabs" *ngIf="ppService" style=" display: inline-flex !important;">
+                                        <li (click)="tabSelected = PP_SERVICE_TYPE.PP_SERVICE_UNPAID">
+                                            <a [ngClass]="{'active text-white':tabSelected === PP_SERVICE_TYPE.PP_SERVICE_UNPAID, 'text-black': tabSelected !== PP_SERVICE_TYPE.PP_SERVICE_UNPAID}" data-toggle="tab" >
+                                                <span jhiTranslate="ebwebApp.muaHang.muaDichVu.insertUpdate.PPServiceLicense"></span>
+                                            </a>
+                                        </li>
+                                        <li (click)="tabSelected = ppServiceTypePaid"  *ngIf="ppService.receiptType === PP_SERVICE_TYPE.PP_SERVICE_CASH">
+                                            <a [ngClass]="{'active text-white':tabSelected === PP_SERVICE_TYPE.PP_SERVICE_CASH, 'text-black': tabSelected !== PP_SERVICE_TYPE.PP_SERVICE_CASH}" data-toggle="tab" >
+                                                <span jhiTranslate="ebwebApp.muaHang.muaDichVu.insertUpdate.MCPayment"></span>
+                                            </a>
+                                        </li>
+                                        <li *ngIf="PP_SERVICE_TYPE.PP_SERVICE_PAYMENT_ORDER === ppService.receiptType ||
+                                            PP_SERVICE_TYPE.PP_SERVICE_TRANSFER_SEC === ppService.receiptType ||
+                                            PP_SERVICE_TYPE.PP_SERVICE_CASH_SEC === ppService.receiptType"
+                                            (click)="tabSelected = ppServiceTypePaid">
+                                            <a [class.active]="tabSelected === PP_SERVICE_TYPE.PP_SERVICE_PAYMENT_ORDER
+                                            || tabSelected === PP_SERVICE_TYPE.PP_SERVICE_TRANSFER_SEC
+                                            || tabSelected === PP_SERVICE_TYPE.PP_SERVICE_CASH_SEC"
+                                               [ngClass]="{'active text-white':tabSelected === PP_SERVICE_TYPE.PP_SERVICE_PAYMENT_ORDER
+                                            || tabSelected === PP_SERVICE_TYPE.PP_SERVICE_TRANSFER_SEC
+                                            || tabSelected === PP_SERVICE_TYPE.PP_SERVICE_CASH_SEC , 'text-black': tabSelected !== PP_SERVICE_TYPE.PP_SERVICE_PAYMENT_ORDER
+                                            && tabSelected !== PP_SERVICE_TYPE.PP_SERVICE_TRANSFER_SEC
+                                            && tabSelected !== PP_SERVICE_TYPE.PP_SERVICE_CASH_SEC}"
+                                               data-toggle="tab" >
+                                                <span *ngIf="ppServiceTypePaid === PP_SERVICE_TYPE.PP_SERVICE_PAYMENT_ORDER" jhiTranslate="ebwebApp.muaHang.muaDichVu.insertUpdate.ppServicePaymentOrder"></span>
+                                                <span *ngIf="ppServiceTypePaid === PP_SERVICE_TYPE.PP_SERVICE_TRANSFER_SEC" jhiTranslate="ebwebApp.muaHang.muaDichVu.insertUpdate.ppServiceTransferSec"></span>
+                                                <span *ngIf="ppServiceTypePaid === PP_SERVICE_TYPE.PP_SERVICE_CASH_SEC" jhiTranslate="ebwebApp.muaHang.muaDichVu.insertUpdate.ppServiceCashSec"></span>
+                                            </a>
+
+                                        </li>
+                                        <li (click)="tabSelected = PP_SERVICE_TYPE.PP_SERVICE_CREDIT_CARD"
+                                            *ngIf="ppService.receiptType === PP_SERVICE_TYPE.PP_SERVICE_CREDIT_CARD">
+                                            <a [class.active]="tabSelected === PP_SERVICE_TYPE.PP_SERVICE_CREDIT_CARD" data-toggle="tab" >
+                                                <span jhiTranslate="ebwebApp.muaHang.muaDichVu.insertUpdate.ppServiceCreditCard"></span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-8" >
+                            <div class="d-flex justify-content-end" >
+                                <label class="radio-inline" (click)="onSelectUnpaidType()">
+                                    <input type="radio" name="radio-pp-service-paid-type"
+                                           [(ngModel)]="ppService.receiptType" [value]="PP_SERVICE_TYPE.PP_SERVICE_UNPAID">
+                                    <span jhiTranslate="ebwebApp.muaHang.muaDichVu.insertUpdate.unPaid"></span>
+                                </label>
+                                <label class="ml-4 radio-inline" style="padding-right: 5px;">
+                                    <input type="radio" name="radio-pp-service-paid-type"
+                                           [(ngModel)]="ppService.receiptType" [value]="ppServiceTypePaid"
+                                           (click)="onSelectPaidType()">
+                                    <span jhiTranslate="ebwebApp.muaHang.muaDichVu.insertUpdate.paid"></span>
+                                </label>
+                                <div class="col-lg-2" style="padding-right: 0px" *ngIf="isShowPaid">
+                                    <select name="typeid"
+                                            id="field_typeid"
+                                            [disabled]="ppService.receiptType === PP_SERVICE_TYPE.PP_SERVICE_UNPAID"
+                                            class="form-control form-control-sm"
+                                            [(ngModel)]="ppServiceTypePaid"
+                                            (ngModelChange)="onChangePPServiceTypePaid()"
+                                    >
+                                        <option [value]="PP_SERVICE_TYPE.PP_SERVICE_CASH" jhiTranslate="ebwebApp.muaHang.muaDichVu.insertUpdate.ppServiceCash"></option>
+                                        <option [value]="PP_SERVICE_TYPE.PP_SERVICE_PAYMENT_ORDER" jhiTranslate="ebwebApp.muaHang.muaDichVu.insertUpdate.ppServicePaymentOrder"></option>
+                                        <option [value]="PP_SERVICE_TYPE.PP_SERVICE_TRANSFER_SEC" jhiTranslate="ebwebApp.muaHang.muaDichVu.insertUpdate.ppServiceTransferSec"></option>
+                                        <option [value]="PP_SERVICE_TYPE.PP_SERVICE_CASH_SEC" jhiTranslate="ebwebApp.muaHang.muaDichVu.insertUpdate.ppServiceCashSec"></option>
+                                        <option [value]="PP_SERVICE_TYPE.PP_SERVICE_CREDIT_CARD" jhiTranslate="ebwebApp.muaHang.muaDichVu.insertUpdate.ppServiceCreditCard"></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div  class="row no-gutters">
+                    <div class="col-lg-9 pd-r-0 form-main-new"  *ngIf="tabSelected === PP_SERVICE_TYPE.PP_SERVICE_UNPAID">
+                        <form>
+                            <h3 jhiTranslate="ebwebApp.muaHang.muaDichVu.insertUpdate.generalInfo"></h3>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group row no-gutters">
+                                        <label class="col-sm-2 col-form-label"
+                                               for="field-account-object"
+                                               jhiTranslate="ebwebApp.muaHang.muaDichVu.insertUpdate.accountObject"></label>
+                                        <div class="col-sm-3 pd-l-0 pd-r-10"
+                                             style="padding-left: 0px;padding-right: 0px;">
+                                            <combo-box id="field-account-object"
+                                                       name="combobox-account-object"
+                                                       [tabindex]="1"
+                                                       [dataList]="accountingObjects"
+                                                       [listColumns]="utilsService.listColumnsAccountingObjects"
+                                                       displayMember="accountingObjectCode"
+                                                       valueName="id"
+                                                       [isObject]="false"
+                                                       [isRequired]="isRequiredAccountObjects"
+                                                       [hideRequiredWhenValueTrue]="isRequiredAccountObjects"
+                                                       [isCheckEmpty]="isRequiredAccountObjects"
+                                                       [isRemoveValue]="true"
+                                                       [nameCategory]="utilsService.NHA_CUNG_CAP"
+                                                       [showIconPlus]="!isReadOnly"
+                                                       [(ngModel)]="ppService.accountingObjectID"
+                                                       (ngModelChange)="onSelectAccountingObject()"
+                                                       (click)="saveParent()"
+                                                       [isOutTable]="true"
+                                                       [headerColumns]="[
+            translateService.instant('ebwebApp.comboBox.accountingObjects.accountingObjectCode'),
+            translateService.instant('ebwebApp.comboBox.accountingObjects.accountingObjectName'),
+            translateService.instant('ebwebApp.comboBox.accountingObjects.accountingObjectAddress')
+        ]">
+                                            </combo-box>
+                                        </div>
+                                        <div class="col-sm-8 pd-l-0 last-div-1-1">
+                                            <input type="text" class="form-control form-control-sm"
+                                                   name="accounting-object-name" tabindex="2"
+                                                   [(ngModel)]="ppService.accountingObjectName" maxlength="512" (ngModelChange)="onChangeAccountingObjectName()"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row no-gutters">
+                                        <label class="col-sm-2 col-form-label"
+                                               for="field-accounting-object-address"
+                                               jhiTranslate="ebwebApp.muaHang.muaDichVu.insertUpdate.accountingObjectAddress"></label>
+                                        <div class="col-sm-10 pd-l-0 last-div-1-0" style="padding-left: 0px;">
+                                            <input type="text" class="form-control form-control-sm"
+                                                   name="field-accounting-object-address"
+                                                   id="field-accounting-object-address"
+                                                   tabindex="3"
+                                                   [(ngModel)]="ppService.accountingObjectAddress"
+                                                   maxlength="512">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row no-gutters">
+                                        <label class="col-sm-2 col-form-label" for="field-accounting-object-tax-code"
+                                               jhiTranslate="ebwebApp.muaHang.muaDichVu.insertUpdate.companyTaxCode"></label>
+                                        <div class="col-sm-3 pd-l-0 pd-r-10">
+                                            <input type="text" class="form-control form-control-sm"
+                                                   name="field-accounting-object-tax-code"
+                                                   id="field-accounting-object-tax-code"
+                                                   [(ngModel)]="ppService.companyTaxCode"
+                                                   (ngModelChange)="onChangeTaxCode()"
+                                                   tabindex="4"
+                                                   maxlength="512">
+                                        </div>
+                                        <label class="col-sm-2 col-form-label"
+                                               for="field_payers" jhiTranslate="ebwebApp.muaHang.muaDichVu.insertUpdate.contactName"></label>
+                                        <div class="col-sm-11 pd-l-0 last-div-2-1">
+                                            <input type="text" class="form-control form-control-sm"
+                                                   name="contact-name"
+                                                   tabindex="5"
+                                                   id="field_payers" [(ngModel)]="ppService.contactName"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row no-gutters">
+                                        <label class="col-sm-2 col-form-label"
+                                               jhiTranslate="ebwebApp.muaHang.muaDichVu.insertUpdate.reason"></label>
+                                        <div class="col-sm-6 pd-l-0">
+                                            <input type="text" class="form-control form-control-sm" name="pp-service-reason"
+                                                   tabindex="6"
+                                                   [(ngModel)]="ppService.reason" (ngModelChange)="onChangeReason()"/>
+                                        </div>
+
+                                        <label class="col-sm-2 col-form-label" style="max-width: 120px !important;"
+                                               jhiTranslate="ebwebApp.muaHang.muaDichVu.insertUpdate.dueDate"></label>
+                                        <div class="col-sm-2 last-div-special-long">
+                                            <eb-date-picker [tabindex]="7" id="due-date-picker" [(ngModel)]="ppService.dueDate" name="input-pp-service-due-date" format="DD/MM/YYYY"></eb-date-picker>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row no-gutters">
+                                        <label class="col-sm-2 col-form-label" for="field-number-attach-service"
+                                               jhiTranslate="ebwebApp.muaHang.muaDichVu.insertUpdate.numberAttach"></label>
+                                        <div class="col-sm-6 pd-l-0">
+                                            <input type="text" class="form-control form-control-sm" id="field-number-attach-service"
+                                                   name="field-number-attach-service" tabindex="8"
+                                                   [(ngModel)]="ppService.numberAttach" (change)="onChangeNumberAttach()"/>
+                                        </div>
+                                        <label class="col-sm-2 col-form-label" for="field-employee-id" style="max-width: 120px !important;"
+                                               jhiTranslate="ebwebApp.muaHang.muaDichVu.insertUpdate.employee"></label>
+                                        <div class="col-sm-2 last-div-special-long">
+                                            <combo-box style="" id="field-employee-id"
+                                                       name="field-employee-id"
+                                                       [tabindex]="9"
+                                                       [dataList]="employees"
+                                                       [nameCategory]="utilsService.NHAN_VIEN"
+                                                       [showIconPlus]="isEdit"
+                                                       [listColumns]="utilsService.listColumnsEmployees"
+                                                       displayMember="accountingObjectCode"
+                                                       valueName="id"
+                                                       [headerColumns]="[
+            translateService.instant('ebwebApp.comboBox.employees.accountingObjectCode'),
+            translateService.instant('ebwebApp.comboBox.employees.accountingObjectName')
+        ]"
+                                                       [isOutTable]="true"
+                                                       [isRemoveValue]="true"
+                                                       (click)="saveParent()"
+                                                       [(ngModel)]="ppService.employeeID"
+                                                       (ngModelChange)="selectEmployee()">
+                                            </combo-box>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-lg-9 pd-r-0 form-main-new" *ngIf="tabSelected === PP_SERVICE_TYPE.PP_SERVICE_CASH">
+                        <form>
+                            <h3 jhiTranslate="ebwebApp.muaHang.muaDichVu.insertUpdate.generalInfo"></h3>
+                            <div class="row no-gutters">
+                                <div class="col-lg-12">
+                                    <div class="form-group row no-gutters">
+                                        <label class="col-sm-2 col-form-label"
+                                               jhiTranslate="ebwebApp.mCPayment.accountingObjectID"
+                                               for="field-account-object-2">Accounting Object</label>
+                                        <div class="col-sm-3 pd-l-0 pd-r-10">
+                                            <combo-box id="field-account-object-2"
+                                                       name="field-account-object-2"
+                                                       [tabindex]="10"
+                                                       [dataList]="accountingObjects"
+                                                       [listColumns]="utilsService.listColumnsAccountingObjects"
+                                                       displayMember="accountingObjectCode"
+                                                       valueName="id"
+                                                       [isRequired]="isRequiredAccountObjects"
+                                                       [hideRequiredWhenValueTrue]="isRequiredAccountObjects"
+                                                       [isCheckEmpty]="isRequiredAccountObjects"
+                                                       [isRemoveValue]="true"
+                                                       [isObject]="false"
+                                                       [nameCategory]="utilsService.NHA_CUNG_CAP"
+                                                       [showIconPlus]="!isReadOnly"
+                                                       (click)="saveParent()"
+                                                       [(ngModel)]="ppService.accountingObjectID"
+                                                       [headerColumns]="[
+            translateService.instant('ebwebApp.comboBox.accountingObjects.accountingObjectCode'),
+            translateService.instant('ebwebApp.comboBox.accountingObjects.accountingObjectName'),
+            translateService.instant('ebwebApp.comboBox.accountingObjects.accountingObjectAddress')
+        ]"
+                                                       (ngModelChange)="onSelectAccountingObject()">
+                                            </combo-box>
+                                        </div>
+                                        <div class="col-sm-7 pd-l-0 last-div-1-1">
+                                            <input type="text" class="form-control form-control-sm"
+                                                   name="accountingObjectName" tabindex="11"
+                                                   [(ngModel)]="ppService.accountingObjectName" (ngModelChange)="onChangeAccountingObjectName()" maxlength="512"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row no-gutters">
+                                        <label class="col-sm-2 col-form-label"
+                                               jhiTranslate="ebwebApp.mCPayment.accountingObjectAddress"
+                                               for="field_accountingObjectAddress">Accounting Object Address</label>
+                                        <div class="col-sm-10 pd-l-0 last-div-1-0">
+                                            <input type="text" class="form-control form-control-sm"
+                                                   name="accountingObjectAddress"
+                                                   id="field_accountingObjectAddress" tabindex="12"
+                                                   [(ngModel)]="ppService.accountingObjectAddress"
+                                                   maxlength="512">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row no-gutters">
+                                        <label class="col-sm-2 col-form-label"
+                                               jhiTranslate="ebwebApp.mCPayment.taxCode">Mã số thuế</label>
+                                        <div class="col-sm-3 pd-l-0 pd-r-10">
+                                            <input type="text" class="form-control form-control-sm" name="taxCode"
+                                                   tabindex="13"
+                                                   [(ngModel)]="ppService.companyTaxCode" (ngModelChange)="onChangeTaxCode()">
+                                        </div>
+                                        <label class="col-sm-2 col-form-label text-right"
+                                               jhiTranslate="ebwebApp.mCPayment.receiver"
+                                               for="field_receiver">Payers</label>
+                                        <div class="col-sm-5 pd-l-0 last-div-2-1">
+                                            <input type="text" class="form-control form-control-sm" name="receiver"
+                                                   id="field_receiver" tabindex="14"
+                                                   [(ngModel)]="ppService.contactName" maxlength="512"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row no-gutters">
+                                        <label class="col-sm-2 col-form-label"
+                                               jhiTranslate="ebwebApp.mCPayment.reason"
+                                               for="field_reason">Diễn giải</label>
+
+                                        <div class="col-sm-10 pd-l-0 last-div-1-0">
+                                            <input type="text" class="form-control form-control-sm" name="reason"
+                                                   id="field_reason" tabindex="15"
+                                                   (ngModelChange)="onChangeOtherReason()"
+                                                   [(ngModel)]="ppService.otherReason" maxlength="512"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row no-gutters">
+                                        <label class="col-sm-2 col-form-label"
+                                               jhiTranslate="ebwebApp.mCPayment.employeeID" >Nhân
+                                            viên thực hiện</label>
+                                        <div class="col-sm-3 pd-l-0 pd-r-10">
+                                            <combo-box style="" id="field-employee-id-mc-payment"
+                                                       name="field-employee-id-mc-payment"
+                                                       [tabindex]="16"
+                                                       [dataList]="employees"
+                                                       [listColumns]="utilsService.listColumnsEmployees"
+                                                       displayMember="accountingObjectCode"
+                                                       valueName="id"
+                                                       (click)="saveParent()"
+                                                       [nameCategory]="utilsService.NHAN_VIEN"
+                                                       [showIconPlus]="!isReadOnly"
+                                                       [headerColumns]="[
+            translateService.instant('ebwebApp.comboBox.employees.accountingObjectCode'),
+            translateService.instant('ebwebApp.comboBox.employees.accountingObjectName')
+        ]"
+                                                       [isOutTable]="true"
+                                                       [isRemoveValue]="true"
+                                                       [(ngModel)]="ppService.employeeID"
+                                                       (ngModelChange)="selectEmployee()">
+                                            </combo-box>
+
+                                        </div>
+
+                                        <label class="col-sm-2 col-form-label text-right"
+                                               jhiTranslate="ebwebApp.mCPayment.numberAttach" for="number_attach">Kèm
+                                            theo</label>
+                                        <div class="col-sm-5 pd-l-0 last-div-2-1">
+                                            <input type="text" class="form-control form-control-sm"
+                                                   id="number_attach" tabindex="17"
+                                                   [(ngModel)]="ppService.otherNumberAttach"
+                                                   name="numberAttach"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="col-lg-9 pd-r-0 form-main-new"
+                         *ngIf="PP_SERVICE_TYPE.PP_SERVICE_PAYMENT_ORDER === tabSelected ||
+                                            PP_SERVICE_TYPE.PP_SERVICE_TRANSFER_SEC === tabSelected ||
+                                            PP_SERVICE_TYPE.PP_SERVICE_CASH_SEC === tabSelected">
+                        <form>
+                            <h3 jhiTranslate="ebwebApp.mBTellerPaper.generalinfo">General Information</h3>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group row no-gutters">
+                                        <label class="col-sm-2 col-form-label" for="field_bankaccountdetail"
+                                               jhiTranslate="ebwebApp.mBTellerPaper.bankAccountDetails"
+                                        >BankAccountDetails</label>
+                                        <div class="col-sm-3 pd-l-0 pd-r-10">
+                                            <combo-box style="" id="field_bankaccountdetail"
+                                                       name="bankaccountdetail"
+                                                       [isOutTable]="true"
+                                                       [tabindex]="18"
+                                                       [dataList]="bankAccountDetails"
+                                                       [headerColumns]="[
+            translateService.instant('ebwebApp.comboBox.bankAccountDetails.bankAccount'),
+            translateService.instant('ebwebApp.comboBox.bankAccountDetails.bankName')
+        ]"
+                                                       [listColumns]="utilsService.listColumnsBankAccountDetails"
+                                                       [nameCategory]="utilsService.TAI_KHOAN_NGAN_HANG"
+                                                       [showIconPlus]="!isReadOnly"
+                                                       displayMember="bankAccount"
+                                                       valueName="id"
+                                                       [isRequired]="isRequiredAccountPayment"
+                                                       [hideRequiredWhenValueTrue]="isRequiredAccountPayment"
+                                                       [isCheckEmpty]="isRequiredAccountPayment"
+                                                       [isRemoveValue]="true"
+                                                       (click)="saveParent()"
+                                                       [(ngModel)]="ppService.accountPaymentId"
+                                                       (ngModelChange)="onChangeAccountPayment()"
+                                            ></combo-box>
+                                        </div>
+                                        <div class="col-sm-7 pd-l-0 last-div-1-1">
+                                            <input type="text" class="form-control form-control-sm"
+                                                   name="bankName" tabindex="19"
+                                                   [(ngModel)]="ppService.accountPaymentName"
+                                                   maxlength="512"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row no-gutters">
+                                        <label class="col-sm-2 col-form-label" for="field-mb-teller-paper-reason"
+                                               jhiTranslate="ebwebApp.mBTellerPaper.reason"
+                                        >Reason</label>
+                                        <div class="col-sm-10 pd-l-0 last-div-1-0">
+                                            <input type="text" class="form-control form-control-sm" name="reason"
+                                                   id="field-mb-teller-paper-reason" tabindex="20"
+                                                   (ngModelChange)="onChangeOtherReason()"
+                                                   [(ngModel)]="ppService.otherReason" maxlength="512"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row no-gutters">
+                                        <label class="col-sm-2 col-form-label" for="field_accountingObject"
+                                               jhiTranslate="{{PP_SERVICE_TYPE.PP_SERVICE_CASH_SEC === tabSelected ? 'ebwebApp.mBTellerPaper.paymentTo' : 'ebwebApp.mBTellerPaper.accountingObject'}}"
+                                        >AccountingObject</label>
+                                        <div class="col-sm-3 pd-l-0">
+                                            <combo-box id="field_accountingObject"
+                                                       name="field_accountingObject"
+                                                       [tabindex]="21"
+                                                       [dataList]="accountingObjects"
+                                                       [listColumns]="utilsService.listColumnsAccountingObjects"
+                                                       displayMember="accountingObjectCode"
+                                                       valueName="id"
+                                                       [isRequired]="isRequiredAccountObjects"
+                                                       [hideRequiredWhenValueTrue]="isRequiredAccountObjects"
+                                                       [isCheckEmpty]="isRequiredAccountObjects"
+                                                       [isRemoveValue]="true"
+                                                       [isObject]="false"
+                                                       [nameCategory]="utilsService.NHA_CUNG_CAP"
+                                                       [showIconPlus]="!isReadOnly"
+                                                       (click)="saveParent()"
+                                                       [(ngModel)]="ppService.accountingObjectID"
+                                                       (ngModelChange)="onSelectAccountingObject()"
+                                                       [headerColumns]="[
+            translateService.instant('ebwebApp.comboBox.accountingObjects.accountingObjectCode'),
+            translateService.instant('ebwebApp.comboBox.accountingObjects.accountingObjectName'),
+            translateService.instant('ebwebApp.comboBox.accountingObjects.accountingObjectAddress')
+        ]">
+                                            </combo-box>
+                                        </div>
+                                        <div class="col-sm-7 pd-l-0 last-div-1-1">
+                                            <input type="text" class="form-control form-control-sm"
+                                                   name="accountingObjectName" tabindex="22"
+                                                   [(ngModel)]="ppService.accountingObjectName"
+                                                   (ngModelChange)="onChangeAccountingObjectName()"
+                                                   maxlength="512"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row no-gutters">
+                                        <label class="col-sm-2 col-form-label"
+                                               jhiTranslate="{{PP_SERVICE_TYPE.PP_SERVICE_CASH_SEC === tabSelected ? 'ebwebApp.mBTellerPaper.receiver' : 'ebwebApp.mBTellerPaper.accountingobjectaddress'}}"
+                                        >Accountingobjectaddress</label>
+                                        <div class="col-sm-10 pd-l-0 last-div-1-0">
+                                            <input type="text" class="form-control form-control-sm"
+                                                   *ngIf="PP_SERVICE_TYPE.PP_SERVICE_CASH_SEC !== tabSelected"
+                                                   name="accounting-object-address-mb"
+                                                   id="accounting-object-address-mb" tabindex="23"
+                                                   [(ngModel)]="ppService.accountingObjectAddress"
+                                                   maxlength="512">
+                                            <input type="text" class="form-control form-control-sm"
+                                                   *ngIf="PP_SERVICE_TYPE.PP_SERVICE_CASH_SEC === tabSelected"
+                                                   name="bank-name-receiver"
+                                                   id="bank-name-receiver" tabindex="24"
+                                                   [(ngModel)]="ppService.accountingObjectName"
+                                                   maxlength="512">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row no-gutters" *ngIf="PP_SERVICE_TYPE.PP_SERVICE_CASH_SEC !== tabSelected">
+                                        <label class="col-sm-2 col-form-label"
+                                               for="field_accountingobjectbankaccount"
+                                               jhiTranslate="ebwebApp.mBTellerPaper.accountingObjectBankAccount"
+                                        >AccountingObjectBankAccount</label>
+                                        <div class="col-sm-6 row">
+                                            <div class="col-sm-6 pd-l-0 pd-r-10">
+                                                <combo-box style="" id="field_accountingobjectbankaccount"
+                                                           name="accountingObjectBankAccount"
+                                                           [tabindex]="25"
+                                                           [isOutTable]="true"
+                                                           [dataList]="bankAccountDetailReceivers"
+                                                           [listColumns]="utilsService.listColumnsAccountingObjectBankAccount"
+                                                           displayMember="bankAccount"
+                                                           valueName="id"
+                                                           [isRemoveValue]="true"
+                                                           [headerColumns]="[
+            translateService.instant('ebwebApp.comboBox.bankAccountDetails.bankAccount'),
+            translateService.instant('ebwebApp.comboBox.bankAccountDetails.bankName')
+        ]"
+                                                           [(ngModel)]="ppService.accountReceiverId"
+                                                           (ngModelChange)="onSelectBankAccountDetailReceiver()"
+                                                ></combo-box>
+                                            </div>
+                                            <div class="col-sm-6 pd-l-0">
+                                                <input type="text" class="form-control form-control-sm"
+                                                       name="bankname" tabindex="26"
+                                                       [(ngModel)]="ppService.accountReceiverName"
+                                                       maxlength="512"/>
+                                            </div>
+                                        </div>
+                                        <label class="col-sm-2 col-form-label" for="field-employee-id-mb-teller-paper"
+                                               jhiTranslate="ebwebApp.mBTellerPaper.accountingObjectIsEmployee"
+                                               style="min-width: 150px;">Employee</label>
+                                        <div class="col-sm-2 last-div-special-long">
+                                            <combo-box style="" id="field-employee-id-mb-teller-paper"
+                                                       name="field-employee-id-mb-teller-paper"
+                                                       [tabindex]="27"
+                                                       [isOutTable]="true"
+                                                       [dataList]="employees"
+                                                       [listColumns]="utilsService.listColumnsEmployees"
+                                                       [nameCategory]="utilsService.NHAN_VIEN"
+                                                       (click)="saveParent()"
+                                                       [showIconPlus]="!isReadOnly"
+                                                       displayMember="accountingObjectCode"
+                                                       valueName="id"
+                                                       [isRemoveValue]="true"
+                                                       [headerColumns]="[
+            translateService.instant('ebwebApp.comboBox.employees.accountingObjectCode'),
+            translateService.instant('ebwebApp.comboBox.employees.accountingObjectName')
+        ]"
+                                                       [(ngModel)]="ppService.employeeID"
+                                                       (ngModelChange)="selectEmployee()"
+                                            ></combo-box>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row no-gutters" *ngIf="PP_SERVICE_TYPE.PP_SERVICE_CASH_SEC === tabSelected">
+                                        <label class="col-sm-2 col-form-label" for="field_identificationno"
+                                               jhiTranslate="ebwebApp.mBTellerPaper.identificationno"
+                                        >IdentificationNo</label>
+                                        <div class="col-sm-3">
+                                            <input type="text" class="form-control form-control-sm"
+                                                   name="identificationno"
+                                                   id="field_identificationno" tabindex="29"
+                                                   [(ngModel)]="ppService.identificationNo"
+                                                   maxlength="30"/>
+                                        </div>
+                                        <label class="col-sm-2 col-form-label" for="field_issuedate"
+                                               jhiTranslate="ebwebApp.mBTellerPaper.issuedate"
+                                               style="padding-right: 0;padding-left: 0;text-align: center;"
+                                        >Issue Date</label>
+                                        <div class="col-sm-2" style="padding-right: 0;padding-left: 0">
+                                            <div class="input-group">
+                                                <eb-date-picker id="field_issuedate"
+                                                                [tabindex]="30"
+                                                                [(ngModel)]="ppService.issueDate" name="issueDate"
+                                                                [isInTable]="true"></eb-date-picker>
+                                            </div>
+                                        </div>
+                                        <label class="col-sm-2 col-form-label" for="field_issueby"
+                                               jhiTranslate="ebwebApp.mBTellerPaper.issueby"
+                                               style="padding-right: 0;padding-left: 0;text-align: right;"
+                                        >Issue by</label>
+                                        <div class="col-sm-2 last-div-3-2" style="padding-right: 0">
+                                            <input type="text" class="form-control form-control-sm"
+                                                   name="issueby"
+                                                   id="field_issueby" tabindex="31"
+                                                   [(ngModel)]="ppService.issueBy"
+                                                   maxlength="512"/>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="col-lg-9 pd-r-0 form-main-new" *ngIf="tabSelected === PP_SERVICE_TYPE.PP_SERVICE_CREDIT_CARD">
+                        <form style="padding-right: 10px;padding-bottom: 0px;">
+                            <h3 jhiTranslate="ebwebApp.muaHang.muaDichVu.insertUpdate.generalInfo"></h3>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group row no-gutters">
+                                        <label class="col-sm-2 col-form-label"
+                                               jhiTranslate="ebwebApp.mBCreditCard.accountPay"></label>
+                                        <div class="col-sm-3 pd-l-0 pd-r-10">
+                                            <combo-box style="" class="padding" id="field_creditCard"
+                                                       name="combobox-creditCard"
+                                                       [tabindex]="32"
+                                                       [dataList]="creditCards"
+                                                       [isOutTable]="true"
+                                                       [isRemoveValue]="true"
+                                                       [listColumns]="utilsService.listColumnsCreditCard"
+                                                       displayMember="creditCardNumber"
+                                                       [headerColumns]="[
+            translateService.instant('ebwebApp.comboBox.creditCard.creditCardNumber'),
+            translateService.instant('ebwebApp.comboBox.creditCard.creditCardType')
+        ]"
+                                                       [(ngModel)]="ppService.creditCardNumber" valueName="creditCardNumber"
+                                                       (ngModelChange)="onChangeCreditCard()">
+                                            </combo-box>
+                                        </div>
+                                        <label class="col-sm-1 col-form-label"
+                                               jhiTranslate="ebwebApp.mBCreditCard.typeCard"></label>
+                                        <div class="col-sm-2 pd-l-0">
+                                            <input type="text" class="form-control form-control-sm padding"
+                                                   name="credit-card-type" id="field_creditCardType" tabindex="33"
+                                                   [(ngModel)]="ppService.creditCardType" maxlength="512" readonly>
+                                        </div>
+                                        <label class="col-sm-2 col-form-label"
+                                               jhiTranslate="ebwebApp.mBCreditCard.ownerCard"></label>
+                                        <div class="col-sm-3 pd-l-0 last-div-3-2">
+                                            <input type="text" class="form-control form-control-sm padding"
+                                                   name="credit-card-object" id="field_creditCardObject" tabindex="34"
+                                                   [(ngModel)]="ppService.ownerCreditCard" maxlength="512" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row no-gutters">
+                                        <label class="col-sm-2 col-form-label"
+                                               for="pp-service-reason-credit-card"
+                                               jhiTranslate="ebwebApp.mBCreditCard.autoPrinciple"></label>
+
+                                        <div class="col-sm-10 pd-l-0 last-div-1-0">
+                                            <input type="text" class="form-control form-control-sm" name="reason"
+                                                   id="pp-service-reason-credit-card" tabindex="35"
+                                                   (ngModelChange)="onChangeOtherReason()"
+                                                   [(ngModel)]="ppService.otherReason" maxlength="512">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row no-gutters">
+                                        <label class="col-sm-2 col-form-label"
+                                               for="field-account-object-creadit-card-option"
+                                               jhiTranslate="ebwebApp.mBCreditCard.accountObjectReceive"></label>
+                                        <div class="col-sm-3 pd-l-0 pd-r-10">
+                                            <combo-box id="field-account-object-creadit-card-option"
+                                                       name="field-account-object-creadit-card-option"
+                                                       [dataList]="accountingObjects" [tabindex]="36"
+                                                       [listColumns]="utilsService.listColumnsAccountingObjects"
+                                                       displayMember="accountingObjectCode"
+                                                       valueName="id"
+                                                       [isRequired]="isRequiredAccountObjects"
+                                                       [hideRequiredWhenValueTrue]="isRequiredAccountObjects"
+                                                       [isCheckEmpty]="isRequiredAccountObjects"
+                                                       [isRemoveValue]="true"
+                                                       [isObject]="false"
+                                                       [nameCategory]="utilsService.NHA_CUNG_CAP"
+                                                       (click)="saveParent()"
+                                                       [showIconPlus]="!isReadOnly"
+                                                       [(ngModel)]="ppService.accountingObjectID"
+                                                       (ngModelChange)="onSelectAccountingObject()"
+                                                       [headerColumns]="[
+            translateService.instant('ebwebApp.comboBox.accountingObjects.accountingObjectCode'),
+            translateService.instant('ebwebApp.comboBox.accountingObjects.accountingObjectName'),
+            translateService.instant('ebwebApp.comboBox.accountingObjects.accountingObjectAddress')
+        ]">
+                                            </combo-box>
+                                        </div>
+                                        <div class="col-sm-7 pd-l-0 last-div-1-1">
+                                            <input type="text" class="form-control form-control-sm"
+                                                   name="accounting-object-name-cc"
+                                                   id="accounting-object-name-cc" tabindex="37"
+                                                   [(ngModel)]="ppService.accountingObjectName"
+                                                   (ngModelChange)="onChangeAccountingObjectName()"
+                                                   maxlength="512"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row no-gutters">
+                                        <label class="col-sm-2 col-form-label"
+                                               jhiTranslate="ebwebApp.mBCreditCard.accountingObjectAddress"
+                                               for="accounting-object-address-cc"></label>
+                                        <div class="col-sm-10 pd-l-0 last-div-1-0">
+                                            <input type="text" class="form-control form-control-sm"
+                                                   name="accounting-object-address-cc"
+                                                   id="accounting-object-address-cc" tabindex="38"
+                                                   [(ngModel)]="ppService.accountingObjectAddress" maxlength="512"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row no-gutters">
+                                        <label class="col-sm-2 col-form-label" for="field-credit-card-bank-account-receiver"
+                                               jhiTranslate="ebwebApp.mBCreditCard.accountReceive"></label>
+                                        <div class="col-sm-6 row">
+                                            <div class="col-sm-6 pd-l-0 pd-r-10">
+                                                <combo-box id="field-credit-card-bank-account-receiver"
+                                                           name="field-credit-card-bank-account-receiver"
+                                                           [tabindex]="39"
+                                                           [dataList]="bankAccountDetailReceivers"
+                                                           [listColumns]="utilsService.listColumnsAccountingObjectBankAccount"
+                                                           displayMember="bankAccount"
+                                                           valueName="id"
+                                                           [isRemoveValue]="true"
+                                                           [headerColumns]="[
+            translateService.instant('ebwebApp.comboBox.bankAccountDetails.bankAccount'),
+            translateService.instant('ebwebApp.comboBox.bankAccountDetails.bankName')
+        ]"
+                                                           [(ngModel)]="ppService.accountReceiverId"
+                                                           (ngModelChange)="onSelectBankAccountDetailReceiver()">
+                                                </combo-box>
+                                            </div>
+                                            <div class="col-sm-6 pd-l-0">
+                                                <input type="text" class="form-control form-control-sm"
+                                                       name="accounting-object-bank-name" id="field_accountingObjectBankName"
+                                                       tabindex="40"
+                                                       [(ngModel)]="ppService.accountReceiverName" maxlength="512"/>
+                                            </div>
+                                        </div>
+                                        <label class="col-sm-2 col-form-label" style="min-width: 150px;"
+                                               jhiTranslate="ebwebApp.mBCreditCard.employeeName"></label>
+                                        <div class="col-sm-2 last-div-special-long">
+                                            <combo-box style="" id="field-employee-credit-card-option"
+                                                       name="field-employee-credit-card-option"
+                                                       [dataList]="employees"
+                                                       [listColumns]="utilsService.listColumnsEmployees"
+                                                       displayMember="accountingObjectCode"
+                                                       valueName="id"
+                                                       [tabindex]="41"
+                                                       [isRemoveValue]="true"
+                                                       [headerColumns]="[
+            translateService.instant('ebwebApp.comboBox.employees.accountingObjectCode'),
+            translateService.instant('ebwebApp.comboBox.employees.accountingObjectName')
+        ]"
+                                                       [(ngModel)]="ppService.employeeID"
+                                                       (ngModelChange)="selectEmployee()">
+                                            </combo-box>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="col-lg-4 pd-only-l-10 form-main-new">
+                        <form>
+                            <h3 jhiTranslate="ebwebApp.muaHang.muaDichVu.insertUpdate.receipt"></h3>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-group row no-gutters">
+                                        <label class="col-sm-4 col-form-label" style="padding-right: 0px;"
+                                               jhiTranslate="ebwebApp.muaHang.muaDichVu.insertUpdate.receiptNo"></label>
+                                        <div class="col-sm-8 pd-l-0 last-div-1-0">
+                                            <input type="text" [(ngModel)]="ppService.noBook"
+                                                   class="form-control form-control-sm"
+                                                   name="receipt-no" tabindex="42"
+                                                   *ngIf="tabSelected === PP_SERVICE_TYPE.PP_SERVICE_UNPAID">
+
+                                            <input type="text" [(ngModel)]="ppService.otherNoBook"
+                                                   class="form-control form-control-sm"
+                                                   name="receipt-other-no" tabindex="43"
+                                                   *ngIf="tabSelected !== PP_SERVICE_TYPE.PP_SERVICE_UNPAID">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row no-gutters">
+                                        <label class="col-sm-4 col-form-label" style="padding-left: 13px;" for="field-riept-date"
+                                               jhiTranslate="ebwebApp.muaHang.muaDichVu.insertUpdate.receiptDate"></label>
+                                        <div class="col-sm-8 last-div-1-0">
+                                            <eb-date-picker id="field-riept-date" [tabindex]="44" [(ngModel)]="ppService.receiptDate" name="field-riept-date" format="DD/MM/YYYY"
+                                            (change)="onChangeReceiptDate()"></eb-date-picker>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row no-gutters">
+                                        <label class="col-sm-4 col-form-label" style="padding-left: 13px;" for="field-posted-date"
+                                               jhiTranslate="ebwebApp.muaHang.muaDichVu.insertUpdate.postedDate"></label>
+                                        <div class="col-sm-8 last-div-1-0">
+                                            <eb-date-picker id="field-posted-date" [tabindex]="45"
+                                                            [(ngModel)]="ppService.postedDate" name="field-posted-date" format="DD/MM/YYYY"></eb-date-picker>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row no-gutters">
+                                        <label class="col-sm-4 col-form-label"
+                                               jhiTranslate="ebwebApp.mBDeposit.currencyID"></label>
+                                        <div class="col-sm-3">
+                                            <combo-box style="" id="field-currency"
+                                                       name="combobox-currency"
+                                                       [tabindex]="46"
+                                                       [dataList]="currencies"
+                                                       [listColumns]="utilsService.listColumnsCurrency"
+                                                       displayMember="currencyCode"
+                                                       valueName="currencyCode"
+                                                       [isRemoveValue]="true"
+                                                       [headerColumns]="[
+            translateService.instant('ebwebApp.comboBox.currency.currencyCode'),
+            translateService.instant('ebwebApp.comboBox.currency.currencyName')
+        ]"
+                                                       [isOutTable]="true"
+                                                       [(ngModel)]="ppService.currencyID"
+                                                       (ngModelChange)="selectCurrency(true)"
+                                            ></combo-box>
+                                        </div>
+                                        <label class="col-sm-2 col-form-label"
+                                               style="text-align:center; padding-left: 0px; padding-right: 0px;"
+                                               jhiTranslate="ebwebApp.mBDeposit.exchangeRate"></label>
+                                        <div class="col-sm-3">
+                                            <input name="exngModelChangeRate" type="text" [(ngModel)]="ppService.exchangeRate"
+                                                   [tabIndex]="!isForeignCurrency ? -1 :47"
+                                                   class="form-control form-control-sm" [class.eb-read-only-tr]="!isForeignCurrency" ebCurrencyMask
+                                                   [allowNegative]="false" [systemOptions]="account?.systemOption" (ngModelChange)="onUpdateExChangeRate()"
+                                                   [type]="4"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row no-gutters" *ngIf="usingManagerBook">
+                                        <label class="col-sm-4 col-form-label" jhiTranslate="ebwebApp.muaHang.muaDichVu.insertUpdate.typeLedgerSelect"></label>
+                                        <div class="col-sm-8 pd-l-0 last-div-1-0">
+                                            <select class="form-control" name="type-ledger" id="field-type-ledger"
+                                                    [(ngModel)]="ppService.typeLedger" tabindex="48">
+                                                <option [value]="0" jhiTranslate="ebwebApp.muaHang.muaDichVu.insertUpdate.financialBook"
+                                                        *ngIf="ppService.currentBook && ppService.currentBook === '0'">
+                                                </option>
+                                                <option [value]="1" jhiTranslate="ebwebApp.muaHang.muaDichVu.insertUpdate.managementBook"
+                                                        *ngIf="ppService.currentBook && ppService.currentBook === '1'">
+                                                </option>
+                                                <option [value]="2" jhiTranslate="ebwebApp.muaHang.muaDichVu.insertUpdate.bothBooks">
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <ngb-tabset style="padding-top: 15px" class="tool-navbar border-li-none" (tabChange)="beforeChange($event)" (click)="closeContextMenu()">
+                    <ngb-tab>
+                        <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.tabs.detail"></span></ng-template>
+                        <ng-template ngbTabContent>
+                            <div class="tab-content" >
+                                <div class="frm-main frm-padding tab-pane fade in active show" id="home-detail" style="background: #cbdcf0">
+                                    <div class="table-scroll">
+                                        <table id="main-table-detail" class="main-table"
+                                               (keydown.arrowDown)="moveArrowDown($event,40)"
+                                               (keydown.arrowUp)="moveArrowUp($event,40)">
+                                            <thead>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.materialGoodsCode">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.materialGoodsName">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.detail.unitName">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.debitAccount">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.creditAccount">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.taxation.postedObject">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.detail.quantity">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.detail.unitPriceOriginal">
+                                            </th>
+                                            <th scope="col" class="text-center" *ngIf="isForeignCurrency" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.detail.unitPrice">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.detail.amountOriginal">
+                                            </th>
+                                            <th scope="col" *ngIf="isForeignCurrency" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.detail.amount">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.detail.discountRate">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.detail.discountAmountOriginal">
+                                            </th>
+                                            <th scope="col" *ngIf="isForeignCurrency" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.detail.discountAmount">
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.detail.ppOrderNo">
+                                            </th>
+                                            </thead>
+                                            <tbody [class.disable]="isReadOnly">
+                                            <tr oncontextmenu="return false;"
+                                                (contextmenu)="onRightClick($event, ppService.ppServiceDetailDTOS, detail, true, true, true)"
+                                                *ngFor="let detail of ppService.ppServiceDetailDTOS; let i = index"
+                                                (keydown.control.insert)="addNewRow(0)"
+                                                (keydown.control.c)="copyRow(i)"
+                                                (keydown.meta.c)="copyRow(i)"
+                                                (keydown.control.delete)="keyPress(i, 0)"
+                                            >
+                                                <td class="cell-Table">
+                                                    <combo-box name="{{'ppsd-detail-material-goods-1' + i}}"
+                                                               [dataList]="materialGoodss"
+                                                               [listColumns]="utilsService.listColumnsMaterialGoodsPPService"
+                                                               displayMember="materialGoodsCode"
+                                                               valueName="id"
+                                                               [tabindex]="50 + (40 * i) + 1"
+                                                               [isRequired]="true"
+                                                               [isOutTable]="false"
+                                                               [hideRequiredWhenValueTrue]="true"
+                                                               [idIp]="'ppsd-detail-material-goods-1' + i"
+                                                               [isRemoveValue]="true"
+                                                               [headerColumns]="[
+            translateService.instant('ebwebApp.comboBox.materialGoods.materialGoodsCode'),
+            translateService.instant('ebwebApp.comboBox.materialGoods.materialGoodsName')
+        ]"
+                                                               [showIconPlus]="isEdit"
+                                                               [nameCategory]="utilsService.VAT_TU_HANG_HOA_PP_SERVICE"
+                                                               (click)="saveDetails(i)"
+                                                               [(ngModel)]="detail.materialGoodsId"
+                                                               (ngModelChange)="onSelectMaterialGoods(detail, true)">
+                                                    </combo-box>
+                                                </td>
+                                                <td class="cell-Table">
+                                                    <input type="text" class="input-Cell" name="{{'ppsd-material-goods-name-'+ i}}"
+                                                           tabindex="{{50 + (40 * i) + 2}}"
+                                                           [(ngModel)]="detail.materialGoodsName">
+                                                </td>
+                                                <td class="cell-Table">
+                                                    <combo-box id="field_unit"
+                                                               name="unit"
+                                                               [tabindex]="50 + (40 * i) + 3"
+                                                               [dataList]="detail.units"
+                                                               [listColumns]="utilsService.listColumnsUnit"
+                                                               displayMember="unitName"
+                                                               valueName="id"
+                                                               [isRemoveValue]="true"
+                                                               [isOutTable]="false"
+                                                               [headerColumns]="[translateService.instant('ebwebApp.comboBox.unit.unitName')]"
+                                                               [(ngModel)]="detail.unitId"
+                                                               (ngModelChange)="selectUnit(detail)"
+                                                    ></combo-box>
+                                                </td>
+                                                <td class="cell-Table jsgrid-align-center">
+                                                    <combo-box name="{{'ppsd-material-debit-account-'+i}}"
+                                                               [tabindex]="50 + (40 * i) + 4"
+                                                               [isRequired]="true"
+                                                               [isOutTable]="false"
+                                                               [hideRequiredWhenValueTrue]="true"
+                                                               [dataList]="accountDebit"
+                                                               [headerColumns]="[
+            translateService.instant('ebwebApp.comboBox.accountDebit.accountNumber'),
+            translateService.instant('ebwebApp.comboBox.accountDebit.accountName')
+        ]"
+                                                               displayMember="accountNumber"
+                                                               valueName="accountNumber"
+                                                               [isRemoveValue]="true"
+                                                               [isCheckEmpty]="true"
+                                                               [listColumns]="['accountNumber', translateService.instant('ebwebApp.comboBox.accountDebit.accountNameCol')]"
+                                                               [(ngModel)]="detail.debitAccount"
+                                                               (ngModelChange)="selectDebitAccount(detail)"
+                                                    >
+
+                                                    </combo-box>
+                                                </td>
+                                                <td class="cell-Table jsgrid-align-center">
+                                                    <combo-box name="{{'ppsd-material-credit-account-'+ i}}"
+                                                               [tabindex]="50 + (40 * i) + 5"
+                                                               [dataList]="accountCredit"
+                                                               [isRequired]="true"
+                                                               [isCheckEmpty]="true"
+                                                               [isOutTable]="false"
+                                                               [hideRequiredWhenValueTrue]="true"
+                                                               [headerColumns]="[
+            translateService.instant('ebwebApp.comboBox.accountDebit.accountNumber'),
+            translateService.instant('ebwebApp.comboBox.accountDebit.accountName')
+        ]"
+                                                               displayMember="accountNumber"
+                                                               valueName="accountNumber"
+                                                               [isRemoveValue]="true"
+                                                               [listColumns]="['accountNumber', translateService.instant('ebwebApp.comboBox.accountDebit.accountNameCol')]"
+                                                               [(ngModel)]="detail.creditAccount"
+                                                               (ngModelChange)="selectCreditAccount(detail)"
+                                                    >
+
+                                                    </combo-box>
+                                                </td>
+                                                <td class="cell-Table jsgrid-align-left">
+                                                    <combo-box name="{{'ppsd-posted-object-code-'+ i}}"
+                                                               [tabindex]="50 + (40 * i) + 6"
+                                                               [dataList]="accountingObjects"
+                                                               [listColumns]="utilsService.listColumnsAccountingObjects"
+                                                               displayMember="accountingObjectCode"
+                                                               valueName="id"
+                                                               [isOutTable]="false"
+                                                               [nameCategory]="utilsService.NHA_CUNG_CAP"
+                                                               [showIconPlus]="isEdit"
+                                                               (click)="saveDetails(i)"
+                                                               [isRemoveValue]="true"
+                                                               [headerColumns]="[
+            translateService.instant('ebwebApp.comboBox.accountingObjects.accountingObjectCode'),
+            translateService.instant('ebwebApp.comboBox.accountingObjects.accountingObjectName'),
+            translateService.instant('ebwebApp.comboBox.accountingObjects.accountingObjectAddress')
+        ]"
+                                                               [(ngModel)]="detail.postedObjectId"
+                                                               (ngModelChange)="onSelectPostObject(i)" >
+                                                    </combo-box>
+                                                </td>
+                                                <td class="cell-Table">
+                                                    <input type="text" class="input-Cell" [(ngModel)]="detail.quantity" name="{{'ppsd-unit-name-'+ i}}"
+                                                           tabindex="{{50 + (40 * i) + 7}}"
+                                                           (ngModelChange)="validReceivedQuantity(detail)" ebCurrencyMask [systemOptions]="account?.systemOption" [type]="3">
+                                                </td>
+                                                <td class="cell-Table">
+                                                    <combo-box
+                                                            [listColumns]="['data']"
+                                                            [tabindex]="50 + (40 * i) + 8"
+                                                            displayMember="data"
+                                                            valueName="data"
+                                                            [isOutTable]="false"
+                                                            [dataList]="detail.unitPrices"
+                                                            [headerColumns]="[translateService.instant('ebwebApp.comboBox.unit.valueNumber')]"
+                                                            [(ngModel)]="detail.unitPriceOriginal"
+                                                            name="-original-{{i}}" id="-original-{{i}}"
+                                                            (ngModelChange)="selectUnitPriceOriginal(detail)"
+                                                            [systemOptions]="account?.systemOption"
+                                                            [type]="1"
+                                                            [valueIsNumber]="true"
+                                                            [getValueDisplay] ="true"
+                                                    ></combo-box>
+                                                </td>
+                                                <td class="cell-Table" *ngIf="isForeignCurrency">
+                                                    <input type="text" class="input-Cell" [(ngModel)]="detail.unitPrice" name="{{'ppsd-unit-price'+ i}}"
+                                                           (ngModelChange)="changeUnitPrice(detail)" tabindex="{{50 + (40 * i) + 9}}"
+                                                            ebCurrencyMask [systemOptions]="account?.systemOption" [type]="1">
+                                                </td>
+                                                <td class="cell-Table">
+                                                    <input type="text" class="input-Cell" [(ngModel)]="detail.amountOriginal" name="{{'ppsd-amount-'+ i}}"
+                                                           (ngModelChange)="changeAmountOriginal(detail)" tabindex="{{50 + (40 * i) + 10}}"
+                                                           ebCurrencyMask [systemOptions]="account?.systemOption" [type]="!isForeignCurrency ? 7 : 8">
+                                                </td>
+                                                <td class="cell-Table" *ngIf="isForeignCurrency">
+                                                    <input type="text" class="input-Cell" [(ngModel)]="detail.amount" name="{{'ppsd-amount-original-'+ i}}"
+                                                           (ngModelChange)="changeAmount(detail)" [allowNegative]="false" tabindex="{{50 + (40 * i) + 11}}"
+                                                           ebCurrencyMask [systemOptions]="account?.systemOption" [type]="7">
+                                                </td>
+                                                <td class="cell-Table">
+                                                    <input type="number" class="input-Cell bg-transparent border-0"
+                                                           name="discountRate{{i}}" [readOnly]="isReadOnly" tabindex="{{50 + (40 * i) +  12}}"
+                                                           [(ngModel)]="detail.discountRate" (ngModelChange)="changeDiscountRate(detail)"
+                                                           ebCurrencyMask [systemOptions]="account?.systemOption" [type]="5" [allowNegative]="false">
+                                                </td>
+                                                <td class="cell-Table">
+                                                    <input type="text" class="input-Cell" [(ngModel)]="detail.discountAmountOriginal"
+                                                           tabindex="{{50 + (40 * i) + 13}}"
+                                                           name="{{'ppsd-discount-amount-'+ i}}"
+                                                           (ngModelChange)="changeDiscountAmountOriginal(detail)" ebCurrencyMask [systemOptions]="account?.systemOption"
+                                                           [type]="!isForeignCurrency ? 7 : 8" [allowNegative]="false" (keydown.tab)="addIfLastInput(isForeignCurrency ? -1 : i)">
+                                                </td>
+                                                <td class="cell-Table" *ngIf="isForeignCurrency">
+                                                    <input type="text" class="input-Cell" [(ngModel)]="detail.discountAmount"
+                                                           tabindex="{{50 + (40 * i) + 14}}"
+                                                           name="{{'ppsd-discount-amount-original-'+ i}}"
+                                                            ebCurrencyMask [systemOptions]="account?.systemOption" (ngModelChange)="changeDiscountAmount(detail)"
+                                                           [type]="7" [allowNegative]="false" (keydown.tab)="addIfLastInput(isForeignCurrency ? i : -1)">
+                                                </td>
+                                                <td class="cell-Table">
+                                                    <input type="text" class="input-Cell" style="border: none; pointer-events: none;" [(ngModel)]="detail.ppOrderNo"/>
+                                                </td>
+                                            </tr>
+                                            <tr (click)="addNewRow(0)" *ngIf="!isReadOnly">
+                                                <td class="jsgrid-cell">
+                                                    <span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.newLine"></span>
+                                                </td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell" *ngIf="isForeignCurrency">&nbsp;</td>
+                                                <td class="jsgrid-cell" *ngIf="isForeignCurrency">&nbsp;</td>
+                                                <td class="jsgrid-cell" *ngIf="isForeignCurrency">&nbsp;</td>
+                                            </tr>
+                                            <tr *ngFor="let detail of getEmptyRow(ppService.ppServiceDetailDTOS)">
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+
+                                                <td class="jsgrid-cell" *ngIf="isForeignCurrency">&nbsp;</td>
+                                                <td class="jsgrid-cell" *ngIf="isForeignCurrency">&nbsp;</td>
+                                                <td class="jsgrid-cell" *ngIf="isForeignCurrency">&nbsp;</td>
+
+                                            </tr>
+                                            </tbody>
+                                            <tfoot>
+                                            <tr>
+                                                <td class="cell-Table color-tfoot input-Cell" colspan="6">
+                                                    <input type="text" class="color-tfoot input-Cell disable"
+                                                           value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{ppService.ppServiceDetailDTOS.length}}"></td>
+
+                                                <td class="cell-Table color-tfoot input-Cell jsgrid-align-right">
+                                                    {{ppService.totalquantity | ebcurrency:3:account}}
+                                                </td>
+                                                <td class="cell-Table color-tfoot input-Cell">
+                                                <td *ngIf="isForeignCurrency" class="cell-Table color-tfoot input-Cell">
+                                                </td>
+                                                <td class="cell-Table color-tfoot input-Cell">
+                                                    <input type="text" disabled [(ngModel)]="ppService.totalAmountOriginal" class="color-tfoot input-Cell noPointer"
+                                                           ebCurrencyMask [systemOptions]="account?.systemOption" [type]="!isForeignCurrency ? 7 : 8">
+                                                </td>
+                                                <td *ngIf="isForeignCurrency" class="cell-Table color-tfoot input-Cell">
+                                                    <input type="text" disabled [(ngModel)]="ppService.totalAmount" class="color-tfoot input-Cell noPointer"
+                                                           ebCurrencyMask [systemOptions]="account?.systemOption" [type]="7">
+                                                </td>
+                                                <td class="cell-Table color-tfoot input-Cell" ></td>
+                                                <td class="cell-Table color-tfoot input-Cell">
+                                                    <input type="text" disabled [(ngModel)]="ppService.totalDiscountAmountOriginal  " class="color-tfoot input-Cell noPointer"
+                                                           ebCurrencyMask [systemOptions]="account?.systemOption" [type]="!isForeignCurrency ? 7 : 8">
+                                                </td>
+                                                <td *ngIf="isForeignCurrency" class="cell-Table color-tfoot input-Cell">
+                                                    <input type="text" class="color-tfoot input-Cell noPointer" disabled [(ngModel)]="ppService.totalDiscountAmount"
+                                                           ebCurrencyMask [systemOptions]="account?.systemOption" [type]="7">
+                                                </td>
+                                                <td class="cell-Table color-tfoot input-Cell disable" ></td>
+                                            </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </ngb-tab>
+
+                    <ngb-tab>
+                        <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.tabs.taxation"></span></ng-template>
+                        <ng-template ngbTabContent>
+                            <div class="tab-content" >
+                                <div class="frm-main frm-padding tab-pane fade in active show" style="background: #cbdcf0">
+                                    <div class="table-scroll">
+                                        <table id="main-table-detail-taxation" class="main-table"
+                                               (keydown.arrowDown)="moveArrowDown($event,40)"
+                                               (keydown.arrowUp)="moveArrowUp($event,40)">
+                                            <thead>
+                                            <th class="text-center">
+                                                <span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.materialGoodsCode"></span>
+                                            </th>
+                                            <th class="text-center">
+                                                <span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.taxation.vatDescription"></span>
+                                            </th>
+                                            <th class="text-center">
+                                                <span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.debitAccount"></span>
+                                            </th>
+                                            <th class="text-center">
+                                                <span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.creditAccount"></span>
+                                            </th>
+                                            <th class="text-center">
+                                                <span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.taxation.postedObject"></span>
+                                            </th>
+                                            <th class="text-center">
+                                                <span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.taxation.vatRate"></span>
+                                            </th>
+                                            <th class="text-center">
+                                                <span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.taxation.vatAmountOriginal"></span>
+                                            </th>
+                                            <th class="text-center" *ngIf="isForeignCurrency">
+                                                <span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.taxation.vatAmount"></span>
+                                            </th>
+                                            <th class="text-center">
+                                                <span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.taxation.vatAccount"></span>
+                                            </th>
+                                            <th class="text-center">
+                                                <span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.taxation.deductionDebitAccount"></span>
+                                            </th>
+                                            <th class="text-center">
+                                                <span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.taxation.invoiceTemplate"></span>
+                                            </th>
+                                            <th class="text-center">
+
+                                                <span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.taxation.invoiceSeries"></span>
+                                            </th>
+                                            <th class="text-center">
+                                                <span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.taxation.invoiceNo"></span>
+                                            </th>
+                                            <th class="text-center">
+                                                <span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.taxation.invoiceDate"></span>
+                                            </th>
+                                            <th class="text-center" *ngIf="this.isCareerGroup">
+                                                <span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.taxation.goodsServicePurchaseName"></span>
+                                            </th>
+                                            </thead>
+                                            <tbody >
+                                            <tr oncontextmenu="return false;"
+                                                (contextmenu)="onRightClick($event, ppService.ppServiceDetailDTOS, detail, true, true, true)"
+                                                *ngFor="let detail of ppService.ppServiceDetailDTOS; let i = index"
+                                                (keydown.control.insert)="addNewRow(0)"
+                                                (keydown.control.c)="copyRow(i)"
+                                                (keydown.control.delete)="keyPress(i, 0)">
+                                                <td class="cell-Table">
+                                                    <combo-box name="{{'ppsd-detail-material-goods-2' + i}}"
+                                                               [dataList]="materialGoodss"
+                                                               [tabindex]="50 + (40 * i) + 16"
+                                                               [listColumns]="utilsService.listColumnsMaterialGoodsPPService"
+                                                               displayMember="materialGoodsCode"
+                                                               valueName="id"
+                                                               [idIp]="'ppsd-detail-material-goods-2' + i"
+                                                               [isRequired]="true"
+                                                               [hideRequiredWhenValueTrue]="true"
+                                                               [isRemoveValue]="true"
+                                                               [isOutTable]="false"
+                                                               [headerColumns]="[
+            translateService.instant('ebwebApp.comboBox.materialGoods.materialGoodsCode'),
+            translateService.instant('ebwebApp.comboBox.materialGoods.materialGoodsName')
+        ]"
+                                                               [(ngModel)]="detail.materialGoodsId"
+                                                               [showIconPlus]="isEdit"
+                                                               [nameCategory]="utilsService.VAT_TU_HANG_HOA_PP_SERVICE"
+                                                               (click)="saveDetails(i)"
+                                                               (ngModelChange)="onSelectMaterialGoods(detail, true)">
+                                                    </combo-box>
+                                                </td>
+
+                                                <td class="cell-Table one-long-line"><input type="text" class="input-Cell" [(ngModel)]="detail.vatDescription"/></td>
+                                                <td class="cell-Table jsgrid-align-center">
+                                                    <combo-box name="{{'ppsd-material-debit-account-'+i}}"
+                                                               [tabindex]="50 + (40 * i) + 4"
+                                                               [isRequired]="true"
+                                                               [isOutTable]="false"
+                                                               [hideRequiredWhenValueTrue]="true"
+                                                               [dataList]="accountDebit"
+                                                               [headerColumns]="[
+            translateService.instant('ebwebApp.comboBox.accountDebit.accountNumber'),
+            translateService.instant('ebwebApp.comboBox.accountDebit.accountName')
+        ]"
+                                                               displayMember="accountNumber"
+                                                               valueName="accountNumber"
+                                                               [isRemoveValue]="true"
+                                                               [isCheckEmpty]="true"
+                                                               [listColumns]="['accountNumber', translateService.instant('ebwebApp.comboBox.accountDebit.accountNameCol')]"
+                                                               [(ngModel)]="detail.debitAccount"
+                                                               (ngModelChange)="selectDebitAccount(detail)"
+                                                    >
+
+                                                    </combo-box>
+                                                </td>
+                                                <td class="cell-Table jsgrid-align-center">
+                                                    <combo-box name="{{'ppsd-material-credit-account-'+ i}}"
+                                                               [tabindex]="50 + (40 * i) + 5"
+                                                               [dataList]="accountCredit"
+                                                               [isRequired]="true"
+                                                               [isCheckEmpty]="true"
+                                                               [isOutTable]="false"
+                                                               [hideRequiredWhenValueTrue]="true"
+                                                               [headerColumns]="[
+            translateService.instant('ebwebApp.comboBox.accountDebit.accountNumber'),
+            translateService.instant('ebwebApp.comboBox.accountDebit.accountName')
+        ]"
+                                                               displayMember="accountNumber"
+                                                               valueName="accountNumber"
+                                                               [isRemoveValue]="true"
+                                                               [listColumns]="['accountNumber', translateService.instant('ebwebApp.comboBox.accountDebit.accountNameCol')]"
+                                                               [(ngModel)]="detail.creditAccount"
+                                                               (ngModelChange)="selectCreditAccount(detail)"
+                                                    >
+
+                                                    </combo-box>
+                                                </td>
+                                                <td class="cell-Table ">
+                                                    <combo-box
+                                                            name="{{'ppsd-posted-object-code-'+ i}}"
+                                                            [tabindex]="50 + (40 * i) + 19"
+                                                            [dataList]="accountingObjects"
+                                                            [nameCategory]="utilsService.NHA_CUNG_CAP"
+                                                            (click)="saveDetails(i)"
+                                                            [showIconPlus]="!isReadOnly"
+                                                            [isRemoveValue]="true"
+                                                            [isOutTable]="false"
+                                                            [isRequired]="isRequiredAccountObjects"
+                                                            [hideRequiredWhenValueTrue]="isRequiredAccountObjects"
+                                                            [isCheckEmpty]="isRequiredAccountObjects"
+                                                            [headerColumns]="[
+            translateService.instant('ebwebApp.comboBox.accountingObjects.accountingObjectCode'),
+            translateService.instant('ebwebApp.comboBox.accountingObjects.accountingObjectName'),
+            translateService.instant('ebwebApp.comboBox.accountingObjects.accountingObjectAddress')]"
+                                                            [listColumns]="utilsService.listColumnsAccountingObjects"
+                                                            displayMember="accountingObjectCode"
+                                                    [(ngModel)]="detail.postedObjectId"
+                                                            valueName="id"
+                                                            (ngModelChange)="onSelectPostObject(i)">
+                                                    </combo-box>
+                                                </td>
+                                                <td class="cell-Table jsgrid-align-right">
+                                                    <combo-box
+                                                            name="{{'ppsd-posted-object-code-'+ i}}"
+                                                            [tabindex]="50 + (40 * i) + 20"
+                                                            [dataList]="dataVATRate"
+                                                            [isRemoveValue]="true"
+                                                            [isOutTable]="false"
+                                                            [autoFillFistMatch]="true"
+                                                            [isCheckEmpty]="isRequiredAccountObjects"
+                                                            [hiddenHeader]="true"
+                                                            [listColumns]="['name']"
+                                                            displayMember="name"
+                                                            [(ngModel)]="detail.vatRate"
+                                                            valueName="value"
+                                                            (ngModelChange)="changeVatRate(detail)">
+                                                    </combo-box>
+                                                </td >
+                                                <td class="cell-Table one-long-line" [class.disable]="true">
+                                                    <input type="text" class="input-Cell disable" [(ngModel)]="detail.vatAmountOriginal"
+                                                           (ngModelChange)="changeVatAmountOriginal(detail)"
+                                                           tabindex="{{50 + (40 * i) + 21}}"
+                                                           ebCurrencyMask [systemOptions]="account?.systemOption"
+                                                           [type]="!isForeignCurrency ? 7 : 8">
+                                                </td>
+                                                <td class="cell-Table one-long-line" [class.disable]="true" *ngIf="isForeignCurrency">
+                                                    <input type="text" class="input-Cell disable " [(ngModel)]="detail.vatAmount"
+                                                           (ngModelChange)="changeVatAmount(detail)"
+                                                           tabindex="{{50 + (40 * i) + 22}}"
+                                                           ebCurrencyMask [systemOptions]="account?.systemOption" [type]="7">
+                                                </td>
+                                                <td class="cell-Table jsgrid-align-center" style="padding-right: 5px;">
+                                                    <combo-box id="vatAccount{{i}}" class="input-Cell bg-transparent border-0"
+                                                               style="padding-left: 0"
+                                                               name="vatAccount"
+                                                               [tabindex]="50 + (40 * i) + 23"
+                                                               [dataList]="vatAccountList"
+                                                               [listColumns]="utilsService.listColumnsAccountDefaults"
+                                                               displayMember="accountNumber"
+                                                               valueName="accountNumber"
+                                                               [isRemoveValue]="true"
+                                                               [isOutTable]="false"
+                                                               [isCheckEmpty]="true"
+                                                               [isRequired]="detail.vatRate === 1 || detail.vatRate === 2 || detail.isRequiredVATAccount"
+                                                               [hideRequiredWhenValueTrue]="detail.vatRate === 1 || detail.vatRate === 2"
+                                                               [required]="detail.vatRate === 1 || detail.vatRate === 2"
+                                                               (ngModelChange)="changeVatAccount(detail)"
+                                                               [headerColumns]="[
+            translateService.instant('ebwebApp.comboBox.accountDebit.accountNumber'),
+            translateService.instant('ebwebApp.comboBox.accountDebit.accountName')
+        ]"
+                                                               [(ngModel)]="detail.vatAccount">
+                                                    </combo-box>
+                                                </td>
+                                                <td class="cell-Table jsgrid-align-center" style="padding-right: 5px;">
+                                                    <combo-box id="deductionDebitAccount{{i}}"
+                                                               class="input-Cell bg-transparent border-0"
+                                                               style="padding-left: 0"
+                                                               name="deductionDebitAccount"
+                                                               [tabindex]="50 + (40 * i) + 24"
+                                                               [dataList]="deductionDebitAccountList"
+                                                               [listColumns]="utilsService.listColumnsAccountDefaults"
+                                                               displayMember="accountNumber"
+                                                               valueName="accountNumber"
+                                                               [isRemoveValue]="true"
+                                                               [isOutTable]="false"
+                                                               [isCheckEmpty]="true"
+                                                               [isRequired]="detail.vatRate === 1 || detail.vatRate === 2 || detail.isRequiredVATAccount"
+                                                               [hideRequiredWhenValueTrue]="detail.vatRate === 1 || detail.vatRate === 2"
+                                                               [required]="detail.vatRate === 1 || detail.vatRate === 2"
+                                                               (ngModelChange)="changeDeductDebitAccount(detail)"
+                                                               [headerColumns]="[
+            translateService.instant('ebwebApp.comboBox.accountDebit.accountNumber'),
+            translateService.instant('ebwebApp.comboBox.accountDebit.accountName')
+        ]"
+                                                               [(ngModel)]="detail.deductionDebitAccount">
+                                                    </combo-box>
+                                                </td>
+                                                <td class="cell-Table one-long-line">
+                                                    <input [class.eb-read-only-tr]="!ppService.billReceived"
+                                                                                            tabindex="{{!ppService.billReceived ? -1 : 50 + (40 * i) + 25}}" type="text"
+                                                           [(ngModel)]="detail.invoiceTemplate"
+                                                           (ngModelChange)="detail.invoiceTemplate = $event.toUpperCase()"/>
+                                                </td>
+                                                <td class="cell-Table one-long-line">
+                                                    <input [class.eb-read-only-tr]="!ppService.billReceived"
+                                                                                            tabindex="{{!ppService.billReceived ? -1 : 50 + (40 * i) + 26}}" type="text"
+                                                           [(ngModel)]="detail.invoiceSeries"
+                                                           (ngModelChange)="detail.invoiceSeries = $event.toUpperCase()"/></td>
+                                                <td class="cell-Table one-long-line">
+                                                    <input [class.eb-read-only-tr]="!ppService.billReceived"
+                                                           [class.required-input]="ppService.billReceived && (!detail.invoiceNo || detail.invoiceNo === '')"
+                                                                                            tabindex="{{!ppService.billReceived ? -1 : 50 + (40 * i) + 27}}"
+                                                           type="text" [(ngModel)]="detail.invoiceNo"
+                                                           (ngModelChange)="detail.invoiceNo = $event.toUpperCase()"/></td>
+                                                <td class="cell-Table" [class.eb-read-only-tr]="!ppService.billReceived">
+                                                    <eb-date-picker [tabindex]="!ppService.billReceived ? -1 : 50 + (40 * i) + 28"
+                                                                    [isRequired]="ppService.billReceived"
+                                                                    [(ngModel)]="detail.invoiceDate" name="{{'input-invoice-date-'+ i}}" format="DD/MM/YYYY"></eb-date-picker>
+                                                </td>
+                                                <td class="cell-Table jsgrid-align-left" *ngIf="this.isCareerGroup">
+                                                    <combo-box name="{{'ppsd-good-service-purchases-'+ i}}"
+                                                               [tabindex]="50 + (40 * i) + 29"
+                                                               [dataList]="goodsServicePurchases"
+                                                               [listColumns]="utilsService.listColumnsGoodsServicePurchase"
+                                                               displayMember="goodsServicePurchaseCode"
+                                                               valueName="id"
+                                                               [isRemoveValue]="true"
+                                                               [isOutTable]="false"
+                                                               (ngModelChange)="changeGoodsServicePurchaseId(detail)"
+                                                               [headerColumns]="[
+            translateService.instant('ebwebApp.comboBox.goodsServicePurchase.code'),
+            translateService.instant('ebwebApp.comboBox.goodsServicePurchase.name')
+        ]"
+                                                               [(ngModel)]="detail.goodsServicePurchaseId"
+                                                               (keydown.tab)="addIfLastInput(i)">
+                                                    </combo-box>
+                                                </td>
+                                            </tr>
+                                            <tr (click)="addNewRow(0)" *ngIf="!isReadOnly">
+                                                <td class="jsgrid-cell">
+                                                    <span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.newLine"></span>
+                                                </td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell" *ngIf="isForeignCurrency">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell" *ngIf="this.isCareerGroup">&nbsp;</td>
+                                            </tr>
+                                            <tr *ngFor="let detail of getEmptyRow(ppService.ppServiceDetailDTOS)">
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell" *ngIf="isForeignCurrency">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell" *ngIf="this.isCareerGroup">&nbsp;</td>
+                                            </tr>
+                                            </tbody>
+                                            <tfoot>
+                                            <tr>
+                                                <td class="cell-Table color-tfoot input-Cell" colspan="6"><input type="text" readonly
+                                                                                          class="color-tfoot input-Cell"
+                                                                                          value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{ppService.ppServiceDetailDTOS.length}}"></td>
+                                                <td class="cell-Table color-tfoot input-Cell">
+                                                    <input disabled [(ngModel)]="ppService.totalVATAmountOriginal" class="color-tfoot input-Cell noPointer"
+                                                           readonly ebCurrencyMask [systemOptions]="account?.systemOption" is [type]="!isForeignCurrency ? 7 : 8">
+                                                </td>
+                                                <td *ngIf="isForeignCurrency" class="cell-Table color-tfoot input-Cell">
+                                                    <input disabled [(ngModel)]="ppService.totalVATAmount" class="color-tfoot input-Cell noPointer"
+                                                           readonly ebCurrencyMask [systemOptions]="account?.systemOption" [type]="7">
+                                                </td>
+                                                <td class="cell-Table color-tfoot input-Cell" colspan="8" readonly></td>
+                                            </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </ngb-tab>
+                    <ngb-tab>
+                        <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.tabs.statiscal"></span></ng-template>
+                        <ng-template ngbTabContent>
+                            <div class="tab-content" >
+                                <div class="frm-main frm-padding tab-pane fade in active show" style="background: #cbdcf0">
+                                    <div class="table-scroll">
+                                        <table id="main-table-detail-statiscal" class="main-table"
+                                               (keydown.arrowDown)="moveArrowDown($event,40)"
+                                               (keydown.arrowUp)="moveArrowUp($event,40)">
+                                            <thead>
+                                            <th class="text-center">
+                                                <span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.materialGoodsCode"></span>
+                                            </th>
+                                            <th class="text-center">
+                                                <span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.materialGoodsName"></span>
+                                            </th>
+                                            <th class="text-center">
+                                                <span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.statiscal.expenseItemName"></span>
+                                            </th>
+                                            <th class="text-center">
+                                                <span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.statiscal.costSetName"></span>
+                                            </th>
+<!--                                            <th class="text-center">-->
+<!--                                                <span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.statiscal.EMContractName"></span>-->
+<!--                                            </th>-->
+                                            <th class="text-center">
+                                                <span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.statiscal.budgetItemName"></span>
+                                            </th>
+                                            <th class="text-center">
+                                                <span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.statiscal.departmentName"></span>
+                                            </th>
+                                            <th class="text-center">
+                                                <span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.statiscal.statisticsCode"></span>
+                                            </th>
+                                            </thead>
+                                            <tbody [class.disable]="isReadOnly">
+                                            <tr oncontextmenu="return false;"
+                                                (contextmenu)="onRightClick($event, ppService.ppServiceDetailDTOS, detail, true, true, true)"
+                                                *ngFor="let detail of ppService.ppServiceDetailDTOS; let i = index"
+                                                (keydown.control.insert)="addNewRow(0)"
+                                                (keydown.control.c)="copyRow(i)"
+                                                (keydown.control.delete)="keyPress(i, 0)"
+                                            >
+                                                <td class="cell-Table">
+                                                    <combo-box name="{{'ppsd-detail-material-goods-3' + i}}"
+                                                               [tabindex]="50 + (40 * i) + 30"
+                                                               [dataList]="materialGoodss"
+                                                               [listColumns]="utilsService.listColumnsMaterialGoodsPPService"
+                                                               displayMember="materialGoodsCode"
+                                                               valueName="id"
+                                                               [isRequired]="true"
+                                                               [isOutTable]="false"
+                                                               [idIp]="'ppsd-detail-material-goods-3' + i"
+                                                               [hideRequiredWhenValueTrue]="true"
+                                                               [isRemoveValue]="true"
+                                                               [headerColumns]="[
+            translateService.instant('ebwebApp.comboBox.materialGoods.materialGoodsCode'),
+            translateService.instant('ebwebApp.comboBox.materialGoods.materialGoodsName')
+        ]"
+                                                               [(ngModel)]="detail.materialGoodsId"
+                                                               [showIconPlus]="isEdit"
+                                                               [nameCategory]="utilsService.VAT_TU_HANG_HOA_PP_SERVICE"
+                                                               (click)="saveDetails(i)"
+                                                               (ngModelChange)="onSelectMaterialGoods(detail, true)">
+                                                    </combo-box>
+                                                </td>
+                                                <td class="cell-Table jsgrid-align-left one-long-line">
+                                                    <input type="text" class="input-Cell" name="{{'ppsd-material-goods-name-'+ i}}"
+                                                           tabindex="{{50 + (40 * i) + 31}}"
+                                                           [(ngModel)]="detail.materialGoodsName">
+                                                </td>
+                                                <td class="cell-Table jsgrid-align-left">
+                                                    <combo-box name="{{'ppsd-material-goods-code-' + i}}"
+                                                               [tabindex]="50 + (40 * i) + 32"
+                                                               [dataList]="expenseItems"
+                                                               [listColumns]="utilsService.listColumnsExpenseItem"
+                                                               displayMember="expenseItemCode"
+                                                               valueName="id"
+                                                               [isRemoveValue]="true"
+                                                               [isOutTable]="false"
+                                                               [showIconPlus]="isEdit"
+                                                               [nameCategory]="utilsService.KHOAN_MUC_CHI_PHI"
+                                                               (click)="saveDetails(i)"
+                                                               (ngModelChange)="changeExpenseItem(detail)"
+                                                               [headerColumns]="[translateService.instant('ebwebApp.comboBox.expenseItem.code'), translateService.instant('ebwebApp.comboBox.expenseItem.name')]"
+                                                               [(ngModel)]="detail.expenseItemId">
+                                                    </combo-box>
+                                                </td>
+                                                <td class="cell-Table jsgrid-align-left" >
+                                                    <combo-box name="{{'ppsd-material-goods-code-' + i}}"
+                                                               [tabindex]="50 + (40 * i) + 33"
+                                                               [dataList]="costSets"
+                                                               [listColumns]="utilsService.listColumnsCostSet"
+                                                               displayMember="costSetCode"
+                                                               valueName="id"
+                                                               [isRemoveValue]="true"
+                                                               [isOutTable]="false"
+                                                               [showIconPlus]="isEdit"
+                                                               [nameCategory]="utilsService.DOI_TUONG_TAP_HOP_CHI_PHI"
+                                                               (click)="saveDetails(i)"
+                                                               (ngModelChange)="changeCostSet(detail)"
+                                                               [headerColumns]="[translateService.instant('ebwebApp.comboBox.costSet.code'), translateService.instant('ebwebApp.comboBox.costSet.name')]"
+                                                               [(ngModel)]="detail.costSetId">
+                                                    </combo-box>
+                                                </td>
+<!--                                                <td class="cell-Table jsgrid-align-left">-->
+<!--                                                    <combo-box name="{{'ppsd-material-goods-code-' + i}}"-->
+<!--                                                               [tabindex]="50 + (40 * i) + 34"-->
+<!--                                                               [dataList]="emContracts"-->
+<!--                                                               [isRemoveValue]="true"-->
+<!--                                                               [displayMember]="ppService.typeLedger === 1 ? 'noMBook' : 'noFBook'"-->
+<!--                                                               [headerColumns]="[-->
+<!--            translateService.instant('ebwebApp.comboBox.emContract.no'),-->
+<!--            translateService.instant('ebwebApp.comboBox.emContract.description')-->
+<!--        ]"-->
+<!--                                                               valueName="id"-->
+<!--                                                               (ngModelChange)="changeEMContract(detail)"-->
+<!--                                                               [listColumns]="[currentBook === '0' ? 'noFBook' : 'noMBook', 'description']"-->
+<!--                                                               [(ngModel)]="detail.emContractId">-->
+<!--                                                    </combo-box>-->
+<!--                                                </td>-->
+                                                <td class="cell-Table jsgrid-align-left">
+                                                    <combo-box name="{{'ppsd-material-goods-code-' + i}}"
+                                                               [tabindex]="35"
+                                                               [dataList]="budgetItems"
+                                                               [isRemoveValue]="true"
+                                                               [isOutTable]="false"
+                                                               [listColumns]="utilsService.listColumnsBudgetItem"
+                                                               displayMember="budgetItemCode"
+                                                               valueName="id"
+                                                               [showIconPlus]="isEdit"
+                                                               [nameCategory]="utilsService.MUC_THU_CHI"
+                                                               (click)="saveDetails(i)"
+                                                               (ngModelChange)="changeBudgetItem(detail)"
+                                                               [headerColumns]="[translateService.instant('ebwebApp.comboBox.budgetItem.code'), translateService.instant('ebwebApp.comboBox.budgetItem.name')]"
+                                                               [(ngModel)]="detail.budgetItemId">
+                                                    </combo-box>
+                                                </td>
+                                                <td class="cell-Table jsgrid-align-left">
+                                                    <combo-box name="{{'ppsd-department-' + i}}"
+                                                               [tabindex]="50 + (40 * i) + 36"
+                                                               [dataList]="organizationUnits"
+                                                               [isRemoveValue]="true"
+                                                               [isOutTable]="false"
+                                                               [listColumns]="utilsService.listColumnsOrganizationUnit"
+                                                               displayMember="organizationUnitCode"
+                                                               valueName="id"
+                                                               [showIconPlus]="isEdit"
+                                                               [nameCategory]="utilsService.PHONG_BAN"
+                                                               (click)="saveDetails(i)"
+                                                               (ngModelChange)="changeOrganizationUnit(detail)"
+                                                               [headerColumns]="[
+            translateService.instant('ebwebApp.comboBox.organizationUnit.code'),
+            translateService.instant('ebwebApp.comboBox.organizationUnit.name')
+        ]"
+                                                               [(ngModel)]="detail.departmentId">
+                                                    </combo-box>
+                                                </td>
+                                                <td class="cell-Table jsgrid-align-left">
+                                                    <combo-box name="{{'ppsd-statistics-id-' + i}}"
+                                                               [tabindex]="50 + (40 * i) + 37"
+                                                               [dataList]="statisticCodes"
+                                                               [isRemoveValue]="true"
+                                                               [isOutTable]="false"
+                                                               [listColumns]="utilsService.listColumnsStatisticCode"
+                                                               displayMember="statisticsCode"
+                                                               valueName="id"
+                                                               [showIconPlus]="isEdit"
+                                                               [nameCategory]="utilsService.MA_THONG_KE"
+                                                               (click)="saveDetails(i)"
+                                                               (ngModelChange)="changeStatisticCode(detail)"
+                                                               [headerColumns]="[
+            translateService.instant('ebwebApp.comboBox.statisticCode.code'),
+            translateService.instant('ebwebApp.comboBox.statisticCode.name')
+        ]"
+                                                               [(ngModel)]="detail.statisticsId">
+                                                    </combo-box>
+                                                </td>
+                                            </tr>
+
+                                            <tr (click)="addNewRow(0)" *ngIf="!isReadOnly && isEdit">
+                                                <td class="jsgrid-cell">
+                                                    <span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.newLine"></span>
+                                                </td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+<!--                                                <td class="jsgrid-cell">&nbsp;</td>-->
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                            </tr>
+                                            <tr *ngFor="let detail of getEmptyRow(ppService.ppServiceDetailDTOS)">
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+<!--                                                <td class="jsgrid-cell">&nbsp;</td>-->
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                            </tr>
+                                            </tbody>
+                                            <tfoot>
+                                            <tr>
+                                                <td class="cell-Table" colspan="7">
+                                                    <input type="text" readonly
+                                                           class="color-tfoot input-Cell"
+                                                           value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{ppService.ppServiceDetailDTOS?.length}}"></td>
+                                            </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </ngb-tab>
+                    <ngb-tab>
+                        <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.tabs.referenceVoucher"></span></ng-template>
+                        <ng-template ngbTabContent>
+                            <div class="tab-content" >
+                                <div class="frm-main frm-padding tab-pane fade in active show"  style="background: #cbdcf0">
+                                    <div class="table-scroll">
+                                        <table id="main-table-detail-referenceVoucher" class="main-table">
+                                            <thead>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.receiptDate"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.postedDate"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.noBook"></th>
+                                            <th scope="col" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.explain"></th>
+                                            </thead>
+                                            <tbody [class.disable]="isReadOnly">
+                                            <tr *ngFor="let viewVoucher of ppService.refVouchers; let i = index"
+                                                oncontextmenu="return false;"
+                                                (contextmenu)="onRightClick($event, ppService.refVouchers, viewVoucher, false, true, false)"
+                                                (keydown.control.delete)="keyPress(i, 0)">
+                                                <td class="jsgrid-cell jsgrid-align">
+                                            <span>
+                                                {{viewVoucher.date}}
+                                            </span>
+                                                </td>
+                                                <td class="jsgrid-cell jsgrid-align">
+                                            <span>
+                                                {{viewVoucher.postedDate}}
+                                            </span>
+                                                </td>
+                                                <td class="jsgrid-cell" style="color:blue; text-decoration: underline;"
+                                                    (click)="utilsService.viewRefVoucher(viewVoucher)"
+                                                >
+                                            <span>
+                                                {{viewVoucher.no}}
+                                            </span>
+                                                </td>
+                                                <td class="jsgrid-cell">
+                                            <span>
+                                                {{viewVoucher.reason}}
+                                            </span>
+                                                </td>
+                                            </tr>
+                                            <tr *ngFor="let detail of getEmptyRow(ppService.refVouchers)">
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                                <td class="jsgrid-cell">&nbsp;</td>
+                                            </tr>
+                                            </tbody>
+                                            <tfoot>
+                                            <tr>
+                                                <td class="cell-Table" colspan="4">
+                                                    <input type="text" readonly
+                                                           class="color-tfoot input-Cell"
+                                                           value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{ppService.refVouchers?.length}}"></td>
+                                            </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </ngb-tab>
+                    <ngb-tab id="muaDichVu-tab-liabilities">
+                        <ng-template ngbTabTitle>
+                            <span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.tabs.Liabilities"></span>
+                        </ng-template>
+                    </ngb-tab>
+                    <ngb-tab id="muaDichVu-tab-pp-order">
+                        <ng-template ngbTabTitle>
+                            <span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.tabs.ppOrder"></span>
+                        </ng-template>
+                    </ngb-tab>
+                    <ngb-tab id="muaDichVu-tab-pp-reference">
+                        <ng-template ngbTabTitle>
+                            <span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.tabs.reference"></span>
+                        </ng-template>
+                    </ngb-tab>
+
+                    <ngb-tab id="muaDichVu-tab-discount-allocation">
+                        <ng-template ngbTabTitle>
+                            <span jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.tabs.discountAllocation"></span>
+                        </ng-template>
+                    </ngb-tab>
+                </ngb-tabset>
+                <div class="row" style="margin-left: 15px!important;" >
+                    <div class="col-md-4 row">
+                        <div class="col-12">
+                            <input class="form-check-input" type="checkbox" id="pp-service-is-feight-service" style="width: 20px; height: 20px"
+                                   [(ngModel)]="ppService.purchaseCosts">
+                            <label class="form-check-label" for="pp-service-is-feight-service"
+                                   style="font-size: 14px; white-space: nowrap; margin-left: 6px; margin-top: 4px" jhiTranslate="ebwebApp.muaHang.muaDichVu.insertUpdate.isFeightService">Là chi phí mua hàng</label>
+                        </div>
+                        <div class="col-12">
+                            <input class="form-check-input" type="checkbox" id="pp-service-recorded" style="width: 20px; height: 20px"
+                                   [(ngModel)]="ppService.billReceived" (ngModelChange)="updateBillReveived()">
+                            <label class="form-check-label" for="pp-service-recorded"
+                                   style="font-size: 14px; white-space: nowrap; margin-left: 6px; margin-top: 4px" jhiTranslate="ebwebApp.muaHang.muaDichVu.insertUpdate.recorded">Đã nhận hóa đơn</label>
+                        </div>
+                    </div>
+                    <div class="col-md-8 row max-width-1472">
+                        <div class="col-md-6 max-width-1088">
+                            <div class="row">
+                                <label class="text-right col-md-4" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.totalAmount"></label>
+                                <div class="col-md-4">
+                                    <input class="noEdit form-control form-control-sm disable" type="number" name="totalAmountOriginal"
+                                           [(ngModel)]="ppService.totalAmountOriginal" readonly
+                                           ebCurrencyMask [systemOptions]="account?.systemOption"
+                                           [type]="!isForeignCurrency ? 7 : 8">
+                                </div>
+                                <div class="col-md-4" *ngIf="!isForeignCurrency">
+                                    <input class="noEdit form-control form-control-sm disable" type="number" name="totalAmount"
+                                           [(ngModel)]="ppService.totalAmountOriginal" readonly
+                                           ebCurrencyMask [systemOptions]="account?.systemOption"
+                                           [type]="7">
+                                </div>
+                                <div class="col-md-4" *ngIf="isForeignCurrency">
+                                    <input class="noEdit form-control form-control-sm disable" type="number" name="totalAmount"
+                                           [(ngModel)]="ppService.totalAmount" readonly
+                                           ebCurrencyMask [systemOptions]="account?.systemOption"
+                                           [type]="7">
+                                </div>
+
+                            </div>
+                            <div class="row mt-2">
+                                <label class="text-right col-md-4" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.totalDiscountAmount">Tiền CK</label>
+                                <div class="col-md-4">
+                                    <input class="noEdit form-control form-control-sm disable" type="number" name="totalImportTaxAmount"
+                                           [(ngModel)]="ppService.totalDiscountAmountOriginal" readonly
+                                           ebCurrencyMask [systemOptions]="account?.systemOption"
+                                           [type]="!isForeignCurrency ? 7 : 8">
+                                </div>
+                                <div class="col-md-4" *ngIf="!isForeignCurrency">
+                                    <input class="noEdit form-control form-control-sm disable" type="number"
+                                           name="totalDiscountAmount"
+                                           [(ngModel)]="ppService.totalDiscountAmountOriginal" readonly
+                                           ebCurrencyMask [systemOptions]="account?.systemOption"
+                                           [type]="7">
+                                </div>
+                                <div class="col-md-4" *ngIf="isForeignCurrency">
+                                    <input class="noEdit form-control form-control-sm disable" type="number"
+                                           name="totalDiscountAmount"
+                                           [(ngModel)]="ppService.totalDiscountAmount" readonly
+                                           ebCurrencyMask [systemOptions]="account?.systemOption"
+                                           [type]="7">
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="col-md-6 max-width-1088">
+                            <div class="row">
+                                <label class="text-right col-md-4" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.taxation.totalVATAmount">Tiền thuế GTGT</label>
+                                <div class="col-md-4">
+                                    <input class="noEdit form-control form-control-sm disable" type="number" name="totalDiscountAmount"
+                                           [(ngModel)]="ppService.totalVATAmountOriginal" readonly
+                                           ebCurrencyMask [systemOptions]="account?.systemOption"
+                                           [type]="!isForeignCurrency ? 7 : 8">
+                                </div>
+                                <div class="col-md-4" *ngIf="!isForeignCurrency">
+                                    <input class="noEdit form-control form-control-sm disable" type="number" name="totalDiscountAmount"
+                                           [(ngModel)]="ppService.totalVATAmountOriginal" readonly
+                                           ebCurrencyMask [systemOptions]="account?.systemOption"
+                                           [type]="7">
+                                </div>
+                                <div class="col-md-4" *ngIf="isForeignCurrency">
+                                    <input class="noEdit form-control form-control-sm disable" type="number" name="totalDiscountAmountOriginal"
+                                           [(ngModel)]="ppService.totalVATAmount" readonly
+                                           ebCurrencyMask [systemOptions]="account?.systemOption"
+                                           [type]="7">
+                                </div>
+
+                            </div>
+                            <div class="row mt-2">
+                                <label class="text-right col-md-4" jhiTranslate="ebwebApp.muaHang.muaDichVu.tableDetail.resultAmount">Tiền TT</label>
+                                <div class="col-md-4" >
+                                    <input class="noEdit form-control form-control-sm disable" type="number"
+                                           name="totalSpecialConsumeTaxAmount"
+                                           [(ngModel)]="ppService.resultAmountOriginal" readonly
+                                           ebCurrencyMask [systemOptions]="account?.systemOption"
+                                           [type]="!isForeignCurrency ? 7 : 8">
+                                </div>
+                                <div class="col-md-4" *ngIf="!isForeignCurrency">
+                                    <input class="noEdit form-control form-control-sm disable" type="number"
+                                           name="totalSpecialConsumeTaxAmount"
+                                           [(ngModel)]="ppService.resultAmountOriginal" readonly
+                                           ebCurrencyMask [systemOptions]="account?.systemOption"
+                                           [type]="7">
+                                </div>
+                                <div class="col-md-4" *ngIf="isForeignCurrency">
+                                    <input class="noEdit form-control form-control-sm disable" type="number"
+                                           name="totalSpecialConsumeTaxAmountOriginal"
+                                           [(ngModel)]="ppService.resultAmount" readonly
+                                           ebCurrencyMask [systemOptions]="account?.systemOption"
+                                           [type]="7">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<eb-context-menu [contextMenu]="contextMenu" [eventHandlingHere]="true" [useCopyRow]="true"></eb-context-menu>
+<ng-template #content let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.saBill.saveMessage"></label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="save(null, quantityLargerModal)" jhiTranslate="entity.action.save">Save</button>
+        <button type="button" class="btn btn-outline-danger" (click)="close()" jhiTranslate="entity.action.noSave">Save</button>
+        <button type="button" class="btn btn-outline-dark" (click)="modalRef.close()" jhiTranslate="entity.action.close">close</button>
+    </div>
+</ng-template>
+
+<ng-template #unRecordModal let-d="dismiss">
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="global.messages.receiptHadReference"></label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-primary" (click)="unRecording()" jhiTranslate="entity.action.ok">ok</button>
+        <button type="button" class="btn btn-outline-dark" (click)="modalRef.close()" jhiTranslate="entity.action.cancel">cancel</button>
+    </div>
+</ng-template>
+
+<ng-template #checkHadPaidModal let-d="dismiss">
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="global.messages.receiptHadPaid"></label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-primary" (click)="unRecording()" jhiTranslate="entity.action.ok">ok</button>
+        <button type="button" class="btn btn-outline-dark" (click)="modalRef.close()" jhiTranslate="entity.action.close">close</button>
+    </div>
+</ng-template>
+
+<ng-template #checkHadReferencePaidModal let-d="dismiss">
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <p jhiTranslate="global.messages.receiptHadReference"></p>
+                <p jhiTranslate="global.messages.receiptHadPaid"></p>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-primary" (click)="unRecording()" jhiTranslate="entity.action.ok">ok</button>
+        <button type="button" class="btn btn-outline-dark" (click)="modalRef.close()" jhiTranslate="entity.action.close">close</button>
+    </div>
+</ng-template>
+
+<ng-template #quantityLargerModal let-d="dismiss">
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.muaHang.muaDichVu.toastr.saveWhenQuantityLarger"></label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-primary" (click)="savePPService()" jhiTranslate="entity.action.ok">ok</button>
+        <button type="button" class="btn btn-outline-dark" (click)="modalRef.close()" jhiTranslate="entity.action.cancel">cancel</button>
+    </div>
+</ng-template>
+
+<ng-template #vatValidModal let-d="dismiss">
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.muaHang.muaDichVu.toastr.vatNUllCase" *ngIf="vatValidNUllCase"></label>
+                <label jhiTranslate="ebwebApp.muaHang.muaDichVu.toastr.vatZeroCase" *ngIf="!vatValidNUllCase"></label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-primary" (click)="checkVATValid()" jhiTranslate="entity.action.ok">ok</button>
+        <button type="button" class="btn btn-outline-dark" (click)="modalRef.close(); vatValid = false;" jhiTranslate="entity.action.cancel">cancel</button>
+    </div>
+</ng-template>

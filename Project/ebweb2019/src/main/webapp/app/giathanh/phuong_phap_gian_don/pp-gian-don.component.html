@@ -1,0 +1,875 @@
+<!--edit by anmt-->
+<div class="row">
+    <div class="col-md-12">
+        <div class="menu-tool-bar he">
+            <div class="ptitle">
+                <span jhiTranslate="ebwebApp.cPPeriod.home.title">Giá thành theo phương pháp giản đơn (Sản xuất liên tục)</span>
+            </div>
+            <div class="gr-toolbar">
+                <button *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_Them]"
+                        (click)="addNew($event)" title="{{'ebwebApp.outWard.tooltipAdd' | translate}}"
+                        class="button-navigation"><i class="mdi mdi-plus"></i><span
+                    jhiTranslate="ebwebApp.mBTellerPaper.add">Add</span></button>
+                <button
+                    *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_Xoa]"
+                    [disabled]="!cPPeriods || cPPeriods?.length === 0" (click)="delete()"
+                        title="{{'ebwebApp.outWard.tooltipDrop' | translate}}" class="button-navigation"><i
+                    class="mdi mdi-delete"></i><span jhiTranslate="ebwebApp.mBTellerPaper.deletes">Delete</span>
+                </button>
+                <button *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_KetXuat]"
+                        [disabled]="!cPPeriods || cPPeriods?.length === 0" (click)="exportPdf()"
+                        title="{{'ebwebApp.outWard.tooltipExport' | translate}}" class="button-navigation"><i
+                    class="mdi mdi-file-export"></i><span
+                    jhiTranslate="ebwebApp.mBTellerPaper.export">Export</span></button>
+            </div>
+        </div>
+        <div class="frm-main frm-tables frm-padding" style="background: #cbdcf0; margin-top: 5px">
+            <div id="table-scroll0" class="table-scroll">
+                <table id="main-table0" class="main-table">
+                    <thead>
+                    <tr>
+                        <th scope="col" style="width: 150px" jhiTranslate="ebwebApp.cPPeriod.listTable.fromDate">Từ ngày</th>
+                        <th scope="col" style="width: 150px" jhiTranslate="ebwebApp.cPPeriod.listTable.toDate">
+                            Đến ngày
+                        </th>
+                        <th scope="col" style="width: 150px" jhiTranslate="ebwebApp.cPPeriod.listTable.name">Tên kỳ tính giá thành</th>
+                        <th scope="col" style="width: 150px" jhiTranslate="ebwebApp.cPPeriod.listTable.doDangDauKy">
+                            Dở dang đầu kỳ
+                        </th>
+                        <th scope="col" style="width: 150px" jhiTranslate="ebwebApp.cPPeriod.listTable.chiPhiPhatSinhTrongKy">
+                            Chi phí phát sinh trong kỳ
+                        </th>
+                        <th scope="col" style="width: 150px" jhiTranslate="ebwebApp.cPPeriod.listTable.doDangCuoiKy">Dở dang cuối kỳ
+                        </th>
+                        <th scope="col" style="width: 150px" jhiTranslate="ebwebApp.cPPeriod.listTable.tongGiaThanh">
+                            Tổng giá thành
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let cPPeriod of cPPeriods ;trackBy: trackId;"
+                        (click)="selectMultiRow(cPPeriod, $event, cPPeriods)"
+                        [class.selected]="this.selectedRows.indexOf(cPPeriod) !== -1"
+                        (dblclick)="doubleClickRow(selectedRow.id)">
+                        <td class="jsgrid-cell jsgrid-align-center">{{cPPeriod.fromDate | date:'dd/MM/yyyy'}}</td>
+                        <td class="jsgrid-cell jsgrid-align-center"
+                        >{{cPPeriod.toDate| date:'dd/MM/yyyy'}}</td>
+                        <td class="jsgrid-cell jsgrid-align-left"
+                        >{{cPPeriod.name}}</td>
+                        <td class="jsgrid-cell jsgrid-align-right"
+                        >{{cPPeriod.totalIncompleteOpenning | ebcurrency:7:account}}</td>
+                        <td class="jsgrid-cell jsgrid-align-right"
+                        >{{cPPeriod.totalAmountInPeriod | ebcurrency:7:account}}</td>
+                        <td class="jsgrid-cell jsgrid-align-right"
+                        >{{cPPeriod.totalIncompleteClosing | ebcurrency:7:account}}</td>
+                        <td class="jsgrid-cell jsgrid-align-right"
+                        >{{cPPeriod.totalCost | ebcurrency:7:account}}</td>
+                    </tr>
+                    <tr *ngFor="let row of newArr(itemsPerPage - cPPeriods?.length)">
+                        <td class="jsgrid-cell">&nbsp;</td>
+                        <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                        <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                        <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                        <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                        <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                        <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!--        phân trang-->
+        <div *ngIf="cPPeriods && cPPeriods.length"
+             style="padding-right: 16px;">
+            <div class="row justify-content-end">
+                <div class="col-lg-2">
+                    <div class="form-group row">
+                        <label class="col-sm-7 col-form-label" for="itemsPerPage"
+                               style="padding-right: 0px;text-align: right;"><span
+                            jhiTranslate="ebwebApp.mBDeposit.totalPage"></span>: {{totalItems}}</label>
+                        <div class="col-sm-5 pd-l-0">
+                            <select class="form-control form-control-sm" name="itemsPerPage"
+                                    id="itemsPerPage"
+                                    style="background-color: #f5f7fa;"
+                                    [(ngModel)]="itemsPerPage"
+                                    (ngModelChange)="selectedItemPerPage()"
+                            >
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="30">30</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="justify-content-end">
+                    <ngb-pagination [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage"
+                                    [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
+                                    (pageChange)="loadPage(page)"></ngb-pagination>
+                </div>
+            </div>
+        </div>
+        <!--        end of phan trang-->
+        <div>
+            <ngb-tabset class="tool-navbar">
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.cPPeriod.cPExcpenseList.title">Tập hợp chi phí trực tiếp</span>
+                    </ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content">
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="home-detail"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-detail" class="table-scroll">
+                                    <table id="main-table-detail" class="main-table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col" jhiTranslate="ebwebApp.cPPeriod.cPExcpenseList.costSetID">
+                                                CostSetID
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.cPPeriod.cPExcpenseList.date">
+                                                Date
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.cPPeriod.cPExcpenseList.postedDate">
+                                                PostedDate
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.cPPeriod.cPExcpenseList.no">
+                                                No
+                                            </th>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPExcpenseList.description">
+                                                Description
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.cPPeriod.cPExcpenseList.amount">
+                                                Amount
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+
+                                        <tr *ngFor="let detail of cPExcpenseList0">
+                                            <td class="ellip">{{detail.costSetCode}}</td>
+                                            <td class="text-center ellip">{{detail.date | date:'dd/MM/yyyy'}}</td>
+                                            <td class="text-center ellip">{{detail.postedDate | date:'dd/MM/yyyy'}}</td>
+                                            <td class="ellip" (click)="utilsService.viewRefVoucher(detail)"
+                                                style="color:blue; text-decoration: underline;">{{detail.no}}</td>
+                                            <td class="ellip">{{detail.description}}</td>
+                                            <td class="text-right ellip">{{detail.amount | ebcurrency:7:account}}</td>
+<!--                                            <td class="text-center">{{detail.accountNumber}}</td>-->
+<!--                                            <td class="">{{getExpenseItemCode(detail.expenseItemID)}}</td>-->
+                                        </tr>
+                                        <tr *ngFor="let row of newArr(10 - cPExcpenseList0?.length)">
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot>
+                                        <td class="cell-Table countRow">
+                                            <input type="text" readonly
+                                                   class="input-Cell"
+                                                   value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{cPExcpenseList0?.length}}">
+                                        </td>
+                                        <td class="cell-Table countRow">&nbsp;</td>
+                                        <td class="cell-Table countRow">&nbsp;</td>
+                                        <td class="cell-Table countRow">&nbsp;</td>
+                                        <td class="cell-Table countRow">&nbsp;</td>
+                                        <td class="cell-Table countRow"><input type="text" class="input-Cell text-right"
+                                                                               [ngModel]="sumCPExpenseListType0('amount')" readonly
+                                                                               ebCurrencyMask
+                                                                               [systemOptions]="account?.systemOption"
+                                                                               [type]="7"></td>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.cPPeriod.cPExcpenseList.title1">Các khoản giảm giá thành</span>
+                    </ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content">
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="home-detail1"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-detail1" class="table-scroll">
+                                    <table id="main-table-detail1" class="main-table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col" jhiTranslate="ebwebApp.cPPeriod.cPExcpenseList.costSetID">
+                                                CostSetID
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.cPPeriod.cPExcpenseList.date">
+                                                Date
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.cPPeriod.cPExcpenseList.postedDate">
+                                                PostedDate
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.cPPeriod.cPExcpenseList.no">
+                                                No
+                                            </th>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPExcpenseList.description">
+                                                Description
+                                            </th>
+                                            <th scope="col" jhiTranslate="ebwebApp.cPPeriod.cPExcpenseList.amount">
+                                                Amount
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+
+                                        <tr *ngFor="let detail of cPExcpenseList1;">
+                                            <td class="ellip">{{detail.costSetCode}}</td>
+                                            <td class="text-center ellip">{{detail.date | date:'dd/MM/yyyy'}}</td>
+                                            <td class="text-center ellip">{{detail.postedDate | date:'dd/MM/yyyy'}}</td>
+                                            <td class="ellip" (click)="utilsService.viewRefVoucher(detail)"
+                                                style="color:blue; text-decoration: underline;">{{detail.no}}</td>
+                                            <td class="ellip">{{detail.description}}</td>
+                                            <td class="text-right ellip">{{detail.amount | ebcurrency:7:account}}</td>
+                                        </tr>
+                                        <tr *ngFor="let row of newArr(10 - cPExcpenseList1?.length)">
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot>
+                                        <td class="cell-Table countRow">
+                                            <input type="text" readonly
+                                                   class="input-Cell"
+                                                   value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{cPExcpenseList1?.length}}">
+                                        </td>
+                                        <td class="cell-Table countRow">&nbsp;</td>
+                                        <td class="cell-Table countRow">&nbsp;</td>
+                                        <td class="cell-Table countRow">&nbsp;</td>
+                                        <td class="cell-Table countRow">&nbsp;</td>
+                                        <td class="cell-Table countRow"><input type="text" class="input-Cell text-right"
+                                                                               [ngModel]="sumCPExpenseListType1('amount')" readonly
+                                                                               ebCurrencyMask
+                                                                               [systemOptions]="account?.systemOption"
+                                                                               [type]="7"></td>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.cPPeriod.cPAllocationGeneralExpenseDetail.title">Phân bố chi phí chung</span>
+                    </ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content">
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="home-detail2"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-detail2" class="table-scroll">
+                                    <table id="main-table-detail2" class="main-table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPAllocationGeneralExpenseDetail.costSetIDCode">
+                                                CostSetID
+                                            </th>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPAllocationGeneralExpenseDetail.costSetIDName">
+                                                CostSetName
+                                            </th>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPAllocationGeneralExpenseDetail.accountNumber">
+                                                AccountNumber
+                                            </th>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPAllocationGeneralExpenseDetail.expenseItemID">
+                                                ExpenseItemID
+                                            </th>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPAllocationGeneralExpenseDetail.allocatedRate">
+                                                AllocatedRate
+                                            </th>
+                                            <th scope="col"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPAllocationGeneralExpenseDetail.allocatedAmount">
+                                                AllocatedAmount
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+
+                                        <tr *ngFor="let detail of cPAllocationGeneralExpenseDetails">
+                                            <td class="ellip">{{detail.costSetCode}}</td>
+                                            <td class="ellip">{{detail.costSetName}}</td>
+                                            <td class="text-center ellip">{{detail.accountNumber}}</td>
+                                            <td class="ellip">{{detail.expenseItemCode}}</td>
+                                            <td class="text-right ellip">{{detail.allocatedRate | ebcurrency:5:account}}</td>
+                                            <td class="text-right ellip">{{detail.allocatedAmount | ebcurrency:7:account}}</td>
+                                        </tr>
+                                        <tr *ngFor="let row of newArr(10 - cPAllocationGeneralExpenseDetails?.length)">
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot>
+                                        <td class="cell-Table countRow">
+                                            <input type="text" readonly
+                                                   class="input-Cell"
+                                                   value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{cPAllocationGeneralExpenseDetails?.length}}">
+                                        </td>
+                                        <td class="cell-Table countRow"></td>
+                                        <td class="cell-Table countRow"></td>
+                                        <td class="cell-Table countRow"></td>
+                                        <td class="cell-Table countRow"></td>
+                                        <td class="cell-Table countRow"><input type="text" class="input-Cell text-right noEdit"
+                                                                               [ngModel]="sumCPAllocationDetail('allocatedAmount')" readonly
+                                                                               ebCurrencyMask
+                                                                               [systemOptions]="account?.systemOption"
+                                                                               [type]="7"></td>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.cPPeriod.cPUncompleteDetail.title">Đánh giá dở dang cuối kỳ</span>
+                    </ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content">
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="home-detail3"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-detail3" class="table-scroll">
+                                    <table id="main-table-detail3" class="main-table">
+                                        <thead>
+                                        <tr>
+                                            <th rowspan="2" scope="col"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPUncompleteDetail.costSetCode">
+                                                CostSetCode
+                                            </th>
+                                            <th rowspan="2" scope="col"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPUncompleteDetail.costSetName">
+                                                CostSetName
+                                            </th>
+                                            <th rowspan="2" scope="col"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPUncompleteDetail.directMatetialAmount">
+                                                DirectMatetialAmount
+                                            </th>
+                                            <th rowspan="2" scope="col"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPUncompleteDetail.directLaborAmount">
+                                                DirectLaborAmount
+                                            </th>
+                                            <th colspan="6" scope="col"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPUncompleteDetail.machineMatetialAmount">
+                                                MachineMatetialAmount
+                                            </th>
+                                            <th colspan="6" scope="col"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPUncompleteDetail.generalProductionAmount">
+                                                GeneralProductionAmount
+                                            </th>
+                                            <th rowspan="2" scope="col"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPUncompleteDetail.totalCostAmount">
+                                                TotalCostAmount
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th scope="col" class="sticky-25"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPUncompleteDetail.machineLaborAmount">
+                                                MachineLaborAmount
+                                            </th>
+                                            <th scope="col" class="sticky-25"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPUncompleteDetail.material">
+                                                Material
+                                            </th>
+                                            <th scope="col" class="sticky-25"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPUncompleteDetail.machineToolsAmount">
+                                                MachineToolsAmount
+                                            </th>
+                                            <th scope="col" class="sticky-25"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPUncompleteDetail.machineDepreciationAmount">
+                                                MachineDepreciationAmount
+                                            </th>
+                                            <th scope="col" class="sticky-25"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPUncompleteDetail.machineServiceAmount">
+                                                MachineServiceAmount
+                                            </th>
+                                            <th scope="col" class="sticky-25"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPUncompleteDetail.other">
+                                                Other
+                                            </th>
+                                            <th scope="col" class="sticky-25"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPUncompleteDetail.generalLaborAmount">
+                                                GeneralLaborAmount
+                                            </th>
+                                            <th scope="col" class="sticky-25"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPUncompleteDetail.material">
+                                                Material
+                                            </th>
+                                            <th scope="col" class="sticky-25"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPUncompleteDetail.machineToolsAmount">
+                                                MachineToolsAmount
+                                            </th>
+                                            <th scope="col" class="sticky-25"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPUncompleteDetail.generalDepreciationAmount">
+                                                GeneralDepreciationAmount
+                                            </th>
+                                            <th scope="col" class="sticky-25"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPUncompleteDetail.machineServiceAmount">
+                                                MachineServiceAmount
+                                            </th>
+                                            <th scope="col" class="sticky-25"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPUncompleteDetail.other">
+                                                Other
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let detail of cPUncompleteDetails; let i = index">
+                                            <td class="">{{detail.costSetCode}}</td>
+                                            <td class="">{{detail.costSetName}}</td>
+                                            <td class="text-right">{{detail.directMatetialAmount | ebcurrency:7:account}}</td>
+                                            <td class="text-right">{{detail.directLaborAmount | ebcurrency:7:account}}</td>
+                                            <td class="text-right">{{detail.machineMatetialAmount | ebcurrency:7:account}}</td>
+                                            <td class="text-right">{{detail.machineLaborAmount | ebcurrency:7:account}}</td>
+                                            <td class="text-right">{{detail.machineToolsAmount | ebcurrency:7:account}}</td>
+                                            <td class="text-right">{{detail.machineDepreciationAmount | ebcurrency:7:account}}</td>
+                                            <td class="text-right">{{detail.machineServiceAmount | ebcurrency:7:account}}</td>
+                                            <td class="text-right">{{detail.machineGeneralAmount | ebcurrency:7:account}}</td>
+                                            <td class="text-right">{{detail.generalMatetialAmount | ebcurrency:7:account}}</td>
+                                            <td class="text-right">{{detail.generalLaborAmount | ebcurrency:7:account}}</td>
+                                            <td class="text-right">{{detail.generalToolsAmount | ebcurrency:7:account}}</td>
+                                            <td class="text-right">{{detail.generalDepreciationAmount | ebcurrency:7:account}}</td>
+                                            <td class="text-right">{{detail.generalServiceAmount | ebcurrency:7:account}}</td>
+                                            <td class="text-right">{{detail.otherGeneralAmount | ebcurrency:7:account}}</td>
+                                            <td class="text-right">{{detail.totalCostAmount | ebcurrency:7:account}}</td>
+                                        </tr>
+                                        <tr *ngFor="let row of newArr(10 - cPUncompleteDetails?.length)">
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot>
+                                        <td class="cell-Table countRow">
+                                            <input type="text"
+                                                   class="input-Cell"
+                                                   value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{cPUncompleteDetails?.length}}">
+                                        </td>
+                                        <td class="cell-Table countRow"></td>
+                                        <td class="cell-Table countRow"><input type="text" class="input-Cell text-right noEdit"
+                                                                               [ngModel]="sumcPUncompleteDetail('directMatetialAmount')"
+                                                                               ebCurrencyMask
+                                                                               [systemOptions]="account?.systemOption"
+                                                                               [type]="7"></td>
+                                        <td class="cell-Table countRow"><input type="text" class="input-Cell text-right noEdit"
+                                                                               [ngModel]="sumcPUncompleteDetail('directLaborAmount')"
+                                                                               ebCurrencyMask
+                                                                               [systemOptions]="account?.systemOption"
+                                                                               [type]="7"></td>
+                                        <td class="cell-Table countRow"><input type="text" class="input-Cell text-right noEdit"
+                                                                               [ngModel]="sumcPUncompleteDetail('machineMatetialAmount')"
+                                                                               ebCurrencyMask
+                                                                               [systemOptions]="account?.systemOption"
+                                                                               [type]="7"></td>
+                                        <td class="cell-Table countRow"><input type="text" class="input-Cell text-right noEdit"
+                                                                               [ngModel]="sumcPUncompleteDetail('machineLaborAmount')"
+                                                                               ebCurrencyMask
+                                                                               [systemOptions]="account?.systemOption"
+                                                                               [type]="7"></td>
+                                        <td class="cell-Table countRow"><input type="text" class="input-Cell text-right noEdit"
+                                                                               [ngModel]="sumcPUncompleteDetail('machineToolsAmount')"
+                                                                               ebCurrencyMask
+                                                                               [systemOptions]="account?.systemOption"
+                                                                               [type]="7"></td>
+                                        <td class="cell-Table countRow"><input type="text" class="input-Cell text-right noEdit"
+                                                                               [ngModel]="sumcPUncompleteDetail('machineDepreciationAmount')"
+                                                                               ebCurrencyMask
+                                                                               [systemOptions]="account?.systemOption"
+                                                                               [type]="7"></td>
+                                        <td class="cell-Table countRow"><input type="text" class="input-Cell text-right noEdit"
+                                                                               [ngModel]="sumcPUncompleteDetail('machineServiceAmount')"
+                                                                               ebCurrencyMask
+                                                                               [systemOptions]="account?.systemOption"
+                                                                               [type]="7"></td>
+                                        <td class="cell-Table countRow"><input type="text" class="input-Cell text-right noEdit"
+                                                                               [ngModel]="sumcPUncompleteDetail('machineGeneralAmount')"
+                                                                               ebCurrencyMask
+                                                                               [systemOptions]="account?.systemOption"
+                                                                               [type]="7"></td>
+                                        <td class="cell-Table countRow"><input type="text" class="input-Cell text-right noEdit"
+                                                                               [ngModel]="sumcPUncompleteDetail('generalMatetialAmount')"
+                                                                               ebCurrencyMask
+                                                                               [systemOptions]="account?.systemOption"
+                                                                               [type]="7"></td>
+                                        <td class="cell-Table countRow"><input type="text" class="input-Cell text-right noEdit"
+                                                                               [ngModel]="sumcPUncompleteDetail('generalLaborAmount')"
+                                                                               ebCurrencyMask
+                                                                               [systemOptions]="account?.systemOption"
+                                                                               [type]="7"></td>
+                                        <td class="cell-Table countRow"><input type="text" class="input-Cell text-right noEdit"
+                                                                               [ngModel]="sumcPUncompleteDetail('generalToolsAmount')"
+                                                                               ebCurrencyMask
+                                                                               [systemOptions]="account?.systemOption"
+                                                                               [type]="7"></td>
+                                        <td class="cell-Table countRow"><input type="text" class="input-Cell text-right noEdit"
+                                                                               [ngModel]="sumcPUncompleteDetail('generalDepreciationAmount')"
+                                                                               ebCurrencyMask
+                                                                               [systemOptions]="account?.systemOption"
+                                                                               [type]="7"></td>
+                                        <td class="cell-Table countRow"><input type="text" class="input-Cell text-right noEdit"
+                                                                               [ngModel]="sumcPUncompleteDetail('generalServiceAmount')"
+                                                                               ebCurrencyMask
+                                                                               [systemOptions]="account?.systemOption"
+                                                                               [type]="7"></td>
+                                        <td class="cell-Table countRow"><input type="text" class="input-Cell text-right noEdit"
+                                                                               [ngModel]="sumcPUncompleteDetail('otherGeneralAmount')"
+                                                                               ebCurrencyMask
+                                                                               [systemOptions]="account?.systemOption"
+                                                                               [type]="7"></td>
+                                        <td class="cell-Table countRow"><input type="text" class="input-Cell text-right noEdit"
+                                                                               [ngModel]="sumcPUncompleteDetail('totalCostAmount')"
+                                                                               ebCurrencyMask
+                                                                               [systemOptions]="account?.systemOption"
+                                                                               [type]="7"></td>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+                <ngb-tab>
+                    <ng-template ngbTabTitle><span jhiTranslate="ebwebApp.cPResult.home.title">Kết quả tính giá thành</span>
+                    </ng-template>
+                    <ng-template ngbTabContent>
+                        <div class="tab-content">
+                            <div class="frm-main frm-padding tab-pane fade in active show" id="home-detail6"
+                                 style="background: #cbdcf0">
+                                <div id="table-scroll-detail6" class="table-scroll">
+                                    <table id="main-table-detail6" class="main-table">
+                                        <thead>
+                                        <tr>
+                                            <th rowspan="2" scope="col"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPUncompleteDetail.costSetCode">
+                                                CostSetCode
+                                            </th>
+                                            <th rowspan="2" scope="col"
+                                                jhiTranslate="ebwebApp.cPAllocationRate.productCode">
+                                                Product code
+                                            </th>
+                                            <th rowspan="2" scope="col"
+                                                jhiTranslate="ebwebApp.cPAllocationRate.productName">
+                                                Product name
+                                            </th>
+                                            <th rowspan="2" scope="col"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPUncompleteDetail.directMatetialAmount">
+                                                DirectMatetialAmount
+                                            </th>
+                                            <th rowspan="2" scope="col"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPUncompleteDetail.directLaborAmount">
+                                                DirectLaborAmount
+                                            </th>
+                                            <th colspan="6" scope="col"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPUncompleteDetail.machineMatetialAmount">
+                                                MachineMatetialAmount
+                                            </th>
+                                            <th colspan="6" scope="col"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPUncompleteDetail.generalProductionAmount">
+                                                GeneralProductionAmount
+                                            </th>
+                                            <th rowspan="2" scope="col"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPUncompleteDetail.totalCostAmount">
+                                                TotalCostAmount
+                                            </th>
+                                            <th rowspan="2" scope="col"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPResult.totalQuantity">
+                                                TotalQuantity
+                                            </th>
+                                            <th rowspan="2" scope="col"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPResult.unitPrice">
+                                                UnitPrice
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th scope="col" class="sticky-25"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPUncompleteDetail.machineLaborAmount">
+                                                MachineLaborAmount
+                                            </th>
+                                            <th scope="col" class="sticky-25"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPUncompleteDetail.material">
+                                                Material
+                                            </th>
+                                            <th scope="col" class="sticky-25"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPUncompleteDetail.machineToolsAmount">
+                                                MachineToolsAmount
+                                            </th>
+                                            <th scope="col" class="sticky-25"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPUncompleteDetail.machineDepreciationAmount">
+                                                MachineDepreciationAmount
+                                            </th>
+                                            <th scope="col" class="sticky-25"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPUncompleteDetail.machineServiceAmount">
+                                                MachineServiceAmount
+                                            </th>
+                                            <th scope="col" class="sticky-25"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPUncompleteDetail.other">
+                                                Other
+                                            </th>
+                                            <th scope="col" class="sticky-25"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPUncompleteDetail.generalLaborAmount">
+                                                GeneralLaborAmount
+                                            </th>
+                                            <th scope="col" class="sticky-25"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPUncompleteDetail.material">
+                                                Material
+                                            </th>
+                                            <th scope="col" class="sticky-25"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPUncompleteDetail.machineToolsAmount">
+                                                MachineToolsAmount
+                                            </th>
+                                            <th scope="col" class="sticky-25"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPUncompleteDetail.generalDepreciationAmount">
+                                                GeneralDepreciationAmount
+                                            </th>
+                                            <th scope="col" class="sticky-25"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPUncompleteDetail.machineServiceAmount">
+                                                MachineServiceAmount
+                                            </th>
+                                            <th scope="col" class="sticky-25"
+                                                jhiTranslate="ebwebApp.cPPeriod.cPUncompleteDetail.other">
+                                                Other
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let detail of cPResults; let i = index">
+                                            <td class="">{{detail.costSetCode}}</td>
+                                            <td class="">{{detail.materialGoodsCode}}</td>
+                                            <td class="">{{detail.materialGoodsName}}</td>
+                                            <td class="text-right">{{detail.directMatetialAmount | ebcurrency:7:account}}</td>
+                                            <td class="text-right">{{detail.directLaborAmount | ebcurrency:7:account}}</td>
+                                            <td class="text-right">{{detail.machineMatetialAmount | ebcurrency:7:account}}</td>
+                                            <td class="text-right">{{detail.machineLaborAmount | ebcurrency:7:account}}</td>
+                                            <td class="text-right">{{detail.machineToolsAmount | ebcurrency:7:account}}</td>
+                                            <td class="text-right">{{detail.machineDepreciationAmount | ebcurrency:7:account}}</td>
+                                            <td class="text-right">{{detail.machineServiceAmount | ebcurrency:7:account}}</td>
+                                            <td class="text-right">{{detail.machineGeneralAmount | ebcurrency:7:account}}</td>
+                                            <td class="text-right">{{detail.generalMatetialAmount | ebcurrency:7:account}}</td>
+                                            <td class="text-right">{{detail.generalLaborAmount | ebcurrency:7:account}}</td>
+                                            <td class="text-right">{{detail.generalToolsAmount | ebcurrency:7:account}}</td>
+                                            <td class="text-right">{{detail.generalDepreciationAmount | ebcurrency:7:account}}</td>
+                                            <td class="text-right">{{detail.generalServiceAmount | ebcurrency:7:account}}</td>
+                                            <td class="text-right">{{detail.otherGeneralAmount | ebcurrency:7:account}}</td>
+                                            <td class="text-right">{{detail.totalCostAmount | ebcurrency:7:account}}</td>
+                                            <td class="text-right">{{detail.totalQuantity | ebcurrency:3:account}}</td>
+                                            <td class="text-right">{{detail.unitPrice | ebcurrency:1:account}}</td>
+                                        </tr>
+                                        <tr *ngFor="let row of newArr(10 - cPResults?.length)">
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                            <td class="jsgrid-cell">&nbsp;</td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot>
+                                        <td class="cell-Table countRow">
+                                            <input type="text" readonly
+                                                   class="input-Cell"
+                                                   value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{cPResults?.length}}">
+                                        </td>
+                                        <td class="cell-Table countRow"></td>
+                                        <td class="cell-Table countRow"></td>
+                                        <td class="cell-Table countRow"><input type="text" class="input-Cell text-right noEdit"
+                                                                               [ngModel]="sumcPResult('directMatetialAmount')"
+                                                                               readonly
+                                                                               ebCurrencyMask
+                                                                               [systemOptions]="account?.systemOption"
+                                                                               [type]="7"></td>
+                                        <td class="cell-Table countRow"><input type="text" class="input-Cell text-right noEdit"
+                                                                               [ngModel]="sumcPResult('directLaborAmount')"
+                                                                               ebCurrencyMask
+                                                                               [systemOptions]="account?.systemOption"
+                                                                               [type]="7"></td>
+                                        <td class="cell-Table countRow"><input type="text" class="input-Cell text-right noEdit"
+                                                                               [ngModel]="sumcPResult('machineMatetialAmount')"
+                                                                               readonly
+                                                                               ebCurrencyMask
+                                                                               [systemOptions]="account?.systemOption"
+                                                                               [type]="7"></td>
+                                        <td class="cell-Table countRow"><input type="text" class="input-Cell text-right noEdit"
+                                                                               [ngModel]="sumcPResult('machineLaborAmount')"
+                                                                               readonly
+                                                                               ebCurrencyMask
+                                                                               [systemOptions]="account?.systemOption"
+                                                                               [type]="7"></td>
+                                        <td class="cell-Table countRow"><input type="text" class="input-Cell text-right noEdit"
+                                                                               [ngModel]="sumcPResult('machineToolsAmount')"
+                                                                               readonly
+                                                                               ebCurrencyMask
+                                                                               [systemOptions]="account?.systemOption"
+                                                                               [type]="7"></td>
+                                        <td class="cell-Table countRow"><input type="text" class="input-Cell text-right noEdit"
+                                                                               [ngModel]="sumcPResult('machineDepreciationAmount')"
+                                                                               readonly
+                                                                               ebCurrencyMask
+                                                                               [systemOptions]="account?.systemOption"
+                                                                               [type]="7"></td>
+                                        <td class="cell-Table countRow"><input type="text" class="input-Cell text-right noEdit"
+                                                                               [ngModel]="sumcPResult('machineServiceAmount')"
+                                                                               readonly
+                                                                               ebCurrencyMask
+                                                                               [systemOptions]="account?.systemOption"
+                                                                               [type]="7"></td>
+                                        <td class="cell-Table countRow"><input type="text" class="input-Cell text-right noEdit"
+                                                                               [ngModel]="sumcPResult('machineGeneralAmount')"
+                                                                               readonly
+                                                                               ebCurrencyMask
+                                                                               [systemOptions]="account?.systemOption"
+                                                                               [type]="7"></td>
+                                        <td class="cell-Table countRow"><input type="text" class="input-Cell text-right noEdit"
+                                                                               [ngModel]="sumcPResult('generalMatetialAmount')"
+                                                                               readonly
+                                                                               ebCurrencyMask
+                                                                               [systemOptions]="account?.systemOption"
+                                                                               [type]="7"></td>
+                                        <td class="cell-Table countRow"><input type="text" class="input-Cell text-right noEdit"
+                                                                               [ngModel]="sumcPResult('generalLaborAmount')"
+                                                                               readonly
+                                                                               ebCurrencyMask
+                                                                               [systemOptions]="account?.systemOption"
+                                                                               [type]="7"></td>
+                                        <td class="cell-Table countRow"><input type="text" class="input-Cell text-right noEdit"
+                                                                               [ngModel]="sumcPResult('generalToolsAmount')"
+                                                                               readonly
+                                                                               ebCurrencyMask
+                                                                               [systemOptions]="account?.systemOption"
+                                                                               [type]="7"></td>
+                                        <td class="cell-Table countRow"><input type="text" class="input-Cell text-right noEdit"
+                                                                               [ngModel]="sumcPResult('generalDepreciationAmount')"
+                                                                               readonly
+                                                                               ebCurrencyMask
+                                                                               [systemOptions]="account?.systemOption"
+                                                                               [type]="7"></td>
+                                        <td class="cell-Table countRow"><input type="text" class="input-Cell text-right noEdit"
+                                                                               [ngModel]="sumcPResult('generalServiceAmount')"
+                                                                               readonly
+                                                                               ebCurrencyMask
+                                                                               [systemOptions]="account?.systemOption"
+                                                                               [type]="7"></td>
+                                        <td class="cell-Table countRow"><input type="text" class="input-Cell text-right noEdit"
+                                                                               [ngModel]="sumcPResult('otherGeneralAmount')"
+                                                                               readonly
+                                                                               ebCurrencyMask
+                                                                               [systemOptions]="account?.systemOption"
+                                                                               [type]="7"></td>
+                                        <td class="cell-Table countRow"><input type="text" class="input-Cell text-right noEdit"
+                                                                               [ngModel]="sumcPResult('totalCostAmount')"
+                                                                               ebCurrencyMask
+                                                                               [systemOptions]="account?.systemOption"
+                                                                               [type]="7"></td>
+                                        <td class="cell-Table countRow"><input type="text" class="input-Cell text-right noEdit"
+                                                                               [ngModel]="sumcPResult('totalQuantity')"
+                                                                               readonly
+                                                                               ebCurrencyMask
+                                                                               [systemOptions]="account?.systemOption"
+                                                                               [type]="3"></td>
+                                        <td class="cell-Table countRow"></td>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngb-tab>
+            </ngb-tabset>
+        </div>
+    </div>
+</div>
+<ng-template #deleteItem let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.sAInvoice.delete.question0"></label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-danger" (click)="deleteForm()"
+                jhiTranslate="entity.action.ok">
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="closePopUp()"
+                jhiTranslate="ebwebApp.mBDeposit.return">
+        </button>
+    </div>
+</ng-template>
+<ng-template #checkDelete let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.cPPeriod.messageWarning.questionDelete1"></label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-danger" (click)="deleteForm()"
+                jhiTranslate="entity.action.ok">
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="closePopUp()"
+                jhiTranslate="ebwebApp.mBDeposit.return">
+        </button>
+    </div>
+</ng-template>
+<ng-template #popUpMultiDelete let-modal>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <label jhiTranslate="ebwebApp.mBDeposit.multiDeleteMessage"></label>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-danger" (click)="deleteForm()"
+                jhiTranslate="entity.action.ok">
+        </button>
+        <button type="button" class="btn btn-outline-dark" (click)="closePopUp()"
+                jhiTranslate="ebwebApp.mBDeposit.return">
+        </button>
+    </div>
+</ng-template>

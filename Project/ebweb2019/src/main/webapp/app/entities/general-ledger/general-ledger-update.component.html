@@ -1,0 +1,550 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
+            <h2 id="eb-general-ledger-heading" jhiTranslate="ebwebApp.generalLedger.home.createOrEditLabel">Create or edit a General Ledger</h2>
+            <div>
+                <eb-alert-error></eb-alert-error>
+                <div class="form-group" [hidden]="!generalLedger.id">
+                    <label for="id" jhiTranslate="global.field.id">ID</label>
+                    <input type="text" class="form-control" id="id" name="id"
+                        [(ngModel)]="generalLedger.id" readonly />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.branchID" for="field_branchID">Branch ID</label>
+                    <input type="number" class="form-control" name="branchID" id="field_branchID"
+                        [(ngModel)]="generalLedger.branchID" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.referenceID" for="field_referenceID">Reference ID</label>
+                    <input type="number" class="form-control" name="referenceID" id="field_referenceID"
+                        [(ngModel)]="generalLedger.referenceID" required/>
+                    <div [hidden]="!(editForm.controls.referenceID?.dirty && editForm.controls.referenceID?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.referenceID?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.controls.referenceID?.errors?.number" jhiTranslate="entity.validation.number">
+                            This field should be a number.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.detailID" for="field_detailID">Detail ID</label>
+                    <input type="number" class="form-control" name="detailID" id="field_detailID"
+                        [(ngModel)]="generalLedger.detailID" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.typeID" for="field_typeID">Type ID</label>
+                    <input type="number" class="form-control" name="typeID" id="field_typeID"
+                        [(ngModel)]="generalLedger.typeID" required/>
+                    <div [hidden]="!(editForm.controls.typeID?.dirty && editForm.controls.typeID?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.typeID?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.controls.typeID?.errors?.number" jhiTranslate="entity.validation.number">
+                            This field should be a number.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.date" for="field_date">Date</label>
+                    <div class="input-group">
+                        <input id="field_date" type="text" class="form-control" name="date" ngbDatepicker  #dateDp="ngbDatepicker" [(ngModel)]="generalLedger.date"
+                        required/>
+                        <span class="input-group-append">
+                            <button type="button" class="btn btn-secondary" (click)="dateDp.toggle()"><fa-icon [icon]="'calendar-alt'"></fa-icon></button>
+                        </span>
+                    </div>
+                    <div [hidden]="!(editForm.controls.date?.dirty && editForm.controls.date?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.date?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.postedDate" for="field_postedDate">Posted Date</label>
+                    <div class="input-group">
+                        <input id="field_postedDate" type="text" class="form-control" name="postedDate" ngbDatepicker  #postedDateDp="ngbDatepicker" [(ngModel)]="generalLedger.postedDate"
+                        required/>
+                        <span class="input-group-append">
+                            <button type="button" class="btn btn-secondary" (click)="postedDateDp.toggle()"><fa-icon [icon]="'calendar-alt'"></fa-icon></button>
+                        </span>
+                    </div>
+                    <div [hidden]="!(editForm.controls.postedDate?.dirty && editForm.controls.postedDate?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.postedDate?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.typeLedger" for="field_typeLedger">Type Ledger</label>
+                    <input type="number" class="form-control" name="typeLedger" id="field_typeLedger"
+                        [(ngModel)]="generalLedger.typeLedger" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.noFBook" for="field_noFBook">No F Book</label>
+                    <input type="text" class="form-control" name="noFBook" id="field_noFBook"
+                        [(ngModel)]="generalLedger.noFBook" maxlength="25"/>
+                    <div [hidden]="!(editForm.controls.noFBook?.dirty && editForm.controls.noFBook?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.noFBook?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 25 }">
+                        This field cannot be longer than 25 characters.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.noMBook" for="field_noMBook">No M Book</label>
+                    <input type="text" class="form-control" name="noMBook" id="field_noMBook"
+                        [(ngModel)]="generalLedger.noMBook" maxlength="25"/>
+                    <div [hidden]="!(editForm.controls.noMBook?.dirty && editForm.controls.noMBook?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.noMBook?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 25 }">
+                        This field cannot be longer than 25 characters.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.invoiceSeries" for="field_invoiceSeries">Invoice Series</label>
+                    <input type="text" class="form-control" name="invoiceSeries" id="field_invoiceSeries"
+                        [(ngModel)]="generalLedger.invoiceSeries" maxlength="25"/>
+                    <div [hidden]="!(editForm.controls.invoiceSeries?.dirty && editForm.controls.invoiceSeries?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.invoiceSeries?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 25 }">
+                        This field cannot be longer than 25 characters.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.invoiceDate" for="field_invoiceDate">Invoice Date</label>
+                    <div class="input-group">
+                        <input id="field_invoiceDate" type="text" class="form-control" name="invoiceDate" ngbDatepicker  #invoiceDateDp="ngbDatepicker" [(ngModel)]="generalLedger.invoiceDate"
+                        />
+                        <span class="input-group-append">
+                            <button type="button" class="btn btn-secondary" (click)="invoiceDateDp.toggle()"><fa-icon [icon]="'calendar-alt'"></fa-icon></button>
+                        </span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.invoiceNo" for="field_invoiceNo">Invoice No</label>
+                    <input type="text" class="form-control" name="invoiceNo" id="field_invoiceNo"
+                        [(ngModel)]="generalLedger.invoiceNo" maxlength="25"/>
+                    <div [hidden]="!(editForm.controls.invoiceNo?.dirty && editForm.controls.invoiceNo?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.invoiceNo?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 25 }">
+                        This field cannot be longer than 25 characters.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.account" for="field_account">Account</label>
+                    <input type="text" class="form-control" name="account" id="field_account"
+                        [(ngModel)]="generalLedger.account" maxlength="25"/>
+                    <div [hidden]="!(editForm.controls.account?.dirty && editForm.controls.account?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.account?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 25 }">
+                        This field cannot be longer than 25 characters.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.accountCorresponding" for="field_accountCorresponding">Account Corresponding</label>
+                    <input type="text" class="form-control" name="accountCorresponding" id="field_accountCorresponding"
+                        [(ngModel)]="generalLedger.accountCorresponding" maxlength="25"/>
+                    <div [hidden]="!(editForm.controls.accountCorresponding?.dirty && editForm.controls.accountCorresponding?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.accountCorresponding?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 25 }">
+                        This field cannot be longer than 25 characters.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.bankAccountDetailID" for="field_bankAccountDetailID">Bank Account Detail ID</label>
+                    <input type="number" class="form-control" name="bankAccountDetailID" id="field_bankAccountDetailID"
+                        [(ngModel)]="generalLedger.bankAccountDetailID" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.bankAccount" for="field_bankAccount">Bank Account</label>
+                    <input type="text" class="form-control" name="bankAccount" id="field_bankAccount"
+                        [(ngModel)]="generalLedger.bankAccount" maxlength="50"/>
+                    <div [hidden]="!(editForm.controls.bankAccount?.dirty && editForm.controls.bankAccount?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.bankAccount?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 50 }">
+                        This field cannot be longer than 50 characters.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.bankName" for="field_bankName">Bank Name</label>
+                    <input type="text" class="form-control" name="bankName" id="field_bankName"
+                        [(ngModel)]="generalLedger.bankName" maxlength="512"/>
+                    <div [hidden]="!(editForm.controls.bankName?.dirty && editForm.controls.bankName?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.bankName?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 512 }">
+                        This field cannot be longer than 512 characters.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.currencyID" for="field_currencyID">Currency ID</label>
+                    <input type="text" class="form-control" name="currencyID" id="field_currencyID"
+                        [(ngModel)]="generalLedger.currencyID" maxlength="3"/>
+                    <div [hidden]="!(editForm.controls.currencyID?.dirty && editForm.controls.currencyID?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.currencyID?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 3 }">
+                        This field cannot be longer than 3 characters.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.exchangeRate" for="field_exchangeRate">Exchange Rate</label>
+                    <input type="number" class="form-control" name="exchangeRate" id="field_exchangeRate"
+                        [(ngModel)]="generalLedger.exchangeRate" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.debitAmount" for="field_debitAmount">Debit Amount</label>
+                    <input type="number" class="form-control" name="debitAmount" id="field_debitAmount"
+                        [(ngModel)]="generalLedger.debitAmount" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.debitAmountOriginal" for="field_debitAmountOriginal">Debit Amount Original</label>
+                    <input type="number" class="form-control" name="debitAmountOriginal" id="field_debitAmountOriginal"
+                        [(ngModel)]="generalLedger.debitAmountOriginal" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.creditAmount" for="field_creditAmount">Credit Amount</label>
+                    <input type="number" class="form-control" name="creditAmount" id="field_creditAmount"
+                        [(ngModel)]="generalLedger.creditAmount" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.creditAmountOriginal" for="field_creditAmountOriginal">Credit Amount Original</label>
+                    <input type="number" class="form-control" name="creditAmountOriginal" id="field_creditAmountOriginal"
+                        [(ngModel)]="generalLedger.creditAmountOriginal" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.reason" for="field_reason">Reason</label>
+                    <input type="text" class="form-control" name="reason" id="field_reason"
+                        [(ngModel)]="generalLedger.reason" maxlength="512"/>
+                    <div [hidden]="!(editForm.controls.reason?.dirty && editForm.controls.reason?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.reason?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 512 }">
+                        This field cannot be longer than 512 characters.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.description" for="field_description">Description</label>
+                    <input type="text" class="form-control" name="description" id="field_description"
+                        [(ngModel)]="generalLedger.description" maxlength="512"/>
+                    <div [hidden]="!(editForm.controls.description?.dirty && editForm.controls.description?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.description?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 512 }">
+                        This field cannot be longer than 512 characters.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.accountingObjectID" for="field_accountingObjectID">Accounting Object ID</label>
+                    <input type="number" class="form-control" name="accountingObjectID" id="field_accountingObjectID"
+                        [(ngModel)]="generalLedger.accountingObjectID" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.accountingObjectCode" for="field_accountingObjectCode">Accounting Object Code</label>
+                    <input type="text" class="form-control" name="accountingObjectCode" id="field_accountingObjectCode"
+                        [(ngModel)]="generalLedger.accountingObjectCode" maxlength="25"/>
+                    <div [hidden]="!(editForm.controls.accountingObjectCode?.dirty && editForm.controls.accountingObjectCode?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.accountingObjectCode?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 25 }">
+                        This field cannot be longer than 25 characters.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.accountingObjectName" for="field_accountingObjectName">Accounting Object Name</label>
+                    <input type="text" class="form-control" name="accountingObjectName" id="field_accountingObjectName"
+                        [(ngModel)]="generalLedger.accountingObjectName" maxlength="512"/>
+                    <div [hidden]="!(editForm.controls.accountingObjectName?.dirty && editForm.controls.accountingObjectName?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.accountingObjectName?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 512 }">
+                        This field cannot be longer than 512 characters.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.accountingObjectAddress" for="field_accountingObjectAddress">Accounting Object Address</label>
+                    <input type="text" class="form-control" name="accountingObjectAddress" id="field_accountingObjectAddress"
+                        [(ngModel)]="generalLedger.accountingObjectAddress" maxlength="512"/>
+                    <div [hidden]="!(editForm.controls.accountingObjectAddress?.dirty && editForm.controls.accountingObjectAddress?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.accountingObjectAddress?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 512 }">
+                        This field cannot be longer than 512 characters.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.contactName" for="field_contactName">Contact Name</label>
+                    <input type="text" class="form-control" name="contactName" id="field_contactName"
+                        [(ngModel)]="generalLedger.contactName" maxlength="512"/>
+                    <div [hidden]="!(editForm.controls.contactName?.dirty && editForm.controls.contactName?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.contactName?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 512 }">
+                        This field cannot be longer than 512 characters.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.employeeID" for="field_employeeID">Employee ID</label>
+                    <input type="number" class="form-control" name="employeeID" id="field_employeeID"
+                        [(ngModel)]="generalLedger.employeeID" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.employeeCode" for="field_employeeCode">Employee Code</label>
+                    <input type="text" class="form-control" name="employeeCode" id="field_employeeCode"
+                        [(ngModel)]="generalLedger.employeeCode" maxlength="25"/>
+                    <div [hidden]="!(editForm.controls.employeeCode?.dirty && editForm.controls.employeeCode?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.employeeCode?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 25 }">
+                        This field cannot be longer than 25 characters.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.employeeName" for="field_employeeName">Employee Name</label>
+                    <input type="text" class="form-control" name="employeeName" id="field_employeeName"
+                        [(ngModel)]="generalLedger.employeeName" maxlength="512"/>
+                    <div [hidden]="!(editForm.controls.employeeName?.dirty && editForm.controls.employeeName?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.employeeName?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 512 }">
+                        This field cannot be longer than 512 characters.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.materialGoodsID" for="field_materialGoodsID">Material Goods ID</label>
+                    <input type="number" class="form-control" name="materialGoodsID" id="field_materialGoodsID"
+                        [(ngModel)]="generalLedger.materialGoodsID" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.materialGoodsCode" for="field_materialGoodsCode">Material Goods Code</label>
+                    <input type="text" class="form-control" name="materialGoodsCode" id="field_materialGoodsCode"
+                        [(ngModel)]="generalLedger.materialGoodsCode" required maxlength="25"/>
+                    <div [hidden]="!(editForm.controls.materialGoodsCode?.dirty && editForm.controls.materialGoodsCode?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.materialGoodsCode?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.materialGoodsCode?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 25 }">
+                        This field cannot be longer than 25 characters.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.materialGoodsName" for="field_materialGoodsName">Material Goods Name</label>
+                    <input type="text" class="form-control" name="materialGoodsName" id="field_materialGoodsName"
+                        [(ngModel)]="generalLedger.materialGoodsName" required maxlength="512"/>
+                    <div [hidden]="!(editForm.controls.materialGoodsName?.dirty && editForm.controls.materialGoodsName?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.materialGoodsName?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.materialGoodsName?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 512 }">
+                        This field cannot be longer than 512 characters.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.repositoryID" for="field_repositoryID">Repository ID</label>
+                    <input type="number" class="form-control" name="repositoryID" id="field_repositoryID"
+                        [(ngModel)]="generalLedger.repositoryID" required/>
+                    <div [hidden]="!(editForm.controls.repositoryID?.dirty && editForm.controls.repositoryID?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.repositoryID?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.controls.repositoryID?.errors?.number" jhiTranslate="entity.validation.number">
+                            This field should be a number.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.repositoryCode" for="field_repositoryCode">Repository Code</label>
+                    <input type="text" class="form-control" name="repositoryCode" id="field_repositoryCode"
+                        [(ngModel)]="generalLedger.repositoryCode" required maxlength="25"/>
+                    <div [hidden]="!(editForm.controls.repositoryCode?.dirty && editForm.controls.repositoryCode?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.repositoryCode?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.repositoryCode?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 25 }">
+                        This field cannot be longer than 25 characters.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.repositoryName" for="field_repositoryName">Repository Name</label>
+                    <input type="text" class="form-control" name="repositoryName" id="field_repositoryName"
+                        [(ngModel)]="generalLedger.repositoryName" required/>
+                    <div [hidden]="!(editForm.controls.repositoryName?.dirty && editForm.controls.repositoryName?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.repositoryName?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.unitID" for="field_unitID">Unit ID</label>
+                    <input type="number" class="form-control" name="unitID" id="field_unitID"
+                        [(ngModel)]="generalLedger.unitID" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.quantity" for="field_quantity">Quantity</label>
+                    <input type="number" class="form-control" name="quantity" id="field_quantity"
+                        [(ngModel)]="generalLedger.quantity" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.unitPrice" for="field_unitPrice">Unit Price</label>
+                    <input type="number" class="form-control" name="unitPrice" id="field_unitPrice"
+                        [(ngModel)]="generalLedger.unitPrice" required/>
+                    <div [hidden]="!(editForm.controls.unitPrice?.dirty && editForm.controls.unitPrice?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.unitPrice?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.controls.unitPrice?.errors?.number" jhiTranslate="entity.validation.number">
+                            This field should be a number.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.unitPriceOriginal" for="field_unitPriceOriginal">Unit Price Original</label>
+                    <input type="number" class="form-control" name="unitPriceOriginal" id="field_unitPriceOriginal"
+                        [(ngModel)]="generalLedger.unitPriceOriginal" required/>
+                    <div [hidden]="!(editForm.controls.unitPriceOriginal?.dirty && editForm.controls.unitPriceOriginal?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.unitPriceOriginal?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.controls.unitPriceOriginal?.errors?.number" jhiTranslate="entity.validation.number">
+                            This field should be a number.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.mainUnitID" for="field_mainUnitID">Main Unit ID</label>
+                    <input type="number" class="form-control" name="mainUnitID" id="field_mainUnitID"
+                        [(ngModel)]="generalLedger.mainUnitID" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.mainQuantity" for="field_mainQuantity">Main Quantity</label>
+                    <input type="number" class="form-control" name="mainQuantity" id="field_mainQuantity"
+                        [(ngModel)]="generalLedger.mainQuantity" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.mainUnitPrice" for="field_mainUnitPrice">Main Unit Price</label>
+                    <input type="number" class="form-control" name="mainUnitPrice" id="field_mainUnitPrice"
+                        [(ngModel)]="generalLedger.mainUnitPrice" required/>
+                    <div [hidden]="!(editForm.controls.mainUnitPrice?.dirty && editForm.controls.mainUnitPrice?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.mainUnitPrice?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.controls.mainUnitPrice?.errors?.number" jhiTranslate="entity.validation.number">
+                            This field should be a number.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.mainConvertRate" for="field_mainConvertRate">Main Convert Rate</label>
+                    <input type="number" class="form-control" name="mainConvertRate" id="field_mainConvertRate"
+                        [(ngModel)]="generalLedger.mainConvertRate" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.formula" for="field_formula">Formula</label>
+                    <input type="text" class="form-control" name="formula" id="field_formula"
+                        [(ngModel)]="generalLedger.formula" maxlength="25"/>
+                    <div [hidden]="!(editForm.controls.formula?.dirty && editForm.controls.formula?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.formula?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" translateValues="{ max: 25 }">
+                        This field cannot be longer than 25 characters.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.organizationUnitID" for="field_organizationUnitID">Organization Unit ID</label>
+                    <input type="number" class="form-control" name="organizationUnitID" id="field_organizationUnitID"
+                        [(ngModel)]="generalLedger.organizationUnitID" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.expenseItemID" for="field_expenseItemID">Expense Item ID</label>
+                    <input type="number" class="form-control" name="expenseItemID" id="field_expenseItemID"
+                        [(ngModel)]="generalLedger.expenseItemID" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.budgetItemID" for="field_budgetItemID">Budget Item ID</label>
+                    <input type="number" class="form-control" name="budgetItemID" id="field_budgetItemID"
+                        [(ngModel)]="generalLedger.budgetItemID" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.costSetID" for="field_costSetID">Cost Set ID</label>
+                    <input type="number" class="form-control" name="costSetID" id="field_costSetID"
+                        [(ngModel)]="generalLedger.costSetID" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.contractID" for="field_contractID">Contract ID</label>
+                    <input type="number" class="form-control" name="contractID" id="field_contractID"
+                        [(ngModel)]="generalLedger.contractID" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.statisticsCodeID" for="field_statisticsCodeID">Statistics Code ID</label>
+                    <input type="number" class="form-control" name="statisticsCodeID" id="field_statisticsCodeID"
+                        [(ngModel)]="generalLedger.statisticsCodeID" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.refDateTime" for="field_refDateTime">Ref Date Time</label>
+                    <div class="input-group">
+                        <input id="field_refDateTime" type="text" class="form-control" name="refDateTime" ngbDatepicker  #refDateTimeDp="ngbDatepicker" [(ngModel)]="generalLedger.refDateTime"
+                        />
+                        <span class="input-group-append">
+                            <button type="button" class="btn btn-secondary" (click)="refDateTimeDp.toggle()"><fa-icon [icon]="'calendar-alt'"></fa-icon></button>
+                        </span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="ebwebApp.generalLedger.orderPriority" for="field_orderPriority">Order Priority</label>
+                    <input type="number" class="form-control" name="orderPriority" id="field_orderPriority"
+                        [(ngModel)]="generalLedger.orderPriority" required/>
+                    <div [hidden]="!(editForm.controls.orderPriority?.dirty && editForm.controls.orderPriority?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.orderPriority?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.controls.orderPriority?.errors?.number" jhiTranslate="entity.validation.number">
+                            This field should be a number.
+                        </small>
+                    </div>
+                </div>
+
+            </div>
+            <div>
+                <button type="button" id="cancel-save" class="btn btn-secondary"  (click)="previousState()">
+                    <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+                </button>
+                <button type="submit" id="save-entity" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">
+                    <fa-icon [icon]="'save'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

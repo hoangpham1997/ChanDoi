@@ -1,0 +1,28 @@
+<div class="input-group" [class.outTable]="isOutTable || zIndexForDropdown" [class.height-22]="isInTable">
+    <input [class.background-inherit]="backgroundInherit" class="form-control form-control-sm" [mask]="mask" name="dates" [(ngModel)]="date" (ngModelChange)="parseDate()"
+           #nameOfInputCombobox [tabindex]="tabindex" [class.height-22]="isInTable"
+           [class.in-table-css]="isInTable"
+           [id]="idIp"
+           [name] = "nameIp"
+           (focus)="focus($event)"
+           (blur)="checkDate()" [disabled]="disabled" [class.in-table]="isInTable" [required]="isRequired && !date">
+    <div class="input-group-append" style="max-height: 28px;">
+        <button [class.background-inherit]="backgroundInherit" class="btn btn-secondary" id="time" type="button"
+                [class.in-table-btn]="!isInTable" [class.height-22]="isInTable"
+                *ngIf="isTime" (click)="toggleDropDown($event)" tabindex="-1">
+            <fa-icon [icon]="'clock'"></fa-icon>
+        </button>
+        <button class="btn btn-secondary" id="dates" (click)="datet.toggle()" type="button" [disabled]="disabled"
+                [class.in-table-btn]="!isInTable" tabindex="-1" [class.btn-sm]="isInTable"
+                [class.height-22]="isInTable">
+            <fa-icon [icon]="'calendar-alt'"></fa-icon>
+        </button>
+    </div>
+    <input type="text" name="date" ngbDatepicker [(ngModel)]="dateHolder" style="border: none; width: 0;background: transparent;"
+           #datet="ngbDatepicker" class="date-input" (ngModelChange)="update()" [placement]="showToptoggleDropDown?'top-right':'bottom-right'"
+           [minDate]="minDate" [maxDate]="maxDate" tabindex="-1">
+    <div class="dropdown-content text-center" *ngIf="showTime" [class.overBottomPage]="isOverBottomPage"
+         [class.hiddenOver]="overFlow" [class.bottom-100]="bottom100">
+        <ngb-timepicker [(ngModel)]="time" (ngModelChange)="parseDate()" [seconds]="isSecond"></ngb-timepicker>
+    </div>
+</div>

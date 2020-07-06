@@ -1,0 +1,207 @@
+<div class="modal-header bg-modal">
+    <h4 class="modal-title" jhiTranslate="ebwebApp.pPInvoice.selectCost">chọn chứng từ chi phí</h4>
+</div>
+<div class="pd-10 bg-modal">
+    <div class="modal-body pd-t-search">
+        <div class="row">
+            <div class="col-md-2">
+                <label jhiTranslate="ebwebApp.muaHang.muaDichVu.insertUpdate.accountObject"></label>
+                <combo-box id="field-account-object"
+                           name="combobox-account-object"
+                           displayMember="accountingObjectCode"
+                           [dataList]="accountObjects"
+                           [listColumns]="utilsService.listColumnsAccountingObjects"
+                           valueName="id"
+                           [headerColumns]="utilsService.listHeaderColumnsAccountingObject"
+                           [isObject]="true"
+                           [isOutTable]="true"
+                           [(ngModel)]="accountingObject">
+                </combo-box>
+            </div>
+            <div class="col-md-2">
+                <label jhiTranslate="ebwebApp.muaHang.muaDichVu.insertUpdate.selectPeriods"></label>
+<!--                <combo-box id="field-select-period"-->
+<!--                           name="field-select-period"-->
+<!--                           [dataList]="periods"-->
+<!--                           [listColumns]="['name']"-->
+<!--                           displayMember="name"-->
+<!--                           valueName="value"-->
+<!--                           [headerColumns]="utilsService.getListHeaderValueNumber()"-->
+<!--                           [(ngModel)]="period"-->
+<!--                           [isOutTable]="true"-->
+<!--                           [valueIsNumber]="true"-->
+<!--                           (ngModelChange)="onSelectPeriod()">-->
+<!--                </combo-box>-->
+                <combo-box style=""
+                           name="timeLine"
+                           [dataList]="listTimeLine"
+                           [listColumns]="utilsService.listColumnsTimeLine"
+                           [isOutTable]="true"
+                           displayMember="display"
+                           valueName="value"
+                           [headerColumns]="utilsService.listHeaderColumnsTimeLine"
+                           [isObject]="false"
+                           [(ngModel)]="timeLineVoucher"
+                           (ngModelChange)="selectChangeBeginDateAndEndDate(timeLineVoucher)"
+                ></combo-box>
+            </div>
+            <div class="col-md-2">
+                <label jhiTranslate="ebwebApp.saBill.invoice.fromDate"></label>
+<!--                <eb-date-picker #fromDateTemp (ngModelChange)="onChangeFromDate()" [(ngModel)]="fromDate"-->
+<!--                                [maxDate]="getFromToStr(toDate)" format="YYYYMMDD" name="from-date"-->
+<!--                ></eb-date-picker>-->
+                <eb-date-picker [(ngModel)]="fromDate" name="fromdate" format="YYYYMMDD"></eb-date-picker>
+            </div>
+            <div class="col-md-2">
+                <label jhiTranslate="ebwebApp.saBill.invoice.toDate"></label>
+<!--                <eb-date-picker #toDateTemp (ngModelChange)="period.value = -3" [(ngModel)]="toDate"-->
+<!--                                [minDate]="getFromToStr(fromDate, true)" [maxDate]="getCurrentDate()"-->
+<!--                                format="YYYYMMDD" name="to-date"-->
+<!--                ></eb-date-picker>-->
+                <eb-date-picker [(ngModel)]="toDate" name="todate" format="YYYYMMDD"></eb-date-picker>
+            </div>
+            <div class="col-md-4">
+                <label class="d-block">&nbsp;</label>
+                <button (click)="queryData()" style="line-height: 1.4" class="btn btn-success" jhiTranslate="ebwebApp.receiveBill.getData"></button>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="frm-main tab-pane fade in active show" id="home-ref"
+             style="background: #cbdcf0">
+            <div id="table-scroll-ref" class="table-scroll">
+                <table id="main-table-ref" class="main-table">
+                    <thead>
+                    <tr>
+                        <th scope="col">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="check-all" [checked]="isCheckAll()" (change)="checkAll()">
+                                <label class="custom-control-label" for="check-all"></label>
+                            </div>
+                        </th>
+                        <th scope="col" jhiTranslate="ebwebApp.pPInvoice.noFBook">Số chứng từ</th>
+                        <th scope="col" jhiTranslate="ebwebApp.pPInvoice.date">Ngày chứng từ</th>
+                        <th scope="col" jhiTranslate="ebwebApp.pPInvoice.provider">Nhà cung cấp</th>
+                        <th scope="col" jhiTranslate="ebwebApp.pPInvoice.reason">Diễn giải</th>
+                        <th scope="col" jhiTranslate="ebwebApp.pPInvoice.amount">Số tiền</th>
+                        <th scope="col" jhiTranslate="ebwebApp.pPInvoice.soTienChuaPhanBo">Số tiền chưa phân bổ</th>
+                        <th scope="col" jhiTranslate="ebwebApp.pPInvoice.soTienPhanBoLanNay">Số tiền phân bổ lần này</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let costVoucher of costVouchers; let i = index" (click)="check(costVoucher)">
+                        <td class="text-center">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" name="{{'checkbox' + i}}"
+                                       id="{{'checkbox' + i}}" [(ngModel)]="costVoucher.checked" (click)="check(costVoucher)">
+                                <label class="custom-control-label" for="{{'checkbox' + i}}"></label>
+                            </div>
+                        </td>
+                        <td class="text-left">
+                            <span *ngIf="currentBook && currentBook === '0'">{{costVoucher.noFBook}}</span>
+                            <span *ngIf="currentBook && currentBook !== '0'">{{costVoucher.noMBook}}</span>
+                        </td>
+                        <td class="text-center">{{costVoucher.date | date:'dd/MM/yyyy'}}</td>
+                        <td class="text-left one-long-line" title="{{costVoucher.accountingObjectName}}">{{costVoucher.accountingObjectName}}</td>
+                        <td class="text-left one-long-line" title="{{costVoucher.reason}}">{{costVoucher.reason}}</td>
+                        <td class="text-right">
+                            <input type="number" class="input-Cell bg-transparent border-0 w-100 noSetDisable"
+                                   name="totalAmount" [(ngModel)]="costVoucher.totalAmount"
+                                   [systemOptions]="account?.systemOption"
+                                   [type]="account.organizationUnit.currencyID && account.organizationUnit.currencyID !== 'VND' ? 8 : 7"
+                                   ebCurrencyMask readonly disabled>
+                        </td>
+                        <td class="text-right">
+                            <input type="number" class="input-Cell bg-transparent border-0 w-100 noSetDisable"
+                                   name="amount" [(ngModel)]="costVoucher.amount"
+                                   [systemOptions]="account?.systemOption"
+                                   [type]="account.organizationUnit.currencyID && account.organizationUnit.currencyID !== 'VND' ? 8 : 7"
+                                   ebCurrencyMask readonly disabled>
+                        </td>
+                        <td class="jsgrid-align-right" (click)="$event.stopPropagation()">
+                            <input type="number" name="freightAmount" class="input-Cell"
+                                   [(ngModel)]="costVoucher.freightAmount"
+                                   ebCurrencyMask [systemOptions]="account?.systemOption"
+                                   (ngModelChange)="changeSum()"
+                                   [type]="account.organizationUnit.currencyID && account.organizationUnit.currencyID !== 'VND' ? 8 : 7"
+                                   [allowNegative]="false">
+                        </td>
+                    </tr>
+                    <tr *ngFor="let item of newArr(10-(costVouchers.length ? costVouchers.length : 0))">
+                        <td class="jsgrid-cell">&nbsp;</td>
+                        <td class="jsgrid-cell">&nbsp;</td>
+                        <td class="jsgrid-cell">&nbsp;</td>
+                        <td class="jsgrid-cell">&nbsp;</td>
+                        <td class="jsgrid-cell">&nbsp;</td>
+                        <td class="jsgrid-cell">&nbsp;</td>
+                        <td class="jsgrid-cell">&nbsp;</td>
+                        <td class="jsgrid-cell">&nbsp;</td>
+                    </tr>
+                    </tbody>
+                    <tfoot>
+                    <td colspan="5">
+                        <input type="text" readonly
+                               class="color-tfoot input-Cell"
+                               value="{{'ebwebApp.purchaseOrder.countLine'| translate}} : {{costVouchers.length}}">
+                    </td>
+                    <td class="text-right">
+                        <input type="number"
+                               class="input-Cell text-right bg-transparent border-0 noSetDisable"
+                               [(ngModel)]="sumTotalAmount"
+                               name="sumTotalAmount"
+                               [type]="account.organizationUnit.currencyID && account.organizationUnit.currencyID !== 'VND' ? 8 : 7"
+                               ebCurrencyMask readonly disabled>
+                    </td>
+                    <td class="text-right">
+                        <input type="number"
+                               class="input-Cell text-right bg-transparent border-0 noSetDisable"
+                               [(ngModel)]="sumAmount"
+                               name="sumAmount"
+                               [systemOptions]="account?.systemOption"
+                               [type]="account.organizationUnit.currencyID && account.organizationUnit.currencyID !== 'VND' ? 8 : 7"
+                               ebCurrencyMask readonly disabled>
+                    </td>
+                    <td class="text-right">
+                        <input type="number"
+                               class="input-Cell text-right bg-transparent border-0 noSetDisable"
+                               [(ngModel)]="sumFreightAmount"
+                               name="sumFreightAmount" readonly disabled
+                               ebCurrencyMask [systemOptions]="account?.systemOption"
+                               [type]="account.organizationUnit.currencyID && account.organizationUnit.currencyID !== 'VND' ? 8 : 7">
+                    </td>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="modal-body pd-t-b-0">
+        <div class="row justify-content-end">
+            <div class="col-lg-2">
+                <div class="form-group row">
+                    <label class="col-sm-7 col-form-label text-right" for="itemsPerPage">
+                        <span jhiTranslate="ebwebApp.mCPayment.total"></span> : {{totalItems}}
+                    </label>
+                    <div class="col-sm-5 pd-l-0">
+                        <select class="form-control form-control-sm" name="itemsPerPage" id="itemsPerPage"
+                                style="background-color: #f5f7fa;" [(ngModel)]="itemsPerPage" (ngModelChange)="queryData()" >
+                            <option [value]="10">10</option>
+                            <option [value]="20">20</option>
+                            <option [value]="30">30</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="justify-content-end">
+                <ngb-pagination [size]="'sm'" [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage"
+                                [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
+                                (pageChange)="queryData()"></ngb-pagination>
+            </div>
+        </div>
+    </div>
+    <div class="row pd-t-b-0 text-right d-block">
+        <button type="button" class="btn btn-light" (click)="apply()"><span jhiTranslate="entity.action.ok"></span>
+        </button>
+        <button type="button" class="btn btn-light" (click)="close()"><span jhiTranslate="entity.action.huyBo"></span>
+        </button>
+    </div>
+</div>

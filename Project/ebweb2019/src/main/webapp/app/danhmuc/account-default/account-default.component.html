@@ -1,0 +1,127 @@
+<div class="container-fluid">
+    <div class="margin-tp-5 margin-0">
+        <div class="">
+            <div class="itemw" style="color: #FFFFFF">
+                <div class="menu-tool-bar he">
+                    <div class="ptitle">
+                        <span jhiTranslate="ebwebApp.accountDefault.home.title"></span>
+                    </div>
+                    <div class="gr-toolbar">
+                        <!--                        <a [routerLink]="['/account-default/new']"><i class="mdi mdi-plus"></i> <span-->
+                        <!--                            jhiTranslate="ebwebApp.accountDefault.add"></span></a>-->
+                        <button class="button-navigation" title="{{buttonEditTranslate | translate}}" a
+                                *ebHasSomeAuthority="['ROLE_ADMIN', ROLE_TaiKhoanNgamDinh_Sua]" (click)="edit()"><i
+                            class="mdi mdi-pen"></i><span jhiTranslate="ebwebApp.accountDefault.edit"></span></button>
+                        <!--                        [routerLink]="['/account-list', selectedRow.id, 'edit']"-->
+                        <!--                        <a><i-->
+                        <!--                            class="mdi mdi-delete"></i><span jhiTranslate="ebwebApp.accountDefault.delete"></span></a>-->
+                        <!--                        [routerLink]="['/', { outlets: { popup: 'account-list/'+ selectedRow.id + '/delete'} }]"-->
+                        <!--                        replaceUrl="true"-->
+                    </div>
+                </div>
+            </div>
+            <div class="frm-main frm-mains nobg" style="background: #cbdcf0; margin-top: 5px">
+                <div id="table-scroll0" class="table-scroll" style="height: 700px !important; max-height: 700px !important;">
+                    <table id="main-table0" class="main-table">
+                        <thead>
+                        <tr>
+                            <th scope="col" jhiTranslate="ebwebApp.accountDefault.typeName"></th>
+                            <th scope="col" jhiTranslate="ebwebApp.accountDefault.debitAccount"></th>
+                            <!--                            <th scope="col">Nhóm tài khoản</th>-->
+                            <th scope="col" jhiTranslate="ebwebApp.accountDefault.defaultDebitAccount"></th>
+                            <th scope="col" jhiTranslate="ebwebApp.accountDefault.creditAccount"></th>
+                            <th scope="col" jhiTranslate="ebwebApp.accountDefault.defaultCreditAccount"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td class="jsgrid-align-left sticky-50"
+                                style="background: #fff !important; padding: 0px 10px !important;"><input
+                                type="text"
+                                placeholder="{{'ebwebApp.accountDefault.searchHere' | translate}}"
+                                class="input-Cell"
+                                name="searchTypeName" [(ngModel)]="searchTypeName" (ngModelChange)="changeSearch()"
+                            >
+                            </td>
+                            <td class="jsgrid-align-left sticky-50"
+                                style="background: #fff !important; padding: 0px 10px !important;"><input
+                                type="text" placeholder="{{'ebwebApp.accountDefault.searchHere' | translate}}"
+                                class="input-Cell" [(ngModel)]="searchDebitAccount" (ngModelChange)="changeSearch()"
+                                name="searchDebitAccount">
+                            </td>
+                            <td class="jsgrid-align-left sticky-50"
+                                style="background: #fff !important; padding: 0px 10px !important;"><input
+                                type="text" [(ngModel)]="searchDefaultDebitAccount"
+                                placeholder="{{'ebwebApp.accountDefault.searchHere' | translate}}"
+                                class="input-Cell" (ngModelChange)="changeSearch()"
+                                name="searchDefaultDebitAccount"
+                            >
+                            </td>
+                            <td class="jsgrid-align-left sticky-50"
+                                style="background: #fff !important; padding: 0px 10px !important;"><input
+                                type="text" [(ngModel)]="searchCreditAccount"
+                                placeholder="{{'ebwebApp.accountDefault.searchHere' | translate}}"
+                                class="input-Cell" (ngModelChange)="changeSearch()"
+                                name="searchCreditAccount"
+                            >
+                            </td>
+                            <td class="jsgrid-align-lefst sticky-50"
+                                style="background: #fff !important; padding: 0px 10px !important;"><input
+                                type="text" [(ngModel)]="searchDefaultCreditAccount"
+                                placeholder="{{'ebwebApp.accountDefault.searchHere' | translate}}"
+                                class="input-Cell" (ngModelChange)="changeSearch()"
+                                name="searchDefaultCreditAccount"
+                            >
+                            </td>
+                        </tr>
+                        <tr *ngFor="let accountDefaultCategory of accountDefaultCategories ;trackBy: trackId"
+                            (click)="selectMultiRow(accountDefaultCategory, $event, accountDefaultCategories)"
+                            [class.row-selected]="this.selectedRows.indexOf(accountDefaultCategory) !== -1"
+                            (dblclick)="edit()">
+                            <td title="{{accountDefaultCategory.typeName}}" class="jsgrid-cell jsgrid-align-left"
+                                style="width: 150px">{{accountDefaultCategory.typeName}}</td>
+                            <td title="{{accountDefaultCategory.debitAccount}}" class="jsgrid-cell jsgrid-align-left"
+                                style="width: 150px">{{accountDefaultCategory.debitAccount}}</td>
+                            <!--                            <td class="jsgrid-cell jsgrid-align-center"-->
+                            <!--                                style="width: 150px">{{accountDefault.accountGroupID}}</td>-->
+                            <td title="{{accountDefaultCategory.defaultDebitAccount}}"
+                                class="jsgrid-cell jsgrid-align-left"
+                                style="width: 150px">{{accountDefaultCategory.defaultDebitAccount}}</td>
+                            <td title="{{accountDefaultCategory.creditAccount}}"
+                                class="jsgrid-cell jsgrid-align-left"
+                                style="width: 150px">{{accountDefaultCategory.creditAccount}}</td>
+                            <td title="{{accountDefaultCategory.defaultCreditAccount}}"
+                                class="jsgrid-cell jsgrid-align-left"
+                                style="width: 150px">{{accountDefaultCategory.defaultCreditAccount}}</td>
+
+                        </tr>
+                        <tr
+                            *ngFor="let l of newArr(20 - accountDefaultCategories.length)">
+                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                            </td>
+                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                            </td>
+                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                            </td>
+                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                            </td>
+                            <td class="cell-Table"><input type="text" class="input-Cell" readonly>
+                            </td>
+                        </tr>
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <td class="cell-Table countRow" colspan="5">{{'ebwebApp.mBDeposit.countLine'| translate}}
+                                : {{accountDefaultCategories?.length}}
+                            </td>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Footer -->
+<footer>
+</footer>

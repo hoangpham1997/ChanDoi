@@ -1,0 +1,664 @@
+<!--Add by Hautv-->
+<ngx-loading-bar></ngx-loading-bar>
+<!--edit by anmt-->
+<nav class="navbar p-0 fixed-top flex-row" style="z-index: 8888"
+     [hidden]="this.router.url === '/login' || this.router.url === '/admin/login'"
+     [ngClass]="{'d-flex': (this.router.url !== '/login' && this.router.url !== '/admin/login')}">
+    <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
+        <a routerLink="" class="navbar-brand brand-logo"><img src="/content/images/logo.png"/></a>
+        <a routerLink="" class="navbar-brand brand-logo-mini"><img src="/content/images/icon-logo.png"/></a>
+    </div>
+    <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+        <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize"
+                (click)="toggleNavbar()">
+            <span class="mdi mdi-menu"></span>
+        </button>
+
+        <ul class="nav page-navigation" *ebHasSomeAuthority="[ROLE.ROLE_ADMIN, ROLE_HETHONG, ROLE.ROLE_REPORT, ROLE.ROLE_MGT]">
+            <li class="nav-item" *ebHasSomeAuthority="[ROLE.ROLE_ADMIN, ROLE_HETHONG]">
+                <a class="nav-link">
+                    <span class="menu-title">HỆ THỐNG</span>
+                    <i class="menu-arrow"></i></a>
+                <div class="submenu">
+                    <ul class="submenu-item">
+                        <li class="nav-item" *ebHasSomeAuthority="[ROLE.ROLE_ADMIN, ROLE_NgayHachToan_Xem]">
+                            <a class="nav-link" [tabIndex]="0" (click)="showChangePostedDate(changePostedDate)">Ngày
+                                hạch
+                                toán</a>
+                        </li>
+                        <li class="nav-item" hidden>
+                            <a class="nav-link">Nhật ký truy cập</a>
+                        </li>
+                        <li class="nav-item" *ebHasSomeAuthority="[ROLE.ROLE_ADMIN, ROLE_TuyChon_Xem]">
+                            <a class="nav-link" routerLink="system-option"
+                               jhiTranslate="ebwebApp.systemOption.home.title"></a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <li class="nav-item mega-menu" *ebHasSomeAuthority="[ROLE.ROLE_ADMIN, ROLE_DANHMUC, ROLE.ROLE_MGT]">
+                <a class="nav-link">
+                    <span class="menu-title">DANH MỤC</span>
+                    <i class="menu-arrow"></i>
+                </a>
+                <div class="submenu">
+                    <div class="col-group-wrapper row">
+                        <div class="col-group col-md-2" *ebHasSomeAuthority="[ROLE.ROLE_ADMIN, ROLE_CoCauToChuc_Xem, ROLE.ROLE_MGT]">
+                            <div class="row" *ebHasSomeAuthority="[ROLE.ROLE_ADMIN, ROLE_CoCauToChuc_Xem, ROLE.ROLE_MGT]">
+                                <div class="col-12">
+                                    <p class="category-heading"><a
+                                        routerLink="organization-unit">Cơ cấu tổ
+                                        chức</a></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-group col-md-3" *ebHasSomeAuthority="[ROLE.ROLE_ADMIN, ROLE_HeThongTaiKhoan_Xem,
+                        ROLE_TaiKhoanKetChuyen_Xem, ROLE_TaiKhoanNgamDinh_Xem, ROLE_DanhMucDinhKhoanTuDong_Xem]">
+                            <div class="row">
+                                <div class="col-12">
+                                    <p class="category-heading">Tài khoản</p>
+                                    <div class="submenu-item">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <ul>
+                                                    <li class="nav-item"
+                                                        *ebHasSomeAuthority="[ROLE.ROLE_ADMIN, ROLE_HeThongTaiKhoan_Xem]">
+                                                        <a routerLink="account-list" class="nav-link"
+                                                        >Hệ thống tài khoản</a></li>
+                                                    <li class="nav-item"
+                                                        *ebHasSomeAuthority="[ROLE.ROLE_ADMIN, ROLE_TaiKhoanKetChuyen_Xem]">
+                                                        <a routerLink="account-transfer"
+                                                           class="nav-link">Tài khoản kết
+                                                            chuyển</a></li>
+                                                    <li class="nav-item"
+                                                        *ebHasSomeAuthority="[ROLE.ROLE_ADMIN, ROLE_TaiKhoanNgamDinh_Xem]">
+                                                        <a routerLink="account-default"
+                                                           class="nav-link">Tài khoản ngầm
+                                                            định</a></li>
+                                                    <li class="nav-item"><a
+                                                        *ebHasSomeAuthority="[ROLE.ROLE_ADMIN, ROLE_DanhMucDinhKhoanTuDong_Xem]"
+                                                        routerLink="auto-principle"
+                                                        jhiTranslate="ebwebApp.autoPrinciple.category"
+                                                        class="nav-link">Định Khoản Tự Động</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-group col-md-2 padding-left-0" *ebHasSomeAuthority="[ROLE.ROLE_ADMIN,
+                         ROLE_DanhMucKhachHang_Xem, ROLE_DanhMucNhaCungCap_Xem, ROLE_DanhMucNhanVien_Xem, ROLE_DanhMucKhachHangVaNhaCungCap_Xem]">
+                            <p class="category-heading">Đối tượng</p>
+                            <ul class="submenu-item">
+                                <li class="nav-item" *ebHasSomeAuthority="[ROLE.ROLE_ADMIN, ROLE_DanhMucKhachHang_Xem]"><a
+                                                        routerLink="accounting-object"
+                                                        jhiTranslate="ebwebApp.accountingObject.home.customer"
+                                                        class="nav-link">Khách hàng</a></li>
+                                <li class="nav-item" *ebHasSomeAuthority="[ROLE.ROLE_ADMIN, ROLE_DanhMucNhaCungCap_Xem]"><a
+                                                        routerLink="supplier"
+                                                        jhiTranslate="ebwebApp.accountingObject.home.supplier"
+                                                        class="nav-link">Nhà cung cấp</a></li>
+                                <li class="nav-item" *ebHasSomeAuthority="[ROLE.ROLE_ADMIN, ROLE_DanhMucNhanVien_Xem]"><a
+                                                        routerLink="employee"
+                                                        jhiTranslate="ebwebApp.accountingObject.home.employees"
+                                                        class="nav-link">Nhân viên</a></li>
+                                <li class="nav-item"
+                                    *ebHasSomeAuthority="[ROLE.ROLE_ADMIN, ROLE_DanhMucKhachHangVaNhaCungCap_Xem]"><a
+                                    routerLink="accounting-object-group"
+                                    jhiTranslate="ebwebApp.accountingObjectGroup.home.titled"
+                                    class="nav-link">Nhóm KH/NCC</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-group col-md-5 padding-left-0"
+                             *ebHasSomeAuthority="[ROLE.ROLE_ADMIN, ROLE_DanhMucVatTuHangHoa_Xem, ROLE_DanhMucKho_Xem,
+                             ROLE_DanhMucDonViTinh_Xem, ROLE_DanhMucLoaiVatTuHangHoa_Xem, ROLE_DanhMucHHDVChiuThueTTDB_Xem, ROLE.DinhMucNguyenVatLieu_Xem]">
+                            <div class="row">
+                                <div class="col-12">
+                                    <p class="category-heading">Vật tư hàng hóa, CCDC, TSCĐ</p>
+                                    <div class="submenu-item">
+                                        <div class="row">
+                                            <div class="col-md-5 padding-right-0"
+                                                 *ebHasSomeAuthority="[ROLE.ROLE_ADMIN, ROLE_DanhMucVatTuHangHoa_Xem, ROLE_DanhMucKho_Xem,
+                                                 ROLE_DanhMucDonViTinh_Xem, ROLE_DanhMucLoaiVatTuHangHoa_Xem]">
+                                                <ul>
+                                                    <li class="nav-item"
+                                                        *ebHasSomeAuthority="[ROLE.ROLE_ADMIN, ROLE_DanhMucVatTuHangHoa_Xem]"><a
+                                                        routerLink="material-goods"
+                                                        jhiTranslate="ebwebApp.materialGoods.home.title"
+                                                        class="nav-link">Vật Tư Hàng Hóa</a></li>
+                                                    <li class="nav-item"
+                                                        *ebHasSomeAuthority="[ROLE.ROLE_ADMIN, ROLE_DanhMucKho_Xem]"><a
+                                                        routerLink="repository"
+                                                        jhiTranslate="ebwebApp.repository.home.label"
+                                                        class="nav-link"
+                                                    >Kho</a></li>
+                                                    <li class="nav-item"
+                                                        *ebHasSomeAuthority="[ROLE.ROLE_ADMIN, ROLE_DanhMucDonViTinh_Xem]"><a
+                                                        routerLink="unit"
+                                                        jhiTranslate="ebwebApp.unit.home.label"
+                                                        class="nav-link">Đơn
+                                                        vị tính</a></li>
+                                                    <li class="nav-item"
+                                                        *ebHasSomeAuthority="[ROLE.ROLE_ADMIN, ROLE_DanhMucLoaiVatTuHangHoa_Xem]"><a
+                                                        routerLink="material-goods-category"
+                                                        jhiTranslate="ebwebApp.materialGoodsCategory.home.label"
+                                                        class="nav-link">Loại VTHH</a></li>
+<!--                                                    <li class="nav-item" hidden><a class="nav-link">Công cụ dụng-->
+<!--                                                        cụ</a></li>-->
+                                                </ul>
+                                            </div>
+                                            <div class="col-md-7 padding-right-0" *ebHasSomeAuthority="[ROLE.ROLE_ADMIN, ROLE_DanhMucHHDVChiuThueTTDB_Xem, ROLE.DinhMucNguyenVatLieu_Xem]">
+                                                <ul>
+<!--                                                    <li class="nav-item" hidden><a routerLink="fixed-asset"-->
+<!--                                                                                   class="nav-link"-->
+<!--                                                    >Tài sản cố định</a></li>-->
+<!--                                                    <li class="nav-item" hidden><a routerLink="fixed-asset-category"-->
+<!--                                                                                   class="nav-link">Loại TSCĐ</a></li>-->
+                                                    <li class="nav-item" *ebHasSomeAuthority="[ROLE.ROLE_ADMIN, ROLE_DanhMucHHDVChiuThueTTDB_Xem]">
+                                                        <a routerLink="material-goods-special-tax-group"
+                                                        jhiTranslate="ebwebApp.materialGoodsSpecialTaxGroup.home.label"
+                                                        class="nav-link">Nhóm HHDV chịu
+                                                        thuế TTĐB</a></li>
+<!--                                                    <li class="nav-item" hidden><a class="nav-link">Biểu thuế tài-->
+<!--                                                        nguyên</a></li>-->
+                                                    <li class="nav-item"
+                                                        *ebHasSomeAuthority="[ROLE.ROLE_ADMIN, ROLE.DinhMucNguyenVatLieu_Xem]"
+                                                    ><a routerLink="material-quantum"
+                                                                            class="nav-link">Định mức NVL</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12" *ebHasSomeAuthority="[ROLE.ROLE_ADMIN, ROLE_DanhMucNganHang_Xem,
+                        ROLE_DanhMucTaiKhoanNganHang_Xem, ROLE_DanhMucTheTinDung_Xem, DanhMucDTTHCP_Xem,
+                        ROLE_DanhMucKhoanMucChiPhi_Xem, ROLE_DanhMucMaThongKe_Xem, ROLE_DanhMucThuChi_Xem,
+                        ROLE_DanhMucLoaiTien_Xem,
+                        ROLE_DanhMucDieuKhoanThanhToan_Xem, ROLE_DanhMucPhuongThucVanChuyen_Xem
+                        ]">
+                            <br>
+                        </div>
+                        <div class="col-group col-md-2" *ebHasSomeAuthority="[ROLE.ROLE_ADMIN, ROLE_DanhMucNganHang_Xem,
+                        ROLE_DanhMucTaiKhoanNganHang_Xem, ROLE_DanhMucTheTinDung_Xem
+                        ]">
+                            <p class="category-heading">Ngân hàng</p>
+                            <ul class="submenu-item">
+                                <li class="nav-item" *ebHasSomeAuthority="[ROLE.ROLE_ADMIN, ROLE_DanhMucNganHang_Xem]"><a
+                                                        routerLink="bank"
+                                                        jhiTranslate="ebwebApp.bank.titled"
+                                                        class="nav-link">Ngân Hàng</a></li>
+                                <li class="nav-item" *ebHasSomeAuthority="[ROLE.ROLE_ADMIN, ROLE_DanhMucTaiKhoanNganHang_Xem]"><a
+                                    routerLink="bank-account-details"
+                                    jhiTranslate="ebwebApp.bankAccountDetails.home.label"
+                                    class="nav-link">Tài
+                                    khoản ngân hàng</a></li>
+                                <li class="nav-item" *ebHasSomeAuthority="[ROLE.ROLE_ADMIN, ROLE_DanhMucTheTinDung_Xem]"><a
+                                                        routerLink="credit-card"
+                                                        jhiTranslate="ebwebApp.creditCard.titled"
+                                                        class="nav-link">Thẻ tín dụng</a></li>
+                            </ul>
+                        </div>
+<!--                        <div class="col-group col-md-3" hidden>-->
+<!--                            <p class="category-heading">Lương nhân viên</p>-->
+<!--                            <ul class="submenu-item">-->
+<!--                                <li class="nav-item" hidden><a class="nav-link">Ký hiệu chấm công</a></li>-->
+<!--                                <li class="nav-item" hidden><a class="nav-link">Biểu thuế thu nhập cá nhân</a></li>-->
+<!--                                <li class="nav-item" hidden><a class="nav-link">Quy định lương, thuế, bảo hiểm</a>-->
+<!--                                </li>-->
+<!--                            </ul>-->
+<!--                        </div>-->
+                        <div class="col-group col-md-3 padding-left-0" *ebHasAnyAuthority="[ROLE.ROLE_ADMIN, DanhMucDTTHCP_Xem,
+                        ROLE_DanhMucKhoanMucChiPhi_Xem, ROLE_DanhMucMaThongKe_Xem, ROLE_DanhMucThuChi_Xem]">
+                            <p class="category-heading">Thống kê, chi phí</p>
+                            <ul class="submenu-item">
+                                <li class="nav-item" *ebHasAnyAuthority="[ROLE.ROLE_ADMIN, DanhMucDTTHCP_Xem]"><a
+                                                        class="nav-link" routerLink="cost-set">Đối tượng tập hợp chi
+                                    phí</a></li>
+                                <li class="nav-item" *ebHasAnyAuthority="[ROLE.ROLE_ADMIN, ROLE_DanhMucKhoanMucChiPhi_Xem]"><a
+
+                                    class="nav-link" routerLink="/khoan-muc-chi-phi-list"
+                                    jhiTranslate="ebwebApp.expenseItem.home.title">Khoản mục chi phí</a></li>
+                                <li class="nav-item" *ebHasAnyAuthority="[ROLE.ROLE_ADMIN, ROLE_DanhMucMaThongKe_Xem]"><a
+                                                        class="nav-link" routerLink="/statistics-code"
+                                                        jhiTranslate="ebwebApp.statisticsCode.home.title">Mã thống
+                                    kê</a></li>
+                                <li class="nav-item" *ebHasSomeAuthority="[ROLE.ROLE_ADMIN, ROLE_DanhMucThuChi_Xem]"><a
+                                                        routerLink="/budget-item"
+                                                        jhiTranslate="ebwebApp.budgetItem.home.title"
+                                                        class="nav-link">Mục thu - chi</a></li>
+
+                            </ul>
+                        </div>
+                        <div class="col-group col-md-5 padding-left-0" *ebHasSomeAuthority="[ROLE.ROLE_ADMIN, ROLE_DanhMucLoaiTien_Xem,
+                        ROLE_DanhMucDieuKhoanThanhToan_Xem, ROLE_DanhMucPhuongThucVanChuyen_Xem]">
+                            <div class="row">
+                                <div class="col-12">
+                                    <p class="category-heading">Khác</p>
+                                    <div class="submenu-item">
+                                        <div class="row">
+                                            <div class="col-md-12 padding-right-0">
+                                                <ul>
+                                                    <li class="nav-item"
+                                                        *ebHasSomeAuthority="[ROLE.ROLE_ADMIN, ROLE_DanhMucLoaiTien_Xem]"><a
+                                                        routerLink="currency"
+                                                        jhiTranslate="ebwebApp.currency.home.title"
+                                                        class="nav-link">Loại Tiền</a></li>
+                                                    <li class="nav-item"
+                                                        *ebHasAnyAuthority="[ROLE.ROLE_ADMIN, ROLE_DanhMucDieuKhoanThanhToan_Xem]"><a
+                                                        class="nav-link" routerLink="payment-clause"
+                                                        jhiTranslate="ebwebApp.paymentClause.home.title">Điều khoản
+                                                        thanh
+                                                        toán</a></li>
+
+                                                    <li class="nav-item"
+                                                        *ebHasSomeAuthority="[ROLE.ROLE_ADMIN, ROLE_DanhMucPhuongThucVanChuyen_Xem]"><a
+                                                        routerLink="/transport-method"
+                                                        jhiTranslate="ebwebApp.transportMethod.home.title"
+                                                        class="nav-link">Phương thức vận chuyển</a></li>
+                                                </ul>
+                                            </div>
+<!--                                            <div class="col-md-7 padding-right-0">-->
+<!--                                                <ul>-->
+<!--                                                    <li class="nav-item" hidden><a class="nav-link">Nhóm giá bán</a>-->
+<!--                                                    </li>-->
+<!--                                                    <li class="nav-item" hidden><a class="nav-link">Tình trạng hợp-->
+<!--                                                        đồng</a></li>-->
+<!--                                                </ul>-->
+<!--                                            </div>-->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="nav-item" *ebHasSomeAuthority="[ROLE.ROLE_ADMIN, ROLE_TIENICH, ROLE.QLDuLieu_Xem]">
+                <a class="nav-link">
+                    <span class="menu-title text-uppercase" jhiTranslate="ebwebApp.tienIch.title">TIỆN ÍCH</span>
+                    <i class="menu-arrow"></i></a>
+                <div class="submenu">
+                    <ul class="submenu-item">
+                        <li class="nav-item" *ebHasSomeAuthority="[ROLE.ROLE_ADMIN, ROLE.SoDuDauKy_Xem]">
+                            <a class="nav-link" routerLink="so-du-dau-ky"
+                               jhiTranslate="ebwebApp.tienIch.soDuDauKy.name">Nhập số dư đầu kỳ</a>
+                        </li>
+                        <li class="nav-item" *ebHasSomeAuthority="[ROLE.ROLE_ADMIN, ROLE.QLDuLieu_Xem]">
+                            <a class="nav-link" routerLink="data-backup"
+                               jhiTranslate="ebwebApp.tienIch.data.backupAndRestore"> Dữ liệu</a>
+                        </li>
+                        <li class="nav-item" >
+                            <a class="nav-link" routerLink="danh-lai-so-chung-tu"
+                               jhiTranslate="ebwebApp.tienIch.danhLaiSoChungTu.name"> Đánh lại số chứng từ</a>
+                        </li>
+                        <li class="nav-item" >
+                            <a class="nav-link" routerLink="tim-kiem-chung-tu"
+                               jhiTranslate="ebwebApp.tienIch.timKiemChungTu.name"> Tìm kiếm chứng từ</a>
+                        </li>
+<!--                        <li class="nav-item" hidden>-->
+<!--                            <a class="nav-link">Tìm kiếm chứng từ</a>-->
+<!--                        </li>-->
+<!--                        <li class="nav-item" hidden>-->
+<!--                            <a class="nav-link">Nhập dữ liệu từ File Excel</a>-->
+<!--                        </li>-->
+<!--                        <li class="nav-item" hidden>-->
+<!--                            <a class="nav-link">In chứng từ hàng loạt</a>-->
+<!--                        </li>-->
+                    </ul>
+                </div>
+            </li>
+            <li class="nav-item" *ebHasSomeAuthority="[ROLE.ROLE_ADMIN, ROLE.ROLE_REPORT]">
+                <a class="nav-link" href="javascript:void(0);" routerLink="/bao-cao">
+                    <span class="menu-title text-uppercase" jhiTranslate="ebwebApp.common.report">BÁO CÁO</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link">
+                    <span class="menu-title">TRỢ GIÚP</span>
+                </a>
+                <div class="submenu">
+                    <ul class="submenu-item">
+                        <li class="nav-item">
+                            <a class="nav-link" [tabIndex]="0" jhiTranslate="ebwebApp.common.tutorialUse"
+                               (click)="showTutorialUse(tutorialUse)"></a>
+                        </li>
+                        <li class="nav-item">
+                            <a (click)="toolSign()" class="nav-link" [tabIndex]="1" jhiTranslate="ebwebApp.common.toolSign"></a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+<!--            <li class="nav-item">-->
+<!--                <a class="nav-link">-->
+<!--                    <span class="menu-title" jhiTranslate="global.menu.language">Language</span>-->
+<!--                </a>-->
+<!--                <div class="submenu">-->
+<!--                    <ul class="submenu-item">-->
+<!--                        <li *ngFor="let language of languages" class="nav-item">-->
+<!--                            <a class="nav-link" [ebActiveMenu]="language" href="javascript:void(0);"-->
+<!--                               (click)="changeLanguage(language);">{{language | findLanguageFromKey}}</a>-->
+<!--                        </li>-->
+<!--                    </ul>-->
+<!--                </div>-->
+<!--            </li>-->
+            <li class="nav-item">
+                <a class="nav-link">
+                    <span class="menu-title">TỔNG ĐÀI</span>
+                </a>
+                <div class="submenu">
+                    <ul class="submenu-item">
+                        <li class="nav-item">
+                            <a class="nav-link" style="color: white">0868.213.466</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" style="color: white">0983.308.499</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+
+
+        <ul class="navbar-nav navbar-nav-right">
+            <li class="nav-item phienlamviec">
+                <a class="nav-link" (click)="showPopup(popup)">PHIÊN LÀM VIỆC</a>
+            </li>
+            <li class="nav-item nav-profile dropdown">
+                <a class="nav-link" data-toggle="dropdown" id="profileDropdown">{{currentAccount?.fullName}}
+                    <span class="mdi mdi-chevron-down"></span></a>
+                <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
+                    <a class="dropdown-item" (click)="navigateUser()">
+                        <i class="mdi mdi-settings text-primary"></i>
+                        Thông tin tài khoản
+                    </a>
+                    <a *ebHasSomeAuthority="[ROLE.ROLE_ADMIN, ROLE.ROLE_PERMISSION]" routerLink="user-management" class="dropdown-item">
+                        <i class="mdi mdi-settings text-primary"></i>
+                        Quản trị người dùng
+                    </a>
+                    <a *ebHasSomeAuthority="[ROLE.ROLE_ADMIN, ROLE.ROLE_PERMISSION]" routerLink="eb-group" class="dropdown-item">
+                        <i class="mdi mdi-settings text-primary"></i>
+                        Vai trò quyền hạn
+                    </a>
+                    <a *ngIf="true" class="dropdown-item" (click)="showPopupChangePassword(changePass)">
+                        <i class="mdi mdi-settings text-primary"></i>
+                        <span jhiTranslate="navbar.password.title"></span>
+                    </a>
+                    <a class="dropdown-item" (click)="logout()">
+                        <i class="mdi mdi-logout text-primary"></i>
+                        Đăng xuất
+                    </a>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<ng-template #popup let-d="dismiss">
+    <div id="ModalCustom2">
+        <div class="modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" style="padding: 15px 10px 10px 10px;">
+                    <div class="d-flex flex-wrap col-md-11">
+                        <h3 class="modal-title-detail"><span
+                            class="text-uppercase" jhiTranslate="navbar.popup.title">Thay đổi phiên làm việc</span></h3>
+                    </div>
+                    <a class="close-modal" data-dismiss="modal" (click)="d('Close')"
+                       aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </a>
+                </div>
+                <div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <span jhiTranslate="navbar.popup.org">Đơn vị/Tổ chức</span>
+                            </div>
+                            <div class="col-md-9">
+                                <eb-tree-combo-box [tree]="data" [(ngModel)]="org"
+                                                   (ngModelChange)="changeOrg(org)"></eb-tree-combo-box>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 10px;" *ngIf="isShow">
+                            <div class="offset-md-4 col-md-4">
+                                <div class="custom-control custom-radio" [class.disableDiv]="isRoleUser && soLamViecDuocPhanQuyen !== 0">
+                                    <input type="radio" id="customRadio1" name="customRadio"
+                                           class="custom-control-input noSetDisable"
+                                           [(ngModel)]="book" [value]="'0'">
+                                    <label class="custom-control-label" for="customRadio1">Sổ tài chính</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="custom-control custom-radio" [class.disableDiv]="isRoleUser && soLamViecDuocPhanQuyen !== 1">
+                                    <input type="radio" id="customRadio2" name="customRadio"
+                                           class="custom-control-input noSetDisable"
+                                           [(ngModel)]="book" [value]="'1'">
+                                    <label class="custom-control-label" for="customRadio2">Sổ quản trị</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 text-right">
+                                <label></label>
+                                <div>
+                                    <button class="btn btn-eb noSetDisable" (click)="apply()"
+                                            jhiTranslate="entity.action.ok">
+                                        ok
+                                    </button>
+                                    <button class="btn btn-default noSetDisable" (click)="d('Close')"
+                                            jhiTranslate="entity.action.close">close
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #changePass let-d="dismiss">
+    <div id="ModalCustom">
+        <div class="modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" style="padding: 15px 10px 10px 10px;">
+                    <div class="d-flex flex-wrap col-md-11">
+                        <h3 class="modal-title-detail"><span
+                            class="text-uppercase" jhiTranslate="navbar.password.title">Đổi mật khẩu</span></h3>
+                    </div>
+                    <a class="close-modal" data-dismiss="modal" (click)="d('Close')"
+                       aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </a>
+                </div>
+                <div class="modal-body">
+                    <div class="form">
+                        <div class="form-group row">
+                            <label class="offset-sm-1 col-sm-3 col-form-label"
+                                   jhiTranslate="navbar.password.currentPassword"></label>
+                            <div class="col-sm-6 pd-l-0 pd-r-10">
+                                <input type="password" class="form-control" name="password1" id="password1"
+                                       [(ngModel)]="currentPassword" (keydown.enter)="changePassword()"
+                                       required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="offset-sm-1 col-sm-3 col-form-label"
+                                   jhiTranslate="navbar.password.newPassword">Mật khẩu</label>
+                            <div class="col-sm-6 pd-l-0 pd-r-10">
+                                <input type="password" class="form-control" name="password2" id="password2"
+                                       [(ngModel)]="newPassword" (keydown.enter)="changePassword()"
+                                       required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="offset-sm-1 col-sm-3 col-form-label"
+                                   jhiTranslate="navbar.password.confirmPassword">Mật khẩu</label>
+                            <div class="col-sm-6 pd-l-0 pd-r-10">
+                                <input type="password" class="form-control" name="password3" id="password3"
+                                       [(ngModel)]="confirmPassword" (keydown.enter)="changePassword()"
+                                       required>
+                            </div>
+                        </div>
+                        <div class="button row">
+                            <label class="col-sm-1 col-form-label"></label>
+                            <div class="col-sm-3 pd-l-0 pd-r-10"></div>
+                            <div class="col-sm-6 pd-l-0 pd-r-10 btn_login">
+                                <button (click)="changePassword()" jhiTranslate="entity.action.ok"
+                                        class="btn btn-eb">Đồng ý
+                                </button>
+                                <button (click)="d('Close')" jhiTranslate="entity.action.close"
+                                        class="btn btn-default">đóng
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #changePostedDate let-d="dismiss">
+    <div id="changePostedDate">
+        <div class="modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" style="padding: 15px 10px 10px 10px;">
+                    <div class="d-flex flex-wrap col-md-11">
+                        <h3 class="modal-title-detail"><img src="../../../content/images/icon-logo.png" height="25px"
+                                                            width="25px"> <span
+                            class="text-uppercase" jhiTranslate="navbar.changePostedDate.title"></span></h3>
+                    </div>
+                    <a class="close-modal" data-dismiss="modal" (click)="d('Close')"
+                       aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </a>
+                </div>
+                <div class="modal-body">
+                    <div class="form">
+                        <div class="row">
+                            <div class="col-lg-4 pd-r-0 jsgrid-align-center">
+                                <img src="../../../content/images/calendar.jpg"
+                                     height="100px" width="150px">
+                            </div>
+                            <div class="col-lg-8 pd-r-0">
+                                <div class="form-group row">
+                                    <label class="offset-sm-1 col-sm-3 col-form-label"
+                                           jhiTranslate="navbar.changePostedDate.postedDate"></label>
+                                    <div class="col-sm-6 pd-l-0 pd-r-10">
+                                        <eb-date-picker name="postedDate"
+                                                        [(ngModel)]="postedDate"></eb-date-picker>
+                                    </div>
+                                </div>
+                                <div class="button row">
+                                    <label class="col-sm-1 col-form-label"></label>
+                                    <div class="col-sm-3 pd-l-0 pd-r-10"></div>
+                                    <div class="col-sm-6 pd-l-0 pd-r-10 btn_login">
+                                        <button *ebHasSomeAuthority="[ROLE.ROLE_ADMIN, ROLE_NgayHachToan_Sua]"
+                                                (click)="updatePostedDate()" jhiTranslate="entity.action.ok"
+                                                class="btn btn-eb">Đồng ý
+                                        </button>
+                                        <button (click)="d('Close')" jhiTranslate="entity.action.close"
+                                                class="btn btn-default">đóng
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #tutorialUse let-d="dismiss">
+    <div id="tutorialUse">
+        <div class="modal-lg">
+            <div style="background-color: #cbdcf0">
+                <div class="modal-header" style="padding: 15px 10px 10px 10px;">
+                    <div class="d-flex flex-wrap col-md-11">
+                        <h3 class="modal-title-detail"><img src="../../../content/images/icon-logo.png" height="25px"
+                                                            width="25px"> <span
+                            class="text-uppercase" jhiTranslate="navbar.tutorialUse.title">HƯỚNG DẪN SỬ DỤNG EASYBOOKS TT200</span></h3>
+                    </div>
+                    <a class="close-modal" data-dismiss="modal" (click)="d('Close')"
+                       aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </a>
+                </div>
+                <div class="modal-body" style="padding-top: 15px">
+                    <div class="frm-main frm-tables frm-padding" style="background: #cbdcf0; margin-top: 5px"
+                         [class.myreadonlytrue]="true">
+                        <div id="table-scroll0" class="table-scroll" style="height: 100%">
+                            <table style="min-width: 100%">
+                                <thead>
+                                <tr>
+                                    <th scope="col" jhiTranslate="navbar.tutorialUse.content"></th>
+                                    <th scope="col" jhiTranslate="navbar.tutorialUse.link"></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td class="jsgrid-cell jsgrid-align-left"><span
+                                        jhiTranslate="navbar.tutorialUse.tutorialAll"></span></td>
+                                    <td class="jsgrid-cell jsgrid-align-center" style="width: 10%"><a style="color: #0000EE" href="https://drive.google.com/file/d/1PKE8Tme6uXrUqjqRM3I_JagNJ6EdffA0/view?usp=sharing" target="_blank"><i><u><span jhiTranslate="navbar.tutorialUse.download"></span></u></i></a></td>
+                                </tr>
+                                <tr>
+                                    <td class="jsgrid-cell jsgrid-align-left"><span
+                                        jhiTranslate="navbar.tutorialUse.tutorialFunction"></span></td>
+                                    <td class="jsgrid-cell jsgrid-align-center" style="width: 10%"><a style="color: #0000EE" href="https://drive.google.com/file/d/1Mrilg2PLlbx31L0QyAM-RKzXFswRr-HO/view?usp=sharing" target="_blank"><i><u><span jhiTranslate="navbar.tutorialUse.download"></span></u></i></a></td>
+                                </tr>
+                                <tr>
+                                    <td class="jsgrid-cell jsgrid-align-left"><span
+                                        jhiTranslate="navbar.tutorialUse.tutorialCashAndBank"></span></td>
+                                    <td class="jsgrid-cell jsgrid-align-center"  style="width: 10%"><a style="color: #0000EE" href="https://drive.google.com/file/d/1NXGbrKvL9IkEnwJ_PCywB8X55dbBkHbZ/view?usp=sharing" target="_blank"><u><i><span jhiTranslate="navbar.tutorialUse.download"></span></i></u></a></td>
+                                </tr>
+                                <tr>
+                                    <td class="jsgrid-cell jsgrid-align-left"><span
+                                    jhiTranslate="navbar.tutorialUse.tutorialBuy"></span></td>
+                                    <td class="jsgrid-cell jsgrid-align-center" style="width: 10%"><a style="color: #0000EE" href="https://drive.google.com/file/d/1ZQA7vSeuWwSfNJSDQgL9kmNbTEaT7Nk-/view?usp=sharing" target="_blank"><i><u><span jhiTranslate="navbar.tutorialUse.download"></span></u></i></a></td>
+                                </tr>
+                                <tr>
+                                    <td class="jsgrid-cell jsgrid-align-left"><span
+                                        jhiTranslate="navbar.tutorialUse.tutorialSell"></span></td>
+                                    <td class="jsgrid-cell jsgrid-align-center" style="width: 10%"><a style="color: #0000EE" href="https://drive.google.com/file/d/1lKXkByFpnv3638N7EBrAEYZTFMystzSb/view?usp=sharing" target="_blank"><i><u><span jhiTranslate="navbar.tutorialUse.download"></span></u></i></a></td>
+                                </tr>
+                                <tr>
+                                    <td class="jsgrid-cell jsgrid-align-left"><span
+                                        jhiTranslate="navbar.tutorialUse.tutorialRepository"></span></td>
+                                    <td class="jsgrid-cell jsgrid-align-center" style="width: 10%"><a style="color: #0000EE" href="https://drive.google.com/file/d/171Zs80bS9ZgxqIEy-HeSeMCNvpYegyto/view?usp=sharing" target="_blank"><i><u><span jhiTranslate="navbar.tutorialUse.download"></span></u></i></a></td>
+                                </tr>
+                                <tr>
+                                    <td class="jsgrid-cell jsgrid-align-left"><span
+                                        jhiTranslate="navbar.tutorialUse.tutorialGeneral"></span></td>
+                                    <td class="jsgrid-cell jsgrid-align-center" style="width: 10%"><a style="color: #0000EE" href="https://drive.google.com/file/d/1W1ftLJrYe2cjdUG-EtKIrJabmJgmIuep/view?usp=sharing" target="_blank"><i><u><span jhiTranslate="navbar.tutorialUse.download"></span></u></i></a></td>
+                                </tr>
+                                <tr>
+                                    <td class="jsgrid-cell jsgrid-align-left"><span
+                                        jhiTranslate="navbar.tutorialUse.tutorialMInvoice"></span></td>
+                                    <td class="jsgrid-cell jsgrid-align-center" style="width: 10%"><a style="color: #0000EE" href="https://drive.google.com/file/d/1Hnc86CDdEz55Ewe7x9eVkNefPpDNNiLY/view?usp=sharing" target="_blank"><i><u><span jhiTranslate="navbar.tutorialUse.download"></span></u></i></a></td>
+                                </tr>
+                                <tr>
+                                    <td class="jsgrid-cell jsgrid-align-left"><span
+                                        jhiTranslate="navbar.tutorialUse.tutorialEInvoice"></span></td>
+                                    <td class="jsgrid-cell jsgrid-align-center" style="width: 10%"><a style="color: #0000EE" href="https://drive.google.com/file/d/16v29YyzWYfcAU3dX25lq74dgddTSquT0/view?usp=sharing" target="_blank"><i><u><span jhiTranslate="navbar.tutorialUse.download"></span></u></i></a></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-dark" (click)="ngbModalRef.close()"
+                            jhiTranslate="entity.action.close">Đóng
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>

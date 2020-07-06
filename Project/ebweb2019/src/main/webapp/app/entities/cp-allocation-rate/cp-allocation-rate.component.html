@@ -1,0 +1,84 @@
+<div>
+    <h2 id="page-heading">
+        <span jhiTranslate="ebwebApp.cPAllocationRate.home.title">CP Allocation Rates</span>
+        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-cp-allocation-rate" [routerLink]="['/cp-allocation-rate/new']">
+            <fa-icon [icon]="'plus'"></fa-icon>
+            <span  jhiTranslate="ebwebApp.cPAllocationRate.home.createLabel">
+            Create new CP Allocation Rate
+            </span>
+        </button>
+    </h2>
+    <eb-alert></eb-alert>
+    <br/>
+    <div class="table-responsive" *ngIf="cPAllocationRates">
+        <table class="table table-striped">
+            <thead>
+            <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
+            <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="cPPeriodID"><span jhiTranslate="ebwebApp.cPAllocationRate.cPPeriodID">C P Period ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="cPPeriodDetailID"><span jhiTranslate="ebwebApp.cPAllocationRate.cPPeriodDetailID">C P Period Detail ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="allocationMethod"><span jhiTranslate="ebwebApp.cPAllocationRate.allocationMethod">Allocation Method</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="costSetID"><span jhiTranslate="ebwebApp.cPAllocationRate.costSetID">Cost Set ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="materialGoodsID"><span jhiTranslate="ebwebApp.cPAllocationRate.materialGoodsID">Material Goods ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="isStandardItem"><span jhiTranslate="ebwebApp.cPAllocationRate.isStandardItem">Is Standard Item</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="quantity"><span jhiTranslate="ebwebApp.cPAllocationRate.quantity">Quantity</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="priceQuantum"><span jhiTranslate="ebwebApp.cPAllocationRate.priceQuantum">Price Quantum</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="coefficient"><span jhiTranslate="ebwebApp.cPAllocationRate.coefficient">Coefficient</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="quantityStandard"><span jhiTranslate="ebwebApp.cPAllocationRate.quantityStandard">Quantity Standard</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="allocationStandard"><span jhiTranslate="ebwebApp.cPAllocationRate.allocationStandard">Allocation Standard</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="allocatedRate"><span jhiTranslate="ebwebApp.cPAllocationRate.allocatedRate">Allocated Rate</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let cPAllocationRate of cPAllocationRates ;trackBy: trackId">
+                <td><a [routerLink]="['/cp-allocation-rate', cPAllocationRate.id, 'view' ]">{{cPAllocationRate.id}}</a></td>
+                <td>{{cPAllocationRate.cPPeriodID}}</td>
+                <td>{{cPAllocationRate.cPPeriodDetailID}}</td>
+                <td>{{cPAllocationRate.allocationMethod}}</td>
+                <td>{{cPAllocationRate.costSetID}}</td>
+                <td>{{cPAllocationRate.materialGoodsID}}</td>
+                <td>{{cPAllocationRate.isStandardItem}}</td>
+                <td>{{cPAllocationRate.quantity}}</td>
+                <td>{{cPAllocationRate.priceQuantum}}</td>
+                <td>{{cPAllocationRate.coefficient}}</td>
+                <td>{{cPAllocationRate.quantityStandard}}</td>
+                <td>{{cPAllocationRate.allocationStandard}}</td>
+                <td>{{cPAllocationRate.allocatedRate}}</td>
+                <td class="text-right">
+                    <div class="btn-group flex-btn-group-container">
+                        <button type="submit"
+                                [routerLink]="['/cp-allocation-rate', cPAllocationRate.id, 'view' ]"
+                                class="btn btn-info btn-sm">
+                            <fa-icon [icon]="'eye'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/cp-allocation-rate', cPAllocationRate.id, 'edit']"
+                                class="btn btn-primary btn-sm">
+                            <fa-icon [icon]="'pencil-alt'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                        </button>
+                        <button type="submit"
+                                [routerLink]="['/', { outlets: { popup: 'cp-allocation-rate/'+ cPAllocationRate.id + '/delete'} }]"
+                                replaceUrl="true"
+                                queryParamsHandling="merge"
+                                class="btn btn-danger btn-sm">
+                            <fa-icon [icon]="'times'"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div *ngIf="cPAllocationRates && cPAllocationRates.length">
+        <div class="row justify-content-center">
+            <jhi-item-count [page]="page" [total]="queryCount" [maxSize]="5" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+        </div>
+        <div class="row justify-content-center">
+            <ngb-pagination [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage" [maxSize]="5" [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage(page)"></ngb-pagination>
+        </div>
+    </div>
+</div>

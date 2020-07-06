@@ -1,0 +1,218 @@
+<div class="container-fluid">
+    <div class="margin-tp-5 margin-0">
+        <div class="">
+            <div class="itemw" style="color: #FFFFFF">
+                <div class="menu-tool-bar he">
+                    <div class="ptitle">
+                        <span jhiTranslate="ebwebApp.organizationUnit.home.title"></span>
+                    </div>
+                    <div class="gr-toolbar">
+                        <a (click)="addNew($event)" title="{{'ebwebApp.autoPrinciple.tooltipAdd' | translate}}"><i class="mdi mdi-plus"></i> <span
+                            jhiTranslate="ebwebApp.organizationUnit.add"></span></a>
+                        <a [hidden]="!selectedRowOrg" (click)="edit()" title="{{'ebwebApp.mBTellerPaper.tooltipEdit' | translate}}"><i
+                            class="mdi mdi-pen"></i><span jhiTranslate="ebwebApp.organizationUnit.edit"></span></a>
+                        <a [hidden]="!selectedRowOrg" (click)="delete()" title="{{'ebwebApp.outWard.tooltipDrop' | translate}}"
+                        ><i
+                            class="mdi mdi-delete"></i><span jhiTranslate="ebwebApp.organizationUnit.delete"></span></a>
+                        <a (click)="toggleSearch($event)"
+                           [hidden]="!isShowSearch"
+                           title="{{'ebwebApp.mBTellerPaper.tooltipHideSearch' | translate}}">
+                            <i class="{{isShowSearch?'mdi mdi-chevron-up':'mdi mdi-magnify'}}"></i>
+                            <span jhiTranslate="ebwebApp.mBDeposit.home.hideAdvanceSearch"></span>
+                        </a>
+                        <a (click)="toggleSearch($event)"
+                           [hidden]="isShowSearch"
+                           title="{{'ebwebApp.outWard.tooltipSearch' | translate}}">
+                            <i class="{{isShowSearch?'mdi mdi-chevron-up':'mdi mdi-magnify'}}"></i>
+                            <span jhiTranslate="ebwebApp.mBDeposit.home.advanceSearch"></span>
+                        </a>
+                        <a (click)="showPopup(popup)"
+                           [class.disable]="!selectedRow"
+                           [hidden]="true"
+                        ><i class="mdi mdi-account-edit"></i><span jhiTranslate="userManagement.home.authority">Authority</span></a>
+                    </div>
+                </div>
+            </div>
+            <div class="frm-main frm-mains nobg" style="margin-bottom: 0px">
+                <form id="seach" style="background: #cbdcf0;" [hidden]="!isShowSearch">
+                    <div class="form-group row">
+                        <label class="col-sm-1 col-form-label"
+                               jhiTranslate="ebwebApp.organizationUnit.organizationUnitCode">Mã
+                            tổ chức/đơn vị (*)</label>
+                        <div class="col-sm-3 pd-l-0 pd-r-10">
+                            <input type="text" class="form-control form-control-sm"
+                                   name="organizationUnitCode" id="field_organizationUnitCode1"
+                                   [(ngModel)]="organizationUnitSearch.organizationUnitCode"/>
+                        </div>
+                        <label class="col-sm-1 col-form-label"
+                               jhiTranslate="ebwebApp.organizationUnit.organizationUnitName">Mã
+                            tổ chức/đơn vị (*)</label>
+                        <div class="col-sm-3 pd-l-0 pd-r-10">
+                            <input type="text" class="form-control form-control-sm"
+                                   name="organizationUnitName" id="field_organizationUnitName1"
+                                   [(ngModel)]="organizationUnitSearch.organizationUnitName"/>
+                        </div>
+                        <label class="col-sm-1 col-form-label"
+                               jhiTranslate="ebwebApp.organizationUnit.taxCode">Mã
+                            tổ chức/đơn vị (*)</label>
+                        <div class="col-sm-3 pd-l-0 pd-r-10">
+                            <input type="text" class="form-control form-control-sm"
+                                   name="taxCode" id="field_taxCode1"
+                                   [(ngModel)]="organizationUnitSearch.taxCode"/>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="frm-button">
+                            <button class="btn btn-success btn-sm" style="font-size: 16px" (click)="startLoadAllButtonSearch()">
+                                <i class="mdi mdi-magnify"
+                                   aria-hidden="true"
+                                   style="margin-right: 5px"></i><span
+                                jhiTranslate="entity.searchform.search">Search</span>
+                            </button>
+                            <button class="btn btn-danger btn-sm" (click)="resetSearch()" style="font-size: 16px"><i
+                                class="mdi mdi-replay"
+                                style="margin-right: 5px">
+                            </i><span jhiTranslate="entity.searchform.reset">Reset</span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="frm-main frm-mains nobg" style="background: #cbdcf0; margin-top: 5px">
+                <div id="table-scroll0" class="table-scroll" style="height: 720px !important;">
+                    <table id="main-table0" class="main-table">
+                        <thead>
+                        <tr>
+                            <th scope="col" jhiTranslate="ebwebApp.organizationUnit.organizationUnitCode">Mã tổ chức</th>
+                            <th scope="col" jhiTranslate="ebwebApp.organizationUnit.organizationUnitName">Tên tổ chức</th>
+                            <th scope="col" jhiTranslate="ebwebApp.organizationUnit.taxCode">Mã số thuế</th>
+                            <th scope="col" jhiTranslate="ebwebApp.organizationUnit.address">Địa chỉ</th>
+                            <th scope="col" jhiTranslate="ebwebApp.organizationUnit.phoneNumber">Số điện thoại</th>
+                            <th scope="col" jhiTranslate="ebwebApp.organizationUnit.isActive">Hoạt động</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let organizationUnit of listOrganizationUnit ;trackBy: trackId"
+                            (click)="onSelectOrg(organizationUnit)"
+                            (dblclick)="edit()"
+                            [class.selected]="selectedRowOrg === organizationUnit"
+                        >
+                            <td class="jsgrid-cell jsgrid-align-left"
+                                style="width: 12%">{{organizationUnit.organizationUnitCode}}</td>
+                            <td class="jsgrid-cell jsgrid-align-left"
+                                style="width: 25%">{{organizationUnit.organizationUnitName}}</td>
+                            <td class="jsgrid-cell jsgrid-align-right"
+                                style="width: 16%">{{organizationUnit.taxCode}}</td>
+                            <td class="jsgrid-cell jsgrid-align-left"
+                                style="width: 25%">{{organizationUnit.address}}</td>
+                            <td class="jsgrid-cell jsgrid-align-right"
+                                style="width: 12%">{{organizationUnit.phoneNumber}}</td>
+                            <td class="jsgrid-cell jsgrid-align-center" style="width: 10%">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" name="activated"
+                                           id="activated" [ngModel]="organizationUnit.isActive" disabled>
+                                    <label class="custom-control-label" for="activated"></label>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr *ngFor="let row of newArr(itemsPerPage - listOrganizationUnit?.length)">
+                            <td class="jsgrid-cell">&nbsp;</td>
+                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div *ngIf="listOrganizationUnit && listOrganizationUnit?.length"
+                 style="padding-right: 16px">
+                <div class="row justify-content-end" style="height:32px">
+                    <div class="col-lg-2">
+                        <div class="form-group row">
+                            <label class="col-sm-7 col-form-label" for="itemsPerPage"
+                                   style="padding-right: 0px;text-align: right;"><span
+                                jhiTranslate="ebwebApp.mBDeposit.totalPage"></span>: {{totalItems}}</label>
+                            <div class="col-sm-5 pd-l-0">
+                                <select class="form-control form-control-sm" name="itemsPerPage"
+                                        id="itemsPerPage"
+                                        style="background-color: #f5f7fa;"
+                                        [(ngModel)]="itemsPerPage"
+                                        (ngModelChange)="selectedItemPerPage()"
+                                >
+                                    <option value="20">20</option>
+                                    <option value="30">30</option>
+                                    <option value="40">40</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="justify-content-end">
+                        <ngb-pagination [size]="'sm'" [collectionSize]="totalItems" [(page)]="pageShow" [pageSize]="itemsPerPage"
+                                        [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
+                                        (pageChange)="loadPage(pageShow)"></ngb-pagination>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <ng-template #popup let-d="dismiss">
+            <div id="ModalCustom2">
+                <div class="modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header" style="padding: 15px 10px 10px 10px;">
+                            <div class="d-flex flex-wrap col-md-11">
+                                <h3 class="modal-title-detail"><span
+                                    class="text-uppercase" jhiTranslate="userManagement.selectUser">Chọn người dùng</span></h3>
+                            </div>
+                            <a class="close-modal" data-dismiss="modal" (click)="d('Close')"
+                               aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </a>
+                        </div>
+                        <div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <span jhiTranslate="navbar.popup.org">Đơn vị/Tổ chức</span>
+                                    </div>
+                                    <div class="col-md-9">
+                                        <combo-box style=""
+                                                   name="comboboxParentID"
+                                                   [dataList]="data"
+                                                   [isOutTable]="true"
+                                                   [isReadOnly]="selectedRowOrg.userID && selectedRowOrg.id"
+                                                   [listColumns]="listColumnsUser"
+                                                   displayMember="login"
+                                                   valueName="id"
+                                                   [headerColumns]="listHeaderColumnsUser"
+                                                   [isObject]="false"
+                                                   [(ngModel)]="selectedRowOrg.userID"
+                                        >
+                                        </combo-box>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12 text-right">
+                                        <label></label>
+                                        <div>
+                                            <button class="btn btn-eb noSetDisable" jhiTranslate="entity.action.ok" (click)="saveUserOrg()">
+                                                ok
+                                            </button>
+                                            <button class="btn btn-default noSetDisable" (click)="d('Close')"
+                                                    jhiTranslate="entity.action.close">close
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+    </div>
+</div>
+<footer>
+</footer>

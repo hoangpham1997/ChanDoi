@@ -1,0 +1,135 @@
+<div class="container-fluid">
+    <div class="margin-tp-5 margin-0">
+        <div class="">
+            <div class="itemw">
+                <div class="menu-tool-bar he">
+                    <div class="ptitle">
+                        <span jhiTranslate="ebwebApp.ebPackage.home.title"></span>
+                    </div>
+                    <div class="gr-toolbar">
+                        <a (click)="addNew($event)" title="{{'ebwebApp.autoPrinciple.tooltipAdd' | translate}}"><i class="mdi mdi-plus"></i><span jhiTranslate="ebwebApp.currency.created"></span></a>
+                        <a [hidden]="!selectedRow" (click)="edit()" title="{{'ebwebApp.mBTellerPaper.tooltipEdit' | translate}}"><i
+                            class="mdi mdi-pen"></i><span jhiTranslate="ebwebApp.currency.updated"></span></a>
+                        <a [hidden]="!selectedRow" (click)="delete()" title="{{'ebwebApp.outWard.tooltipDrop' | translate}}"
+                        ><i class="mdi mdi-delete"></i><span jhiTranslate="ebwebApp.currency.deleted"></span></a>
+                    </div>
+                </div>
+            </div>
+            <div class="frm-main frm-mains nobg" style="background: #cbdcf0; margin-top: 5px">
+                <div id="table-scroll0" class="table-scroll" style="height: 720px !important;">
+                    <table id="main-table0" class="main-table">
+                        <thead>
+                        <tr>
+                            <th scope="col" jhiTranslate="ebwebApp.ebPackage.packageCode">Package Code</th>
+                            <th scope="col" jhiTranslate="ebwebApp.ebPackage.packageName">Package Name</th>
+                            <th scope="col" jhiTranslate="ebwebApp.ebPackage.limitedCompany">Limited Company</th>
+                            <th scope="col" jhiTranslate="ebwebApp.ebPackage.limitedUser">Limited User</th>
+                            <th scope="col" jhiTranslate="ebwebApp.ebPackage.limitedVoucher">Limited Voucher</th>
+                            <th scope="col" jhiTranslate="ebwebApp.ebPackage.expiredTime">Expired Time</th>
+<!--                            <th scope="col" jhiTranslate="ebwebApp.ebPackage.description">Description</th>-->
+<!--                            <th scope="col" jhiTranslate="ebwebApp.ebPackage.type">Type</th>-->
+                            <th scope="col" jhiTranslate="ebwebApp.ebPackage.type">Loại Gói DV</th>
+                            <th scope="col" jhiTranslate="ebwebApp.organizationUnit.isActive">Follow</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let ebPackage of ebPackages ;trackBy: trackId"
+                            (click)="onSelect(ebPackage)"
+                            (dblclick)="edit()"
+                            [class.selected]="selectedRow === ebPackage"
+                        >
+                            <td class="jsgrid-cell jsgrid-align-left"
+                                style="width: 150px">{{ebPackage.packageCode}}</td>
+                            <td class="jsgrid-cell jsgrid-align-left"
+                                style="width: 150px">{{ebPackage.packageName}}</td>
+                            <td class="jsgrid-cell jsgrid-align-right"
+                                style="width: 150px">{{ebPackage.limitedCompany}}</td>
+                            <td class="jsgrid-cell jsgrid-align-right"
+                                style="width: 150px">
+                                {{ebPackage.limitedUser !== -1 ? ebPackage.limitedUser : ""}}
+                            </td>
+                            <td class="jsgrid-cell jsgrid-align-right"
+                                style="width: 150px">
+                                {{ebPackage.limitedVoucher !== -1 ? ebPackage.limitedVoucher : ""}}
+                            </td>
+                            <td class="jsgrid-cell jsgrid-align-right"
+                                style="width: 150px">
+                                {{ebPackage.expiredTime !== -1 ? ebPackage.expiredTime : ""}}
+                            </td>
+<!--                            <td class="jsgrid-cell jsgrid-align-center"-->
+<!--                                style="width: 150px">-->
+<!--                                {{ebPackage.description}}-->
+<!--                            </td>-->
+<!--                            <td class="jsgrid-cell jsgrid-align-center"-->
+<!--                                style="width: 150px">-->
+<!--                                {{ebPackage.type}}-->
+<!--                            </td>-->
+                            <td class="jsgrid-cell jsgrid-align-left"
+                                style="width: 150px">
+<!--                                <div class="custom-control custom-checkbox">-->
+<!--                                    <input type="checkbox" class="custom-control-input" name="isTotalPackage"-->
+<!--                                           id="isTotalPackage" [ngModel]="ebPackage.isTotalPackage" disabled>-->
+<!--                                    <label class="custom-control-label" for="isTotalPackage"></label>-->
+<!--                                </div>-->
+                                {{ebPackage.comType === 1 ? 'Kế toán thường' : ebPackage.comType === 2 ? 'Kế toán đa chi nhánh' : 'Kế toán dịch vụ'}}
+                            </td>
+                            <td class="jsgrid-cell jsgrid-align-center"
+                                style="width: 150px">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" name="status"
+                                           id="status" [checked]="true" disabled>
+                                    <label class="custom-control-label" for="status"></label>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr *ngFor="let row of newArr(itemsPerPage - ebPackages?.length)">
+                            <td class="jsgrid-cell">&nbsp;</td>
+                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                            <td class="jsgrid-cell jsgrid-align-right">&nbsp;</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div *ngIf="ebPackages && ebPackages?.length"
+                 style="padding-right: 16px">
+                <div class="row justify-content-end" style="height:32px">
+                    <div class="col-lg-2">
+                        <div class="form-group row">
+                            <label class="col-sm-7 col-form-label" for="itemsPerPage"
+                                   style="padding-right: 0px;text-align: right;"><span
+                                jhiTranslate="ebwebApp.mBDeposit.totalPage"></span>: {{totalItems}}</label>
+                            <div class="col-sm-5 pd-l-0">
+                                <select class="form-control form-control-sm" name="itemsPerPage"
+                                        id="itemsPerPage"
+                                        style="background-color: #f5f7fa;"
+                                        [(ngModel)]="itemsPerPage"
+                                        (ngModelChange)="selectedItemPerPage()"
+                                >
+                                    <option value="20">20</option>
+                                    <option value="30">30</option>
+                                    <option value="40">40</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="justify-content-end">
+                        <ngb-pagination [size]="'sm'" [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage"
+                                        [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
+                                        (pageChange)="loadPage(page)"></ngb-pagination>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Footer -->
+<footer>
+</footer>
+
+
